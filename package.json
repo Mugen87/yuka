@@ -2,15 +2,22 @@
   "name": "yuka",
   "version": "0.0.1",
   "description": "JavaScript Game AI library",
+  "repository": "Mugen87/yuka",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
   },
   "keywords": [
     "javascript",
-    "html5",
     "ai"
   ],
   "author": "Mugen87",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mugen87/yuka/issues"
+  },
+  "devDependencies": {
+    "rollup": "^0.43.0"
+  }
 }
