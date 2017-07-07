@@ -1,0 +1,16 @@
+{
+  "name": "yuka",
+  "version": "0.0.1",
+  "description": "JavaScript Game AI library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "html5",
+    "ai"
+  ],
+  "author": "Mugen87",
+  "license": "MIT"
+}
