@@ -1,0 +1,259 @@
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class Vector3 {
+
+	constructor ( x = 0, y = 0, z = 0 ) {
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+
+	}
+
+	set ( x, y, z ) {
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+
+		return this;
+
+	}
+
+	copy ( v ) {
+
+		this.x = v.x;
+		this.y = v.y;
+		this.z = v.z;
+
+		return this;
+
+	}
+
+	add ( v ) {
+
+		this.x += v.x;
+		this.y += v.y;
+		this.z += v.z;
+
+		return this;
+
+	}
+
+	addScalar ( s ) {
+
+		this.x += s;
+		this.y += s;
+		this.z += s;
+
+		return this;
+
+	}
+
+	addVectors ( a, b ) {
+
+		this.x = a.x + b.x;
+		this.y = a.y + b.y;
+		this.z = a.z + b.z;
+
+		return this;
+
+	}
+
+	sub ( v ) {
+
+		this.x -= v.x;
+		this.y -= v.y;
+		this.z -= v.z;
+
+		return this;
+
+	}
+
+	subScalar ( s ) {
+
+		this.x -= s;
+		this.y -= s;
+		this.z -= s;
+
+		return this;
+
+	}
+
+	subVectors ( a, b ) {
+
+		this.x = a.x - b.x;
+		this.y = a.y - b.y;
+		this.z = a.z - b.z;
+
+		return this;
+
+	}
+
+	multiply ( v ) {
+
+		this.x *= v.x;
+		this.y *= v.y;
+		this.z *= v.z;
+
+		return this;
+
+	}
+
+	multiplyScalar ( s ) {
+
+		this.x *= s;
+		this.y *= s;
+		this.z *= s;
+
+		return this;
+
+	}
+
+	multiplyVectors ( a, b ) {
+
+		this.x = a.x * b.x;
+		this.y = a.y * b.y;
+		this.z = a.z * b.z;
+
+		return this;
+
+	}
+
+	divide ( v ) {
+
+		this.x /= v.x;
+		this.y /= v.y;
+		this.z /= v.z;
+
+		return this;
+
+	}
+
+	divideScalar ( s ) {
+
+		this.x /= s;
+		this.y /= s;
+		this.z /= s;
+
+		return this;
+
+	}
+
+	divideVectors ( a, b ) {
+
+		this.x = a.x / b.x;
+		this.y = a.y / b.y;
+		this.z = a.z / b.z;
+
+		return this;
+
+	}
+
+	dot ( v ) {
+
+		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
+
+	}
+
+	cross ( v ) {
+
+		const x = this.x, y = this.y, z = this.z;
+
+		this.x = ( y * v.z ) - ( z * v.y );
+		this.y = ( z * v.x ) - ( x * v.z );
+		this.z = ( x * v.y ) - ( y * v.x );
+
+		return this;
+
+	}
+
+	crossVectors ( a, b ) {
+
+		const ax = a.x, ay = a.y, az = a.z;
+		const bx = b.x, by = b.y, bz = b.z;
+
+		this.x = ( ay * bz ) - ( az * by );
+		this.y = ( az * bx ) - ( ax * bz );
+		this.z = ( ax * by ) - ( ay * bx );
+
+		return this;
+
+	}
+
+	length () {
+
+		return Math.sqrt( this.lengthSquared() );
+
+	}
+
+	lengthSquared () {
+
+		return this.dot( this );
+
+	}
+
+	distanceTo ( v ) {
+
+		return Math.sqrt( this.distanceToSquared( v ) );
+
+	}
+
+	distanceToSquared ( v ) {
+
+		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
+
+		return ( dx * dx ) + ( dy * dy ) + ( dz * dz );
+
+	}
+
+	normalize () {
+
+		return this.divideScalar( this.length() || 1 );
+
+	}
+
+	applyMatrix4 ( m ) {
+
+		const x = this.x, y = this.y, z = this.z;
+		const e = m.elements;
+
+		const w = 1 / ( ( e[ 3 ] * x ) + ( e[ 7 ] * y ) + ( e[ 11 ] * z ) + e[ 15 ] );
+
+		this.x = ( ( e[ 0 ] * x ) + ( e[ 4 ] * y ) + ( e[ 8 ]  * z ) + e[ 12 ] ) * w;
+		this.y = ( ( e[ 1 ] * x ) + ( e[ 5 ] * y ) + ( e[ 9 ]  * z ) + e[ 13 ] ) * w;
+		this.z = ( ( e[ 2 ] * x ) + ( e[ 6 ] * y ) + ( e[ 10 ] * z ) + e[ 14 ] ) * w;
+
+		return this;
+
+	}
+
+	equals ( v ) {
+
+		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
+
+	}
+
+	setFromMatrixColumn ( m, i ) {
+
+		return this.fromArray( m.elements, i * 4 );
+
+	}
+
+	fromArray ( array, offset ) {
+
+		if ( offset === undefined ) offset = 0;
+
+		this.x = array[ offset + 0 ];
+		this.y = array[ offset + 1 ];
+		this.z = array[ offset + 2 ];
+
+		return this;
+
+	}
+
+}
+
+export { Vector3 };

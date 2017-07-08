@@ -1,3 +1,7 @@
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 class GameEntity {
 
 	constructor () {
