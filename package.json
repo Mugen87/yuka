@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "build-uglify": "rollup -c && uglifyjs build/yuka.js > build/yuka.min.js",
+    "dev": "rollup -c -w"
   },
   "keywords": [
     "javascript",
@@ -18,6 +20,8 @@
     "url": "https://github.com/Mugen87/yuka/issues"
   },
   "devDependencies": {
-    "rollup": "^0.43.0"
+    "rollup": "^0.43.0",
+    "rollup-watch": "^4.0.0",
+    "uglify-es": "^3.0.24"
   }
 }
