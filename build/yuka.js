@@ -8,41 +8,15 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class EntityManager {
+class Telegram {
 
-	constructor () {
+	constructor ( senderId, receiverId, message, data, delay ) {
 
-		this.entities = [];
-
-	}
-
-	add ( entity ) {
-
-		this.entities.push( entity );
-
-		return this;
-
-	}
-
-	remove ( entity ) {
-
-		const index = this.entities.indexOf( entity );
-
-		this.entities.splice( index, 1 );
-
-		return this;
-
-	}
-
-	update ( delta ) {
-
-		for ( let entity of this.entities ) {
-
-			entity.update( delta );
-
-		}
-
-		return this;
+		this.senderId = senderId;
+		this.receiverId = receiverId;
+		this.message = message;
+		this.data = data;
+		this.delay = delay;
 
 	}
 
@@ -52,15 +26,261 @@ class EntityManager {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class GameEntity {
+class MessageDispatcher {
+
+	constructor ( entityManager ) {
+
+		this.delayedTelegrams = new Array();
+		this.entityManager = entityManager;
+
+	}
+
+	deliver ( receiver, telegram ) {
+
+		if ( receiver.handleMessage( telegram ) === false ) {
+
+			console.warn( 'YUKA.MessageDispatcher: Message not handled by receiver: %o', receiver );
+
+		}
+
+	}
+
+	// send a message to another agent
+
+	dispatch ( sender, receiver, message, delay, data ) {
+
+		const telegram = new Telegram( sender.id, receiver.id, message, data, 0 );
+
+		if ( delay <= 0 ) {
+
+			this.deliver( receiver, telegram );
+
+		} else {
+
+			telegram.delay = delay;
+
+			this.delayedTelegrams.push( telegram );
+
+		}
+
+	}
+
+	// process delayed messages
+
+	dispatchDelayedMessages ( delta ) {
+
+		let i = this.delayedTelegrams.length;
+
+		while ( i -- ) {
+
+			const telegram = this.delayedTelegrams[ i ];
+
+			telegram.delay -= delta;
+
+			if ( telegram.delay <= 0 ) {
+
+				const receiver = this.entityManager.getEntityById( telegram.receiverId );
+
+				this.deliver( receiver, telegram );
+
+				this.delayedTelegrams.pop();
+
+			}
+
+		}
+
+	}
+
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class EntityManager {
 
 	constructor () {
 
+		this.entities = new Map();
+		this.messageDispatcher = new MessageDispatcher( this );
+
+	}
+
+	add ( entity ) {
+
+		this.entities.set( entity.id, entity );
+
+		entity.addEventListener( 'message', this.onMessage, this );
+
+		return this;
+
+	}
+
+	remove ( entity ) {
+
+		this.entities.delete( entity.id );
+
+		entity.removeEventListener( 'message', this.onMessage );
+
+		return this;
+
+	}
+
+	getEntityById ( id ) {
+
+		return this.entities.get( id );
+
+	}
+
+	update ( delta ) {
+
+		for ( let entity of this.entities.values() ) {
+
+			entity.update( delta );
+
+		}
+
+		this.messageDispatcher.dispatchDelayedMessages( delta );
+
+	}
+
+	onMessage ( event ) {
+
+		const sender = event.target;
+		const receiver = event.receiver;
+		const message = event.message;
+		const delay = event.delay;
+		const data = event.data;
+
+		this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class EventDispatcher {
+
+	constructor () {
+
+		this.listeners = {};
+
+	}
+
+	addEventListener ( type, listener, scope ) {
+
+		const listeners = this.listeners;
+
+		if ( listeners[ type ] === undefined ) {
+
+			listeners[ type ] = [];
+
+		}
+
+		if ( listeners[ type ].indexOf( listener ) === - 1 ) {
+
+			listener.scope = scope;
+
+			listeners[ type ].push( listener );
+
+		}
+
+	}
+
+	hasEventListener ( type, listener ) {
+
+		const listeners = this.listeners;
+
+		return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
+
+	}
+
+	removeEventListener ( type, listener ) {
+
+		const listeners = this.listeners;
+		const listenerArray = listeners[ type ];
+
+		if ( listenerArray !== undefined ) {
+
+			const index = listenerArray.indexOf( listener );
+
+			if ( index !== - 1 ) {
+
+				listenerArray.splice( index, 1 );
+
+			}
+
+		}
+
+	}
+
+	dispatchEvent ( event ) {
+
+		const listeners = this.listeners;
+		const listenerArray = listeners[ event.type ];
+
+		if ( listenerArray !== undefined ) {
+
+			event.target = this;
+
+			const array = listenerArray.slice( 0 );
+
+			for ( let i = 0, l = array.length; i < l; i ++ ) {
+
+				const listener = array[ i ];
+
+				listener.call( listener.scope || this, event );
+
+			}
+
+		}
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class GameEntity extends EventDispatcher {
+
+	constructor () {
+
+		super();
+
 		this.id = GameEntity.__nextId ++;
+		this.name = '';
 
 	}
 
 	update () {
+
+		console.warn( 'YUKA.GameEntity: .update() must be implemented in derived class.' );
+
+	}
+
+	sendMessage ( receiver, message, delay = 0, data = null ) {
+
+		const event = {
+			type: 'message',
+			receiver: receiver,
+			message: message,
+			delay: delay,
+			data: data
+		};
+
+		this.dispatchEvent( event );
+
+	}
+
+	handleMessage () {
+
+		return false;
 
 	}
 
@@ -74,11 +294,7 @@ GameEntity.__nextId = 0;
 
 class State {
 
-	enter () {
-
-		console.warn( 'YUKA.State: .enter() must be implemented in derived class.' );
-
-	}
+	enter () {}
 
 	execute () {
 
@@ -86,11 +302,9 @@ class State {
 
 	}
 
-	exit () {
+	exit () {}
 
-		console.warn( 'YUKA.State: .exit() must be implemented in derived class.' );
-
-	}
+	onMessage () { return false; }
 
 }
 
@@ -127,13 +341,21 @@ class StateMachine {
 
 	changeState ( newState ) {
 
-		this.previousState = this.currentState;
+		if ( newState instanceof State ) {
 
-		this.currentState.exit( this.owner );
+			this.previousState = this.currentState;
 
-		this.currentState = newState;
+			this.currentState.exit( this.owner );
 
-		this.currentState.enter( this.owner );
+			this.currentState = newState;
+
+			this.currentState.enter( this.owner );
+
+		} else {
+
+			console.warn( 'YUKA.StateMachine: .changeState() needs a parameter of type "YUKA.State".' );
+
+		}
 
 	}
 
@@ -146,6 +368,28 @@ class StateMachine {
 	inState ( state ) {
 
 		return ( state === this.currentState );
+
+	}
+
+	handleMessage ( telegram ) {
+
+		// first see, if the current state is valid and that it can handle the message
+
+		if ( this.currentState !== null && this.currentState.onMessage( this.owner, telegram ) === true ) {
+
+			return true;
+
+		}
+
+		// if not, and if a global state has been implemented, send the message to the global state
+
+		if ( this.globalState !== null && this.globalState.onMessage( this.owner, telegram ) === true ) {
+
+			return true;
+
+		}
+
+		return false;
 
 	}
 

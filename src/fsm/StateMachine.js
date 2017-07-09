@@ -2,6 +2,8 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+import { State } from './State';
+
 class StateMachine {
 
 	constructor ( owner ) {
@@ -31,13 +33,21 @@ class StateMachine {
 
 	changeState ( newState ) {
 
-		this.previousState = this.currentState;
+		if ( newState instanceof State ) {
 
-		this.currentState.exit( this.owner );
+			this.previousState = this.currentState;
 
-		this.currentState = newState;
+			this.currentState.exit( this.owner );
 
-		this.currentState.enter( this.owner );
+			this.currentState = newState;
+
+			this.currentState.enter( this.owner );
+
+		} else {
+
+			console.warn( 'YUKA.StateMachine: .changeState() needs a parameter of type "YUKA.State".' );
+
+		}
 
 	}
 
@@ -50,6 +60,28 @@ class StateMachine {
 	inState ( state ) {
 
 		return ( state === this.currentState );
+
+	}
+
+	handleMessage ( telegram ) {
+
+		// first see, if the current state is valid and that it can handle the message
+
+		if ( this.currentState !== null && this.currentState.onMessage( this.owner, telegram ) === true ) {
+
+			return true;
+
+		}
+
+		// if not, and if a global state has been implemented, send the message to the global state
+
+		if ( this.globalState !== null && this.globalState.onMessage( this.owner, telegram ) === true ) {
+
+			return true;
+
+		}
+
+		return false;
 
 	}
 

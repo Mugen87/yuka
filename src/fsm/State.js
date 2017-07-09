@@ -4,11 +4,7 @@
 
 class State {
 
-	enter () {
-
-		console.warn( 'YUKA.State: .enter() must be implemented in derived class.' );
-
-	}
+	enter () {}
 
 	execute () {
 
@@ -16,11 +12,9 @@ class State {
 
 	}
 
-	exit () {
+	exit () {}
 
-		console.warn( 'YUKA.State: .exit() must be implemented in derived class.' );
-
-	}
+	onMessage () { return false; }
 
 }
 

@@ -1,0 +1,28 @@
+<html lang="en">
+	<head>
+		<title>Yuka | FSM</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<script src="../../../build/yuka.js"></script>
+
+		<script src="./js/states/MinerStates.js"></script>
+		<script src="./js/entities/Miner.js"></script>
+
+	</head>
+<body>
+
+	<script>
+
+	const miner = new Miner();
+
+	setInterval( function() {
+
+		miner.update();
+
+	}, 2000 );
+
+	</script>
+
+</body>
+</html>
