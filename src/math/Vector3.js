@@ -230,6 +230,28 @@ class Vector3 {
 
 	}
 
+	applyQuaternion ( q ) {
+
+		const x = this.x, y = this.y, z = this.z;
+		const qx = q.x, qy = q.y, qz = q.z, qw = q.w;
+
+		// calculate quat * vector
+
+		const ix =  qw * x + qy * z - qz * y;
+		const iy =  qw * y + qz * x - qx * z;
+		const iz =  qw * z + qx * y - qy * x;
+		const iw = - qx * x - qy * y - qz * z;
+
+		// calculate result * inverse quat
+
+		this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
+		this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
+		this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+
+		return this;
+
+	}
+
 	equals ( v ) {
 
 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
