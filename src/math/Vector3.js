@@ -2,6 +2,8 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+ import { _Math } from './Math';
+
 class Vector3 {
 
 	constructor ( x = 0, y = 0, z = 0 ) {
@@ -180,6 +182,16 @@ class Vector3 {
 		this.z = ( ax * by ) - ( ay * bx );
 
 		return this;
+
+	}
+
+	angleTo ( v ) {
+
+		var theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+
+		// clamp, to handle numerical problems
+
+		return Math.acos( _Math.clamp( theta, - 1, 1 ) );
 
 	}
 

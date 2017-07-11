@@ -1,8 +1,10 @@
 export { EntityManager } from './core/EntityManager';
 export { GameEntity } from './core/GameEntity';
 export { MovingEntity } from './core/MovingEntity';
+export { Vehicle } from './steering/Vehicle';
 export { State } from './fsm/State';
 export { StateMachine } from './fsm/StateMachine';
+export { _Math } from './math/Math';
 export { Matrix4 } from './math/Matrix4';
 export { Quaternion } from './math/Quaternion';
 export { Vector3 } from './math/Vector3';

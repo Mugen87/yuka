@@ -3,6 +3,8 @@
  */
 
 import { EventDispatcher } from './EventDispatcher';
+import { Vector3 } from '../math/Vector3';
+import { Quaternion } from '../math/Quaternion';
 
 class GameEntity extends EventDispatcher {
 
@@ -12,6 +14,12 @@ class GameEntity extends EventDispatcher {
 
 		this.id = GameEntity.__nextId ++;
 		this.name = '';
+
+		this.position = new Vector3();
+		this.rotation = new Quaternion();
+		this.scale = new Vector3( 1, 1, 1 );
+
+		this.up = new Vector3( 0, 1, 0 );
 
 	}
 
