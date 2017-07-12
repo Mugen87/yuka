@@ -7,7 +7,8 @@ const SteeringInterface = {
 	TYPES: {
 		NONE: 0,
 		SEEK: 1,
-		FLEE: 2
+		FLEE: 2,
+		ARRIVE: 4
 	},
 
 	seekEnable: function () {
@@ -43,6 +44,24 @@ const SteeringInterface = {
 	fleeOn: function () {
 
 		return ( this._behaviorFlag & SteeringInterface.TYPES.FLEE ) === SteeringInterface.TYPES.FLEE;
+
+	},
+
+	arriveEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.ARRIVE;
+
+	},
+
+	arriveDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.ARRIVE ) ) this._behaviorFlag ^= SteeringInterface.TYPES.ARRIVE;
+
+	},
+
+	arriveOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.ARRIVE ) === SteeringInterface.TYPES.ARRIVE;
 
 	}
 

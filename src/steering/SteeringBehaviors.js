@@ -12,13 +12,15 @@ class SteeringBehaviors {
 		this.vehicle = vehicle;
 		this.target = new Vector3();
 		this.panicDistance = 10; // for flee and evade behavior
+		this.deceleration = 3; // for arrive behavior
 
 		// use these values to tweak the amount that each steering force
 		// contributes to the total steering force
 
 		this.weights = {
 			seek: 1,
-			flee : 1
+			flee : 1,
+			arrive : 1
 		};
 
 		this._steeringForce = new Vector3(); // the calculated steering force per simulation step
@@ -83,6 +85,10 @@ Object.assign( SteeringBehaviors.prototype, {
 
 		return function _calculatePrioritized ( delta ) {
 
+			// reset steering force
+
+			this._steeringForce.set( 0, 0, 0 );
+
 			// flee
 
 			if ( this.fleeOn() === true ) {
@@ -106,6 +112,20 @@ Object.assign( SteeringBehaviors.prototype, {
 				this._seek( this.target, force );
 
 				force.multiplyScalar( this.weights.seek );
+
+				if ( this._accumulateForce( force ) === false ) return;
+
+			}
+
+			// arrive
+
+			if ( this.arriveOn() === true ) {
+
+				force.set( 0, 0, 0 );
+
+				this._arrive( this.target, force, this.deceleration );
+
+				force.multiplyScalar( this.weights.arrive );
 
 				if ( this._accumulateForce( force ) === false ) return;
 
@@ -169,6 +189,43 @@ Object.assign( SteeringBehaviors.prototype, {
 				}
 
 				desiredVelocity.multiplyScalar( vehicle.maxSpeed );
+
+				force.subVectors( desiredVelocity, vehicle.velocity );
+
+			}
+
+		};
+
+	} (),
+
+	_arrive: function () {
+
+		const desiredVelocity = new Vector3();
+		const displacement = new Vector3();
+
+		return function _arrive ( target, force, deceleration ) {
+
+			const vehicle = this.vehicle;
+
+			displacement.subVectors( target, vehicle.position );
+
+			const distance = displacement.length();
+
+			if ( distance > 0 ) {
+
+				// calculate the speed required to reach the target given the desired deceleration
+
+				let speed = distance / deceleration;
+
+				// make sure the speed does not exceed the max
+
+				speed = Math.min( speed, vehicle.maxSpeed );
+
+				// from here proceed just like "seek" except we don't need to normalize
+				// the "displacement" vector because we have already gone to the trouble
+				// of calculating its length.
+
+				desiredVelocity.copy( displacement ).multiplyScalar( speed / distance );
 
 				force.subVectors( desiredVelocity, vehicle.velocity );
 
