@@ -554,6 +554,7 @@ class Quaternion {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.w = w;
 
 	}
 
@@ -1127,8 +1128,6 @@ Object.assign( MovingEntity.prototype, {
 
 		return function lookAt ( target ) {
 
-			console.log( this.position );
-
 			rotationMatrix.lookAt( target, this.position, this.up );
 			this.rotation.setFromRotationMatrix( rotationMatrix );
 
@@ -1444,44 +1443,84 @@ const _Math$1 = {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+const SteeringInterface = {
+
+	TYPES: {
+		NONE: 0,
+		SEEK: 1,
+		FLEE: 2
+	},
+
+	seekEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.SEEK;
+
+	},
+
+	seekDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.SEEK ) ) this._behaviorFlag ^= SteeringInterface.TYPES.SEEK;
+
+	},
+
+	seekOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.SEEK ) === SteeringInterface.TYPES.SEEK;
+
+	},
+
+	fleeEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.FLEE;
+
+	},
+
+	fleeDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.FLEE ) ) this._behaviorFlag ^= SteeringInterface.TYPES.FLEE;
+
+	},
+
+	fleeOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.FLEE ) === SteeringInterface.TYPES.FLEE;
+
+	}
+
+};
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 class SteeringBehaviors {
 
 	constructor ( vehicle ) {
 
 		this.vehicle = vehicle;
 		this.target = new Vector3$1();
-
-		this._steeringForce = new Vector3$1(); // the calculated steering force per simulation step
-		this._behaviorFlag = 0; // bitmask for enable/disable behaviors
+		this.panicDistance = 10; // for flee and evade behavior
 
 		// use these values to tweak the amount that each steering force
 		// contributes to the total steering force
 
 		this.weights = {
-			seek: 1
+			seek: 1,
+			flee : 1
 		};
+
+		this._steeringForce = new Vector3$1(); // the calculated steering force per simulation step
+		this._behaviorFlag = 0; // bitmask for enable/disable behaviors
 
 	}
 
-	calculate ( delta, optionalTarget )  {
+	_calculate ( delta, optionalTarget )  {
 
 		const result = optionalTarget || new Vector3$1();
 
 		this._calculatePrioritized( delta );
 
 		return result.copy( this._steeringForce );
-
-	}
-
-	seekOn () {
-
-		this._behaviorFlag |= SteeringBehaviors.TYPES.SEEK;
-
-	}
-
-	seekOff () {
-
-		if ( this._isOn( SteeringBehaviors.TYPES.SEEK ) ) this._behaviorFlag ^= SteeringBehaviors.TYPES.SEEK;
 
 	}
 
@@ -1522,12 +1561,6 @@ class SteeringBehaviors {
 
 	}
 
-	_on ( type ) {
-
-		return ( this._behaviorFlag & type ) === type;
-
-	}
-
 }
 
 Object.assign( SteeringBehaviors.prototype, {
@@ -1538,9 +1571,23 @@ Object.assign( SteeringBehaviors.prototype, {
 
 		return function _calculatePrioritized ( delta ) {
 
+			// flee
+
+			if ( this.fleeOn() === true ) {
+
+				force.set( 0, 0, 0 );
+
+				this._flee( this.target, force );
+
+				force.multiplyScalar( this.weights.flee );
+
+				if ( this._accumulateForce( force ) === false ) return;
+
+			}
+
 			// seek
 
-			if ( this._on( SteeringBehaviors.TYPES.SEEK ) ) {
+			if ( this.seekOn() === true ) {
 
 				force.set( 0, 0, 0 );
 
@@ -1562,19 +1609,58 @@ Object.assign( SteeringBehaviors.prototype, {
 
 		return function _seek ( target, force ) {
 
+			const vehicle = this.vehicle;
+
 			// First the desired velocity is calculated.
 			// This is the velocity the agent would need to reach the target position in an ideal world.
 			// It represents the vector from the agent to the target,
 			// scaled to be the length of the maximum possible speed of the agent.
 
-			desiredVelocity.subVectors( target, this.vehicle.position ).normalize();
-			desiredVelocity.multiplyScalar( this.vehicle.maxSpeed );
+			desiredVelocity.subVectors( target, vehicle.position ).normalize();
+			desiredVelocity.multiplyScalar( vehicle.maxSpeed );
 
 			// The steering force returned by this method is the force required,
 			// which when added to the agent’s current velocity vector gives the desired velocity.
 			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
 
-			force.subVectors( desiredVelocity, this.vehicle.velocity );
+			force.subVectors( desiredVelocity, vehicle.velocity );
+
+		};
+
+	} (),
+
+	_flee: function () {
+
+		const desiredVelocity = new Vector3$1();
+
+		return function _flee ( target, force ) {
+
+			const vehicle = this.vehicle;
+
+			// only flee if the target is within panic distance
+
+			const distanceToTargetSq = vehicle.position.distanceToSquared( target );
+
+			if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
+
+				// from here, the only difference compared to seek is that the desired
+				// velocity is calculated using a vector pointing in the opposite direction
+
+				desiredVelocity.subVectors( vehicle.position, target ).normalize();
+
+				// if target and vehicle position are identical, choose default velocity
+
+				if ( desiredVelocity.lengthSquared() === 0 ) {
+
+					desiredVelocity.set( 0, 0, 1 );
+
+				}
+
+				desiredVelocity.multiplyScalar( vehicle.maxSpeed );
+
+				force.subVectors( desiredVelocity, vehicle.velocity );
+
+			}
 
 		};
 
@@ -1582,10 +1668,9 @@ Object.assign( SteeringBehaviors.prototype, {
 
 } );
 
-SteeringBehaviors.TYPES = {
-	NONE: 0,
-	SEEK: 1
-};
+// public API
+
+Object.assign( SteeringBehaviors.prototype, SteeringInterface );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -1617,7 +1702,7 @@ Object.assign( Vehicle.prototype, {
 
 			// calculate steering force
 
-			this.steering.calculate( delta, steeringForce );
+			this.steering._calculate( delta, steeringForce );
 
 			// acceleration = force / mass
 

@@ -95,8 +95,6 @@ Object.assign( MovingEntity.prototype, {
 
 		return function lookAt ( target ) {
 
-			console.log( this.position );
-
 			rotationMatrix.lookAt( target, this.position, this.up );
 			this.rotation.setFromRotationMatrix( rotationMatrix );
 

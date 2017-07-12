@@ -32,7 +32,7 @@ Object.assign( Vehicle.prototype, {
 
 			// calculate steering force
 
-			this.steering.calculate( delta, steeringForce );
+			this.steering._calculate( delta, steeringForce );
 
 			// acceleration = force / mass
 
