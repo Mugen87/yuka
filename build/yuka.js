@@ -1054,9 +1054,7 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	getDirection ( optionalTarget ) {
-
-		const result = optionalTarget || new Vector3();
+	getDirection ( result = new Vector3() ) {
 
 		return result.set( 0, 0, 1 ).applyQuaternion( this.rotation ).normalize();
 
@@ -1445,11 +1443,15 @@ const _Math$1 = {
 
 const SteeringInterface = {
 
+	// TODO Make flags nicer
+
 	TYPES: {
 		NONE: 0,
 		SEEK: 1,
 		FLEE: 2,
-		ARRIVE: 4
+		ARRIVE: 4,
+		PURSUIT: 8,
+		EVADE: 16
 	},
 
 	seekEnable: function () {
@@ -1504,6 +1506,42 @@ const SteeringInterface = {
 
 		return ( this._behaviorFlag & SteeringInterface.TYPES.ARRIVE ) === SteeringInterface.TYPES.ARRIVE;
 
+	},
+
+	pursuitEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.PURSUIT;
+
+	},
+
+	pursuitDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.PURSUIT ) ) this._behaviorFlag ^= SteeringInterface.TYPES.PURSUIT;
+
+	},
+
+	pursuitOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.PURSUIT ) === SteeringInterface.TYPES.PURSUIT;
+
+	},
+
+	evadeEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.EVADE;
+
+	},
+
+	evadeDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.EVADE ) ) this._behaviorFlag ^= SteeringInterface.TYPES.EVADE;
+
+	},
+
+	evadeOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.EVADE ) === SteeringInterface.TYPES.EVADE;
+
 	}
 
 };
@@ -1521,13 +1559,17 @@ class SteeringBehaviors {
 		this.panicDistance = 10; // for flee and evade behavior
 		this.deceleration = 3; // for arrive behavior
 
+		this.targetAgent = null; // can be used to keep track of friend, pursuer or prey
+
 		// use these values to tweak the amount that each steering force
 		// contributes to the total steering force
 
 		this.weights = {
 			seek: 1,
 			flee : 1,
-			arrive : 1
+			arrive : 1,
+			pursuit: 1,
+			evade: 1
 		};
 
 		this._steeringForce = new Vector3$1(); // the calculated steering force per simulation step
@@ -1596,6 +1638,20 @@ Object.assign( SteeringBehaviors.prototype, {
 
 			this._steeringForce.set( 0, 0, 0 );
 
+			// evade
+
+			if ( this.evadeOn() === true ) {
+
+				force.set( 0, 0 , 0 );
+
+				this._evade( this.targetAgent, force );
+
+				force.multiplyScalar( this.weights.evade );
+
+				if ( this._accumulateForce( force ) === false ) return;
+
+			}
+
 			// flee
 
 			if ( this.fleeOn() === true ) {
@@ -1633,6 +1689,20 @@ Object.assign( SteeringBehaviors.prototype, {
 				this._arrive( this.target, force, this.deceleration );
 
 				force.multiplyScalar( this.weights.arrive );
+
+				if ( this._accumulateForce( force ) === false ) return;
+
+			}
+
+			// pursuit
+
+			if ( this.pursuitOn() === true ) {
+
+				force.set( 0, 0 , 0 );
+
+				this._pursuit( this.targetAgent, force );
+
+				force.multiplyScalar( this.weights.pursuit );
 
 				if ( this._accumulateForce( force ) === false ) return;
 
@@ -1737,6 +1807,102 @@ Object.assign( SteeringBehaviors.prototype, {
 				force.subVectors( desiredVelocity, vehicle.velocity );
 
 			}
+
+		};
+
+	} (),
+
+	_pursuit: function () {
+
+		const displacement = new Vector3$1();
+		const vehicleDirection = new Vector3$1();
+		const evaderDirection = new Vector3$1();
+		const newEvaderVelocity = new Vector3$1();
+		const predcitedPosition = new Vector3$1();
+
+		return function _pursuit ( evader, force ) {
+
+			const vehicle = this.vehicle;
+
+			if ( evader === null ) {
+
+				console.error( 'YUKA.SteeringBehaviors: Target agent not defined for behavior "pursuit" and entity %o.', vehicle );
+				return;
+
+			}
+
+			displacement.subVectors( evader.position, vehicle.position );
+
+			// 1. if the evader is ahead and facing the agent then we can just seek for the evader's current position
+
+			vehicle.getDirection( vehicleDirection );
+			evader.getDirection( evaderDirection );
+
+			// first condition: evader must be in front of the pursuer
+
+			const evaderAhead = displacement.dot( vehicleDirection ) > 0;
+
+			// second condition: evader must almost directly facing the agent
+
+			const facing = vehicleDirection.dot( evaderDirection ) < - 0.95;
+
+			if ( evaderAhead === true && facing === true ) {
+
+				this._seek( evader.position, force );
+				return;
+
+			}
+
+			// 2. evader not considered ahead so we predict where the evader will be
+
+			// the lookahead time is proportional to the distance between the evader
+			// and the pursuer. and is inversely proportional to the sum of the
+			// agent's velocities
+
+			const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + evader.getSpeed() );
+
+			// calculate new velocity and predicted future position
+
+			newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
+			predcitedPosition.addVectors( evader.position, newEvaderVelocity );
+
+			// now seek to the predicted future position of the evader
+
+			this._seek( predcitedPosition, force );
+
+		};
+
+	} (),
+
+	_evade: function () {
+
+		const displacement = new Vector3$1();
+		const newPuruserVelocity = new Vector3$1();
+		const predcitedPosition = new Vector3$1();
+
+		return function _evade ( pursuer, force ) {
+
+			const vehicle = this.vehicle;
+
+			if ( pursuer === null ) {
+
+				console.error( 'YUKA.SteeringBehaviors: Target agent not defined for behavior "evade" and entity %o.', vehicle );
+				return;
+
+			}
+
+			displacement.subVectors( pursuer.position, vehicle.position );
+
+			const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+
+			// calculate new velocity and predicted future position
+
+			newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+			predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
+
+			// now flee away from predicted future position of the pursuer
+
+			this._flee( predcitedPosition, force );
 
 		};
 

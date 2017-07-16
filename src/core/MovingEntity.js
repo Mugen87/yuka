@@ -21,9 +21,7 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	getDirection ( optionalTarget ) {
-
-		const result = optionalTarget || new Vector3();
+	getDirection ( result = new Vector3() ) {
 
 		return result.set( 0, 0, 1 ).applyQuaternion( this.rotation ).normalize();
 

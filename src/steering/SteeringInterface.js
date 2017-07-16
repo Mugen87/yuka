@@ -4,11 +4,15 @@
 
 const SteeringInterface = {
 
+	// TODO Make flags nicer
+
 	TYPES: {
 		NONE: 0,
 		SEEK: 1,
 		FLEE: 2,
-		ARRIVE: 4
+		ARRIVE: 4,
+		PURSUIT: 8,
+		EVADE: 16
 	},
 
 	seekEnable: function () {
@@ -62,6 +66,42 @@ const SteeringInterface = {
 	arriveOn: function () {
 
 		return ( this._behaviorFlag & SteeringInterface.TYPES.ARRIVE ) === SteeringInterface.TYPES.ARRIVE;
+
+	},
+
+	pursuitEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.PURSUIT;
+
+	},
+
+	pursuitDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.PURSUIT ) ) this._behaviorFlag ^= SteeringInterface.TYPES.PURSUIT;
+
+	},
+
+	pursuitOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.PURSUIT ) === SteeringInterface.TYPES.PURSUIT;
+
+	},
+
+	evadeEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.EVADE;
+
+	},
+
+	evadeDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.EVADE ) ) this._behaviorFlag ^= SteeringInterface.TYPES.EVADE;
+
+	},
+
+	evadeOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.EVADE ) === SteeringInterface.TYPES.EVADE;
 
 	}
 
