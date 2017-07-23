@@ -12,7 +12,8 @@ const SteeringInterface = {
 		FLEE: 2,
 		ARRIVE: 4,
 		PURSUIT: 8,
-		EVADE: 16
+		EVADE: 16,
+		FOLLOW_PATH: 32
 	},
 
 	seekEnable: function () {
@@ -102,6 +103,24 @@ const SteeringInterface = {
 	evadeOn: function () {
 
 		return ( this._behaviorFlag & SteeringInterface.TYPES.EVADE ) === SteeringInterface.TYPES.EVADE;
+
+	},
+
+	followPathEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.FOLLOW_PATH;
+
+	},
+
+	followPathDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.FOLLOW_PATH ) ) this._behaviorFlag ^= SteeringInterface.TYPES.FOLLOW_PATH;
+
+	},
+
+	followPathOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.FOLLOW_PATH ) === SteeringInterface.TYPES.FOLLOW_PATH;
 
 	}
 

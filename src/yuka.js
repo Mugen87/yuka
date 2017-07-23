@@ -1,6 +1,7 @@
 export { EntityManager } from './core/EntityManager';
 export { GameEntity } from './core/GameEntity';
 export { MovingEntity } from './core/MovingEntity';
+export { Path } from './steering/Path';
 export { Vehicle } from './steering/Vehicle';
 export { State } from './fsm/State';
 export { StateMachine } from './fsm/StateMachine';

@@ -1137,6 +1137,66 @@ Object.assign( MovingEntity.prototype, {
 
 } );
 
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class Path {
+
+	constructor () {
+
+		this.loop = false;
+		this._waypoints = [];
+		this._index = 0;
+
+	}
+
+	add ( waypoint ) {
+
+		this._waypoints.push( waypoint );
+
+		return this;
+
+	}
+
+	clear () {
+
+		this._waypoints.length = 0;
+
+		return this;
+
+	}
+
+	finished () {
+
+		const lastIndex =  this._waypoints.length - 1;
+
+		return ( this.loop === true ) ? false : ( this._index === lastIndex );
+
+	}
+
+	advance () {
+
+		this._index += 1;
+
+		if ( ( this._index === this._waypoints.length ) && ( this.loop === true ) ) {
+
+			this._index = 0;
+
+		}
+
+		return this;
+
+	}
+
+	current () {
+
+		return this._waypoints[ this._index ];
+
+	}
+
+}
+
 const _Math$1 = {
 
 	clamp: ( value, min, max ) => {
@@ -1451,7 +1511,8 @@ const SteeringInterface = {
 		FLEE: 2,
 		ARRIVE: 4,
 		PURSUIT: 8,
-		EVADE: 16
+		EVADE: 16,
+		FOLLOW_PATH: 32
 	},
 
 	seekEnable: function () {
@@ -1542,6 +1603,24 @@ const SteeringInterface = {
 
 		return ( this._behaviorFlag & SteeringInterface.TYPES.EVADE ) === SteeringInterface.TYPES.EVADE;
 
+	},
+
+	followPathEnable: function () {
+
+		this._behaviorFlag |= SteeringInterface.TYPES.FOLLOW_PATH;
+
+	},
+
+	followPathDisable: function () {
+
+		if ( this._isOn( SteeringInterface.TYPES.FOLLOW_PATH ) ) this._behaviorFlag ^= SteeringInterface.TYPES.FOLLOW_PATH;
+
+	},
+
+	followPathOn: function () {
+
+		return ( this._behaviorFlag & SteeringInterface.TYPES.FOLLOW_PATH ) === SteeringInterface.TYPES.FOLLOW_PATH;
+
 	}
 
 };
@@ -1558,6 +1637,8 @@ class SteeringBehaviors {
 		this.target = new Vector3$1();
 		this.panicDistance = 10; // for flee and evade behavior
 		this.deceleration = 3; // for arrive behavior
+		this.path = null; // list of waypoints to follow
+		this.nextWaypointDistance = 1; // the distance a waypoint is set to the new target
 
 		this.targetAgent = null; // can be used to keep track of friend, pursuer or prey
 
@@ -1569,7 +1650,8 @@ class SteeringBehaviors {
 			flee : 1,
 			arrive : 1,
 			pursuit: 1,
-			evade: 1
+			evade: 1,
+			followPath: 1
 		};
 
 		this._steeringForce = new Vector3$1(); // the calculated steering force per simulation step
@@ -1644,7 +1726,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 				force.set( 0, 0 , 0 );
 
-				this._evade( this.targetAgent, force );
+				this._evade( force, this.targetAgent );
 
 				force.multiplyScalar( this.weights.evade );
 
@@ -1658,7 +1740,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 				force.set( 0, 0, 0 );
 
-				this._flee( this.target, force );
+				this._flee( force, this.target );
 
 				force.multiplyScalar( this.weights.flee );
 
@@ -1672,7 +1754,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 				force.set( 0, 0, 0 );
 
-				this._seek( this.target, force );
+				this._seek( force, this.target );
 
 				force.multiplyScalar( this.weights.seek );
 
@@ -1686,7 +1768,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 				force.set( 0, 0, 0 );
 
-				this._arrive( this.target, force, this.deceleration );
+				this._arrive( force, this.target, this.deceleration );
 
 				force.multiplyScalar( this.weights.arrive );
 
@@ -1700,9 +1782,23 @@ Object.assign( SteeringBehaviors.prototype, {
 
 				force.set( 0, 0 , 0 );
 
-				this._pursuit( this.targetAgent, force );
+				this._pursuit( force, this.targetAgent );
 
 				force.multiplyScalar( this.weights.pursuit );
+
+				if ( this._accumulateForce( force ) === false ) return;
+
+			}
+
+			// follow path
+
+			if ( this.followPathOn() === true ) {
+
+				force.set( 0, 0 , 0 );
+
+				this._followPath( force );
+
+				force.multiplyScalar( this.weights.followPath );
 
 				if ( this._accumulateForce( force ) === false ) return;
 
@@ -1716,7 +1812,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 		const desiredVelocity = new Vector3$1();
 
-		return function _seek ( target, force ) {
+		return function _seek ( force, target ) {
 
 			const vehicle = this.vehicle;
 
@@ -1742,7 +1838,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 		const desiredVelocity = new Vector3$1();
 
-		return function _flee ( target, force ) {
+		return function _flee ( force, target ) {
 
 			const vehicle = this.vehicle;
 
@@ -1780,7 +1876,7 @@ Object.assign( SteeringBehaviors.prototype, {
 		const desiredVelocity = new Vector3$1();
 		const displacement = new Vector3$1();
 
-		return function _arrive ( target, force, deceleration ) {
+		return function _arrive ( force, target, deceleration = 3 ) {
 
 			const vehicle = this.vehicle;
 
@@ -1820,7 +1916,7 @@ Object.assign( SteeringBehaviors.prototype, {
 		const newEvaderVelocity = new Vector3$1();
 		const predcitedPosition = new Vector3$1();
 
-		return function _pursuit ( evader, force ) {
+		return function _pursuit ( force, evader ) {
 
 			const vehicle = this.vehicle;
 
@@ -1848,7 +1944,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 			if ( evaderAhead === true && facing === true ) {
 
-				this._seek( evader.position, force );
+				this._seek( force, evader.position );
 				return;
 
 			}
@@ -1868,7 +1964,7 @@ Object.assign( SteeringBehaviors.prototype, {
 
 			// now seek to the predicted future position of the evader
 
-			this._seek( predcitedPosition, force );
+			this._seek( force, predcitedPosition );
 
 		};
 
@@ -1880,7 +1976,7 @@ Object.assign( SteeringBehaviors.prototype, {
 		const newPuruserVelocity = new Vector3$1();
 		const predcitedPosition = new Vector3$1();
 
-		return function _evade ( pursuer, force ) {
+		return function _evade ( force, pursuer ) {
 
 			const vehicle = this.vehicle;
 
@@ -1902,11 +1998,40 @@ Object.assign( SteeringBehaviors.prototype, {
 
 			// now flee away from predicted future position of the pursuer
 
-			this._flee( predcitedPosition, force );
+			this._flee( force, predcitedPosition );
 
 		};
 
-	} ()
+	} (),
+
+	_followPath: function ( force ) {
+
+		const vehicle = this.vehicle;
+		const path = this.path;
+
+		// calculate distance in square space from current waypoint to vehicle
+
+		var distanceSq = path.current().distanceToSquared( vehicle.position );
+
+		// move to next waypoint if close enough to current target
+
+		if ( distanceSq < ( this.nextWaypointDistance * this.nextWaypointDistance ) ) {
+
+			path.advance();
+
+		}
+
+		if ( path.finished() === true ) {
+
+			this._arrive( force, path.current() );
+
+		} else {
+
+			this._seek( force, path.current() );
+
+		}
+
+	}
 
 } );
 
@@ -2109,6 +2234,7 @@ class StateMachine {
 exports.EntityManager = EntityManager;
 exports.GameEntity = GameEntity;
 exports.MovingEntity = MovingEntity;
+exports.Path = Path;
 exports.Vehicle = Vehicle;
 exports.State = State;
 exports.StateMachine = StateMachine;

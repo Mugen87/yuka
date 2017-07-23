@@ -81,8 +81,16 @@
 
 			entity = new YUKA.Vehicle();
 			entity.maxSpeed = 2;
-			entity.steering.target.set( 5, 0, 5 );
-			entity.steering.arriveEnable();
+			entity.steering.followPathEnable();
+
+			const path = new YUKA.Path();
+			path.loop = true;
+			path.add( new YUKA.Vector3(   5, 0,   5 ) );
+			path.add( new YUKA.Vector3(   5, 0, - 5 ) );
+			path.add( new YUKA.Vector3( - 5, 0, - 5 ) );
+			path.add( new YUKA.Vector3( - 5, 0,   5 ) );
+
+			entity.steering.path = path;
 
 			// renderer
 
