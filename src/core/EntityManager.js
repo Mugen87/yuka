@@ -45,6 +45,8 @@ class EntityManager {
 
 			entity.update( delta );
 
+			entity.updateMatrix();
+
 		}
 
 		this.messageDispatcher.dispatchDelayedMessages( delta );

@@ -122,6 +122,166 @@
 
 	}
 
+	multiplyScalar ( s ) {
+
+		const e = this.elements;
+
+		e[ 0 ] *= s; e[ 4 ] *= s; e[ 8 ] *= s; e[ 12 ] *= s;
+		e[ 1 ] *= s; e[ 5 ] *= s; e[ 9 ] *= s; e[ 13 ] *= s;
+		e[ 2 ] *= s; e[ 6 ] *= s; e[ 10 ] *= s; e[ 14 ] *= s;
+		e[ 3 ] *= s; e[ 7 ] *= s; e[ 11 ] *= s; e[ 15 ] *= s;
+
+		return this;
+
+	}
+
+	compose ( position, quaternion, scale ) {
+
+		this.makeRotationFromQuaternion( quaternion );
+		this.scale( scale );
+		this.setPosition( position );
+
+		return this;
+
+	}
+
+	makeRotationFromQuaternion ( q ) {
+
+		const e = this.elements;
+
+		const x = q.x, y = q.y, z = q.z, w = q.w;
+		const x2 = x + x, y2 = y + y, z2 = z + z;
+		const xx = x * x2, xy = x * y2, xz = x * z2;
+		const yy = y * y2, yz = y * z2, zz = z * z2;
+		const wx = w * x2, wy = w * y2, wz = w * z2;
+
+		e[ 0 ] = 1 - ( yy + zz );
+		e[ 4 ] = xy - wz;
+		e[ 8 ] = xz + wy;
+
+		e[ 1 ] = xy + wz;
+		e[ 5 ] = 1 - ( xx + zz );
+		e[ 9 ] = yz - wx;
+
+		e[ 2 ] = xz - wy;
+		e[ 6 ] = yz + wx;
+		e[ 10 ] = 1 - ( xx + yy );
+
+		e[ 3 ] = 0;
+		e[ 7 ] = 0;
+		e[ 11 ] = 0;
+
+		e[ 12 ] = 0;
+		e[ 13 ] = 0;
+		e[ 14 ] = 0;
+		e[ 15 ] = 1;
+
+		return this;
+
+	}
+
+	scale ( v ) {
+
+		const e = this.elements;
+
+		const x = v.x, y = v.y, z = v.z;
+
+		e[ 0 ] *= x; e[ 4 ] *= y; e[ 8 ] *= z;
+		e[ 1 ] *= x; e[ 5 ] *= y; e[ 9 ] *= z;
+		e[ 2 ] *= x; e[ 6 ] *= y; e[ 10 ] *= z;
+		e[ 3 ] *= x; e[ 7 ] *= y; e[ 11 ] *= z;
+
+		return this;
+
+	}
+
+	setPosition ( v ) {
+
+		const e = this.elements;
+
+		e[ 12 ] = v.x;
+		e[ 13 ] = v.y;
+		e[ 14 ] = v.z;
+
+		return this;
+
+	}
+
+	transpose () {
+
+		const e = this.elements;
+		let t;
+
+		t = e[ 1 ]; e[ 1 ] = e[ 4 ]; e[ 4 ] = t;
+		t = e[ 2 ]; e[ 2 ] = e[ 8 ]; e[ 8 ] = t;
+		t = e[ 6 ]; e[ 6 ] = e[ 9 ]; e[ 9 ] = t;
+
+		t = e[ 3 ]; e[ 3 ] = e[ 12 ]; e[ 12 ] = t;
+		t = e[ 7 ]; e[ 7 ] = e[ 13 ]; e[ 13 ] = t;
+		t = e[ 11 ]; e[ 11 ] = e[ 14 ]; e[ 14 ] = t;
+
+		return this;
+
+
+	}
+
+	equals ( m ) {
+
+		const e = this.elements;
+		const me = m.elements;
+
+		for ( let i = 0; i < 16; i ++ ) {
+
+			if ( e[ i ] !== me[ i ] ) return false;
+
+		}
+
+		return true;
+
+	}
+
+	fromArray ( array, offset = 0 ) {
+
+		const e = this.elements;
+
+		for ( let i = 0; i < 16; i ++ ) {
+
+			e[ i ] = array[ i + offset ];
+
+		}
+
+		return this;
+
+	}
+
+	toArray ( array = [], offset = 0 ) {
+
+		const e = this.elements;
+
+		array[ offset + 0 ] = e[ 0 ];
+		array[ offset + 1 ] = e[ 1 ];
+		array[ offset + 2 ] = e[ 2 ];
+		array[ offset + 3 ] = e[ 3 ];
+
+		array[ offset + 4 ] = e[ 4 ];
+		array[ offset + 5 ] = e[ 5 ];
+		array[ offset + 6 ] = e[ 6 ];
+		array[ offset + 7 ] = e[ 7 ];
+
+		array[ offset + 8 ] = e[ 8 ];
+		array[ offset + 9 ] = e[ 9 ];
+		array[ offset + 10 ] = e[ 10 ];
+		array[ offset + 11 ] = e[ 11 ];
+
+		array[ offset + 12 ] = e[ 12 ];
+		array[ offset + 13 ] = e[ 13 ];
+		array[ offset + 14 ] = e[ 14 ];
+		array[ offset + 15 ] = e[ 15 ];
+
+		return array;
+
+	}
+
  }
 
 

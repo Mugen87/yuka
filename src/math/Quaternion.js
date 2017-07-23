@@ -240,9 +240,7 @@ class Quaternion {
 
 	}
 
-	fromArray ( array, offset ) {
-
-		if ( offset === undefined ) offset = 0;
+	fromArray ( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
 		this.y = array[ offset + 1 ];
@@ -250,6 +248,17 @@ class Quaternion {
 		this.w = array[ offset + 3 ];
 
 		return this;
+
+	}
+
+	toArray ( array = [], offset = 0 ) {
+
+		array[ offset + 0 ] = this.x;
+		array[ offset + 1 ] = this.y;
+		array[ offset + 2 ] = this.z;
+		array[ offset + 3 ] = this.w;
+
+		return array;
 
 	}
 

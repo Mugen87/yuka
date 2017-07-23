@@ -264,27 +264,35 @@ class Vector3 {
 
 	}
 
-	equals ( v ) {
-
-		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
-
-	}
-
 	setFromMatrixColumn ( m, i ) {
 
 		return this.fromArray( m.elements, i * 4 );
 
 	}
 
-	fromArray ( array, offset ) {
+	equals ( v ) {
 
-		if ( offset === undefined ) offset = 0;
+		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
+
+	}
+
+	fromArray ( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
 		this.y = array[ offset + 1 ];
 		this.z = array[ offset + 2 ];
 
 		return this;
+
+	}
+
+	toArray ( array = [], offset = 0 ) {
+
+		array[ offset + 0 ] = this.x;
+		array[ offset + 1 ] = this.y;
+		array[ offset + 2 ] = this.z;
+
+		return array;
 
 	}
 

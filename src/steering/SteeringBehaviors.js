@@ -385,6 +385,13 @@ Object.assign( SteeringBehaviors.prototype, {
 		const vehicle = this.vehicle;
 		const path = this.path;
 
+		if ( path === null ) {
+
+			console.error( 'YUKA.SteeringBehaviors: Path not defined for behavior "follow Path" and entity %o.', vehicle );
+			return;
+
+		}
+
 		// calculate distance in square space from current waypoint to vehicle
 
 		var distanceSq = path.current().distanceToSquared( vehicle.position );

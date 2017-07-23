@@ -5,6 +5,7 @@
 import { EventDispatcher } from './EventDispatcher';
 import { Vector3 } from '../math/Vector3';
 import { Quaternion } from '../math/Quaternion';
+import { Matrix4 } from '../math/Matrix4';
 
 class GameEntity extends EventDispatcher {
 
@@ -20,6 +21,8 @@ class GameEntity extends EventDispatcher {
 		this.scale = new Vector3( 1, 1, 1 );
 
 		this.up = new Vector3( 0, 1, 0 );
+
+		this.matrix = new Matrix4();
 
 	}
 
@@ -46,6 +49,12 @@ class GameEntity extends EventDispatcher {
 	handleMessage () {
 
 		return false;
+
+	}
+
+	updateMatrix () {
+
+		this.matrix.compose( this.position, this.rotation, this.scale );
 
 	}
 

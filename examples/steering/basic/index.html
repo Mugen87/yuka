@@ -40,7 +40,7 @@
 
 		let renderer, scene, camera, controls, clock;
 
-		let entity, mesh, arrowHelper;
+		let entity, entityManager, mesh, arrowHelper;
 
 		const direction = new THREE.Vector3();
 
@@ -79,10 +79,6 @@
 
 			// game
 
-			entity = new YUKA.Vehicle();
-			entity.maxSpeed = 2;
-			entity.steering.followPathEnable();
-
 			const path = new YUKA.Path();
 			path.loop = true;
 			path.add( new YUKA.Vector3(   5, 0,   5 ) );
@@ -90,7 +86,13 @@
 			path.add( new YUKA.Vector3( - 5, 0, - 5 ) );
 			path.add( new YUKA.Vector3( - 5, 0,   5 ) );
 
+			entity = new YUKA.Vehicle();
+			entity.maxSpeed = 2;
 			entity.steering.path = path;
+			entity.steering.followPathEnable();
+
+			entityManager = new YUKA.EntityManager();
+			entityManager.add( entity );
 
 			// renderer
 
@@ -123,7 +125,7 @@
 
 				const delta = clock.getDelta();
 
-				entity.update( delta );
+				entityManager.update( delta );
 
 				mesh.position.copy( entity.position );
 				mesh.quaternion.copy( entity.rotation );
