@@ -38,11 +38,19 @@ class Path {
 
 	advance () {
 
-		this._index += 1;
+		this._index ++;
 
-		if ( ( this._index === this._waypoints.length ) && ( this.loop === true ) ) {
+		if ( ( this._index === this._waypoints.length ) ) {
 
-			this._index = 0;
+			if (  this.loop === true ) {
+
+				this._index = 0;
+
+			} else {
+
+				this._index --;
+
+			}
 
 		}
 

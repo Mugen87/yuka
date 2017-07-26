@@ -80,7 +80,6 @@
 			// game
 
 			const path = new YUKA.Path();
-			path.loop = true;
 			path.add( new YUKA.Vector3(   5, 0,   5 ) );
 			path.add( new YUKA.Vector3(   5, 0, - 5 ) );
 			path.add( new YUKA.Vector3( - 5, 0, - 5 ) );
@@ -88,8 +87,9 @@
 
 			entity = new YUKA.Vehicle();
 			entity.maxSpeed = 2;
-			entity.steering.path = path;
-			entity.steering.followPathEnable();
+
+			const followPath = new YUKA.FollowPath( path );
+			entity.steering.add( followPath );
 
 			entityManager = new YUKA.EntityManager();
 			entityManager.add( entity );
