@@ -3,7 +3,7 @@
  */
 
 import { MovingEntity } from '../core/MovingEntity';
-import { SteeringBehaviors } from './SteeringBehaviors';
+import { SteeringManager } from './SteeringManager';
 import { Vector3 } from '../math/Vector3';
 
 class Vehicle extends MovingEntity {
@@ -12,7 +12,7 @@ class Vehicle extends MovingEntity {
 
 		super();
 
-		this.steering = new SteeringBehaviors( this );
+		this.steering = new SteeringManager( this );
 		this.smoothing = false;
 
 	}

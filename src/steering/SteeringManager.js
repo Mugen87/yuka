@@ -4,7 +4,7 @@
 
 import { Vector3 } from '../Math/Vector3';
 
-class SteeringBehaviors {
+class SteeringManager {
 
 	constructor ( vehicle ) {
 
@@ -82,7 +82,7 @@ class SteeringBehaviors {
 
 }
 
-Object.assign( SteeringBehaviors.prototype, {
+Object.assign( SteeringManager.prototype, {
 
 	_calculateByOrder: function () {
 
@@ -114,4 +114,4 @@ Object.assign( SteeringBehaviors.prototype, {
 
 } );
 
-export { SteeringBehaviors };
+export { SteeringManager };

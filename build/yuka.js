@@ -1704,7 +1704,7 @@ const _Math$1 = {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class SteeringBehaviors {
+class SteeringManager {
 
 	constructor ( vehicle ) {
 
@@ -1782,7 +1782,7 @@ class SteeringBehaviors {
 
 }
 
-Object.assign( SteeringBehaviors.prototype, {
+Object.assign( SteeringManager.prototype, {
 
 	_calculateByOrder: function () {
 
@@ -1824,7 +1824,7 @@ class Vehicle extends MovingEntity {
 
 		super();
 
-		this.steering = new SteeringBehaviors( this );
+		this.steering = new SteeringManager( this );
 		this.smoothing = false;
 
 	}
