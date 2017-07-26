@@ -2,10 +2,10 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from './SteeringBehavior';
+import { SteeringBehavior } from '../SteeringBehavior';
 import { Vector3 } from '../../Math/Vector3';
 
-class Flee extends SteeringBehavior {
+class FleeBehavior extends SteeringBehavior {
 
 	constructor ( target, panicDistance = 10 ) {
 
@@ -18,7 +18,7 @@ class Flee extends SteeringBehavior {
 
 }
 
-Object.assign( Flee.prototype, {
+Object.assign( FleeBehavior.prototype, {
 
 	calculate: function () {
 
@@ -59,4 +59,4 @@ Object.assign( Flee.prototype, {
 
 } );
 
-export { Flee };
+export { FleeBehavior };

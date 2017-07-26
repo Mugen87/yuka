@@ -2,11 +2,11 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from './SteeringBehavior';
-import { Flee } from './Flee';
+import { SteeringBehavior } from '../SteeringBehavior';
+import { FleeBehavior } from './FleeBehavior';
 import { Vector3 } from '../../Math/Vector3';
 
-class Evade extends SteeringBehavior {
+class EvadeBehavior extends SteeringBehavior {
 
 	constructor ( target , pursuer ) {
 
@@ -17,13 +17,13 @@ class Evade extends SteeringBehavior {
 
 		// internal behaviors
 
-		this._flee = new Flee();
+		this._flee = new FleeBehavior();
 
 	}
 
 }
 
-Object.assign( Evade.prototype, {
+Object.assign( EvadeBehavior.prototype, {
 
 	calculate: function () {
 
@@ -55,4 +55,4 @@ Object.assign( Evade.prototype, {
 
 } );
 
-export { Evade };
+export { EvadeBehavior };

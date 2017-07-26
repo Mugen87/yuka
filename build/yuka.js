@@ -1922,111 +1922,7 @@ class SteeringBehavior {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class Seek extends SteeringBehavior {
-
-	constructor ( target ) {
-
-		super();
-
-		this.target = target;
-
-	}
-
-}
-
-Object.assign( Seek.prototype, {
-
-	calculate: function () {
-
-		const desiredVelocity = new Vector3$1();
-
-		return function calculate ( vehicle, force ) {
-
-			const target = this.target;
-
-			// First the desired velocity is calculated.
-			// This is the velocity the agent would need to reach the target position in an ideal world.
-			// It represents the vector from the agent to the target,
-			// scaled to be the length of the maximum possible speed of the agent.
-
-			desiredVelocity.subVectors( target, vehicle.position ).normalize();
-			desiredVelocity.multiplyScalar( vehicle.maxSpeed );
-
-			// The steering force returned by this method is the force required,
-			// which when added to the agent’s current velocity vector gives the desired velocity.
-			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
-
-			force.subVectors( desiredVelocity, vehicle.velocity );
-
-		};
-
-	} ()
-
-} );
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class Flee extends SteeringBehavior {
-
-	constructor ( target, panicDistance = 10 ) {
-
-		super();
-
-		this.target = target;
-		this.panicDistance = panicDistance;
-
-	}
-
-}
-
-Object.assign( Flee.prototype, {
-
-	calculate: function () {
-
-		const desiredVelocity = new Vector3$1();
-
-		return function calculate ( vehicle, force ) {
-
-			const target = this.target;
-
-			// only flee if the target is within panic distance
-
-			const distanceToTargetSq = vehicle.position.distanceToSquared( target );
-
-			if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
-
-				// from here, the only difference compared to seek is that the desired
-				// velocity is calculated using a vector pointing in the opposite direction
-
-				desiredVelocity.subVectors( vehicle.position, target ).normalize();
-
-				// if target and vehicle position are identical, choose default velocity
-
-				if ( desiredVelocity.lengthSquared() === 0 ) {
-
-					desiredVelocity.set( 0, 0, 1 );
-
-				}
-
-				desiredVelocity.multiplyScalar( vehicle.maxSpeed );
-
-				force.subVectors( desiredVelocity, vehicle.velocity );
-
-			}
-
-		};
-
-	} ()
-
-} );
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class Arrive extends SteeringBehavior {
+class ArriveBehavior extends SteeringBehavior {
 
 	constructor ( target, deceleration = 3 ) {
 
@@ -2039,7 +1935,7 @@ class Arrive extends SteeringBehavior {
 
 }
 
-Object.assign( Arrive.prototype, {
+Object.assign( ArriveBehavior.prototype, {
 
 	calculate: function () {
 
@@ -2085,7 +1981,219 @@ Object.assign( Arrive.prototype, {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class Pursuit extends SteeringBehavior {
+class FleeBehavior extends SteeringBehavior {
+
+	constructor ( target, panicDistance = 10 ) {
+
+		super();
+
+		this.target = target;
+		this.panicDistance = panicDistance;
+
+	}
+
+}
+
+Object.assign( FleeBehavior.prototype, {
+
+	calculate: function () {
+
+		const desiredVelocity = new Vector3$1();
+
+		return function calculate ( vehicle, force ) {
+
+			const target = this.target;
+
+			// only flee if the target is within panic distance
+
+			const distanceToTargetSq = vehicle.position.distanceToSquared( target );
+
+			if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
+
+				// from here, the only difference compared to seek is that the desired
+				// velocity is calculated using a vector pointing in the opposite direction
+
+				desiredVelocity.subVectors( vehicle.position, target ).normalize();
+
+				// if target and vehicle position are identical, choose default velocity
+
+				if ( desiredVelocity.lengthSquared() === 0 ) {
+
+					desiredVelocity.set( 0, 0, 1 );
+
+				}
+
+				desiredVelocity.multiplyScalar( vehicle.maxSpeed );
+
+				force.subVectors( desiredVelocity, vehicle.velocity );
+
+			}
+
+		};
+
+	} ()
+
+} );
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class EvadeBehavior extends SteeringBehavior {
+
+	constructor ( target , pursuer ) {
+
+		super();
+
+		this.target = target;
+		this.pursuer = pursuer;
+
+		// internal behaviors
+
+		this._flee = new FleeBehavior();
+
+	}
+
+}
+
+Object.assign( EvadeBehavior.prototype, {
+
+	calculate: function () {
+
+		const displacement = new Vector3$1();
+		const newPuruserVelocity = new Vector3$1();
+		const predcitedPosition = new Vector3$1();
+
+		return function calculate ( vehicle, force ) {
+
+			const pursuer = this.pursuer;
+
+			displacement.subVectors( pursuer.position, vehicle.position );
+
+			const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+
+			// calculate new velocity and predicted future position
+
+			newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+			predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
+
+			// now flee away from predicted future position of the pursuer
+
+			this._flee.target = predcitedPosition;
+			this._flee.calculate( vehicle, force );
+
+		};
+
+	} ()
+
+} );
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class SeekBehavior extends SteeringBehavior {
+
+	constructor ( target ) {
+
+		super();
+
+		this.target = target;
+
+	}
+
+}
+
+Object.assign( SeekBehavior.prototype, {
+
+	calculate: function () {
+
+		const desiredVelocity = new Vector3$1();
+
+		return function calculate ( vehicle, force ) {
+
+			const target = this.target;
+
+			// First the desired velocity is calculated.
+			// This is the velocity the agent would need to reach the target position in an ideal world.
+			// It represents the vector from the agent to the target,
+			// scaled to be the length of the maximum possible speed of the agent.
+
+			desiredVelocity.subVectors( target, vehicle.position ).normalize();
+			desiredVelocity.multiplyScalar( vehicle.maxSpeed );
+
+			// The steering force returned by this method is the force required,
+			// which when added to the agent’s current velocity vector gives the desired velocity.
+			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
+
+			force.subVectors( desiredVelocity, vehicle.velocity );
+
+		};
+
+	} ()
+
+} );
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class FollowPathBehavior extends SteeringBehavior {
+
+	constructor ( path ) {
+
+		super();
+
+		this.path = path; // list of waypoints to follow
+		this._nextWaypointDistance = 1; // the distance a waypoint is set to the new target
+
+		// internal behaviors
+
+		this._seek = new SeekBehavior();
+		this._arrive = new ArriveBehavior();
+
+	}
+
+	calculate ( vehicle, force ) {
+
+		const path = this.path;
+		const nextWaypointDistance = this._nextWaypointDistance;
+
+		// calculate distance in square space from current waypoint to vehicle
+
+		var distanceSq = path.current().distanceToSquared( vehicle.position );
+
+		// move to next waypoint if close enough to current target
+
+		if ( distanceSq < ( nextWaypointDistance * nextWaypointDistance ) ) {
+
+			path.advance();
+
+		}
+
+		const target = path.current();
+
+		if ( path.finished() === true ) {
+
+			this._arrive.target = target;
+			this._arrive.calculate( vehicle, force );
+
+		} else {
+
+			this._seek.target = target;
+			this._seek.calculate( vehicle, force );
+
+		}
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class PursuitBehavior extends SteeringBehavior {
 
 	constructor ( target, evader ) {
 
@@ -2096,13 +2204,13 @@ class Pursuit extends SteeringBehavior {
 
 		// internal behaviors
 
-		this._seek = new Seek();
+		this._seek = new SeekBehavior();
 
 	}
 
 }
 
-Object.assign( Pursuit.prototype, {
+Object.assign( PursuitBehavior.prototype, {
 
 	calculate: function () {
 
@@ -2161,114 +2269,6 @@ Object.assign( Pursuit.prototype, {
 	} ()
 
 } );
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class Evade extends SteeringBehavior {
-
-	constructor ( target , pursuer ) {
-
-		super();
-
-		this.target = target;
-		this.pursuer = pursuer;
-
-		// internal behaviors
-
-		this._flee = new Flee();
-
-	}
-
-}
-
-Object.assign( Evade.prototype, {
-
-	calculate: function () {
-
-		const displacement = new Vector3$1();
-		const newPuruserVelocity = new Vector3$1();
-		const predcitedPosition = new Vector3$1();
-
-		return function calculate ( vehicle, force ) {
-
-			const pursuer = this.pursuer;
-
-			displacement.subVectors( pursuer.position, vehicle.position );
-
-			const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
-
-			// calculate new velocity and predicted future position
-
-			newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-			predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
-
-			// now flee away from predicted future position of the pursuer
-
-			this._flee.target = predcitedPosition;
-			this._flee.calculate( vehicle, force );
-
-		};
-
-	} ()
-
-} );
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class FollowPath extends SteeringBehavior {
-
-	constructor ( path ) {
-
-		super();
-
-		this.path = path; // list of waypoints to follow
-		this._nextWaypointDistance = 1; // the distance a waypoint is set to the new target
-
-		// internal behaviors
-
-		this._seek = new Seek();
-		this._arrive = new Arrive();
-
-	}
-
-	calculate ( vehicle, force ) {
-
-		const path = this.path;
-		const nextWaypointDistance = this._nextWaypointDistance;
-
-		// calculate distance in square space from current waypoint to vehicle
-
-		var distanceSq = path.current().distanceToSquared( vehicle.position );
-
-		// move to next waypoint if close enough to current target
-
-		if ( distanceSq < ( nextWaypointDistance * nextWaypointDistance ) ) {
-
-			path.advance();
-
-		}
-
-		const target = path.current();
-
-		if ( path.finished() === true ) {
-
-			this._arrive.target = target;
-			this._arrive.calculate( vehicle, force );
-
-		} else {
-
-			this._seek.target = target;
-			this._seek.calculate( vehicle, force );
-
-		}
-
-	}
-
-}
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -2382,12 +2382,12 @@ exports.GameEntity = GameEntity;
 exports.MovingEntity = MovingEntity;
 exports.Path = Path;
 exports.Vehicle = Vehicle;
-exports.Seek = Seek;
-exports.Flee = Flee;
-exports.Arrive = Arrive;
-exports.Pursuit = Pursuit;
-exports.Evade = Evade;
-exports.FollowPath = FollowPath;
+exports.ArriveBehavior = ArriveBehavior;
+exports.EvadeBehavior = EvadeBehavior;
+exports.FleeBehavior = FleeBehavior;
+exports.FollowPathBehavior = FollowPathBehavior;
+exports.PursuitBehavior = PursuitBehavior;
+exports.SeekBehavior = SeekBehavior;
 exports.State = State;
 exports.StateMachine = StateMachine;
 exports._Math = _Math;

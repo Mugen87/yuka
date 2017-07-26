@@ -88,7 +88,7 @@
 			entity = new YUKA.Vehicle();
 			entity.maxSpeed = 2;
 
-			const followPath = new YUKA.FollowPath( path );
+			const followPath = new YUKA.FollowPathBehavior( path );
 			entity.steering.add( followPath );
 
 			entityManager = new YUKA.EntityManager();

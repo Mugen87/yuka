@@ -2,10 +2,10 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from './SteeringBehavior';
+import { SteeringBehavior } from '../SteeringBehavior';
 import { Vector3 } from '../../Math/Vector3';
 
-class Seek extends SteeringBehavior {
+class SeekBehavior extends SteeringBehavior {
 
 	constructor ( target ) {
 
@@ -17,7 +17,7 @@ class Seek extends SteeringBehavior {
 
 }
 
-Object.assign( Seek.prototype, {
+Object.assign( SeekBehavior.prototype, {
 
 	calculate: function () {
 
@@ -47,4 +47,4 @@ Object.assign( Seek.prototype, {
 
 } );
 
-export { Seek };
+export { SeekBehavior };

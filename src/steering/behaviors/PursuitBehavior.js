@@ -2,11 +2,11 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from './SteeringBehavior';
-import { Seek } from './Seek';
+import { SteeringBehavior } from '../SteeringBehavior';
+import { SeekBehavior } from './SeekBehavior';
 import { Vector3 } from '../../Math/Vector3';
 
-class Pursuit extends SteeringBehavior {
+class PursuitBehavior extends SteeringBehavior {
 
 	constructor ( target, evader ) {
 
@@ -17,13 +17,13 @@ class Pursuit extends SteeringBehavior {
 
 		// internal behaviors
 
-		this._seek = new Seek();
+		this._seek = new SeekBehavior();
 
 	}
 
 }
 
-Object.assign( Pursuit.prototype, {
+Object.assign( PursuitBehavior.prototype, {
 
 	calculate: function () {
 
@@ -83,4 +83,4 @@ Object.assign( Pursuit.prototype, {
 
 } );
 
-export { Pursuit };
+export { PursuitBehavior };

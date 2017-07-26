@@ -2,11 +2,11 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from './SteeringBehavior';
-import { Seek } from './Seek';
-import { Arrive } from './Arrive';
+import { SteeringBehavior } from '../SteeringBehavior';
+import { SeekBehavior } from './SeekBehavior';
+import { ArriveBehavior } from './ArriveBehavior';
 
-class FollowPath extends SteeringBehavior {
+class FollowPathBehavior extends SteeringBehavior {
 
 	constructor ( path ) {
 
@@ -17,8 +17,8 @@ class FollowPath extends SteeringBehavior {
 
 		// internal behaviors
 
-		this._seek = new Seek();
-		this._arrive = new Arrive();
+		this._seek = new SeekBehavior();
+		this._arrive = new ArriveBehavior();
 
 	}
 
@@ -57,4 +57,4 @@ class FollowPath extends SteeringBehavior {
 
 }
 
-export { FollowPath };
+export { FollowPathBehavior };
