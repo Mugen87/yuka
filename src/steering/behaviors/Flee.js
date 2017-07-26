@@ -7,12 +7,12 @@ import { Vector3 } from '../../Math/Vector3';
 
 class Flee extends SteeringBehavior {
 
-	constructor ( target ) {
+	constructor ( target, panicDistance = 10 ) {
 
 		super();
 
 		this.target = target;
-		this.panicDistance = 10;
+		this.panicDistance = panicDistance;
 
 	}
 

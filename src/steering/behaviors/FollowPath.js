@@ -13,7 +13,7 @@ class FollowPath extends SteeringBehavior {
 		super();
 
 		this.path = path; // list of waypoints to follow
-		this.nextWaypointDistance = 1; // the distance a waypoint is set to the new target
+		this._nextWaypointDistance = 1; // the distance a waypoint is set to the new target
 
 		// internal behaviors
 
@@ -25,7 +25,7 @@ class FollowPath extends SteeringBehavior {
 	calculate ( vehicle, force ) {
 
 		const path = this.path;
-		const nextWaypointDistance = this.nextWaypointDistance;
+		const nextWaypointDistance = this._nextWaypointDistance;
 
 		// calculate distance in square space from current waypoint to vehicle
 
