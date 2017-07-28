@@ -2296,7 +2296,7 @@ class WanderBehavior extends SteeringBehavior {
 		this.distance = distance; // the distance the wander sphere is projected in front of the agent
 		this.jitter = jitter; // the maximum amount of displacement along the sphere each frame
 
-		this._target = new Vector3$1();
+		this._targetLocal = new Vector3$1();
 
 		this._setup();
 
@@ -2309,8 +2309,8 @@ class WanderBehavior extends SteeringBehavior {
 		// setup a vector to a target position on the wander sphere
 		// target lies always in the XZ plane
 
-		this._target.x = this.radius * Math.cos( theta );
-		this._target.z = this.radius * Math.sin( theta );
+		this._targetLocal.x = this.radius * Math.cos( theta );
+		this._targetLocal.z = this.radius * Math.sin( theta );
 
 	}
 
@@ -2320,9 +2320,8 @@ Object.assign( WanderBehavior.prototype, {
 
 	calculate: function () {
 
-		const targetWorldSpace = new Vector3$1();
+		const targetWorld = new Vector3$1();
 		const randomDisplacement = new Vector3$1();
-		const distanceVector = new Vector3$1();
 
 		return function calculate ( vehicle, force, delta ) {
 
@@ -2338,28 +2337,28 @@ Object.assign( WanderBehavior.prototype, {
 
 			// add random vector to the target's position
 
-			this._target.add( randomDisplacement );
+			this._targetLocal.add( randomDisplacement );
 
 			// re-project this new vector back onto a unit sphere
 
-			this._target.normalize();
+			this._targetLocal.normalize();
 
 			// increase the length of the vector to the same as the radius of the wander sphere
 
-			this._target.multiplyScalar( this.radius );
+			this._targetLocal.multiplyScalar( this.radius );
 
 			// move the target into a position wanderDist in front of the agent
 
-			distanceVector.z = this.distance;
-			targetWorldSpace.addVectors( this._target, distanceVector );
+			targetWorld.copy( this._targetLocal );
+			targetWorld.z += this.distance;
 
 			// project the target into world space
 
-			targetWorldSpace.applyMatrix4( vehicle.matrix );
+			targetWorld.applyMatrix4( vehicle.matrix );
 
 			// and steer towards it
 
-			force.subVectors( targetWorldSpace, vehicle.position );
+			force.subVectors( targetWorld, vehicle.position );
 
 		};
 
