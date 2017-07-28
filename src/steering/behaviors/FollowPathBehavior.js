@@ -22,7 +22,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force ) {
+	calculate ( vehicle, force, delta ) {
 
 		const path = this.path;
 		const nextWaypointDistance = this._nextWaypointDistance;

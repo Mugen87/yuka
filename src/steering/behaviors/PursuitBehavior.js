@@ -33,7 +33,7 @@ Object.assign( PursuitBehavior.prototype, {
 		const newEvaderVelocity = new Vector3();
 		const predcitedPosition = new Vector3();
 
-		return function calculate ( vehicle, force ) {
+		return function calculate ( vehicle, force, delta ) {
 
 			const evader = this.evader;
 

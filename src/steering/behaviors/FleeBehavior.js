@@ -24,7 +24,7 @@ Object.assign( FleeBehavior.prototype, {
 
 		const desiredVelocity = new Vector3();
 
-		return function calculate ( vehicle, force ) {
+		return function calculate ( vehicle, force, delta ) {
 
 			const target = this.target;
 

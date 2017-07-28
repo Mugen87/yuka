@@ -100,7 +100,7 @@ Object.assign( SteeringManager.prototype, {
 
 				force.set( 0, 0 , 0 );
 
-				behavior.calculate( this.vehicle, force );
+				behavior.calculate( this.vehicle, force, delta );
 
 				force.multiplyScalar( behavior.weigth );
 

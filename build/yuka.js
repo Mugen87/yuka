@@ -251,6 +251,12 @@ const _Math = {
 
 		return Math.max( min, Math.min( max, value ) );
 
+	},
+
+	randFloat: ( min, max ) => {
+
+		return min + Math.random() * ( max - min );
+
 	}
 
 };
@@ -1398,6 +1404,12 @@ const _Math$1 = {
 
 		return Math.max( min, Math.min( max, value ) );
 
+	},
+
+	randFloat: ( min, max ) => {
+
+		return min + Math.random() * ( max - min );
+
 	}
 
 };
@@ -1800,7 +1812,7 @@ Object.assign( SteeringManager.prototype, {
 
 				force.set( 0, 0 , 0 );
 
-				behavior.calculate( this.vehicle, force );
+				behavior.calculate( this.vehicle, force, delta );
 
 				force.multiplyScalar( behavior.weigth );
 
@@ -1942,7 +1954,7 @@ Object.assign( ArriveBehavior.prototype, {
 		const desiredVelocity = new Vector3$1();
 		const displacement = new Vector3$1();
 
-		return function calculate ( vehicle, force ) {
+		return function calculate ( vehicle, force, delta ) {
 
 			const target = this.target;
 			const deceleration = this.deceleration;
@@ -2000,7 +2012,7 @@ Object.assign( FleeBehavior.prototype, {
 
 		const desiredVelocity = new Vector3$1();
 
-		return function calculate ( vehicle, force ) {
+		return function calculate ( vehicle, force, delta ) {
 
 			const target = this.target;
 
@@ -2064,7 +2076,7 @@ Object.assign( EvadeBehavior.prototype, {
 		const newPuruserVelocity = new Vector3$1();
 		const predcitedPosition = new Vector3$1();
 
-		return function calculate ( vehicle, force ) {
+		return function calculate ( vehicle, force, delta ) {
 
 			const pursuer = this.pursuer;
 
@@ -2110,7 +2122,7 @@ Object.assign( SeekBehavior.prototype, {
 
 		const desiredVelocity = new Vector3$1();
 
-		return function calculate ( vehicle, force ) {
+		return function calculate ( vehicle, force, delta ) {
 
 			const target = this.target;
 
@@ -2154,7 +2166,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force ) {
+	calculate ( vehicle, force, delta ) {
 
 		const path = this.path;
 		const nextWaypointDistance = this._nextWaypointDistance;
@@ -2220,7 +2232,7 @@ Object.assign( PursuitBehavior.prototype, {
 		const newEvaderVelocity = new Vector3$1();
 		const predcitedPosition = new Vector3$1();
 
-		return function calculate ( vehicle, force ) {
+		return function calculate ( vehicle, force, delta ) {
 
 			const evader = this.evader;
 
@@ -2263,6 +2275,91 @@ Object.assign( PursuitBehavior.prototype, {
 
 			this._seek.target = predcitedPosition;
 			this._seek.calculate( force );
+
+		};
+
+	} ()
+
+} );
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class WanderBehavior extends SteeringBehavior {
+
+	constructor ( radius = 2, distance = 10, jitter = 20 ) {
+
+		super();
+
+		this.radius = radius; // the radius of the constraining circle for the wander behavior
+		this.distance = distance; // the distance the wander sphere is projected in front of the agent
+		this.jitter = jitter; // the maximum amount of displacement along the sphere each frame
+
+		this._target = new Vector3$1();
+
+		this._setup();
+
+	}
+
+	_setup () {
+
+		var theta = Math.random() * Math.PI * 2;
+
+		// setup a vector to a target position on the wander sphere
+		// target lies always in the XZ plane
+
+		this._target.x = this.radius * Math.cos( theta );
+		this._target.z = this.radius * Math.sin( theta );
+
+	}
+
+}
+
+Object.assign( WanderBehavior.prototype, {
+
+	calculate: function () {
+
+		const targetWorldSpace = new Vector3$1();
+		const randomDisplacement = new Vector3$1();
+		const distanceVector = new Vector3$1();
+
+		return function calculate ( vehicle, force, delta ) {
+
+			// this behavior is dependent on the update rate, so this line must be
+			// included when using time independent frame rate
+
+			const jitterThisTimeSlice = this.jitter * delta;
+
+			// prepare random vector
+
+			randomDisplacement.x = _Math$1.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+			randomDisplacement.z = _Math$1.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+
+			// add random vector to the target's position
+
+			this._target.add( randomDisplacement );
+
+			// re-project this new vector back onto a unit sphere
+
+			this._target.normalize();
+
+			// increase the length of the vector to the same as the radius of the wander sphere
+
+			this._target.multiplyScalar( this.radius );
+
+			// move the target into a position wanderDist in front of the agent
+
+			distanceVector.z = this.distance;
+			targetWorldSpace.addVectors( this._target, distanceVector );
+
+			// project the target into world space
+
+			targetWorldSpace.applyMatrix4( vehicle.matrix );
+
+			// and steer towards it
+
+			force.subVectors( targetWorldSpace, vehicle.position );
 
 		};
 
@@ -2388,6 +2485,7 @@ exports.FleeBehavior = FleeBehavior;
 exports.FollowPathBehavior = FollowPathBehavior;
 exports.PursuitBehavior = PursuitBehavior;
 exports.SeekBehavior = SeekBehavior;
+exports.WanderBehavior = WanderBehavior;
 exports.State = State;
 exports.StateMachine = StateMachine;
 exports._Math = _Math;

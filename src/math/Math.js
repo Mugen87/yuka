@@ -4,6 +4,12 @@ const _Math = {
 
 		return Math.max( min, Math.min( max, value ) );
 
+	},
+
+	randFloat: ( min, max ) => {
+
+		return min + Math.random() * ( max - min );
+
 	}
 
 };
