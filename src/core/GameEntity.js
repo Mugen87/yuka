@@ -21,6 +21,7 @@ class GameEntity extends EventDispatcher {
 		this.scale = new Vector3( 1, 1, 1 );
 
 		this.up = new Vector3( 0, 1, 0 );
+		this.boundingRadius = 0;
 
 		this.matrix = new Matrix4();
 

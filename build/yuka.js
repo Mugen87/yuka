@@ -245,6 +245,13 @@ class EventDispatcher {
 
 }
 
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Math.js
+ *
+ */
+
 const _Math = {
 
 	clamp: ( value, min, max ) => {
@@ -263,9 +270,12 @@ const _Math = {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Vector3.js
+ *
  */
 
- class Vector3 {
+class Vector3 {
 
 	constructor ( x = 0, y = 0, z = 0 ) {
 
@@ -448,7 +458,7 @@ const _Math = {
 
 	angleTo ( v ) {
 
-		var theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
 
 		// clamp, to handle numerical problems
 
@@ -561,6 +571,9 @@ const _Math = {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js
+ *
  */
 
 class Quaternion {
@@ -827,11 +840,14 @@ class Quaternion {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
+ *
  */
 
- class Matrix4 {
+class Matrix4 {
 
- 	constructor () {
+	constructor () {
 
 		this.elements = [
 
@@ -842,7 +858,7 @@ class Quaternion {
 
 		];
 
- 	}
+	}
 
 	set ( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
 
@@ -1107,8 +1123,7 @@ class Quaternion {
 
 	}
 
- }
-
+}
 
 Object.assign( Matrix4.prototype, {
 
@@ -1122,53 +1137,52 @@ Object.assign( Matrix4.prototype, {
 
 			z.subVectors( eye, target );
 
- 			if ( z.lengthSquared() === 0 ) {
+			if ( z.lengthSquared() === 0 ) {
 
- 				// eye and target are in the same position
+				// eye and target are in the same position
 
- 				z.z = 1;
+				z.z = 1;
 
- 			}
+			}
 
- 			z.normalize();
- 			x.crossVectors( up, z );
+			z.normalize();
+			x.crossVectors( up, z );
 
- 			if ( x.lengthSquared() === 0 ) {
+			if ( x.lengthSquared() === 0 ) {
 
- 				// up and z are parallel
+				// up and z are parallel
 
- 				if ( Math.abs( up.z ) === 1 ) {
+				if ( Math.abs( up.z ) === 1 ) {
 
- 					z.x += 0.0001;
+					z.x += 0.0001;
 
- 				} else {
+				} else {
 
- 					z.z += 0.0001;
+					z.z += 0.0001;
 
- 				}
+				}
 
- 				z.normalize();
- 				x.crossVectors( up, z );
+				z.normalize();
+				x.crossVectors( up, z );
 
- 			}
+			}
 
- 			x.normalize();
- 			y.crossVectors( z, x );
+			x.normalize();
+			y.crossVectors( z, x );
 
 			const e = this.elements;
 
- 			e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
- 			e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
- 			e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
+				e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
+				e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
+				e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
 
- 			return this;
+				return this;
 
 		 };
 
-
 	 } ()
 
- } );
+} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -1188,6 +1202,7 @@ class GameEntity extends EventDispatcher {
 		this.scale = new Vector3( 1, 1, 1 );
 
 		this.up = new Vector3( 0, 1, 0 );
+		this.boundingRadius = 0;
 
 		this.matrix = new Matrix4();
 
@@ -1398,6 +1413,13 @@ class Path {
 
 }
 
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Math.js
+ *
+ */
+
 const _Math$1 = {
 
 	clamp: ( value, min, max ) => {
@@ -1416,9 +1438,12 @@ const _Math$1 = {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Vector3.js
+ *
  */
 
- class Vector3$1 {
+class Vector3$1 {
 
 	constructor ( x = 0, y = 0, z = 0 ) {
 
@@ -1601,7 +1626,7 @@ const _Math$1 = {
 
 	angleTo ( v ) {
 
-		var theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
 
 		// clamp, to handle numerical problems
 
@@ -2473,6 +2498,99 @@ class StateMachine {
 
 }
 
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
+ *
+ */
+
+class Ray {
+
+	constructor ( origin = new Vector3(), direction = new Vector3() ) {
+
+		this.origin = origin;
+		this.direction = direction;
+
+	}
+
+	set ( origin, direction ) {
+
+		this.origin.copy( origin );
+		this.direction.copy( direction );
+
+		return this;
+
+	}
+
+	copy ( ray ) {
+
+		this.origin.copy( ray.origin );
+		this.direction.copy( ray.direction );
+
+		return this;
+
+	}
+
+	at ( t, result = new Vector3() ) {
+
+		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
+
+	}
+
+	equals ( ray ) {
+
+		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
+
+	}
+
+}
+
+Object.assign( Ray.prototype, {
+
+	intersectSphere: function () {
+
+		const v1 = new Vector3();
+
+		return function intersectSphere( center, radius, result = new Vector3() ) {
+
+			v1.subVectors( center, this.origin );
+			const tca = v1.dot( this.direction );
+			const d2 = v1.dot( v1 ) - tca * tca;
+			const radius2 = radius * radius;
+
+			if ( d2 > radius2 ) return null;
+
+			const thc = Math.sqrt( radius2 - d2 );
+
+			// t0 = first intersect point - entrance on front of sphere
+
+			const t0 = tca - thc;
+
+			// t1 = second intersect point - exit point on back of sphere
+
+			const t1 = tca + thc;
+
+			// test to see if both t0 and t1 are behind the ray - if so, return null
+
+			if ( t0 < 0 && t1 < 0 ) return null;
+
+			// test to see if t0 is behind the ray:
+			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
+			// in order to always return an intersect point that is in front of the ray.
+
+			if ( t0 < 0 ) return this.at( t1, optionalTarget );
+
+			// else t0 is in front of the ray, so return the first collision point scaled by t0
+
+			return this.at( t0, optionalTarget );
+
+		};
+
+	} ()
+
+} );
+
 exports.EntityManager = EntityManager;
 exports.GameEntity = GameEntity;
 exports.MovingEntity = MovingEntity;
@@ -2490,6 +2608,7 @@ exports.StateMachine = StateMachine;
 exports._Math = _Math;
 exports.Matrix4 = Matrix4;
 exports.Quaternion = Quaternion;
+exports.Ray = Ray;
 exports.Vector3 = Vector3;
 
 Object.defineProperty(exports, '__esModule', { value: true });

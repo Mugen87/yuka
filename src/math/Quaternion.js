@@ -1,5 +1,8 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js
+ *
  */
 
 class Quaternion {

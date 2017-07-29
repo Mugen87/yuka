@@ -1,8 +1,11 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Vector3.js
+ *
  */
 
- import { _Math } from './Math';
+import { _Math } from './Math';
 
 class Vector3 {
 
@@ -187,7 +190,7 @@ class Vector3 {
 
 	angleTo ( v ) {
 
-		var theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
 
 		// clamp, to handle numerical problems
 

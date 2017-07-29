@@ -1,12 +1,15 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
+ *
  */
 
- import { Vector3 } from './Vector3';
+import { Vector3 } from './Vector3';
 
- class Matrix4 {
+class Matrix4 {
 
- 	constructor () {
+	constructor () {
 
 		this.elements = [
 
@@ -17,7 +20,7 @@
 
 		];
 
- 	}
+	}
 
 	set ( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
 
@@ -282,8 +285,7 @@
 
 	}
 
- }
-
+}
 
 Object.assign( Matrix4.prototype, {
 
@@ -297,52 +299,51 @@ Object.assign( Matrix4.prototype, {
 
 			z.subVectors( eye, target );
 
- 			if ( z.lengthSquared() === 0 ) {
+			if ( z.lengthSquared() === 0 ) {
 
- 				// eye and target are in the same position
+				// eye and target are in the same position
 
- 				z.z = 1;
+				z.z = 1;
 
- 			}
+			}
 
- 			z.normalize();
- 			x.crossVectors( up, z );
+			z.normalize();
+			x.crossVectors( up, z );
 
- 			if ( x.lengthSquared() === 0 ) {
+			if ( x.lengthSquared() === 0 ) {
 
- 				// up and z are parallel
+				// up and z are parallel
 
- 				if ( Math.abs( up.z ) === 1 ) {
+				if ( Math.abs( up.z ) === 1 ) {
 
- 					z.x += 0.0001;
+					z.x += 0.0001;
 
- 				} else {
+				} else {
 
- 					z.z += 0.0001;
+					z.z += 0.0001;
 
- 				}
+				}
 
- 				z.normalize();
- 				x.crossVectors( up, z );
+				z.normalize();
+				x.crossVectors( up, z );
 
- 			}
+			}
 
- 			x.normalize();
- 			y.crossVectors( z, x );
+			x.normalize();
+			y.crossVectors( z, x );
 
 			const e = this.elements;
 
- 			e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
- 			e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
- 			e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
+				e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
+				e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
+				e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
 
- 			return this;
+				return this;
 
 		 };
 
-
 	 } ()
 
- } );
+} );
 
- export { Matrix4 };
+export { Matrix4 };

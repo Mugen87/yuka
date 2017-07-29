@@ -15,4 +15,5 @@ export { StateMachine } from './fsm/StateMachine';
 export { _Math } from './math/Math';
 export { Matrix4 } from './math/Matrix4';
 export { Quaternion } from './math/Quaternion';
+export { Ray } from './math/Ray';
 export { Vector3 } from './math/Vector3';
