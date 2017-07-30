@@ -56,7 +56,8 @@
 
 			clock = new THREE.Clock();
 
-			const geometry = new THREE.CylinderBufferGeometry( 1, 1, 5 );
+			const geometry = new THREE.CylinderBufferGeometry( 0.5, 0.5, 3 );
+			geometry.computeBoundingSphere();
 			const material = new THREE.MeshPhongMaterial( { color: 0x0000ff } );
 
 			mesh = new THREE.Mesh( geometry, material );
@@ -69,7 +70,7 @@
 			directionalLight.position.set( 1, 1, 0 ).normalize();
 			scene.add( directionalLight );
 
-			const gridHelper = new THREE.GridHelper( 20, 20 );
+			const gridHelper = new THREE.GridHelper( 25, 25 );
 			scene.add( gridHelper );
 
 			// helper
@@ -79,20 +80,28 @@
 
 			// game
 
+			entityManager = new YUKA.EntityManager();
+
 			const path = new YUKA.Path();
-			path.add( new YUKA.Vector3(   5, 0,   5 ) );
-			path.add( new YUKA.Vector3(   5, 0, - 5 ) );
-			path.add( new YUKA.Vector3( - 5, 0, - 5 ) );
-			path.add( new YUKA.Vector3( - 5, 0,   5 ) );
+			path.add( new YUKA.Vector3(   10, 0,   10 ) );
+			path.add( new YUKA.Vector3(   10, 0, - 10 ) );
+			path.add( new YUKA.Vector3( - 10, 0, - 10 ) );
+			path.add( new YUKA.Vector3( - 10, 0,   10 ) );
 
 			entity = new YUKA.Vehicle();
 			entity.maxSpeed = 2;
+			entity.boundingRadius = geometry.boundingSphere.radius;
+			entityManager.add( entity );
+
+			const obstacleAvoidance = new YUKA.ObstacleAvoidanceBehavior( entityManager );
+			entity.steering.add( obstacleAvoidance );
 
 			const followPath = new YUKA.FollowPathBehavior( path );
 			entity.steering.add( followPath );
 
-			entityManager = new YUKA.EntityManager();
-			entityManager.add( entity );
+			// obstacles
+
+			setupObstacles();
 
 			// renderer
 
@@ -132,6 +141,41 @@
 				mesh.scale.copy( entity.scale );
 
 				renderer.render( scene, camera );
+
+		}
+
+		function setupObstacles() {
+
+			const geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );
+			geometry.computeBoundingSphere();
+			const material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+
+			const mesh1 = new THREE.Mesh( geometry, material );
+			const mesh2 = new THREE.Mesh( geometry, material );
+			const mesh3 = new THREE.Mesh( geometry, material );
+
+			mesh1.position.set( - 10, 0, 0 );
+			mesh2.position.set( 10, 0, 0 );
+			mesh3.position.set( 4, 0, - 10 );
+
+			scene.add( mesh1 );
+			scene.add( mesh2 );
+			scene.add( mesh3 );
+
+			const obstacle1 = new YUKA.GameEntity();
+			obstacle1.position.copy( mesh1.position );
+			obstacle1.boundingRadius = geometry.boundingSphere.radius;
+			entityManager.add( obstacle1 );
+
+			const obstacle2 = new YUKA.GameEntity();
+			obstacle2.position.copy( mesh2.position );
+			obstacle2.boundingRadius = geometry.boundingSphere.radius;
+			entityManager.add( obstacle2 );
+
+			const obstacle3 = new YUKA.GameEntity();
+			obstacle3.position.copy( mesh3.position );
+			obstacle3.boundingRadius = geometry.boundingSphere.radius;
+			entityManager.add( obstacle3 );
 
 		}
 

@@ -27,11 +27,7 @@ class GameEntity extends EventDispatcher {
 
 	}
 
-	update () {
-
-		console.warn( 'YUKA.GameEntity: .update() must be implemented in derived class.' );
-
-	}
+	update () {}
 
 	sendMessage ( receiver, message, delay = 0, data = null ) {
 

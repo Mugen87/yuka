@@ -98,7 +98,7 @@ Object.assign( SteeringManager.prototype, {
 
 			for ( let behavior of this.behaviors ) {
 
-				force.set( 0, 0 , 0 );
+				force.set( 0, 0, 0 );
 
 				behavior.calculate( this.vehicle, force, delta );
 

@@ -81,11 +81,11 @@ Object.assign( Ray.prototype, {
 			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
 			// in order to always return an intersect point that is in front of the ray.
 
-			if ( t0 < 0 ) return this.at( t1, optionalTarget );
+			if ( t0 < 0 ) return this.at( t1, result );
 
 			// else t0 is in front of the ray, so return the first collision point scaled by t0
 
-			return this.at( t0, optionalTarget );
+			return this.at( t0, result );
 
 		};
 

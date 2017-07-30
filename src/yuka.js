@@ -7,6 +7,7 @@ export { ArriveBehavior } from './steering/behaviors/ArriveBehavior';
 export { EvadeBehavior } from './steering/behaviors/EvadeBehavior';
 export { FleeBehavior } from './steering/behaviors/FleeBehavior';
 export { FollowPathBehavior } from './steering/behaviors/FollowPathBehavior';
+export { ObstacleAvoidanceBehavior } from './steering/behaviors/ObstacleAvoidanceBehavior';
 export { PursuitBehavior } from './steering/behaviors/PursuitBehavior';
 export { SeekBehavior } from './steering/behaviors/SeekBehavior';
 export { WanderBehavior } from './steering/behaviors/WanderBehavior';

@@ -13,7 +13,6 @@ class Vehicle extends MovingEntity {
 		super();
 
 		this.steering = new SteeringManager( this );
-		this.smoothing = false;
 
 	}
 
@@ -59,21 +58,11 @@ Object.assign( Vehicle.prototype, {
 
 			target.copy( this.position ).add( displacement );
 
-			// update the orientation if the vehicle has non zero speed
+			// update the orientation if the vehicle has a non zero velocity
 
 			if ( this.getSpeedSquared() > 0.00000001 ) {
 
-				// check smoothing
-
-				if ( this.smoothing === true ) {
-
-					// TODO
-
-				} else {
-
-					this.lookAt( target );
-
-				}
+				this.lookAt( target );
 
 			}
 
@@ -83,7 +72,7 @@ Object.assign( Vehicle.prototype, {
 
 		};
 
-	} (),
+	} ()
 
 } );
 
