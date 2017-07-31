@@ -14,9 +14,9 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 		super();
 
 		this.entityManager = entityManager;
-		this.weigth = 10; // this behavior needs a high value in order to prioritize the produced force
-		this.brakingWeight = 0.2;
-		this.dBoxMinLength = 2; // minimum length of the detection box
+		this.weigth = 3; // this behavior needs a higher value in order to prioritize the produced force
+		this.brakingWeight = 0.2; // controls the amount of braking force
+		this.dBoxMinLength = 5; // minimum length of the detection box
 
 	}
 

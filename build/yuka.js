@@ -1901,6 +1901,64 @@ Object.assign( SteeringManager.prototype, {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+class Smoother {
+
+	constructor ( count = 10 ) {
+
+		this.count = count; // how many samples the smoother will use to average a value
+		this._history = []; // this holds the history
+		this._slot = 0; // the current sample slot
+
+		// initialize history with Vector3s
+
+		for ( let i = 0; i < this.count; i ++ ) {
+
+			this._history[ i ] = new Vector3$1();
+
+		}
+
+	}
+
+	update ( value, average ) {
+
+		// ensure, average is a zero vector
+
+		average.set( 0, 0, 0 );
+
+		// make sure the slot index wraps around
+
+		if ( this._slot === this.count ) {
+
+			this._slot = 0;
+
+		}
+
+		// overwrite the oldest value with the newest
+
+		this._history[ this._slot ].copy( value );
+
+		// increase slot index
+
+		this._slot ++;
+
+		// now calculate the average of the history array
+
+		for ( let i = 0; i < this.count; i ++ ) {
+
+			average.add( this._history[ i ] );
+
+		}
+
+		average.divideScalar( this.count );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 class Vehicle extends MovingEntity {
 
 	constructor () {
@@ -1908,6 +1966,22 @@ class Vehicle extends MovingEntity {
 		super();
 
 		this.steering = new SteeringManager( this );
+
+		this._smoother = null;
+		this._smoothedVelocity = new Vector3();
+		this.rotationSmooth = new Quaternion();
+
+	}
+
+	enableSmoothing ( sampleCount ) {
+
+		this._smoother = new Smoother( sampleCount );
+
+	}
+
+	disableSmoothing () {
+
+		this._smoother = null;
 
 	}
 
@@ -1921,6 +1995,7 @@ Object.assign( Vehicle.prototype, {
 		const displacement = new Vector3();
 		const acceleration = new Vector3();
 		const target = new Vector3();
+		const rotationMatrix = new Matrix4();
 
 		return function update ( delta ) {
 
@@ -1964,6 +2039,20 @@ Object.assign( Vehicle.prototype, {
 			// update position
 
 			this.position.copy( target );
+
+			// smoothing
+
+			if ( this._smoother !== null ) {
+
+				this._smoother.update( this.velocity, this._smoothedVelocity );
+
+				displacement.copy( this._smoothedVelocity ).multiplyScalar( delta );
+				target.copy( this.position ).add( displacement );
+
+				rotationMatrix.lookAt( target, this.position, this.up );
+				this.rotationSmooth.setFromRotationMatrix( rotationMatrix );
+
+			}
 
 		};
 
@@ -2761,9 +2850,9 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 		super();
 
 		this.entityManager = entityManager;
-		this.weigth = 10; // this behavior needs a high value in order to prioritize the produced force
-		this.brakingWeight = 0.2;
-		this.dBoxMinLength = 2; // minimum length of the detection box
+		this.weigth = 3; // this behavior needs a higher value in order to prioritize the produced force
+		this.brakingWeight = 0.2; // controls the amount of braking force
+		this.dBoxMinLength = 5; // minimum length of the detection box
 
 	}
 

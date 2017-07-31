@@ -90,10 +90,12 @@
 
 			entity = new YUKA.Vehicle();
 			entity.maxSpeed = 2;
+			entity.enableSmoothing( 20 );
 			entity.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( entity );
 
 			const obstacleAvoidance = new YUKA.ObstacleAvoidanceBehavior( entityManager );
+			obstacleAvoidance.weight = 2;
 			entity.steering.add( obstacleAvoidance );
 
 			const followPath = new YUKA.FollowPathBehavior( path );
@@ -137,7 +139,7 @@
 				entityManager.update( delta );
 
 				mesh.position.copy( entity.position );
-				mesh.quaternion.copy( entity.rotation );
+				mesh.quaternion.copy( entity.rotationSmooth );
 				mesh.scale.copy( entity.scale );
 
 				renderer.render( scene, camera );
