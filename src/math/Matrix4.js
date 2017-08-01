@@ -7,6 +7,10 @@
 
 import { Vector3 } from './Vector3';
 
+const x = new Vector3();
+const y = new Vector3();
+const z = new Vector3();
+
 class Matrix4 {
 
 	constructor () {
@@ -278,6 +282,53 @@ class Matrix4 {
 
 	}
 
+	lookAt ( eye, target, up ) {
+
+		z.subVectors( eye, target );
+
+		if ( z.lengthSquared() === 0 ) {
+
+			// eye and target are in the same position
+
+			z.z = 1;
+
+		}
+
+		z.normalize();
+		x.crossVectors( up, z );
+
+		if ( x.lengthSquared() === 0 ) {
+
+			// up and z are parallel
+
+			if ( Math.abs( up.z ) === 1 ) {
+
+				z.x += 0.0001;
+
+			} else {
+
+				z.z += 0.0001;
+
+			}
+
+			z.normalize();
+			x.crossVectors( up, z );
+
+		}
+
+		x.normalize();
+		y.crossVectors( z, x );
+
+		const e = this.elements;
+
+			e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
+			e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
+			e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
+
+			return this;
+
+	 }
+
 	equals ( m ) {
 
 		const e = this.elements;
@@ -336,64 +387,5 @@ class Matrix4 {
 	}
 
 }
-
-Object.assign( Matrix4.prototype, {
-
-	lookAt: function () {
-
-		const x = new Vector3();
-		const y = new Vector3();
-		const z = new Vector3();
-
-		return function lookAt ( eye, target, up ) {
-
-			z.subVectors( eye, target );
-
-			if ( z.lengthSquared() === 0 ) {
-
-				// eye and target are in the same position
-
-				z.z = 1;
-
-			}
-
-			z.normalize();
-			x.crossVectors( up, z );
-
-			if ( x.lengthSquared() === 0 ) {
-
-				// up and z are parallel
-
-				if ( Math.abs( up.z ) === 1 ) {
-
-					z.x += 0.0001;
-
-				} else {
-
-					z.z += 0.0001;
-
-				}
-
-				z.normalize();
-				x.crossVectors( up, z );
-
-			}
-
-			x.normalize();
-			y.crossVectors( z, x );
-
-			const e = this.elements;
-
-				e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
-				e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
-				e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
-
-				return this;
-
-		 };
-
-	 } ()
-
-} );
 
 export { Matrix4 };

@@ -6,6 +6,9 @@ import { SteeringBehavior } from '../SteeringBehavior';
 import { Vector3 } from '../../Math/Vector3';
 import { _Math } from '../../Math/Math';
 
+const targetWorld = new Vector3();
+const randomDisplacement = new Vector3();
+
 class WanderBehavior extends SteeringBehavior {
 
 	constructor ( radius = 2, distance = 10, jitter = 20 ) {
@@ -22,6 +25,45 @@ class WanderBehavior extends SteeringBehavior {
 
 	}
 
+	calculate ( vehicle, force, delta ) {
+
+		// this behavior is dependent on the update rate, so this line must be
+		// included when using time independent frame rate
+
+		const jitterThisTimeSlice = this.jitter * delta;
+
+		// prepare random vector
+
+		randomDisplacement.x = _Math.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+		randomDisplacement.z = _Math.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+
+		// add random vector to the target's position
+
+		this._targetLocal.add( randomDisplacement );
+
+		// re-project this new vector back onto a unit sphere
+
+		this._targetLocal.normalize();
+
+		// increase the length of the vector to the same as the radius of the wander sphere
+
+		this._targetLocal.multiplyScalar( this.radius );
+
+		// move the target into a position wanderDist in front of the agent
+
+		targetWorld.copy( this._targetLocal );
+		targetWorld.z += this.distance;
+
+		// project the target into world space
+
+		targetWorld.applyMatrix4( vehicle.matrix );
+
+		// and steer towards it
+
+		force.subVectors( targetWorld, vehicle.position );
+
+	}
+
 	_setup () {
 
 		var theta = Math.random() * Math.PI * 2;
@@ -35,55 +77,5 @@ class WanderBehavior extends SteeringBehavior {
 	}
 
 }
-
-Object.assign( WanderBehavior.prototype, {
-
-	calculate: function () {
-
-		const targetWorld = new Vector3();
-		const randomDisplacement = new Vector3();
-
-		return function calculate ( vehicle, force, delta ) {
-
-			// this behavior is dependent on the update rate, so this line must be
-			// included when using time independent frame rate
-
-			const jitterThisTimeSlice = this.jitter * delta;
-
-			// prepare random vector
-
-			randomDisplacement.x = _Math.randFloat( - 1, 1 ) * jitterThisTimeSlice;
-			randomDisplacement.z = _Math.randFloat( - 1, 1 ) * jitterThisTimeSlice;
-
-			// add random vector to the target's position
-
-			this._targetLocal.add( randomDisplacement );
-
-			// re-project this new vector back onto a unit sphere
-
-			this._targetLocal.normalize();
-
-			// increase the length of the vector to the same as the radius of the wander sphere
-
-			this._targetLocal.multiplyScalar( this.radius );
-
-			// move the target into a position wanderDist in front of the agent
-
-			targetWorld.copy( this._targetLocal );
-			targetWorld.z += this.distance;
-
-			// project the target into world space
-
-			targetWorld.applyMatrix4( vehicle.matrix );
-
-			// and steer towards it
-
-			force.subVectors( targetWorld, vehicle.position );
-
-		};
-
-	} ()
-
-} );
 
 export { WanderBehavior };

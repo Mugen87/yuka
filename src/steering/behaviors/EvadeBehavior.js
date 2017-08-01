@@ -6,6 +6,10 @@ import { SteeringBehavior } from '../SteeringBehavior';
 import { FleeBehavior } from './FleeBehavior';
 import { Vector3 } from '../../Math/Vector3';
 
+const displacement = new Vector3();
+const newPuruserVelocity = new Vector3();
+const predcitedPosition = new Vector3();
+
 class EvadeBehavior extends SteeringBehavior {
 
 	constructor ( target , pursuer ) {
@@ -21,38 +25,26 @@ class EvadeBehavior extends SteeringBehavior {
 
 	}
 
+	calculate ( vehicle, force, delta ) {
+
+		const pursuer = this.pursuer;
+
+		displacement.subVectors( pursuer.position, vehicle.position );
+
+		const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+
+		// calculate new velocity and predicted future position
+
+		newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+		predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
+
+		// now flee away from predicted future position of the pursuer
+
+		this._flee.target = predcitedPosition;
+		this._flee.calculate( vehicle, force );
+
+	}
+
 }
-
-Object.assign( EvadeBehavior.prototype, {
-
-	calculate: function () {
-
-		const displacement = new Vector3();
-		const newPuruserVelocity = new Vector3();
-		const predcitedPosition = new Vector3();
-
-		return function calculate ( vehicle, force, delta ) {
-
-			const pursuer = this.pursuer;
-
-			displacement.subVectors( pursuer.position, vehicle.position );
-
-			const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
-
-			// calculate new velocity and predicted future position
-
-			newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-			predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
-
-			// now flee away from predicted future position of the pursuer
-
-			this._flee.target = predcitedPosition;
-			this._flee.calculate( vehicle, force );
-
-		};
-
-	} ()
-
-} );
 
 export { EvadeBehavior };

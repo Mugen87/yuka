@@ -9,6 +9,12 @@ import { Vector3 } from '../math/Vector3';
 import { Quaternion } from '../math/Quaternion';
 import { Matrix4 } from '../math/Matrix4';
 
+const steeringForce = new Vector3();
+const displacement = new Vector3();
+const acceleration = new Vector3();
+const target = new Vector3();
+const rotationMatrix = new Matrix4();
+
 class Vehicle extends MovingEntity {
 
 	constructor () {
@@ -35,80 +41,65 @@ class Vehicle extends MovingEntity {
 
 	}
 
-}
+	update ( delta ) {
 
-Object.assign( Vehicle.prototype, {
+		// calculate steering force
 
-	update: function() {
+		this.steering._calculate( delta, steeringForce );
 
-		const steeringForce = new Vector3();
-		const displacement = new Vector3();
-		const acceleration = new Vector3();
-		const target = new Vector3();
-		const rotationMatrix = new Matrix4();
+		// acceleration = force / mass
 
-		return function update ( delta ) {
+		acceleration.copy( steeringForce ).divideScalar( this.mass );
 
-			// calculate steering force
+		// update velocity
 
-			this.steering._calculate( delta, steeringForce );
+		this.velocity.add( acceleration.multiplyScalar( delta ) );
 
-			// acceleration = force / mass
+		// make sure vehicle does not exceed maximum speed
 
-			acceleration.copy( steeringForce ).divideScalar( this.mass );
+		if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
 
-			// update velocity
+			this.velocity.normalize();
+			this.velocity.multiplyScalar( this.maxSpeed );
 
-			this.velocity.add( acceleration.multiplyScalar( delta ) );
+		}
 
-			// make sure vehicle does not exceed maximum speed
+		// calculate displacement
 
-			if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
+		displacement.copy( this.velocity ).multiplyScalar( delta );
 
-				this.velocity.normalize();
-				this.velocity.multiplyScalar( this.maxSpeed );
+		// calculate target position
 
-			}
+		target.copy( this.position ).add( displacement );
 
-			// calculate displacement
+		// update the orientation if the vehicle has a non zero velocity
 
-			displacement.copy( this.velocity ).multiplyScalar( delta );
+		if ( this.getSpeedSquared() > 0.00000001 ) {
 
-			// calculate target position
+			this.lookAt( target );
 
+		}
+
+		// update position
+
+		this.position.copy( target );
+
+		// smoothing
+
+		if ( this._smoother !== null ) {
+
+			this._smoother.update( this.velocity, this._smoothedVelocity );
+
+			displacement.copy( this._smoothedVelocity ).multiplyScalar( delta );
 			target.copy( this.position ).add( displacement );
 
-			// update the orientation if the vehicle has a non zero velocity
+			rotationMatrix.lookAt( target, this.position, this.up );
+			this.rotationSmooth.setFromRotationMatrix( rotationMatrix );
 
-			if ( this.getSpeedSquared() > 0.00000001 ) {
+		}
 
-				this.lookAt( target );
+	}
 
-			}
-
-			// update position
-
-			this.position.copy( target );
-
-			// smoothing
-
-			if ( this._smoother !== null ) {
-
-				this._smoother.update( this.velocity, this._smoothedVelocity );
-
-				displacement.copy( this._smoothedVelocity ).multiplyScalar( delta );
-				target.copy( this.position ).add( displacement );
-
-				rotationMatrix.lookAt( target, this.position, this.up );
-				this.rotationSmooth.setFromRotationMatrix( rotationMatrix );
-
-			}
-
-		};
-
-	} ()
-
-} );
-
+}
 
 export { Vehicle };

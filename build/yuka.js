@@ -845,6 +845,10 @@ class Quaternion {
  *
  */
 
+const x = new Vector3();
+const y = new Vector3();
+const z = new Vector3();
+
 class Matrix4 {
 
 	constructor () {
@@ -1116,6 +1120,53 @@ class Matrix4 {
 
 	}
 
+	lookAt ( eye, target, up ) {
+
+		z.subVectors( eye, target );
+
+		if ( z.lengthSquared() === 0 ) {
+
+			// eye and target are in the same position
+
+			z.z = 1;
+
+		}
+
+		z.normalize();
+		x.crossVectors( up, z );
+
+		if ( x.lengthSquared() === 0 ) {
+
+			// up and z are parallel
+
+			if ( Math.abs( up.z ) === 1 ) {
+
+				z.x += 0.0001;
+
+			} else {
+
+				z.z += 0.0001;
+
+			}
+
+			z.normalize();
+			x.crossVectors( up, z );
+
+		}
+
+		x.normalize();
+		y.crossVectors( z, x );
+
+		const e = this.elements;
+
+			e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
+			e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
+			e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
+
+			return this;
+
+	 }
+
 	equals ( m ) {
 
 		const e = this.elements;
@@ -1174,65 +1225,6 @@ class Matrix4 {
 	}
 
 }
-
-Object.assign( Matrix4.prototype, {
-
-	lookAt: function () {
-
-		const x = new Vector3();
-		const y = new Vector3();
-		const z = new Vector3();
-
-		return function lookAt ( eye, target, up ) {
-
-			z.subVectors( eye, target );
-
-			if ( z.lengthSquared() === 0 ) {
-
-				// eye and target are in the same position
-
-				z.z = 1;
-
-			}
-
-			z.normalize();
-			x.crossVectors( up, z );
-
-			if ( x.lengthSquared() === 0 ) {
-
-				// up and z are parallel
-
-				if ( Math.abs( up.z ) === 1 ) {
-
-					z.x += 0.0001;
-
-				} else {
-
-					z.z += 0.0001;
-
-				}
-
-				z.normalize();
-				x.crossVectors( up, z );
-
-			}
-
-			x.normalize();
-			y.crossVectors( z, x );
-
-			const e = this.elements;
-
-				e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
-				e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
-				e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
-
-				return this;
-
-		 };
-
-	 } ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -1294,6 +1286,10 @@ GameEntity.__nextId = 0;
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+const direction = new Vector3();
+const rotationMatrix = new Matrix4();
+const targetRotation = new Quaternion();
+
 class MovingEntity extends GameEntity {
 
 	constructor () {
@@ -1305,6 +1301,51 @@ class MovingEntity extends GameEntity {
 		this.maxSpeed = 1; // the maximum speed at which this entity may travel
 		this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 		this.maxTurnRate = Math.PI; // the maximum rate (radians per second) at which this vehicle can rotate
+
+	}
+
+	// given a target position, this method rotates the entity by an amount not
+	// greater than maxTurnRate until it directly faces the target
+
+	rotateToTarget ( target ) {
+
+		this.getDirection( direction );
+
+		// first determine the angle between the look vector and the target
+
+		const angle = target.angleTo( direction );
+
+		// return true if the player is facing the target
+
+		if ( angle < 0.00001 ) return true;
+
+		// clamp the amount to turn to the max turn rate
+
+		const t = ( angle > this.maxTurnRate ) ? ( this.maxTurnRate / angle ) : 1;
+
+		// get target rotation
+
+		rotationMatrix.lookAt( target, this.position, this.up );
+		targetRotation.setFromRotationMatrix( rotationMatrix );
+
+		// interpolate
+
+		this.rotation.slerp( targetRotation, t );
+
+		// adjust velocity
+
+		this.velocity.applyQuaternion( this.rotation );
+
+		return false;
+
+	}
+
+	lookAt ( target ) {
+
+		rotationMatrix.lookAt( target, this.position, this.up );
+		this.rotation.setFromRotationMatrix( rotationMatrix );
+
+		return this;
 
 	}
 
@@ -1327,69 +1368,6 @@ class MovingEntity extends GameEntity {
 	}
 
 }
-
-Object.assign( MovingEntity.prototype, {
-
-	// given a target position, this method rotates the entity by an amount not
-	// greater than maxTurnRate until it directly faces the target
-
-	rotateToTarget: function () {
-
-		const direction = new Vector3();
-		const rotationMatrix = new Matrix4();
-		const targetRotation = new Quaternion();
-
-		return function rotateToTarget ( target ) {
-
-			this.getDirection( direction );
-
-			// first determine the angle between the look vector and the target
-
-			const angle = target.angleTo( direction );
-
-			// return true if the player is facing the target
-
-			if ( angle < 0.00001 ) return true;
-
-			// clamp the amount to turn to the max turn rate
-
-			const t = ( angle > this.maxTurnRate ) ? ( this.maxTurnRate / angle ) : 1;
-
-			// get target rotation
-
-			rotationMatrix.lookAt( target, this.position, this.up );
-			targetRotation.setFromRotationMatrix( rotationMatrix );
-
-			// interpolate
-
-			this.rotation.slerp( targetRotation, t );
-
-			// adjust velocity
-
-			this.velocity.applyQuaternion( this.rotation );
-
-			return false;
-
-		};
-
-	} (),
-
-	lookAt: function () {
-
-		const rotationMatrix = new Matrix4();
-
-		return function lookAt ( target ) {
-
-			rotationMatrix.lookAt( target, this.position, this.up );
-			this.rotation.setFromRotationMatrix( rotationMatrix );
-
-			return this;
-
-		};
-
-	} ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -1787,6 +1765,8 @@ class Vector3$1 {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+const force = new Vector3$1();
+
 class SteeringManager {
 
 	constructor ( vehicle ) {
@@ -1863,39 +1843,29 @@ class SteeringManager {
 
 	}
 
+	_calculateByOrder ( delta ) {
+
+		// reset steering force
+
+		this._steeringForce.set( 0, 0, 0 );
+
+		// calculate for each behavior the respective force
+
+		for ( let behavior of this.behaviors ) {
+
+			force.set( 0, 0, 0 );
+
+			behavior.calculate( this.vehicle, force, delta );
+
+			force.multiplyScalar( behavior.weigth );
+
+			if ( this._accumulate( force ) === false ) return;
+
+		}
+
+	}
+
 }
-
-Object.assign( SteeringManager.prototype, {
-
-	_calculateByOrder: function () {
-
-		const force = new Vector3$1();
-
-		return function _calculatePrioritized ( delta ) {
-
-			// reset steering force
-
-			this._steeringForce.set( 0, 0, 0 );
-
-			// calculate for each behavior the respective force
-
-			for ( let behavior of this.behaviors ) {
-
-				force.set( 0, 0, 0 );
-
-				behavior.calculate( this.vehicle, force, delta );
-
-				force.multiplyScalar( behavior.weigth );
-
-				if ( this._accumulate( force ) === false ) return;
-
-			}
-
-		};
-
-	} ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -1959,6 +1929,12 @@ class Smoother {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+const steeringForce = new Vector3();
+const displacement = new Vector3();
+const acceleration = new Vector3();
+const target = new Vector3();
+const rotationMatrix$1 = new Matrix4();
+
 class Vehicle extends MovingEntity {
 
 	constructor () {
@@ -1985,80 +1961,66 @@ class Vehicle extends MovingEntity {
 
 	}
 
-}
+	update ( delta ) {
 
-Object.assign( Vehicle.prototype, {
+		// calculate steering force
 
-	update: function() {
+		this.steering._calculate( delta, steeringForce );
 
-		const steeringForce = new Vector3();
-		const displacement = new Vector3();
-		const acceleration = new Vector3();
-		const target = new Vector3();
-		const rotationMatrix = new Matrix4();
+		// acceleration = force / mass
 
-		return function update ( delta ) {
+		acceleration.copy( steeringForce ).divideScalar( this.mass );
 
-			// calculate steering force
+		// update velocity
 
-			this.steering._calculate( delta, steeringForce );
+		this.velocity.add( acceleration.multiplyScalar( delta ) );
 
-			// acceleration = force / mass
+		// make sure vehicle does not exceed maximum speed
 
-			acceleration.copy( steeringForce ).divideScalar( this.mass );
+		if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
 
-			// update velocity
+			this.velocity.normalize();
+			this.velocity.multiplyScalar( this.maxSpeed );
 
-			this.velocity.add( acceleration.multiplyScalar( delta ) );
+		}
 
-			// make sure vehicle does not exceed maximum speed
+		// calculate displacement
 
-			if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
+		displacement.copy( this.velocity ).multiplyScalar( delta );
 
-				this.velocity.normalize();
-				this.velocity.multiplyScalar( this.maxSpeed );
+		// calculate target position
 
-			}
+		target.copy( this.position ).add( displacement );
 
-			// calculate displacement
+		// update the orientation if the vehicle has a non zero velocity
 
-			displacement.copy( this.velocity ).multiplyScalar( delta );
+		if ( this.getSpeedSquared() > 0.00000001 ) {
 
-			// calculate target position
+			this.lookAt( target );
 
+		}
+
+		// update position
+
+		this.position.copy( target );
+
+		// smoothing
+
+		if ( this._smoother !== null ) {
+
+			this._smoother.update( this.velocity, this._smoothedVelocity );
+
+			displacement.copy( this._smoothedVelocity ).multiplyScalar( delta );
 			target.copy( this.position ).add( displacement );
 
-			// update the orientation if the vehicle has a non zero velocity
+			rotationMatrix$1.lookAt( target, this.position, this.up );
+			this.rotationSmooth.setFromRotationMatrix( rotationMatrix$1 );
 
-			if ( this.getSpeedSquared() > 0.00000001 ) {
+		}
 
-				this.lookAt( target );
+	}
 
-			}
-
-			// update position
-
-			this.position.copy( target );
-
-			// smoothing
-
-			if ( this._smoother !== null ) {
-
-				this._smoother.update( this.velocity, this._smoothedVelocity );
-
-				displacement.copy( this._smoothedVelocity ).multiplyScalar( delta );
-				target.copy( this.position ).add( displacement );
-
-				rotationMatrix.lookAt( target, this.position, this.up );
-				this.rotationSmooth.setFromRotationMatrix( rotationMatrix );
-
-			}
-
-		};
-
-	} ()
-
-} );
+}
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -2083,6 +2045,9 @@ class SteeringBehavior {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+const desiredVelocity = new Vector3$1();
+const displacement$1 = new Vector3$1();
+
 class ArriveBehavior extends SteeringBehavior {
 
 	constructor ( target, deceleration = 3 ) {
@@ -2094,53 +2059,44 @@ class ArriveBehavior extends SteeringBehavior {
 
 	}
 
+	calculate ( vehicle, force, delta ) {
+
+		const target = this.target;
+		const deceleration = this.deceleration;
+
+		displacement$1.subVectors( target, vehicle.position );
+
+		const distance = displacement$1.length();
+
+		if ( distance > 0 ) {
+
+			// calculate the speed required to reach the target given the desired deceleration
+
+			let speed = distance / deceleration;
+
+			// make sure the speed does not exceed the max
+
+			speed = Math.min( speed, vehicle.maxSpeed );
+
+			// from here proceed just like "seek" except we don't need to normalize
+			// the "displacement" vector because we have already gone to the trouble
+			// of calculating its length.
+
+			desiredVelocity.copy( displacement$1 ).multiplyScalar( speed / distance );
+
+			force.subVectors( desiredVelocity, vehicle.velocity );
+
+		}
+
+	}
+
 }
-
-Object.assign( ArriveBehavior.prototype, {
-
-	calculate: function () {
-
-		const desiredVelocity = new Vector3$1();
-		const displacement = new Vector3$1();
-
-		return function calculate ( vehicle, force, delta ) {
-
-			const target = this.target;
-			const deceleration = this.deceleration;
-
-			displacement.subVectors( target, vehicle.position );
-
-			const distance = displacement.length();
-
-			if ( distance > 0 ) {
-
-				// calculate the speed required to reach the target given the desired deceleration
-
-				let speed = distance / deceleration;
-
-				// make sure the speed does not exceed the max
-
-				speed = Math.min( speed, vehicle.maxSpeed );
-
-				// from here proceed just like "seek" except we don't need to normalize
-				// the "displacement" vector because we have already gone to the trouble
-				// of calculating its length.
-
-				desiredVelocity.copy( displacement ).multiplyScalar( speed / distance );
-
-				force.subVectors( desiredVelocity, vehicle.velocity );
-
-			}
-
-		};
-
-	} ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
+
+const desiredVelocity$1 = new Vector3$1();
 
 class FleeBehavior extends SteeringBehavior {
 
@@ -2153,52 +2109,46 @@ class FleeBehavior extends SteeringBehavior {
 
 	}
 
-}
+	calculate ( vehicle, force, delta ) {
 
-Object.assign( FleeBehavior.prototype, {
+		const target = this.target;
 
-	calculate: function () {
+		// only flee if the target is within panic distance
 
-		const desiredVelocity = new Vector3$1();
+		const distanceToTargetSq = vehicle.position.distanceToSquared( target );
 
-		return function calculate ( vehicle, force, delta ) {
+		if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
 
-			const target = this.target;
+			// from here, the only difference compared to seek is that the desired
+			// velocity is calculated using a vector pointing in the opposite direction
 
-			// only flee if the target is within panic distance
+			desiredVelocity$1.subVectors( vehicle.position, target ).normalize();
 
-			const distanceToTargetSq = vehicle.position.distanceToSquared( target );
+			// if target and vehicle position are identical, choose default velocity
 
-			if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
+			if ( desiredVelocity$1.lengthSquared() === 0 ) {
 
-				// from here, the only difference compared to seek is that the desired
-				// velocity is calculated using a vector pointing in the opposite direction
-
-				desiredVelocity.subVectors( vehicle.position, target ).normalize();
-
-				// if target and vehicle position are identical, choose default velocity
-
-				if ( desiredVelocity.lengthSquared() === 0 ) {
-
-					desiredVelocity.set( 0, 0, 1 );
-
-				}
-
-				desiredVelocity.multiplyScalar( vehicle.maxSpeed );
-
-				force.subVectors( desiredVelocity, vehicle.velocity );
+				desiredVelocity$1.set( 0, 0, 1 );
 
 			}
 
-		};
+			desiredVelocity$1.multiplyScalar( vehicle.maxSpeed );
 
-	} ()
+			force.subVectors( desiredVelocity$1, vehicle.velocity );
 
-} );
+		}
+
+	}
+
+}
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
+
+const displacement$2 = new Vector3$1();
+const newPuruserVelocity = new Vector3$1();
+const predcitedPosition = new Vector3$1();
 
 class EvadeBehavior extends SteeringBehavior {
 
@@ -2215,43 +2165,33 @@ class EvadeBehavior extends SteeringBehavior {
 
 	}
 
+	calculate ( vehicle, force, delta ) {
+
+		const pursuer = this.pursuer;
+
+		displacement$2.subVectors( pursuer.position, vehicle.position );
+
+		const lookAheadTime = displacement$2.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+
+		// calculate new velocity and predicted future position
+
+		newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+		predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
+
+		// now flee away from predicted future position of the pursuer
+
+		this._flee.target = predcitedPosition;
+		this._flee.calculate( vehicle, force );
+
+	}
+
 }
-
-Object.assign( EvadeBehavior.prototype, {
-
-	calculate: function () {
-
-		const displacement = new Vector3$1();
-		const newPuruserVelocity = new Vector3$1();
-		const predcitedPosition = new Vector3$1();
-
-		return function calculate ( vehicle, force, delta ) {
-
-			const pursuer = this.pursuer;
-
-			displacement.subVectors( pursuer.position, vehicle.position );
-
-			const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
-
-			// calculate new velocity and predicted future position
-
-			newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-			predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
-
-			// now flee away from predicted future position of the pursuer
-
-			this._flee.target = predcitedPosition;
-			this._flee.calculate( vehicle, force );
-
-		};
-
-	} ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
+
+const desiredVelocity$2 = new Vector3$1();
 
 class SeekBehavior extends SteeringBehavior {
 
@@ -2263,37 +2203,27 @@ class SeekBehavior extends SteeringBehavior {
 
 	}
 
+	calculate ( vehicle, force, delta ) {
+
+		const target = this.target;
+
+		// First the desired velocity is calculated.
+		// This is the velocity the agent would need to reach the target position in an ideal world.
+		// It represents the vector from the agent to the target,
+		// scaled to be the length of the maximum possible speed of the agent.
+
+		desiredVelocity$2.subVectors( target, vehicle.position ).normalize();
+		desiredVelocity$2.multiplyScalar( vehicle.maxSpeed );
+
+		// The steering force returned by this method is the force required,
+		// which when added to the agent’s current velocity vector gives the desired velocity.
+		// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
+
+		force.subVectors( desiredVelocity$2, vehicle.velocity );
+
+	}
+
 }
-
-Object.assign( SeekBehavior.prototype, {
-
-	calculate: function () {
-
-		const desiredVelocity = new Vector3$1();
-
-		return function calculate ( vehicle, force, delta ) {
-
-			const target = this.target;
-
-			// First the desired velocity is calculated.
-			// This is the velocity the agent would need to reach the target position in an ideal world.
-			// It represents the vector from the agent to the target,
-			// scaled to be the length of the maximum possible speed of the agent.
-
-			desiredVelocity.subVectors( target, vehicle.position ).normalize();
-			desiredVelocity.multiplyScalar( vehicle.maxSpeed );
-
-			// The steering force returned by this method is the force required,
-			// which when added to the agent’s current velocity vector gives the desired velocity.
-			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
-
-			force.subVectors( desiredVelocity, vehicle.velocity );
-
-		};
-
-	} ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -2356,6 +2286,10 @@ class FollowPathBehavior extends SteeringBehavior {
  * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
  *
  */
+
+const x$1 = new Vector3$1();
+const y$1 = new Vector3$1();
+const z$1 = new Vector3$1();
 
 class Matrix4$1 {
 
@@ -2628,6 +2562,53 @@ class Matrix4$1 {
 
 	}
 
+	lookAt ( eye, target, up ) {
+
+		z$1.subVectors( eye, target );
+
+		if ( z$1.lengthSquared() === 0 ) {
+
+			// eye and target are in the same position
+
+			z$1.z = 1;
+
+		}
+
+		z$1.normalize();
+		x$1.crossVectors( up, z$1 );
+
+		if ( x$1.lengthSquared() === 0 ) {
+
+			// up and z are parallel
+
+			if ( Math.abs( up.z ) === 1 ) {
+
+				z$1.x += 0.0001;
+
+			} else {
+
+				z$1.z += 0.0001;
+
+			}
+
+			z$1.normalize();
+			x$1.crossVectors( up, z$1 );
+
+		}
+
+		x$1.normalize();
+		y$1.crossVectors( z$1, x$1 );
+
+		const e = this.elements;
+
+			e[ 0 ] = x$1.x; e[ 4 ] = y$1.x; e[ 8 ] = z$1.x;
+			e[ 1 ] = x$1.y; e[ 5 ] = y$1.y; e[ 9 ] = z$1.y;
+			e[ 2 ] = x$1.z; e[ 6 ] = y$1.z; e[ 10 ] = z$1.z;
+
+			return this;
+
+	 }
+
 	equals ( m ) {
 
 		const e = this.elements;
@@ -2687,71 +2668,14 @@ class Matrix4$1 {
 
 }
 
-Object.assign( Matrix4$1.prototype, {
-
-	lookAt: function () {
-
-		const x = new Vector3$1();
-		const y = new Vector3$1();
-		const z = new Vector3$1();
-
-		return function lookAt ( eye, target, up ) {
-
-			z.subVectors( eye, target );
-
-			if ( z.lengthSquared() === 0 ) {
-
-				// eye and target are in the same position
-
-				z.z = 1;
-
-			}
-
-			z.normalize();
-			x.crossVectors( up, z );
-
-			if ( x.lengthSquared() === 0 ) {
-
-				// up and z are parallel
-
-				if ( Math.abs( up.z ) === 1 ) {
-
-					z.x += 0.0001;
-
-				} else {
-
-					z.z += 0.0001;
-
-				}
-
-				z.normalize();
-				x.crossVectors( up, z );
-
-			}
-
-			x.normalize();
-			y.crossVectors( z, x );
-
-			const e = this.elements;
-
-				e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
-				e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
-				e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
-
-				return this;
-
-		 };
-
-	 } ()
-
-} );
-
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
  * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
  *
  */
+
+const v1 = new Vector3$1();
 
 class Ray {
 
@@ -2786,6 +2710,41 @@ class Ray {
 
 	}
 
+	intersectSphere ( center, radius, result = new Vector3$1() ) {
+
+		v1.subVectors( center, this.origin );
+		const tca = v1.dot( this.direction );
+		const d2 = v1.dot( v1 ) - tca * tca;
+		const radius2 = radius * radius;
+
+		if ( d2 > radius2 ) return null;
+
+		const thc = Math.sqrt( radius2 - d2 );
+
+		// t0 = first intersect point - entrance on front of sphere
+
+		const t0 = tca - thc;
+
+		// t1 = second intersect point - exit point on back of sphere
+
+		const t1 = tca + thc;
+
+		// test to see if both t0 and t1 are behind the ray - if so, return null
+
+		if ( t0 < 0 && t1 < 0 ) return null;
+
+		// test to see if t0 is behind the ray:
+		// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
+		// in order to always return an intersect point that is in front of the ray.
+
+		if ( t0 < 0 ) return this.at( t1, result );
+
+		// else t0 is in front of the ray, so return the first collision point scaled by t0
+
+		return this.at( t0, result );
+
+	}
+
 	equals ( ray ) {
 
 		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
@@ -2794,54 +2753,18 @@ class Ray {
 
 }
 
-Object.assign( Ray.prototype, {
-
-	intersectSphere: function () {
-
-		const v1 = new Vector3$1();
-
-		return function intersectSphere( center, radius, result = new Vector3$1() ) {
-
-			v1.subVectors( center, this.origin );
-			const tca = v1.dot( this.direction );
-			const d2 = v1.dot( v1 ) - tca * tca;
-			const radius2 = radius * radius;
-
-			if ( d2 > radius2 ) return null;
-
-			const thc = Math.sqrt( radius2 - d2 );
-
-			// t0 = first intersect point - entrance on front of sphere
-
-			const t0 = tca - thc;
-
-			// t1 = second intersect point - exit point on back of sphere
-
-			const t1 = tca + thc;
-
-			// test to see if both t0 and t1 are behind the ray - if so, return null
-
-			if ( t0 < 0 && t1 < 0 ) return null;
-
-			// test to see if t0 is behind the ray:
-			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
-			// in order to always return an intersect point that is in front of the ray.
-
-			if ( t0 < 0 ) return this.at( t1, result );
-
-			// else t0 is in front of the ray, so return the first collision point scaled by t0
-
-			return this.at( t0, result );
-
-		};
-
-	} ()
-
-} );
-
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
+
+const inverse = new Matrix4$1();
+const localPositionOfObstacle = new Vector3$1();
+const localPositionOfClosestObstacle = new Vector3$1();
+const intersectionPoint = new Vector3$1();
+
+// this will be later used for a ray/sphere intersection test
+
+const ray = new Ray( new Vector3$1( 0, 0, 0 ), new Vector3$1( 0, 0, 1 ) );
 
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
@@ -2856,82 +2779,65 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	}
 
-}
+	calculate ( vehicle, force, delta ) {
 
-Object.assign( ObstacleAvoidanceBehavior.prototype, {
+		// this will keep track of the closest intersecting obstacle
 
-	calculate: function () {
+		let closestObstacle = null;
 
-		const inverse = new Matrix4$1();
-		const localPositionOfObstacle = new Vector3$1();
-		const localPositionOfClosestObstacle = new Vector3$1();
-		const intersectionPoint = new Vector3$1();
+		// this will be used to track the distance to the closest obstacle
 
-		// this will be later used for a ray/sphere intersection test
+		let distanceToClosestObstacle = Infinity;
 
-		const ray = new Ray( new Vector3$1( 0, 0, 0 ), new Vector3$1( 0, 0, 1 ) );
+		// the obstacles in the game world
 
-		return function calculate ( vehicle, force, delta ) {
+		const obstacles = entityManager.entities.values();
 
-			// this will keep track of the closest intersecting obstacle
+		// the detection box length is proportional to the agent's velocity
 
-			let closestObstacle = null;
+		const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-			// this will be used to track the distance to the closest obstacle
+		inverse.getInverse( vehicle.matrix );
 
-			let distanceToClosestObstacle = Infinity;
+		for ( let obstacle of obstacles ) {
 
-			// the obstacles in the game world
+			if ( obstacle === vehicle ) continue;
 
-			const obstacles = entityManager.entities.values();
+			// calculate this obstacle's position in local space of the vehicle
 
-			// the detection box length is proportional to the agent's velocity
+			localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
 
-			const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
+			// if the local position has a positive z value then it must lay behind the agent.
+			// besides the absolute z value must be smaller than the length of the detection box
 
-			inverse.getInverse( vehicle.matrix );
+			if ( localPositionOfObstacle.z > 0 && Math.abs( localPositionOfObstacle.z ) < dBoxLength ) {
 
-			for ( let obstacle of obstacles ) {
+				// if the distance from the x axis to the object's position is less
+				// than its radius + half the width of the detection box then there is a potential intersection
 
-				if ( obstacle === vehicle ) continue;
+				const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
 
-				// calculate this obstacle's position in local space of the vehicle
+				if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
 
-				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
+					// do intersection test in local space of the vehicle
 
-				// if the local position has a positive z value then it must lay behind the agent.
-				// besides the absolute z value must be smaller than the length of the detection box
+					ray.intersectSphere( localPositionOfObstacle, expandedRadius, intersectionPoint );
 
-				if ( localPositionOfObstacle.z > 0 && Math.abs( localPositionOfObstacle.z ) < dBoxLength ) {
+					// compare distances
 
-					// if the distance from the x axis to the object's position is less
-					// than its radius + half the width of the detection box then there is a potential intersection
+					if ( intersectionPoint.z < distanceToClosestObstacle ) {
 
-					const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
+						// save new minimum distance
 
-					if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
+						distanceToClosestObstacle = intersectionPoint.z;
 
-						// do intersection test in local space of the vehicle
+						// save closest obstacle
 
-						ray.intersectSphere( localPositionOfObstacle, expandedRadius, intersectionPoint );
+						closestObstacle = obstacle;
 
-						// compare distances
+						// save local position for force calculation
 
-						if ( intersectionPoint.z < distanceToClosestObstacle ) {
-
-							// save new minimum distance
-
-							distanceToClosestObstacle = intersectionPoint.z;
-
-							// save closest obstacle
-
-							closestObstacle = obstacle;
-
-							// save local position for force calculation
-
-							localPositionOfClosestObstacle.copy( localPositionOfObstacle );
-
-						}
+						localPositionOfClosestObstacle.copy( localPositionOfObstacle );
 
 					}
 
@@ -2939,37 +2845,43 @@ Object.assign( ObstacleAvoidanceBehavior.prototype, {
 
 			}
 
-			// if we have found an intersecting obstacle, calculate a steering force away from it
+		}
 
-			if ( closestObstacle !== null ) {
+		// if we have found an intersecting obstacle, calculate a steering force away from it
 
-				// the closer the agent is to an object, the stronger the steering force should be
+		if ( closestObstacle !== null ) {
 
-				const multiplier =  1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
+			// the closer the agent is to an object, the stronger the steering force should be
 
-				// calculate the lateral force
+			const multiplier =  1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
 
-				force.x = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.x ) * multiplier;
+			// calculate the lateral force
 
-				// apply a braking force proportional to the obstacles distance from the vehicle
+			force.x = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.x ) * multiplier;
 
-				force.z = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.z ) * this.brakingWeight;
+			// apply a braking force proportional to the obstacles distance from the vehicle
 
-				// finally, convert the steering vector from local to world space (just apply the rotation)
+			force.z = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.z ) * this.brakingWeight;
 
-				force.applyQuaternion( vehicle.rotation );
+			// finally, convert the steering vector from local to world space (just apply the rotation)
 
-			}
+			force.applyQuaternion( vehicle.rotation );
 
-		};
+		}
 
-	} ()
+	}
 
-} );
+}
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
+
+const displacement$3 = new Vector3$1();
+const vehicleDirection = new Vector3$1();
+const evaderDirection = new Vector3$1();
+const newEvaderVelocity = new Vector3$1();
+const predcitedPosition$1 = new Vector3$1();
 
 class PursuitBehavior extends SteeringBehavior {
 
@@ -2986,71 +2898,60 @@ class PursuitBehavior extends SteeringBehavior {
 
 	}
 
+	calculate ( vehicle, force, delta ) {
+
+		const evader = this.evader;
+
+		displacement$3.subVectors( evader.position, vehicle.position );
+
+		// 1. if the evader is ahead and facing the agent then we can just seek for the evader's current position
+
+		vehicle.getDirection( vehicleDirection );
+		evader.getDirection( evaderDirection );
+
+		// first condition: evader must be in front of the pursuer
+
+		const evaderAhead = displacement$3.dot( vehicleDirection ) > 0;
+
+		// second condition: evader must almost directly facing the agent
+
+		const facing = vehicleDirection.dot( evaderDirection ) < - 0.95;
+
+		if ( evaderAhead === true && facing === true ) {
+
+			this._seek( force, evader.position );
+			return;
+
+		}
+
+		// 2. evader not considered ahead so we predict where the evader will be
+
+		// the lookahead time is proportional to the distance between the evader
+		// and the pursuer. and is inversely proportional to the sum of the
+		// agent's velocities
+
+		const lookAheadTime = displacement$3.length() / ( vehicle.maxSpeed + evader.getSpeed() );
+
+		// calculate new velocity and predicted future position
+
+		newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
+		predcitedPosition$1.addVectors( evader.position, newEvaderVelocity );
+
+		// now seek to the predicted future position of the evader
+
+		this._seek.target = predcitedPosition$1;
+		this._seek.calculate( force );
+
+	}
+
 }
-
-Object.assign( PursuitBehavior.prototype, {
-
-	calculate: function () {
-
-		const displacement = new Vector3$1();
-		const vehicleDirection = new Vector3$1();
-		const evaderDirection = new Vector3$1();
-		const newEvaderVelocity = new Vector3$1();
-		const predcitedPosition = new Vector3$1();
-
-		return function calculate ( vehicle, force, delta ) {
-
-			const evader = this.evader;
-
-			displacement.subVectors( evader.position, vehicle.position );
-
-			// 1. if the evader is ahead and facing the agent then we can just seek for the evader's current position
-
-			vehicle.getDirection( vehicleDirection );
-			evader.getDirection( evaderDirection );
-
-			// first condition: evader must be in front of the pursuer
-
-			const evaderAhead = displacement.dot( vehicleDirection ) > 0;
-
-			// second condition: evader must almost directly facing the agent
-
-			const facing = vehicleDirection.dot( evaderDirection ) < - 0.95;
-
-			if ( evaderAhead === true && facing === true ) {
-
-				this._seek( force, evader.position );
-				return;
-
-			}
-
-			// 2. evader not considered ahead so we predict where the evader will be
-
-			// the lookahead time is proportional to the distance between the evader
-			// and the pursuer. and is inversely proportional to the sum of the
-			// agent's velocities
-
-			const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + evader.getSpeed() );
-
-			// calculate new velocity and predicted future position
-
-			newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
-			predcitedPosition.addVectors( evader.position, newEvaderVelocity );
-
-			// now seek to the predicted future position of the evader
-
-			this._seek.target = predcitedPosition;
-			this._seek.calculate( force );
-
-		};
-
-	} ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
+
+const targetWorld = new Vector3$1();
+const randomDisplacement = new Vector3$1();
 
 class WanderBehavior extends SteeringBehavior {
 
@@ -3068,6 +2969,45 @@ class WanderBehavior extends SteeringBehavior {
 
 	}
 
+	calculate ( vehicle, force, delta ) {
+
+		// this behavior is dependent on the update rate, so this line must be
+		// included when using time independent frame rate
+
+		const jitterThisTimeSlice = this.jitter * delta;
+
+		// prepare random vector
+
+		randomDisplacement.x = _Math$1.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+		randomDisplacement.z = _Math$1.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+
+		// add random vector to the target's position
+
+		this._targetLocal.add( randomDisplacement );
+
+		// re-project this new vector back onto a unit sphere
+
+		this._targetLocal.normalize();
+
+		// increase the length of the vector to the same as the radius of the wander sphere
+
+		this._targetLocal.multiplyScalar( this.radius );
+
+		// move the target into a position wanderDist in front of the agent
+
+		targetWorld.copy( this._targetLocal );
+		targetWorld.z += this.distance;
+
+		// project the target into world space
+
+		targetWorld.applyMatrix4( vehicle.matrix );
+
+		// and steer towards it
+
+		force.subVectors( targetWorld, vehicle.position );
+
+	}
+
 	_setup () {
 
 		var theta = Math.random() * Math.PI * 2;
@@ -3081,56 +3021,6 @@ class WanderBehavior extends SteeringBehavior {
 	}
 
 }
-
-Object.assign( WanderBehavior.prototype, {
-
-	calculate: function () {
-
-		const targetWorld = new Vector3$1();
-		const randomDisplacement = new Vector3$1();
-
-		return function calculate ( vehicle, force, delta ) {
-
-			// this behavior is dependent on the update rate, so this line must be
-			// included when using time independent frame rate
-
-			const jitterThisTimeSlice = this.jitter * delta;
-
-			// prepare random vector
-
-			randomDisplacement.x = _Math$1.randFloat( - 1, 1 ) * jitterThisTimeSlice;
-			randomDisplacement.z = _Math$1.randFloat( - 1, 1 ) * jitterThisTimeSlice;
-
-			// add random vector to the target's position
-
-			this._targetLocal.add( randomDisplacement );
-
-			// re-project this new vector back onto a unit sphere
-
-			this._targetLocal.normalize();
-
-			// increase the length of the vector to the same as the radius of the wander sphere
-
-			this._targetLocal.multiplyScalar( this.radius );
-
-			// move the target into a position wanderDist in front of the agent
-
-			targetWorld.copy( this._targetLocal );
-			targetWorld.z += this.distance;
-
-			// project the target into world space
-
-			targetWorld.applyMatrix4( vehicle.matrix );
-
-			// and steer towards it
-
-			force.subVectors( targetWorld, vehicle.position );
-
-		};
-
-	} ()
-
-} );
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -3246,6 +3136,8 @@ class StateMachine {
  *
  */
 
+const v1$1 = new Vector3();
+
 class Ray$1 {
 
 	constructor ( origin = new Vector3(), direction = new Vector3() ) {
@@ -3279,6 +3171,41 @@ class Ray$1 {
 
 	}
 
+	intersectSphere ( center, radius, result = new Vector3() ) {
+
+		v1$1.subVectors( center, this.origin );
+		const tca = v1$1.dot( this.direction );
+		const d2 = v1$1.dot( v1$1 ) - tca * tca;
+		const radius2 = radius * radius;
+
+		if ( d2 > radius2 ) return null;
+
+		const thc = Math.sqrt( radius2 - d2 );
+
+		// t0 = first intersect point - entrance on front of sphere
+
+		const t0 = tca - thc;
+
+		// t1 = second intersect point - exit point on back of sphere
+
+		const t1 = tca + thc;
+
+		// test to see if both t0 and t1 are behind the ray - if so, return null
+
+		if ( t0 < 0 && t1 < 0 ) return null;
+
+		// test to see if t0 is behind the ray:
+		// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
+		// in order to always return an intersect point that is in front of the ray.
+
+		if ( t0 < 0 ) return this.at( t1, result );
+
+		// else t0 is in front of the ray, so return the first collision point scaled by t0
+
+		return this.at( t0, result );
+
+	}
+
 	equals ( ray ) {
 
 		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
@@ -3286,51 +3213,6 @@ class Ray$1 {
 	}
 
 }
-
-Object.assign( Ray$1.prototype, {
-
-	intersectSphere: function () {
-
-		const v1 = new Vector3();
-
-		return function intersectSphere( center, radius, result = new Vector3() ) {
-
-			v1.subVectors( center, this.origin );
-			const tca = v1.dot( this.direction );
-			const d2 = v1.dot( v1 ) - tca * tca;
-			const radius2 = radius * radius;
-
-			if ( d2 > radius2 ) return null;
-
-			const thc = Math.sqrt( radius2 - d2 );
-
-			// t0 = first intersect point - entrance on front of sphere
-
-			const t0 = tca - thc;
-
-			// t1 = second intersect point - exit point on back of sphere
-
-			const t1 = tca + thc;
-
-			// test to see if both t0 and t1 are behind the ray - if so, return null
-
-			if ( t0 < 0 && t1 < 0 ) return null;
-
-			// test to see if t0 is behind the ray:
-			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
-			// in order to always return an intersect point that is in front of the ray.
-
-			if ( t0 < 0 ) return this.at( t1, result );
-
-			// else t0 is in front of the ray, so return the first collision point scaled by t0
-
-			return this.at( t0, result );
-
-		};
-
-	} ()
-
-} );
 
 exports.EntityManager = EntityManager;
 exports.GameEntity = GameEntity;

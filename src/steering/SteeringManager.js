@@ -4,6 +4,8 @@
 
 import { Vector3 } from '../Math/Vector3';
 
+const force = new Vector3();
+
 class SteeringManager {
 
 	constructor ( vehicle ) {
@@ -80,38 +82,28 @@ class SteeringManager {
 
 	}
 
+	_calculateByOrder ( delta ) {
+
+		// reset steering force
+
+		this._steeringForce.set( 0, 0, 0 );
+
+		// calculate for each behavior the respective force
+
+		for ( let behavior of this.behaviors ) {
+
+			force.set( 0, 0, 0 );
+
+			behavior.calculate( this.vehicle, force, delta );
+
+			force.multiplyScalar( behavior.weigth );
+
+			if ( this._accumulate( force ) === false ) return;
+
+		}
+
+	}
+
 }
-
-Object.assign( SteeringManager.prototype, {
-
-	_calculateByOrder: function () {
-
-		const force = new Vector3();
-
-		return function _calculatePrioritized ( delta ) {
-
-			// reset steering force
-
-			this._steeringForce.set( 0, 0, 0 );
-
-			// calculate for each behavior the respective force
-
-			for ( let behavior of this.behaviors ) {
-
-				force.set( 0, 0, 0 );
-
-				behavior.calculate( this.vehicle, force, delta );
-
-				force.multiplyScalar( behavior.weigth );
-
-				if ( this._accumulate( force ) === false ) return;
-
-			}
-
-		};
-
-	} ()
-
-} );
 
 export { SteeringManager };

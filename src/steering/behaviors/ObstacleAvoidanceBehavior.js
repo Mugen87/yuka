@@ -7,6 +7,15 @@ import { Vector3 } from '../../Math/Vector3';
 import { Matrix4 } from '../../Math/Matrix4';
 import { Ray } from '../../Math/Ray';
 
+const inverse = new Matrix4();
+const localPositionOfObstacle = new Vector3();
+const localPositionOfClosestObstacle = new Vector3();
+const intersectionPoint = new Vector3();
+
+// this will be later used for a ray/sphere intersection test
+
+const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
+
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	constructor ( entityManager ) {
@@ -20,82 +29,65 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	}
 
-}
+	calculate ( vehicle, force, delta ) {
 
-Object.assign( ObstacleAvoidanceBehavior.prototype, {
+		// this will keep track of the closest intersecting obstacle
 
-	calculate: function () {
+		let closestObstacle = null;
 
-		const inverse = new Matrix4();
-		const localPositionOfObstacle = new Vector3();
-		const localPositionOfClosestObstacle = new Vector3();
-		const intersectionPoint = new Vector3();
+		// this will be used to track the distance to the closest obstacle
 
-		// this will be later used for a ray/sphere intersection test
+		let distanceToClosestObstacle = Infinity;
 
-		const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
+		// the obstacles in the game world
 
-		return function calculate ( vehicle, force, delta ) {
+		const obstacles = entityManager.entities.values();
 
-			// this will keep track of the closest intersecting obstacle
+		// the detection box length is proportional to the agent's velocity
 
-			let closestObstacle = null;
+		const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-			// this will be used to track the distance to the closest obstacle
+		inverse.getInverse( vehicle.matrix );
 
-			let distanceToClosestObstacle = Infinity;
+		for ( let obstacle of obstacles ) {
 
-			// the obstacles in the game world
+			if ( obstacle === vehicle ) continue;
 
-			const obstacles = entityManager.entities.values();
+			// calculate this obstacle's position in local space of the vehicle
 
-			// the detection box length is proportional to the agent's velocity
+			localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
 
-			const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
+			// if the local position has a positive z value then it must lay behind the agent.
+			// besides the absolute z value must be smaller than the length of the detection box
 
-			inverse.getInverse( vehicle.matrix );
+			if ( localPositionOfObstacle.z > 0 && Math.abs( localPositionOfObstacle.z ) < dBoxLength ) {
 
-			for ( let obstacle of obstacles ) {
+				// if the distance from the x axis to the object's position is less
+				// than its radius + half the width of the detection box then there is a potential intersection
 
-				if ( obstacle === vehicle ) continue;
+				const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
 
-				// calculate this obstacle's position in local space of the vehicle
+				if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
 
-				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
+					// do intersection test in local space of the vehicle
 
-				// if the local position has a positive z value then it must lay behind the agent.
-				// besides the absolute z value must be smaller than the length of the detection box
+					ray.intersectSphere( localPositionOfObstacle, expandedRadius, intersectionPoint );
 
-				if ( localPositionOfObstacle.z > 0 && Math.abs( localPositionOfObstacle.z ) < dBoxLength ) {
+					// compare distances
 
-					// if the distance from the x axis to the object's position is less
-					// than its radius + half the width of the detection box then there is a potential intersection
+					if ( intersectionPoint.z < distanceToClosestObstacle ) {
 
-					const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
+						// save new minimum distance
 
-					if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
+						distanceToClosestObstacle = intersectionPoint.z;
 
-						// do intersection test in local space of the vehicle
+						// save closest obstacle
 
-						ray.intersectSphere( localPositionOfObstacle, expandedRadius, intersectionPoint );
+						closestObstacle = obstacle;
 
-						// compare distances
+						// save local position for force calculation
 
-						if ( intersectionPoint.z < distanceToClosestObstacle ) {
-
-							// save new minimum distance
-
-							distanceToClosestObstacle = intersectionPoint.z;
-
-							// save closest obstacle
-
-							closestObstacle = obstacle;
-
-							// save local position for force calculation
-
-							localPositionOfClosestObstacle.copy( localPositionOfObstacle );
-
-						}
+						localPositionOfClosestObstacle.copy( localPositionOfObstacle );
 
 					}
 
@@ -103,32 +95,32 @@ Object.assign( ObstacleAvoidanceBehavior.prototype, {
 
 			}
 
-			// if we have found an intersecting obstacle, calculate a steering force away from it
+		}
 
-			if ( closestObstacle !== null ) {
+		// if we have found an intersecting obstacle, calculate a steering force away from it
 
-				// the closer the agent is to an object, the stronger the steering force should be
+		if ( closestObstacle !== null ) {
 
-				const multiplier =  1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
+			// the closer the agent is to an object, the stronger the steering force should be
 
-				// calculate the lateral force
+			const multiplier =  1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
 
-				force.x = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.x ) * multiplier;
+			// calculate the lateral force
 
-				// apply a braking force proportional to the obstacles distance from the vehicle
+			force.x = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.x ) * multiplier;
 
-				force.z = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.z ) * this.brakingWeight;
+			// apply a braking force proportional to the obstacles distance from the vehicle
 
-				// finally, convert the steering vector from local to world space (just apply the rotation)
+			force.z = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.z ) * this.brakingWeight;
 
-				force.applyQuaternion( vehicle.rotation );
+			// finally, convert the steering vector from local to world space (just apply the rotation)
 
-			}
+			force.applyQuaternion( vehicle.rotation );
 
-		};
+		}
 
-	} ()
+	}
 
-} );
+}
 
 export { ObstacleAvoidanceBehavior };

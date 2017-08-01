@@ -5,6 +5,8 @@
 import { SteeringBehavior } from '../SteeringBehavior';
 import { Vector3 } from '../../Math/Vector3';
 
+const desiredVelocity = new Vector3();
+
 class FleeBehavior extends SteeringBehavior {
 
 	constructor ( target, panicDistance = 10 ) {
@@ -16,47 +18,37 @@ class FleeBehavior extends SteeringBehavior {
 
 	}
 
-}
+	calculate ( vehicle, force, delta ) {
 
-Object.assign( FleeBehavior.prototype, {
+		const target = this.target;
 
-	calculate: function () {
+		// only flee if the target is within panic distance
 
-		const desiredVelocity = new Vector3();
+		const distanceToTargetSq = vehicle.position.distanceToSquared( target );
 
-		return function calculate ( vehicle, force, delta ) {
+		if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
 
-			const target = this.target;
+			// from here, the only difference compared to seek is that the desired
+			// velocity is calculated using a vector pointing in the opposite direction
 
-			// only flee if the target is within panic distance
+			desiredVelocity.subVectors( vehicle.position, target ).normalize();
 
-			const distanceToTargetSq = vehicle.position.distanceToSquared( target );
+			// if target and vehicle position are identical, choose default velocity
 
-			if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
+			if ( desiredVelocity.lengthSquared() === 0 ) {
 
-				// from here, the only difference compared to seek is that the desired
-				// velocity is calculated using a vector pointing in the opposite direction
-
-				desiredVelocity.subVectors( vehicle.position, target ).normalize();
-
-				// if target and vehicle position are identical, choose default velocity
-
-				if ( desiredVelocity.lengthSquared() === 0 ) {
-
-					desiredVelocity.set( 0, 0, 1 );
-
-				}
-
-				desiredVelocity.multiplyScalar( vehicle.maxSpeed );
-
-				force.subVectors( desiredVelocity, vehicle.velocity );
+				desiredVelocity.set( 0, 0, 1 );
 
 			}
 
-		};
+			desiredVelocity.multiplyScalar( vehicle.maxSpeed );
 
-	} ()
+			force.subVectors( desiredVelocity, vehicle.velocity );
 
-} );
+		}
+
+	}
+
+}
 
 export { FleeBehavior };
