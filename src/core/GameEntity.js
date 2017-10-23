@@ -2,14 +2,14 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { EventDispatcher } from './EventDispatcher';
-import { Vector3 } from '../math/Vector3';
-import { Quaternion } from '../math/Quaternion';
-import { Matrix4 } from '../math/Matrix4';
+import { EventDispatcher } from './EventDispatcher.js';
+import { Vector3 } from '../math/Vector3.js';
+import { Quaternion } from '../math/Quaternion.js';
+import { Matrix4 } from '../math/Matrix4.js';
 
 class GameEntity extends EventDispatcher {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -27,9 +27,9 @@ class GameEntity extends EventDispatcher {
 
 	}
 
-	update () {}
+	update() {}
 
-	sendMessage ( receiver, message, delay = 0, data = null ) {
+	sendMessage( receiver, message, delay = 0, data = null ) {
 
 		const event = {
 			type: 'message',
@@ -43,13 +43,13 @@ class GameEntity extends EventDispatcher {
 
 	}
 
-	handleMessage () {
+	handleMessage() {
 
 		return false;
 
 	}
 
-	updateMatrix () {
+	updateMatrix() {
 
 		this.matrix.compose( this.position, this.rotation, this.scale );
 

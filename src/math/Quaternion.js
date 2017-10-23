@@ -7,7 +7,7 @@
 
 class Quaternion {
 
-	constructor ( x = 0, y = 0, z = 0, w = 1 ) {
+	constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
 		this.x = x;
 		this.y = y;
@@ -16,7 +16,7 @@ class Quaternion {
 
 	}
 
-	set ( x, y, z, w ) {
+	set( x, y, z, w ) {
 
 		this.x = x;
 		this.y = y;
@@ -27,7 +27,7 @@ class Quaternion {
 
 	}
 
-	copy ( q ) {
+	copy( q ) {
 
 		this.x = q.x;
 		this.y = q.y;
@@ -38,13 +38,13 @@ class Quaternion {
 
 	}
 
-	inverse () {
+	inverse() {
 
 		return this.conjugate().normalize();
 
 	}
 
-	conjugate () {
+	conjugate() {
 
 		this.x *= - 1;
 		this.y *= - 1;
@@ -54,25 +54,25 @@ class Quaternion {
 
 	}
 
-	dot ( q ) {
+	dot( q ) {
 
 		return ( this.x * q.x ) + ( this.y * q.y ) + ( this.z * q.z ) + ( this.w * q.w );
 
 	}
 
-	length () {
+	length() {
 
 		return Math.sqrt( this.lengthSquared() );
 
 	}
 
-	lengthSquared () {
+	lengthSquared() {
 
 		return this.dot( this );
 
 	}
 
-	normalize () {
+	normalize() {
 
 		let l = this.length();
 
@@ -98,19 +98,19 @@ class Quaternion {
 
 	}
 
-	multiply ( q ) {
+	multiply( q ) {
 
 		return this.multiplyQuaternions( this, q );
 
 	}
 
-	premultiply ( q ) {
+	premultiply( q ) {
 
 		return this.multiplyQuaternions( q, this );
 
 	}
 
-	multiplyQuaternions ( a, b ) {
+	multiplyQuaternions( a, b ) {
 
 		const qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
 		const qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
@@ -124,7 +124,7 @@ class Quaternion {
 
 	}
 
-	slerp ( q, t ) {
+	slerp( q, t ) {
 
 		if ( t === 0 ) return this;
 		if ( t === 1 ) return this.copy( q );
@@ -185,7 +185,7 @@ class Quaternion {
 
 	}
 
-	setFromRotationMatrix ( m ) {
+	setFromRotationMatrix( m ) {
 
 		const e = m.elements;
 
@@ -237,13 +237,13 @@ class Quaternion {
 
 	}
 
-	equals ( q ) {
+	equals( q ) {
 
 		return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
 		this.y = array[ offset + 1 ];
@@ -254,7 +254,7 @@ class Quaternion {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;

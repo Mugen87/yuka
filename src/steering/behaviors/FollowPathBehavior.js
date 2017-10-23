@@ -2,13 +2,13 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from '../SteeringBehavior';
-import { SeekBehavior } from './SeekBehavior';
-import { ArriveBehavior } from './ArriveBehavior';
+import { SteeringBehavior } from '../SteeringBehavior.js';
+import { SeekBehavior } from './SeekBehavior.js';
+import { ArriveBehavior } from './ArriveBehavior.js';
 
 class FollowPathBehavior extends SteeringBehavior {
 
-	constructor ( path ) {
+	constructor( path ) {
 
 		super();
 
@@ -22,7 +22,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const path = this.path;
 		const nextWaypointDistance = this._nextWaypointDistance;

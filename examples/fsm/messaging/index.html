@@ -29,13 +29,15 @@
 
 	setInterval( function() {
 
-		const delta = performance.now() - lastTimestap;
+		const now = performance.now()
+
+		const delta = now - lastTimestap;
 
 		entityManager.update( delta );
 
-		lastTimestap = performance.now();
+		lastTimestap = now;
 
-	}, 1000 );
+	}, 2000 );
 
 	</script>
 

@@ -5,11 +5,11 @@
  *
  */
 
-import { _Math } from './Math';
+import { _Math } from './Math.js';
 
 class Vector3 {
 
-	constructor ( x = 0, y = 0, z = 0 ) {
+	constructor( x = 0, y = 0, z = 0 ) {
 
 		this.x = x;
 		this.y = y;
@@ -17,7 +17,7 @@ class Vector3 {
 
 	}
 
-	set ( x, y, z ) {
+	set( x, y, z ) {
 
 		this.x = x;
 		this.y = y;
@@ -27,7 +27,7 @@ class Vector3 {
 
 	}
 
-	copy ( v ) {
+	copy( v ) {
 
 		this.x = v.x;
 		this.y = v.y;
@@ -37,7 +37,7 @@ class Vector3 {
 
 	}
 
-	add ( v ) {
+	add( v ) {
 
 		this.x += v.x;
 		this.y += v.y;
@@ -47,7 +47,7 @@ class Vector3 {
 
 	}
 
-	addScalar ( s ) {
+	addScalar( s ) {
 
 		this.x += s;
 		this.y += s;
@@ -57,7 +57,7 @@ class Vector3 {
 
 	}
 
-	addVectors ( a, b ) {
+	addVectors( a, b ) {
 
 		this.x = a.x + b.x;
 		this.y = a.y + b.y;
@@ -67,7 +67,7 @@ class Vector3 {
 
 	}
 
-	sub ( v ) {
+	sub( v ) {
 
 		this.x -= v.x;
 		this.y -= v.y;
@@ -77,7 +77,7 @@ class Vector3 {
 
 	}
 
-	subScalar ( s ) {
+	subScalar( s ) {
 
 		this.x -= s;
 		this.y -= s;
@@ -87,7 +87,7 @@ class Vector3 {
 
 	}
 
-	subVectors ( a, b ) {
+	subVectors( a, b ) {
 
 		this.x = a.x - b.x;
 		this.y = a.y - b.y;
@@ -97,7 +97,7 @@ class Vector3 {
 
 	}
 
-	multiply ( v ) {
+	multiply( v ) {
 
 		this.x *= v.x;
 		this.y *= v.y;
@@ -107,7 +107,7 @@ class Vector3 {
 
 	}
 
-	multiplyScalar ( s ) {
+	multiplyScalar( s ) {
 
 		this.x *= s;
 		this.y *= s;
@@ -117,7 +117,7 @@ class Vector3 {
 
 	}
 
-	multiplyVectors ( a, b ) {
+	multiplyVectors( a, b ) {
 
 		this.x = a.x * b.x;
 		this.y = a.y * b.y;
@@ -127,7 +127,7 @@ class Vector3 {
 
 	}
 
-	divide ( v ) {
+	divide( v ) {
 
 		this.x /= v.x;
 		this.y /= v.y;
@@ -137,7 +137,7 @@ class Vector3 {
 
 	}
 
-	divideScalar ( s ) {
+	divideScalar( s ) {
 
 		this.x /= s;
 		this.y /= s;
@@ -147,7 +147,7 @@ class Vector3 {
 
 	}
 
-	divideVectors ( a, b ) {
+	divideVectors( a, b ) {
 
 		this.x = a.x / b.x;
 		this.y = a.y / b.y;
@@ -157,13 +157,13 @@ class Vector3 {
 
 	}
 
-	dot ( v ) {
+	dot( v ) {
 
 		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
 
 	}
 
-	cross ( v ) {
+	cross( v ) {
 
 		const x = this.x, y = this.y, z = this.z;
 
@@ -175,7 +175,7 @@ class Vector3 {
 
 	}
 
-	crossVectors ( a, b ) {
+	crossVectors( a, b ) {
 
 		const ax = a.x, ay = a.y, az = a.z;
 		const bx = b.x, by = b.y, bz = b.z;
@@ -188,7 +188,7 @@ class Vector3 {
 
 	}
 
-	angleTo ( v ) {
+	angleTo( v ) {
 
 		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
 
@@ -198,25 +198,25 @@ class Vector3 {
 
 	}
 
-	length () {
+	length() {
 
 		return Math.sqrt( this.lengthSquared() );
 
 	}
 
-	lengthSquared () {
+	lengthSquared() {
 
 		return this.dot( this );
 
 	}
 
-	distanceTo ( v ) {
+	distanceTo( v ) {
 
 		return Math.sqrt( this.distanceToSquared( v ) );
 
 	}
 
-	distanceToSquared ( v ) {
+	distanceToSquared( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
@@ -224,37 +224,37 @@ class Vector3 {
 
 	}
 
-	normalize () {
+	normalize() {
 
 		return this.divideScalar( this.length() || 1 );
 
 	}
 
-	applyMatrix4 ( m ) {
+	applyMatrix4( m ) {
 
 		const x = this.x, y = this.y, z = this.z;
 		const e = m.elements;
 
 		const w = 1 / ( ( e[ 3 ] * x ) + ( e[ 7 ] * y ) + ( e[ 11 ] * z ) + e[ 15 ] );
 
-		this.x = ( ( e[ 0 ] * x ) + ( e[ 4 ] * y ) + ( e[ 8 ]  * z ) + e[ 12 ] ) * w;
-		this.y = ( ( e[ 1 ] * x ) + ( e[ 5 ] * y ) + ( e[ 9 ]  * z ) + e[ 13 ] ) * w;
+		this.x = ( ( e[ 0 ] * x ) + ( e[ 4 ] * y ) + ( e[ 8 ] * z ) + e[ 12 ] ) * w;
+		this.y = ( ( e[ 1 ] * x ) + ( e[ 5 ] * y ) + ( e[ 9 ] * z ) + e[ 13 ] ) * w;
 		this.z = ( ( e[ 2 ] * x ) + ( e[ 6 ] * y ) + ( e[ 10 ] * z ) + e[ 14 ] ) * w;
 
 		return this;
 
 	}
 
-	applyQuaternion ( q ) {
+	applyQuaternion( q ) {
 
 		const x = this.x, y = this.y, z = this.z;
 		const qx = q.x, qy = q.y, qz = q.z, qw = q.w;
 
 		// calculate quat * vector
 
-		const ix =  qw * x + qy * z - qz * y;
-		const iy =  qw * y + qz * x - qx * z;
-		const iz =  qw * z + qx * y - qy * x;
+		const ix = qw * x + qy * z - qz * y;
+		const iy = qw * y + qz * x - qx * z;
+		const iz = qw * z + qx * y - qy * x;
 		const iw = - qx * x - qy * y - qz * z;
 
 		// calculate result * inverse quat
@@ -267,19 +267,19 @@ class Vector3 {
 
 	}
 
-	setFromMatrixColumn ( m, i ) {
+	setFromMatrixColumn( m, i ) {
 
 		return this.fromArray( m.elements, i * 4 );
 
 	}
 
-	equals ( v ) {
+	equals( v ) {
 
 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
 		this.y = array[ offset + 1 ];
@@ -289,7 +289,7 @@ class Vector3 {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;

@@ -2,18 +2,18 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { MessageDispatcher } from './MessageDispatcher';
+import { MessageDispatcher } from './MessageDispatcher.js';
 
 class EntityManager {
 
-	constructor () {
+	constructor() {
 
 		this.entities = new Map();
 		this.messageDispatcher = new MessageDispatcher( this );
 
 	}
 
-	add ( entity ) {
+	add( entity ) {
 
 		this.entities.set( entity.id, entity );
 
@@ -23,7 +23,7 @@ class EntityManager {
 
 	}
 
-	remove ( entity ) {
+	remove( entity ) {
 
 		this.entities.delete( entity.id );
 
@@ -33,13 +33,13 @@ class EntityManager {
 
 	}
 
-	getEntityById ( id ) {
+	getEntityById( id ) {
 
 		return this.entities.get( id );
 
 	}
 
-	update ( delta ) {
+	update( delta ) {
 
 		for ( let entity of this.entities.values() ) {
 
@@ -53,7 +53,7 @@ class EntityManager {
 
 	}
 
-	onMessage ( event ) {
+	onMessage( event ) {
 
 		const sender = event.target;
 		const receiver = event.receiver;

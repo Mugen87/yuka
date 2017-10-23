@@ -3,23 +3,32 @@
   "version": "0.0.1",
   "description": "JavaScript Game AI library",
   "repository": "Mugen87/yuka",
-  "main": "index.js",
+  "main": "build/yuka.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c",
     "build-uglify": "rollup -c && uglifyjs build/yuka.js > build/yuka.min.js",
-    "dev": "rollup -c -w"
+    "dev": "rollup -c -w",
+		"lint": "eslint src"
   },
   "keywords": [
     "javascript",
     "ai"
   ],
+  "eslintConfig": {
+    "extends": "mdcs"
+  },
+  "directories": {
+    "example": "examples"
+  },
   "author": "Mugen87",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Mugen87/yuka/issues"
   },
   "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-mdcs": "^4.2.2",
     "rollup": "^0.43.0",
     "rollup-watch": "^4.0.0",
     "uglify-es": "^3.0.24"

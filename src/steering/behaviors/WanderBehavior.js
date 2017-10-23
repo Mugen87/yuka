@@ -2,16 +2,16 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from '../SteeringBehavior';
-import { Vector3 } from '../../Math/Vector3';
-import { _Math } from '../../Math/Math';
+import { SteeringBehavior } from '../SteeringBehavior.js';
+import { Vector3 } from '../../Math/Vector3.js';
+import { _Math } from '../../Math/Math.js';
 
 const targetWorld = new Vector3();
 const randomDisplacement = new Vector3();
 
 class WanderBehavior extends SteeringBehavior {
 
-	constructor ( radius = 2, distance = 10, jitter = 20 ) {
+	constructor( radius = 2, distance = 10, jitter = 20 ) {
 
 		super();
 
@@ -25,7 +25,7 @@ class WanderBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force, delta ) {
 
 		// this behavior is dependent on the update rate, so this line must be
 		// included when using time independent frame rate
@@ -64,7 +64,7 @@ class WanderBehavior extends SteeringBehavior {
 
 	}
 
-	_setup () {
+	_setup() {
 
 		var theta = Math.random() * Math.PI * 2;
 

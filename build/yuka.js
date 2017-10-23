@@ -10,7 +10,7 @@
 
 class Telegram {
 
-	constructor ( senderId, receiverId, message, data, delay ) {
+	constructor( senderId, receiverId, message, data, delay ) {
 
 		this.senderId = senderId;
 		this.receiverId = receiverId;
@@ -28,14 +28,14 @@ class Telegram {
 
 class MessageDispatcher {
 
-	constructor ( entityManager ) {
+	constructor( entityManager ) {
 
 		this.delayedTelegrams = new Array();
 		this.entityManager = entityManager;
 
 	}
 
-	deliver ( receiver, telegram ) {
+	deliver( receiver, telegram ) {
 
 		if ( receiver.handleMessage( telegram ) === false ) {
 
@@ -47,7 +47,7 @@ class MessageDispatcher {
 
 	// send a message to another agent
 
-	dispatch ( sender, receiver, message, delay, data ) {
+	dispatch( sender, receiver, message, delay, data ) {
 
 		const telegram = new Telegram( sender.id, receiver.id, message, data, 0 );
 
@@ -67,7 +67,7 @@ class MessageDispatcher {
 
 	// process delayed messages
 
-	dispatchDelayedMessages ( delta ) {
+	dispatchDelayedMessages( delta ) {
 
 		let i = this.delayedTelegrams.length;
 
@@ -100,14 +100,14 @@ class MessageDispatcher {
 
 class EntityManager {
 
-	constructor () {
+	constructor() {
 
 		this.entities = new Map();
 		this.messageDispatcher = new MessageDispatcher( this );
 
 	}
 
-	add ( entity ) {
+	add( entity ) {
 
 		this.entities.set( entity.id, entity );
 
@@ -117,7 +117,7 @@ class EntityManager {
 
 	}
 
-	remove ( entity ) {
+	remove( entity ) {
 
 		this.entities.delete( entity.id );
 
@@ -127,13 +127,13 @@ class EntityManager {
 
 	}
 
-	getEntityById ( id ) {
+	getEntityById( id ) {
 
 		return this.entities.get( id );
 
 	}
 
-	update ( delta ) {
+	update( delta ) {
 
 		for ( let entity of this.entities.values() ) {
 
@@ -147,7 +147,7 @@ class EntityManager {
 
 	}
 
-	onMessage ( event ) {
+	onMessage( event ) {
 
 		const sender = event.target;
 		const receiver = event.receiver;
@@ -167,13 +167,13 @@ class EntityManager {
 
 class EventDispatcher {
 
-	constructor () {
+	constructor() {
 
 		this.listeners = {};
 
 	}
 
-	addEventListener ( type, listener, scope ) {
+	addEventListener( type, listener, scope ) {
 
 		const listeners = this.listeners;
 
@@ -193,7 +193,7 @@ class EventDispatcher {
 
 	}
 
-	hasEventListener ( type, listener ) {
+	hasEventListener( type, listener ) {
 
 		const listeners = this.listeners;
 
@@ -201,7 +201,7 @@ class EventDispatcher {
 
 	}
 
-	removeEventListener ( type, listener ) {
+	removeEventListener( type, listener ) {
 
 		const listeners = this.listeners;
 		const listenerArray = listeners[ type ];
@@ -220,7 +220,7 @@ class EventDispatcher {
 
 	}
 
-	dispatchEvent ( event ) {
+	dispatchEvent( event ) {
 
 		const listeners = this.listeners;
 		const listenerArray = listeners[ event.type ];
@@ -277,7 +277,7 @@ const _Math = {
 
 class Vector3 {
 
-	constructor ( x = 0, y = 0, z = 0 ) {
+	constructor( x = 0, y = 0, z = 0 ) {
 
 		this.x = x;
 		this.y = y;
@@ -285,7 +285,7 @@ class Vector3 {
 
 	}
 
-	set ( x, y, z ) {
+	set( x, y, z ) {
 
 		this.x = x;
 		this.y = y;
@@ -295,7 +295,7 @@ class Vector3 {
 
 	}
 
-	copy ( v ) {
+	copy( v ) {
 
 		this.x = v.x;
 		this.y = v.y;
@@ -305,7 +305,7 @@ class Vector3 {
 
 	}
 
-	add ( v ) {
+	add( v ) {
 
 		this.x += v.x;
 		this.y += v.y;
@@ -315,7 +315,7 @@ class Vector3 {
 
 	}
 
-	addScalar ( s ) {
+	addScalar( s ) {
 
 		this.x += s;
 		this.y += s;
@@ -325,7 +325,7 @@ class Vector3 {
 
 	}
 
-	addVectors ( a, b ) {
+	addVectors( a, b ) {
 
 		this.x = a.x + b.x;
 		this.y = a.y + b.y;
@@ -335,7 +335,7 @@ class Vector3 {
 
 	}
 
-	sub ( v ) {
+	sub( v ) {
 
 		this.x -= v.x;
 		this.y -= v.y;
@@ -345,7 +345,7 @@ class Vector3 {
 
 	}
 
-	subScalar ( s ) {
+	subScalar( s ) {
 
 		this.x -= s;
 		this.y -= s;
@@ -355,7 +355,7 @@ class Vector3 {
 
 	}
 
-	subVectors ( a, b ) {
+	subVectors( a, b ) {
 
 		this.x = a.x - b.x;
 		this.y = a.y - b.y;
@@ -365,7 +365,7 @@ class Vector3 {
 
 	}
 
-	multiply ( v ) {
+	multiply( v ) {
 
 		this.x *= v.x;
 		this.y *= v.y;
@@ -375,7 +375,7 @@ class Vector3 {
 
 	}
 
-	multiplyScalar ( s ) {
+	multiplyScalar( s ) {
 
 		this.x *= s;
 		this.y *= s;
@@ -385,7 +385,7 @@ class Vector3 {
 
 	}
 
-	multiplyVectors ( a, b ) {
+	multiplyVectors( a, b ) {
 
 		this.x = a.x * b.x;
 		this.y = a.y * b.y;
@@ -395,7 +395,7 @@ class Vector3 {
 
 	}
 
-	divide ( v ) {
+	divide( v ) {
 
 		this.x /= v.x;
 		this.y /= v.y;
@@ -405,7 +405,7 @@ class Vector3 {
 
 	}
 
-	divideScalar ( s ) {
+	divideScalar( s ) {
 
 		this.x /= s;
 		this.y /= s;
@@ -415,7 +415,7 @@ class Vector3 {
 
 	}
 
-	divideVectors ( a, b ) {
+	divideVectors( a, b ) {
 
 		this.x = a.x / b.x;
 		this.y = a.y / b.y;
@@ -425,13 +425,13 @@ class Vector3 {
 
 	}
 
-	dot ( v ) {
+	dot( v ) {
 
 		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
 
 	}
 
-	cross ( v ) {
+	cross( v ) {
 
 		const x = this.x, y = this.y, z = this.z;
 
@@ -443,7 +443,7 @@ class Vector3 {
 
 	}
 
-	crossVectors ( a, b ) {
+	crossVectors( a, b ) {
 
 		const ax = a.x, ay = a.y, az = a.z;
 		const bx = b.x, by = b.y, bz = b.z;
@@ -456,7 +456,7 @@ class Vector3 {
 
 	}
 
-	angleTo ( v ) {
+	angleTo( v ) {
 
 		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
 
@@ -466,25 +466,25 @@ class Vector3 {
 
 	}
 
-	length () {
+	length() {
 
 		return Math.sqrt( this.lengthSquared() );
 
 	}
 
-	lengthSquared () {
+	lengthSquared() {
 
 		return this.dot( this );
 
 	}
 
-	distanceTo ( v ) {
+	distanceTo( v ) {
 
 		return Math.sqrt( this.distanceToSquared( v ) );
 
 	}
 
-	distanceToSquared ( v ) {
+	distanceToSquared( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
@@ -492,37 +492,37 @@ class Vector3 {
 
 	}
 
-	normalize () {
+	normalize() {
 
 		return this.divideScalar( this.length() || 1 );
 
 	}
 
-	applyMatrix4 ( m ) {
+	applyMatrix4( m ) {
 
 		const x = this.x, y = this.y, z = this.z;
 		const e = m.elements;
 
 		const w = 1 / ( ( e[ 3 ] * x ) + ( e[ 7 ] * y ) + ( e[ 11 ] * z ) + e[ 15 ] );
 
-		this.x = ( ( e[ 0 ] * x ) + ( e[ 4 ] * y ) + ( e[ 8 ]  * z ) + e[ 12 ] ) * w;
-		this.y = ( ( e[ 1 ] * x ) + ( e[ 5 ] * y ) + ( e[ 9 ]  * z ) + e[ 13 ] ) * w;
+		this.x = ( ( e[ 0 ] * x ) + ( e[ 4 ] * y ) + ( e[ 8 ] * z ) + e[ 12 ] ) * w;
+		this.y = ( ( e[ 1 ] * x ) + ( e[ 5 ] * y ) + ( e[ 9 ] * z ) + e[ 13 ] ) * w;
 		this.z = ( ( e[ 2 ] * x ) + ( e[ 6 ] * y ) + ( e[ 10 ] * z ) + e[ 14 ] ) * w;
 
 		return this;
 
 	}
 
-	applyQuaternion ( q ) {
+	applyQuaternion( q ) {
 
 		const x = this.x, y = this.y, z = this.z;
 		const qx = q.x, qy = q.y, qz = q.z, qw = q.w;
 
 		// calculate quat * vector
 
-		const ix =  qw * x + qy * z - qz * y;
-		const iy =  qw * y + qz * x - qx * z;
-		const iz =  qw * z + qx * y - qy * x;
+		const ix = qw * x + qy * z - qz * y;
+		const iy = qw * y + qz * x - qx * z;
+		const iz = qw * z + qx * y - qy * x;
 		const iw = - qx * x - qy * y - qz * z;
 
 		// calculate result * inverse quat
@@ -535,19 +535,19 @@ class Vector3 {
 
 	}
 
-	setFromMatrixColumn ( m, i ) {
+	setFromMatrixColumn( m, i ) {
 
 		return this.fromArray( m.elements, i * 4 );
 
 	}
 
-	equals ( v ) {
+	equals( v ) {
 
 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
 		this.y = array[ offset + 1 ];
@@ -557,7 +557,7 @@ class Vector3 {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;
@@ -578,7 +578,7 @@ class Vector3 {
 
 class Quaternion {
 
-	constructor ( x = 0, y = 0, z = 0, w = 1 ) {
+	constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
 		this.x = x;
 		this.y = y;
@@ -587,7 +587,7 @@ class Quaternion {
 
 	}
 
-	set ( x, y, z, w ) {
+	set( x, y, z, w ) {
 
 		this.x = x;
 		this.y = y;
@@ -598,7 +598,7 @@ class Quaternion {
 
 	}
 
-	copy ( q ) {
+	copy( q ) {
 
 		this.x = q.x;
 		this.y = q.y;
@@ -609,13 +609,13 @@ class Quaternion {
 
 	}
 
-	inverse () {
+	inverse() {
 
 		return this.conjugate().normalize();
 
 	}
 
-	conjugate () {
+	conjugate() {
 
 		this.x *= - 1;
 		this.y *= - 1;
@@ -625,25 +625,25 @@ class Quaternion {
 
 	}
 
-	dot ( q ) {
+	dot( q ) {
 
 		return ( this.x * q.x ) + ( this.y * q.y ) + ( this.z * q.z ) + ( this.w * q.w );
 
 	}
 
-	length () {
+	length() {
 
 		return Math.sqrt( this.lengthSquared() );
 
 	}
 
-	lengthSquared () {
+	lengthSquared() {
 
 		return this.dot( this );
 
 	}
 
-	normalize () {
+	normalize() {
 
 		let l = this.length();
 
@@ -669,19 +669,19 @@ class Quaternion {
 
 	}
 
-	multiply ( q ) {
+	multiply( q ) {
 
 		return this.multiplyQuaternions( this, q );
 
 	}
 
-	premultiply ( q ) {
+	premultiply( q ) {
 
 		return this.multiplyQuaternions( q, this );
 
 	}
 
-	multiplyQuaternions ( a, b ) {
+	multiplyQuaternions( a, b ) {
 
 		const qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
 		const qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
@@ -695,7 +695,7 @@ class Quaternion {
 
 	}
 
-	slerp ( q, t ) {
+	slerp( q, t ) {
 
 		if ( t === 0 ) return this;
 		if ( t === 1 ) return this.copy( q );
@@ -756,7 +756,7 @@ class Quaternion {
 
 	}
 
-	setFromRotationMatrix ( m ) {
+	setFromRotationMatrix( m ) {
 
 		const e = m.elements;
 
@@ -808,13 +808,13 @@ class Quaternion {
 
 	}
 
-	equals ( q ) {
+	equals( q ) {
 
 		return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
 		this.y = array[ offset + 1 ];
@@ -825,7 +825,7 @@ class Quaternion {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;
@@ -851,7 +851,7 @@ const z = new Vector3();
 
 class Matrix4 {
 
-	constructor () {
+	constructor() {
 
 		this.elements = [
 
@@ -864,7 +864,7 @@ class Matrix4 {
 
 	}
 
-	set ( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
+	set( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
 
 		const e = this.elements;
 
@@ -877,7 +877,7 @@ class Matrix4 {
 
 	}
 
-	identity () {
+	identity() {
 
 		this.set(
 
@@ -892,7 +892,7 @@ class Matrix4 {
 
 	}
 
-	extractBasis ( xAxis, yAxis, zAxis ) {
+	extractBasis( xAxis, yAxis, zAxis ) {
 
 		xAxis.setFromMatrixColumn( this, 0 );
 		yAxis.setFromMatrixColumn( this, 1 );
@@ -902,32 +902,32 @@ class Matrix4 {
 
 	}
 
-	makeBasis ( xAxis, yAxis, zAxis ) {
+	makeBasis( xAxis, yAxis, zAxis ) {
 
 		this.set(
 			xAxis.x, yAxis.x, zAxis.x, 0,
 			xAxis.y, yAxis.y, zAxis.y, 0,
 			xAxis.z, yAxis.z, zAxis.z, 0,
-			0,       0,       0,       1
+			0, 0, 0, 1
 		);
 
 		return this;
 
 	}
 
-	multiply ( m ) {
+	multiply( m ) {
 
 		return this.multiplyMatrices( this, m );
 
 	}
 
-	premultiply ( m ) {
+	premultiply( m ) {
 
 		return this.multiplyMatrices( m, this );
 
 	}
 
-	multiplyMatrices ( a, b ) {
+	multiplyMatrices( a, b ) {
 
 		const ae = a.elements;
 		const be = b.elements;
@@ -943,23 +943,23 @@ class Matrix4 {
 		const b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
 		const b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
 
-		e[ 0 ]  = ( a11 * b11 ) + ( a12 * b21 ) + ( a13 * b31 ) + ( a14 * b41 );
-		e[ 4 ]  = ( a11 * b12 ) + ( a12 * b22 ) + ( a13 * b32 ) + ( a14 * b42 );
-		e[ 8 ]  = ( a11 * b13 ) + ( a12 * b23 ) + ( a13 * b33 ) + ( a14 * b43 );
+		e[ 0 ] = ( a11 * b11 ) + ( a12 * b21 ) + ( a13 * b31 ) + ( a14 * b41 );
+		e[ 4 ] = ( a11 * b12 ) + ( a12 * b22 ) + ( a13 * b32 ) + ( a14 * b42 );
+		e[ 8 ] = ( a11 * b13 ) + ( a12 * b23 ) + ( a13 * b33 ) + ( a14 * b43 );
 		e[ 12 ] = ( a11 * b14 ) + ( a12 * b24 ) + ( a13 * b34 ) + ( a14 * b44 );
 
-		e[ 1 ]  = ( a21 * b11 ) + ( a22 * b21 ) + ( a23 * b31 ) + ( a24 * b41 );
-		e[ 5 ]  = ( a21 * b12 ) + ( a22 * b22 ) + ( a23 * b32 ) + ( a24 * b42 );
-		e[ 9 ]  = ( a21 * b13 ) + ( a22 * b23 ) + ( a23 * b33 ) + ( a24 * b43 );
+		e[ 1 ] = ( a21 * b11 ) + ( a22 * b21 ) + ( a23 * b31 ) + ( a24 * b41 );
+		e[ 5 ] = ( a21 * b12 ) + ( a22 * b22 ) + ( a23 * b32 ) + ( a24 * b42 );
+		e[ 9 ] = ( a21 * b13 ) + ( a22 * b23 ) + ( a23 * b33 ) + ( a24 * b43 );
 		e[ 13 ] = ( a21 * b14 ) + ( a22 * b24 ) + ( a23 * b34 ) + ( a24 * b44 );
 
-		e[ 2 ]  = ( a31 * b11 ) + ( a32 * b21 ) + ( a33 * b31 ) + ( a34 * b41 );
-		e[ 6 ]  = ( a31 * b12 ) + ( a32 * b22 ) + ( a33 * b32 ) + ( a34 * b42 );
+		e[ 2 ] = ( a31 * b11 ) + ( a32 * b21 ) + ( a33 * b31 ) + ( a34 * b41 );
+		e[ 6 ] = ( a31 * b12 ) + ( a32 * b22 ) + ( a33 * b32 ) + ( a34 * b42 );
 		e[ 10 ] = ( a31 * b13 ) + ( a32 * b23 ) + ( a33 * b33 ) + ( a34 * b43 );
 		e[ 14 ] = ( a31 * b14 ) + ( a32 * b24 ) + ( a33 * b34 ) + ( a34 * b44 );
 
-		e[ 3 ]  = ( a41 * b11 ) + ( a42 * b21 ) + ( a43 * b31 ) + ( a44 * b41 );
-		e[ 7 ]  = ( a41 * b12 ) + ( a42 * b22 ) + ( a43 * b32 ) + ( a44 * b42 );
+		e[ 3 ] = ( a41 * b11 ) + ( a42 * b21 ) + ( a43 * b31 ) + ( a44 * b41 );
+		e[ 7 ] = ( a41 * b12 ) + ( a42 * b22 ) + ( a43 * b32 ) + ( a44 * b42 );
 		e[ 11 ] = ( a41 * b13 ) + ( a42 * b23 ) + ( a43 * b33 ) + ( a44 * b43 );
 		e[ 15 ] = ( a41 * b14 ) + ( a42 * b24 ) + ( a43 * b34 ) + ( a44 * b44 );
 
@@ -967,7 +967,7 @@ class Matrix4 {
 
 	}
 
-	multiplyScalar ( s ) {
+	multiplyScalar( s ) {
 
 		const e = this.elements;
 
@@ -980,7 +980,7 @@ class Matrix4 {
 
 	}
 
-	compose ( position, quaternion, scale ) {
+	compose( position, quaternion, scale ) {
 
 		this.makeRotationFromQuaternion( quaternion );
 		this.scale( scale );
@@ -990,7 +990,7 @@ class Matrix4 {
 
 	}
 
-	makeRotationFromQuaternion ( q ) {
+	makeRotationFromQuaternion( q ) {
 
 		const e = this.elements;
 
@@ -1025,7 +1025,7 @@ class Matrix4 {
 
 	}
 
-	scale ( v ) {
+	scale( v ) {
 
 		const e = this.elements;
 
@@ -1040,7 +1040,7 @@ class Matrix4 {
 
 	}
 
-	setPosition ( v ) {
+	setPosition( v ) {
 
 		const e = this.elements;
 
@@ -1052,7 +1052,7 @@ class Matrix4 {
 
 	}
 
-	transpose () {
+	transpose() {
 
 		const e = this.elements;
 		let t;
@@ -1070,7 +1070,7 @@ class Matrix4 {
 
 	}
 
-	getInverse ( m ) {
+	getInverse( m ) {
 
 		const e = this.elements;
 		const me = m.elements;
@@ -1120,7 +1120,7 @@ class Matrix4 {
 
 	}
 
-	lookAt ( eye, target, up ) {
+	lookAt( eye, target, up ) {
 
 		z.subVectors( eye, target );
 
@@ -1159,15 +1159,15 @@ class Matrix4 {
 
 		const e = this.elements;
 
-			e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
-			e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
-			e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
+		e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
+		e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
+		e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
 
-			return this;
+		return this;
 
 	 }
 
-	equals ( m ) {
+	equals( m ) {
 
 		const e = this.elements;
 		const me = m.elements;
@@ -1182,7 +1182,7 @@ class Matrix4 {
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		const e = this.elements;
 
@@ -1196,7 +1196,7 @@ class Matrix4 {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		const e = this.elements;
 
@@ -1232,7 +1232,7 @@ class Matrix4 {
 
 class GameEntity extends EventDispatcher {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -1250,9 +1250,9 @@ class GameEntity extends EventDispatcher {
 
 	}
 
-	update () {}
+	update() {}
 
-	sendMessage ( receiver, message, delay = 0, data = null ) {
+	sendMessage( receiver, message, delay = 0, data = null ) {
 
 		const event = {
 			type: 'message',
@@ -1266,13 +1266,13 @@ class GameEntity extends EventDispatcher {
 
 	}
 
-	handleMessage () {
+	handleMessage() {
 
 		return false;
 
 	}
 
-	updateMatrix () {
+	updateMatrix() {
 
 		this.matrix.compose( this.position, this.rotation, this.scale );
 
@@ -1292,7 +1292,7 @@ const targetRotation = new Quaternion();
 
 class MovingEntity extends GameEntity {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -1307,7 +1307,7 @@ class MovingEntity extends GameEntity {
 	// given a target position, this method rotates the entity by an amount not
 	// greater than maxTurnRate until it directly faces the target
 
-	rotateToTarget ( target ) {
+	rotateToTarget( target ) {
 
 		this.getDirection( direction );
 
@@ -1340,7 +1340,7 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	lookAt ( target ) {
+	lookAt( target ) {
 
 		rotationMatrix.lookAt( target, this.position, this.up );
 		this.rotation.setFromRotationMatrix( rotationMatrix );
@@ -1349,19 +1349,19 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	getDirection ( result = new Vector3() ) {
+	getDirection( result = new Vector3() ) {
 
 		return result.set( 0, 0, 1 ).applyQuaternion( this.rotation ).normalize();
 
 	}
 
-	getSpeed () {
+	getSpeed() {
 
 		return this.velocity.length();
 
 	}
 
-	getSpeedSquared () {
+	getSpeedSquared() {
 
 		return this.velocity.lengthSquared();
 
@@ -1375,7 +1375,7 @@ class MovingEntity extends GameEntity {
 
 class Path {
 
-	constructor () {
+	constructor() {
 
 		this.loop = false;
 		this._waypoints = [];
@@ -1383,7 +1383,7 @@ class Path {
 
 	}
 
-	add ( waypoint ) {
+	add( waypoint ) {
 
 		this._waypoints.push( waypoint );
 
@@ -1391,7 +1391,7 @@ class Path {
 
 	}
 
-	clear () {
+	clea() {
 
 		this._waypoints.length = 0;
 
@@ -1399,21 +1399,21 @@ class Path {
 
 	}
 
-	finished () {
+	finished() {
 
-		const lastIndex =  this._waypoints.length - 1;
+		const lastIndex = this._waypoints.length - 1;
 
 		return ( this.loop === true ) ? false : ( this._index === lastIndex );
 
 	}
 
-	advance () {
+	advance() {
 
 		this._index ++;
 
 		if ( ( this._index === this._waypoints.length ) ) {
 
-			if (  this.loop === true ) {
+			if ( this.loop === true ) {
 
 				this._index = 0;
 
@@ -1429,7 +1429,7 @@ class Path {
 
 	}
 
-	current () {
+	current() {
 
 		return this._waypoints[ this._index ];
 
@@ -1469,7 +1469,7 @@ const _Math$1 = {
 
 class Vector3$1 {
 
-	constructor ( x = 0, y = 0, z = 0 ) {
+	constructor( x = 0, y = 0, z = 0 ) {
 
 		this.x = x;
 		this.y = y;
@@ -1477,7 +1477,7 @@ class Vector3$1 {
 
 	}
 
-	set ( x, y, z ) {
+	set( x, y, z ) {
 
 		this.x = x;
 		this.y = y;
@@ -1487,7 +1487,7 @@ class Vector3$1 {
 
 	}
 
-	copy ( v ) {
+	copy( v ) {
 
 		this.x = v.x;
 		this.y = v.y;
@@ -1497,7 +1497,7 @@ class Vector3$1 {
 
 	}
 
-	add ( v ) {
+	add( v ) {
 
 		this.x += v.x;
 		this.y += v.y;
@@ -1507,7 +1507,7 @@ class Vector3$1 {
 
 	}
 
-	addScalar ( s ) {
+	addScalar( s ) {
 
 		this.x += s;
 		this.y += s;
@@ -1517,7 +1517,7 @@ class Vector3$1 {
 
 	}
 
-	addVectors ( a, b ) {
+	addVectors( a, b ) {
 
 		this.x = a.x + b.x;
 		this.y = a.y + b.y;
@@ -1527,7 +1527,7 @@ class Vector3$1 {
 
 	}
 
-	sub ( v ) {
+	sub( v ) {
 
 		this.x -= v.x;
 		this.y -= v.y;
@@ -1537,7 +1537,7 @@ class Vector3$1 {
 
 	}
 
-	subScalar ( s ) {
+	subScalar( s ) {
 
 		this.x -= s;
 		this.y -= s;
@@ -1547,7 +1547,7 @@ class Vector3$1 {
 
 	}
 
-	subVectors ( a, b ) {
+	subVectors( a, b ) {
 
 		this.x = a.x - b.x;
 		this.y = a.y - b.y;
@@ -1557,7 +1557,7 @@ class Vector3$1 {
 
 	}
 
-	multiply ( v ) {
+	multiply( v ) {
 
 		this.x *= v.x;
 		this.y *= v.y;
@@ -1567,7 +1567,7 @@ class Vector3$1 {
 
 	}
 
-	multiplyScalar ( s ) {
+	multiplyScalar( s ) {
 
 		this.x *= s;
 		this.y *= s;
@@ -1577,7 +1577,7 @@ class Vector3$1 {
 
 	}
 
-	multiplyVectors ( a, b ) {
+	multiplyVectors( a, b ) {
 
 		this.x = a.x * b.x;
 		this.y = a.y * b.y;
@@ -1587,7 +1587,7 @@ class Vector3$1 {
 
 	}
 
-	divide ( v ) {
+	divide( v ) {
 
 		this.x /= v.x;
 		this.y /= v.y;
@@ -1597,7 +1597,7 @@ class Vector3$1 {
 
 	}
 
-	divideScalar ( s ) {
+	divideScalar( s ) {
 
 		this.x /= s;
 		this.y /= s;
@@ -1607,7 +1607,7 @@ class Vector3$1 {
 
 	}
 
-	divideVectors ( a, b ) {
+	divideVectors( a, b ) {
 
 		this.x = a.x / b.x;
 		this.y = a.y / b.y;
@@ -1617,13 +1617,13 @@ class Vector3$1 {
 
 	}
 
-	dot ( v ) {
+	dot( v ) {
 
 		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
 
 	}
 
-	cross ( v ) {
+	cross( v ) {
 
 		const x = this.x, y = this.y, z = this.z;
 
@@ -1635,7 +1635,7 @@ class Vector3$1 {
 
 	}
 
-	crossVectors ( a, b ) {
+	crossVectors( a, b ) {
 
 		const ax = a.x, ay = a.y, az = a.z;
 		const bx = b.x, by = b.y, bz = b.z;
@@ -1648,7 +1648,7 @@ class Vector3$1 {
 
 	}
 
-	angleTo ( v ) {
+	angleTo( v ) {
 
 		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
 
@@ -1658,25 +1658,25 @@ class Vector3$1 {
 
 	}
 
-	length () {
+	length() {
 
 		return Math.sqrt( this.lengthSquared() );
 
 	}
 
-	lengthSquared () {
+	lengthSquared() {
 
 		return this.dot( this );
 
 	}
 
-	distanceTo ( v ) {
+	distanceTo( v ) {
 
 		return Math.sqrt( this.distanceToSquared( v ) );
 
 	}
 
-	distanceToSquared ( v ) {
+	distanceToSquared( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
@@ -1684,37 +1684,37 @@ class Vector3$1 {
 
 	}
 
-	normalize () {
+	normalize() {
 
 		return this.divideScalar( this.length() || 1 );
 
 	}
 
-	applyMatrix4 ( m ) {
+	applyMatrix4( m ) {
 
 		const x = this.x, y = this.y, z = this.z;
 		const e = m.elements;
 
 		const w = 1 / ( ( e[ 3 ] * x ) + ( e[ 7 ] * y ) + ( e[ 11 ] * z ) + e[ 15 ] );
 
-		this.x = ( ( e[ 0 ] * x ) + ( e[ 4 ] * y ) + ( e[ 8 ]  * z ) + e[ 12 ] ) * w;
-		this.y = ( ( e[ 1 ] * x ) + ( e[ 5 ] * y ) + ( e[ 9 ]  * z ) + e[ 13 ] ) * w;
+		this.x = ( ( e[ 0 ] * x ) + ( e[ 4 ] * y ) + ( e[ 8 ] * z ) + e[ 12 ] ) * w;
+		this.y = ( ( e[ 1 ] * x ) + ( e[ 5 ] * y ) + ( e[ 9 ] * z ) + e[ 13 ] ) * w;
 		this.z = ( ( e[ 2 ] * x ) + ( e[ 6 ] * y ) + ( e[ 10 ] * z ) + e[ 14 ] ) * w;
 
 		return this;
 
 	}
 
-	applyQuaternion ( q ) {
+	applyQuaternion( q ) {
 
 		const x = this.x, y = this.y, z = this.z;
 		const qx = q.x, qy = q.y, qz = q.z, qw = q.w;
 
 		// calculate quat * vector
 
-		const ix =  qw * x + qy * z - qz * y;
-		const iy =  qw * y + qz * x - qx * z;
-		const iz =  qw * z + qx * y - qy * x;
+		const ix = qw * x + qy * z - qz * y;
+		const iy = qw * y + qz * x - qx * z;
+		const iz = qw * z + qx * y - qy * x;
 		const iw = - qx * x - qy * y - qz * z;
 
 		// calculate result * inverse quat
@@ -1727,19 +1727,19 @@ class Vector3$1 {
 
 	}
 
-	setFromMatrixColumn ( m, i ) {
+	setFromMatrixColumn( m, i ) {
 
 		return this.fromArray( m.elements, i * 4 );
 
 	}
 
-	equals ( v ) {
+	equals( v ) {
 
 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
 		this.y = array[ offset + 1 ];
@@ -1749,7 +1749,7 @@ class Vector3$1 {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;
@@ -1769,7 +1769,7 @@ const force = new Vector3$1();
 
 class SteeringManager {
 
-	constructor ( vehicle ) {
+	constructor( vehicle ) {
 
 		this.vehicle = vehicle;
 		this.behaviors = [];
@@ -1778,7 +1778,7 @@ class SteeringManager {
 
 	}
 
-	add ( behavior ) {
+	add( behavior ) {
 
 		this.behaviors.push( behavior );
 
@@ -1786,7 +1786,7 @@ class SteeringManager {
 
 	}
 
-	remove ( behavior ) {
+	remove( behavior ) {
 
 		const index = this.behaviors.indexOf( behavior );
 
@@ -1796,7 +1796,7 @@ class SteeringManager {
 
 	}
 
-	_calculate ( delta, optionalTarget )  {
+	_calculate( delta, optionalTarget ) {
 
 		const result = optionalTarget || new Vector3$1();
 
@@ -1809,7 +1809,7 @@ class SteeringManager {
 	// this method calculates how much of its max steering force the vehicle has
 	// left to apply and then applies that amount of the force to add
 
-	_accumulate ( forceToAdd ) {
+	_accumulate( forceToAdd ) {
 
 		// calculate how much steering force the vehicle has used so far
 
@@ -1843,7 +1843,7 @@ class SteeringManager {
 
 	}
 
-	_calculateByOrder ( delta ) {
+	_calculateByOrder( delta ) {
 
 		// reset steering force
 
@@ -1873,7 +1873,7 @@ class SteeringManager {
 
 class Smoother {
 
-	constructor ( count = 10 ) {
+	constructor( count = 10 ) {
 
 		this.count = count; // how many samples the smoother will use to average a value
 		this._history = []; // this holds the history
@@ -1889,7 +1889,7 @@ class Smoother {
 
 	}
 
-	update ( value, average ) {
+	update( value, average ) {
 
 		// ensure, average is a zero vector
 
@@ -1937,7 +1937,7 @@ const rotationMatrix$1 = new Matrix4();
 
 class Vehicle extends MovingEntity {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -1949,19 +1949,19 @@ class Vehicle extends MovingEntity {
 
 	}
 
-	enableSmoothing ( sampleCount ) {
+	enableSmoothing( sampleCount ) {
 
 		this._smoother = new Smoother( sampleCount );
 
 	}
 
-	disableSmoothing () {
+	disableSmoothing() {
 
 		this._smoother = null;
 
 	}
 
-	update ( delta ) {
+	update( delta ) {
 
 		// calculate steering force
 
@@ -2028,7 +2028,7 @@ class Vehicle extends MovingEntity {
 
 class SteeringBehavior {
 
-	constructor () {
+	constructor() {
 
 		// use this value to tweak the amount that a steering force
 		// contributes to the total steering force
@@ -2037,7 +2037,7 @@ class SteeringBehavior {
 
 	}
 
-	calculate () {}
+	calculate() {}
 
 }
 
@@ -2050,7 +2050,7 @@ const displacement$1 = new Vector3$1();
 
 class ArriveBehavior extends SteeringBehavior {
 
-	constructor ( target, deceleration = 3 ) {
+	constructor( target, deceleration = 3 ) {
 
 		super();
 
@@ -2059,7 +2059,7 @@ class ArriveBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const target = this.target;
 		const deceleration = this.deceleration;
@@ -2100,7 +2100,7 @@ const desiredVelocity$1 = new Vector3$1();
 
 class FleeBehavior extends SteeringBehavior {
 
-	constructor ( target, panicDistance = 10 ) {
+	constructor( target, panicDistance = 10 ) {
 
 		super();
 
@@ -2109,7 +2109,7 @@ class FleeBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const target = this.target;
 
@@ -2152,7 +2152,7 @@ const predcitedPosition = new Vector3$1();
 
 class EvadeBehavior extends SteeringBehavior {
 
-	constructor ( target , pursuer ) {
+	constructor( target, pursuer ) {
 
 		super();
 
@@ -2165,7 +2165,7 @@ class EvadeBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const pursuer = this.pursuer;
 
@@ -2195,7 +2195,7 @@ const desiredVelocity$2 = new Vector3$1();
 
 class SeekBehavior extends SteeringBehavior {
 
-	constructor ( target ) {
+	constructor( target ) {
 
 		super();
 
@@ -2203,7 +2203,7 @@ class SeekBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const target = this.target;
 
@@ -2231,7 +2231,7 @@ class SeekBehavior extends SteeringBehavior {
 
 class FollowPathBehavior extends SteeringBehavior {
 
-	constructor ( path ) {
+	constructor( path ) {
 
 		super();
 
@@ -2245,7 +2245,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const path = this.path;
 		const nextWaypointDistance = this._nextWaypointDistance;
@@ -2293,7 +2293,7 @@ const z$1 = new Vector3$1();
 
 class Matrix4$1 {
 
-	constructor () {
+	constructor() {
 
 		this.elements = [
 
@@ -2306,7 +2306,7 @@ class Matrix4$1 {
 
 	}
 
-	set ( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
+	set( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
 
 		const e = this.elements;
 
@@ -2319,7 +2319,7 @@ class Matrix4$1 {
 
 	}
 
-	identity () {
+	identity() {
 
 		this.set(
 
@@ -2334,7 +2334,7 @@ class Matrix4$1 {
 
 	}
 
-	extractBasis ( xAxis, yAxis, zAxis ) {
+	extractBasis( xAxis, yAxis, zAxis ) {
 
 		xAxis.setFromMatrixColumn( this, 0 );
 		yAxis.setFromMatrixColumn( this, 1 );
@@ -2344,32 +2344,32 @@ class Matrix4$1 {
 
 	}
 
-	makeBasis ( xAxis, yAxis, zAxis ) {
+	makeBasis( xAxis, yAxis, zAxis ) {
 
 		this.set(
 			xAxis.x, yAxis.x, zAxis.x, 0,
 			xAxis.y, yAxis.y, zAxis.y, 0,
 			xAxis.z, yAxis.z, zAxis.z, 0,
-			0,       0,       0,       1
+			0, 0, 0, 1
 		);
 
 		return this;
 
 	}
 
-	multiply ( m ) {
+	multiply( m ) {
 
 		return this.multiplyMatrices( this, m );
 
 	}
 
-	premultiply ( m ) {
+	premultiply( m ) {
 
 		return this.multiplyMatrices( m, this );
 
 	}
 
-	multiplyMatrices ( a, b ) {
+	multiplyMatrices( a, b ) {
 
 		const ae = a.elements;
 		const be = b.elements;
@@ -2385,23 +2385,23 @@ class Matrix4$1 {
 		const b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
 		const b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
 
-		e[ 0 ]  = ( a11 * b11 ) + ( a12 * b21 ) + ( a13 * b31 ) + ( a14 * b41 );
-		e[ 4 ]  = ( a11 * b12 ) + ( a12 * b22 ) + ( a13 * b32 ) + ( a14 * b42 );
-		e[ 8 ]  = ( a11 * b13 ) + ( a12 * b23 ) + ( a13 * b33 ) + ( a14 * b43 );
+		e[ 0 ] = ( a11 * b11 ) + ( a12 * b21 ) + ( a13 * b31 ) + ( a14 * b41 );
+		e[ 4 ] = ( a11 * b12 ) + ( a12 * b22 ) + ( a13 * b32 ) + ( a14 * b42 );
+		e[ 8 ] = ( a11 * b13 ) + ( a12 * b23 ) + ( a13 * b33 ) + ( a14 * b43 );
 		e[ 12 ] = ( a11 * b14 ) + ( a12 * b24 ) + ( a13 * b34 ) + ( a14 * b44 );
 
-		e[ 1 ]  = ( a21 * b11 ) + ( a22 * b21 ) + ( a23 * b31 ) + ( a24 * b41 );
-		e[ 5 ]  = ( a21 * b12 ) + ( a22 * b22 ) + ( a23 * b32 ) + ( a24 * b42 );
-		e[ 9 ]  = ( a21 * b13 ) + ( a22 * b23 ) + ( a23 * b33 ) + ( a24 * b43 );
+		e[ 1 ] = ( a21 * b11 ) + ( a22 * b21 ) + ( a23 * b31 ) + ( a24 * b41 );
+		e[ 5 ] = ( a21 * b12 ) + ( a22 * b22 ) + ( a23 * b32 ) + ( a24 * b42 );
+		e[ 9 ] = ( a21 * b13 ) + ( a22 * b23 ) + ( a23 * b33 ) + ( a24 * b43 );
 		e[ 13 ] = ( a21 * b14 ) + ( a22 * b24 ) + ( a23 * b34 ) + ( a24 * b44 );
 
-		e[ 2 ]  = ( a31 * b11 ) + ( a32 * b21 ) + ( a33 * b31 ) + ( a34 * b41 );
-		e[ 6 ]  = ( a31 * b12 ) + ( a32 * b22 ) + ( a33 * b32 ) + ( a34 * b42 );
+		e[ 2 ] = ( a31 * b11 ) + ( a32 * b21 ) + ( a33 * b31 ) + ( a34 * b41 );
+		e[ 6 ] = ( a31 * b12 ) + ( a32 * b22 ) + ( a33 * b32 ) + ( a34 * b42 );
 		e[ 10 ] = ( a31 * b13 ) + ( a32 * b23 ) + ( a33 * b33 ) + ( a34 * b43 );
 		e[ 14 ] = ( a31 * b14 ) + ( a32 * b24 ) + ( a33 * b34 ) + ( a34 * b44 );
 
-		e[ 3 ]  = ( a41 * b11 ) + ( a42 * b21 ) + ( a43 * b31 ) + ( a44 * b41 );
-		e[ 7 ]  = ( a41 * b12 ) + ( a42 * b22 ) + ( a43 * b32 ) + ( a44 * b42 );
+		e[ 3 ] = ( a41 * b11 ) + ( a42 * b21 ) + ( a43 * b31 ) + ( a44 * b41 );
+		e[ 7 ] = ( a41 * b12 ) + ( a42 * b22 ) + ( a43 * b32 ) + ( a44 * b42 );
 		e[ 11 ] = ( a41 * b13 ) + ( a42 * b23 ) + ( a43 * b33 ) + ( a44 * b43 );
 		e[ 15 ] = ( a41 * b14 ) + ( a42 * b24 ) + ( a43 * b34 ) + ( a44 * b44 );
 
@@ -2409,7 +2409,7 @@ class Matrix4$1 {
 
 	}
 
-	multiplyScalar ( s ) {
+	multiplyScalar( s ) {
 
 		const e = this.elements;
 
@@ -2422,7 +2422,7 @@ class Matrix4$1 {
 
 	}
 
-	compose ( position, quaternion, scale ) {
+	compose( position, quaternion, scale ) {
 
 		this.makeRotationFromQuaternion( quaternion );
 		this.scale( scale );
@@ -2432,7 +2432,7 @@ class Matrix4$1 {
 
 	}
 
-	makeRotationFromQuaternion ( q ) {
+	makeRotationFromQuaternion( q ) {
 
 		const e = this.elements;
 
@@ -2467,7 +2467,7 @@ class Matrix4$1 {
 
 	}
 
-	scale ( v ) {
+	scale( v ) {
 
 		const e = this.elements;
 
@@ -2482,7 +2482,7 @@ class Matrix4$1 {
 
 	}
 
-	setPosition ( v ) {
+	setPosition( v ) {
 
 		const e = this.elements;
 
@@ -2494,7 +2494,7 @@ class Matrix4$1 {
 
 	}
 
-	transpose () {
+	transpose() {
 
 		const e = this.elements;
 		let t;
@@ -2512,7 +2512,7 @@ class Matrix4$1 {
 
 	}
 
-	getInverse ( m ) {
+	getInverse( m ) {
 
 		const e = this.elements;
 		const me = m.elements;
@@ -2562,7 +2562,7 @@ class Matrix4$1 {
 
 	}
 
-	lookAt ( eye, target, up ) {
+	lookAt( eye, target, up ) {
 
 		z$1.subVectors( eye, target );
 
@@ -2601,15 +2601,15 @@ class Matrix4$1 {
 
 		const e = this.elements;
 
-			e[ 0 ] = x$1.x; e[ 4 ] = y$1.x; e[ 8 ] = z$1.x;
-			e[ 1 ] = x$1.y; e[ 5 ] = y$1.y; e[ 9 ] = z$1.y;
-			e[ 2 ] = x$1.z; e[ 6 ] = y$1.z; e[ 10 ] = z$1.z;
+		e[ 0 ] = x$1.x; e[ 4 ] = y$1.x; e[ 8 ] = z$1.x;
+		e[ 1 ] = x$1.y; e[ 5 ] = y$1.y; e[ 9 ] = z$1.y;
+		e[ 2 ] = x$1.z; e[ 6 ] = y$1.z; e[ 10 ] = z$1.z;
 
-			return this;
+		return this;
 
 	 }
 
-	equals ( m ) {
+	equals( m ) {
 
 		const e = this.elements;
 		const me = m.elements;
@@ -2624,7 +2624,7 @@ class Matrix4$1 {
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		const e = this.elements;
 
@@ -2638,7 +2638,7 @@ class Matrix4$1 {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		const e = this.elements;
 
@@ -2679,14 +2679,14 @@ const v1 = new Vector3$1();
 
 class Ray {
 
-	constructor ( origin = new Vector3$1(), direction = new Vector3$1() ) {
+	constructor( origin = new Vector3$1(), direction = new Vector3$1() ) {
 
 		this.origin = origin;
 		this.direction = direction;
 
 	}
 
-	set ( origin, direction ) {
+	set( origin, direction ) {
 
 		this.origin.copy( origin );
 		this.direction.copy( direction );
@@ -2695,7 +2695,7 @@ class Ray {
 
 	}
 
-	copy ( ray ) {
+	copy( ray ) {
 
 		this.origin.copy( ray.origin );
 		this.direction.copy( ray.direction );
@@ -2704,13 +2704,13 @@ class Ray {
 
 	}
 
-	at ( t, result = new Vector3$1() ) {
+	at( t, result = new Vector3$1() ) {
 
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere ( center, radius, result = new Vector3$1() ) {
+	intersectSphere( center, radius, result = new Vector3$1() ) {
 
 		v1.subVectors( center, this.origin );
 		const tca = v1.dot( this.direction );
@@ -2745,7 +2745,7 @@ class Ray {
 
 	}
 
-	equals ( ray ) {
+	equals( ray ) {
 
 		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
 
@@ -2768,7 +2768,7 @@ const ray = new Ray( new Vector3$1( 0, 0, 0 ), new Vector3$1( 0, 0, 1 ) );
 
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
-	constructor ( entityManager ) {
+	constructor( entityManager ) {
 
 		super();
 
@@ -2779,7 +2779,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		// this will keep track of the closest intersecting obstacle
 
@@ -2791,7 +2791,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		// the obstacles in the game world
 
-		const obstacles = entityManager.entities.values();
+		const obstacles = this.entityManager.entities.values();
 
 		// the detection box length is proportional to the agent's velocity
 
@@ -2853,7 +2853,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 			// the closer the agent is to an object, the stronger the steering force should be
 
-			const multiplier =  1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
+			const multiplier = 1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
 
 			// calculate the lateral force
 
@@ -2885,7 +2885,7 @@ const predcitedPosition$1 = new Vector3$1();
 
 class PursuitBehavior extends SteeringBehavior {
 
-	constructor ( target, evader ) {
+	constructor( target, evader ) {
 
 		super();
 
@@ -2898,7 +2898,7 @@ class PursuitBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const evader = this.evader;
 
@@ -2955,7 +2955,7 @@ const randomDisplacement = new Vector3$1();
 
 class WanderBehavior extends SteeringBehavior {
 
-	constructor ( radius = 2, distance = 10, jitter = 20 ) {
+	constructor( radius = 2, distance = 10, jitter = 20 ) {
 
 		super();
 
@@ -2969,7 +2969,7 @@ class WanderBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force, delta ) {
 
 		// this behavior is dependent on the update rate, so this line must be
 		// included when using time independent frame rate
@@ -3008,7 +3008,7 @@ class WanderBehavior extends SteeringBehavior {
 
 	}
 
-	_setup () {
+	_setup() {
 
 		var theta = Math.random() * Math.PI * 2;
 
@@ -3028,17 +3028,21 @@ class WanderBehavior extends SteeringBehavior {
 
 class State {
 
-	enter () {}
+	enter() {}
 
-	execute () {
+	execute() {
 
 		console.warn( 'YUKA.State: .execute() must be implemented in derived class.' );
 
 	}
 
-	exit () {}
+	exit() {}
 
-	onMessage () { return false; }
+	onMessage() {
+
+		return false;
+
+	}
 
 }
 
@@ -3048,7 +3052,7 @@ class State {
 
 class StateMachine {
 
-	constructor ( owner ) {
+	constructor( owner ) {
 
 		this.owner = owner; // a reference to the agent that owns this instance
 		this.currentState = null; // the current state of the agent
@@ -3057,7 +3061,7 @@ class StateMachine {
 
 	}
 
-	update () {
+	update() {
 
 		if ( this.globalState !== null ) {
 
@@ -3073,7 +3077,7 @@ class StateMachine {
 
 	}
 
-	changeState ( newState ) {
+	changeState( newState ) {
 
 		if ( newState instanceof State ) {
 
@@ -3093,19 +3097,19 @@ class StateMachine {
 
 	}
 
-	revertToPrevoiusState () {
+	revertToPrevoiusState() {
 
 		this.changeState( this.previousState );
 
 	}
 
-	inState ( state ) {
+	inState( state ) {
 
 		return ( state === this.currentState );
 
 	}
 
-	handleMessage ( telegram ) {
+	handleMessage( telegram ) {
 
 		// first see, if the current state is valid and that it can handle the message
 
@@ -3140,14 +3144,14 @@ const v1$1 = new Vector3();
 
 class Ray$1 {
 
-	constructor ( origin = new Vector3(), direction = new Vector3() ) {
+	constructor( origin = new Vector3(), direction = new Vector3() ) {
 
 		this.origin = origin;
 		this.direction = direction;
 
 	}
 
-	set ( origin, direction ) {
+	set( origin, direction ) {
 
 		this.origin.copy( origin );
 		this.direction.copy( direction );
@@ -3156,7 +3160,7 @@ class Ray$1 {
 
 	}
 
-	copy ( ray ) {
+	copy( ray ) {
 
 		this.origin.copy( ray.origin );
 		this.direction.copy( ray.direction );
@@ -3165,13 +3169,13 @@ class Ray$1 {
 
 	}
 
-	at ( t, result = new Vector3() ) {
+	at( t, result = new Vector3() ) {
 
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere ( center, radius, result = new Vector3() ) {
+	intersectSphere( center, radius, result = new Vector3() ) {
 
 		v1$1.subVectors( center, this.origin );
 		const tca = v1$1.dot( this.direction );
@@ -3206,7 +3210,7 @@ class Ray$1 {
 
 	}
 
-	equals ( ray ) {
+	equals( ray ) {
 
 		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
 

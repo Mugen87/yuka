@@ -2,10 +2,10 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { GameEntity } from './GameEntity';
-import { Matrix4 } from '../math/Matrix4';
-import { Quaternion } from '../math/Quaternion';
-import { Vector3 } from '../math/Vector3';
+import { GameEntity } from './GameEntity.js';
+import { Matrix4 } from '../math/Matrix4.js';
+import { Quaternion } from '../math/Quaternion.js';
+import { Vector3 } from '../math/Vector3.js';
 
 const direction = new Vector3();
 const rotationMatrix = new Matrix4();
@@ -13,7 +13,7 @@ const targetRotation = new Quaternion();
 
 class MovingEntity extends GameEntity {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -28,7 +28,7 @@ class MovingEntity extends GameEntity {
 	// given a target position, this method rotates the entity by an amount not
 	// greater than maxTurnRate until it directly faces the target
 
-	rotateToTarget ( target ) {
+	rotateToTarget( target ) {
 
 		this.getDirection( direction );
 
@@ -61,7 +61,7 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	lookAt ( target ) {
+	lookAt( target ) {
 
 		rotationMatrix.lookAt( target, this.position, this.up );
 		this.rotation.setFromRotationMatrix( rotationMatrix );
@@ -70,19 +70,19 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	getDirection ( result = new Vector3() ) {
+	getDirection( result = new Vector3() ) {
 
 		return result.set( 0, 0, 1 ).applyQuaternion( this.rotation ).normalize();
 
 	}
 
-	getSpeed () {
+	getSpeed() {
 
 		return this.velocity.length();
 
 	}
 
-	getSpeedSquared () {
+	getSpeedSquared() {
 
 		return this.velocity.lengthSquared();
 

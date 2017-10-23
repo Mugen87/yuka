@@ -4,13 +4,13 @@
 
 class EventDispatcher {
 
-	constructor () {
+	constructor() {
 
 		this.listeners = {};
 
 	}
 
-	addEventListener ( type, listener, scope ) {
+	addEventListener( type, listener, scope ) {
 
 		const listeners = this.listeners;
 
@@ -30,7 +30,7 @@ class EventDispatcher {
 
 	}
 
-	hasEventListener ( type, listener ) {
+	hasEventListener( type, listener ) {
 
 		const listeners = this.listeners;
 
@@ -38,7 +38,7 @@ class EventDispatcher {
 
 	}
 
-	removeEventListener ( type, listener ) {
+	removeEventListener( type, listener ) {
 
 		const listeners = this.listeners;
 		const listenerArray = listeners[ type ];
@@ -57,7 +57,7 @@ class EventDispatcher {
 
 	}
 
-	dispatchEvent ( event ) {
+	dispatchEvent( event ) {
 
 		const listeners = this.listeners;
 		const listenerArray = listeners[ event.type ];

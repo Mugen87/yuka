@@ -4,17 +4,21 @@
 
 class State {
 
-	enter () {}
+	enter() {}
 
-	execute () {
+	execute() {
 
 		console.warn( 'YUKA.State: .execute() must be implemented in derived class.' );
 
 	}
 
-	exit () {}
+	exit() {}
 
-	onMessage () { return false; }
+	onMessage() {
+
+		return false;
+
+	}
 
 }
 

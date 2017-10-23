@@ -5,20 +5,20 @@
  *
  */
 
-import { Vector3 } from './Vector3';
+import { Vector3 } from './Vector3.js';
 
 const v1 = new Vector3();
 
 class Ray {
 
-	constructor ( origin = new Vector3(), direction = new Vector3() ) {
+	constructor( origin = new Vector3(), direction = new Vector3() ) {
 
 		this.origin = origin;
 		this.direction = direction;
 
 	}
 
-	set ( origin, direction ) {
+	set( origin, direction ) {
 
 		this.origin.copy( origin );
 		this.direction.copy( direction );
@@ -27,7 +27,7 @@ class Ray {
 
 	}
 
-	copy ( ray ) {
+	copy( ray ) {
 
 		this.origin.copy( ray.origin );
 		this.direction.copy( ray.direction );
@@ -36,13 +36,13 @@ class Ray {
 
 	}
 
-	at ( t, result = new Vector3() ) {
+	at( t, result = new Vector3() ) {
 
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere ( center, radius, result = new Vector3() ) {
+	intersectSphere( center, radius, result = new Vector3() ) {
 
 		v1.subVectors( center, this.origin );
 		const tca = v1.dot( this.direction );
@@ -77,7 +77,7 @@ class Ray {
 
 	}
 
-	equals ( ray ) {
+	equals( ray ) {
 
 		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
 

@@ -4,7 +4,7 @@
 
 class SteeringBehavior {
 
-	constructor () {
+	constructor() {
 
 		// use this value to tweak the amount that a steering force
 		// contributes to the total steering force
@@ -13,7 +13,7 @@ class SteeringBehavior {
 
 	}
 
-	calculate () {}
+	calculate() {}
 
 }
 

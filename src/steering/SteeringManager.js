@@ -2,13 +2,13 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Vector3 } from '../Math/Vector3';
+import { Vector3 } from '../Math/Vector3.js';
 
 const force = new Vector3();
 
 class SteeringManager {
 
-	constructor ( vehicle ) {
+	constructor( vehicle ) {
 
 		this.vehicle = vehicle;
 		this.behaviors = [];
@@ -17,7 +17,7 @@ class SteeringManager {
 
 	}
 
-	add ( behavior ) {
+	add( behavior ) {
 
 		this.behaviors.push( behavior );
 
@@ -25,7 +25,7 @@ class SteeringManager {
 
 	}
 
-	remove ( behavior ) {
+	remove( behavior ) {
 
 		const index = this.behaviors.indexOf( behavior );
 
@@ -35,7 +35,7 @@ class SteeringManager {
 
 	}
 
-	_calculate ( delta, optionalTarget )  {
+	_calculate( delta, optionalTarget ) {
 
 		const result = optionalTarget || new Vector3();
 
@@ -48,7 +48,7 @@ class SteeringManager {
 	// this method calculates how much of its max steering force the vehicle has
 	// left to apply and then applies that amount of the force to add
 
-	_accumulate ( forceToAdd ) {
+	_accumulate( forceToAdd ) {
 
 		// calculate how much steering force the vehicle has used so far
 
@@ -82,7 +82,7 @@ class SteeringManager {
 
 	}
 
-	_calculateByOrder ( delta ) {
+	_calculateByOrder( delta ) {
 
 		// reset steering force
 

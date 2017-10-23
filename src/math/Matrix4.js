@@ -5,7 +5,7 @@
  *
  */
 
-import { Vector3 } from './Vector3';
+import { Vector3 } from './Vector3.js';
 
 const x = new Vector3();
 const y = new Vector3();
@@ -13,7 +13,7 @@ const z = new Vector3();
 
 class Matrix4 {
 
-	constructor () {
+	constructor() {
 
 		this.elements = [
 
@@ -26,7 +26,7 @@ class Matrix4 {
 
 	}
 
-	set ( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
+	set( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
 
 		const e = this.elements;
 
@@ -39,7 +39,7 @@ class Matrix4 {
 
 	}
 
-	identity () {
+	identity() {
 
 		this.set(
 
@@ -54,7 +54,7 @@ class Matrix4 {
 
 	}
 
-	extractBasis ( xAxis, yAxis, zAxis ) {
+	extractBasis( xAxis, yAxis, zAxis ) {
 
 		xAxis.setFromMatrixColumn( this, 0 );
 		yAxis.setFromMatrixColumn( this, 1 );
@@ -64,32 +64,32 @@ class Matrix4 {
 
 	}
 
-	makeBasis ( xAxis, yAxis, zAxis ) {
+	makeBasis( xAxis, yAxis, zAxis ) {
 
 		this.set(
 			xAxis.x, yAxis.x, zAxis.x, 0,
 			xAxis.y, yAxis.y, zAxis.y, 0,
 			xAxis.z, yAxis.z, zAxis.z, 0,
-			0,       0,       0,       1
+			0, 0, 0, 1
 		);
 
 		return this;
 
 	}
 
-	multiply ( m ) {
+	multiply( m ) {
 
 		return this.multiplyMatrices( this, m );
 
 	}
 
-	premultiply ( m ) {
+	premultiply( m ) {
 
 		return this.multiplyMatrices( m, this );
 
 	}
 
-	multiplyMatrices ( a, b ) {
+	multiplyMatrices( a, b ) {
 
 		const ae = a.elements;
 		const be = b.elements;
@@ -105,23 +105,23 @@ class Matrix4 {
 		const b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
 		const b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
 
-		e[ 0 ]  = ( a11 * b11 ) + ( a12 * b21 ) + ( a13 * b31 ) + ( a14 * b41 );
-		e[ 4 ]  = ( a11 * b12 ) + ( a12 * b22 ) + ( a13 * b32 ) + ( a14 * b42 );
-		e[ 8 ]  = ( a11 * b13 ) + ( a12 * b23 ) + ( a13 * b33 ) + ( a14 * b43 );
+		e[ 0 ] = ( a11 * b11 ) + ( a12 * b21 ) + ( a13 * b31 ) + ( a14 * b41 );
+		e[ 4 ] = ( a11 * b12 ) + ( a12 * b22 ) + ( a13 * b32 ) + ( a14 * b42 );
+		e[ 8 ] = ( a11 * b13 ) + ( a12 * b23 ) + ( a13 * b33 ) + ( a14 * b43 );
 		e[ 12 ] = ( a11 * b14 ) + ( a12 * b24 ) + ( a13 * b34 ) + ( a14 * b44 );
 
-		e[ 1 ]  = ( a21 * b11 ) + ( a22 * b21 ) + ( a23 * b31 ) + ( a24 * b41 );
-		e[ 5 ]  = ( a21 * b12 ) + ( a22 * b22 ) + ( a23 * b32 ) + ( a24 * b42 );
-		e[ 9 ]  = ( a21 * b13 ) + ( a22 * b23 ) + ( a23 * b33 ) + ( a24 * b43 );
+		e[ 1 ] = ( a21 * b11 ) + ( a22 * b21 ) + ( a23 * b31 ) + ( a24 * b41 );
+		e[ 5 ] = ( a21 * b12 ) + ( a22 * b22 ) + ( a23 * b32 ) + ( a24 * b42 );
+		e[ 9 ] = ( a21 * b13 ) + ( a22 * b23 ) + ( a23 * b33 ) + ( a24 * b43 );
 		e[ 13 ] = ( a21 * b14 ) + ( a22 * b24 ) + ( a23 * b34 ) + ( a24 * b44 );
 
-		e[ 2 ]  = ( a31 * b11 ) + ( a32 * b21 ) + ( a33 * b31 ) + ( a34 * b41 );
-		e[ 6 ]  = ( a31 * b12 ) + ( a32 * b22 ) + ( a33 * b32 ) + ( a34 * b42 );
+		e[ 2 ] = ( a31 * b11 ) + ( a32 * b21 ) + ( a33 * b31 ) + ( a34 * b41 );
+		e[ 6 ] = ( a31 * b12 ) + ( a32 * b22 ) + ( a33 * b32 ) + ( a34 * b42 );
 		e[ 10 ] = ( a31 * b13 ) + ( a32 * b23 ) + ( a33 * b33 ) + ( a34 * b43 );
 		e[ 14 ] = ( a31 * b14 ) + ( a32 * b24 ) + ( a33 * b34 ) + ( a34 * b44 );
 
-		e[ 3 ]  = ( a41 * b11 ) + ( a42 * b21 ) + ( a43 * b31 ) + ( a44 * b41 );
-		e[ 7 ]  = ( a41 * b12 ) + ( a42 * b22 ) + ( a43 * b32 ) + ( a44 * b42 );
+		e[ 3 ] = ( a41 * b11 ) + ( a42 * b21 ) + ( a43 * b31 ) + ( a44 * b41 );
+		e[ 7 ] = ( a41 * b12 ) + ( a42 * b22 ) + ( a43 * b32 ) + ( a44 * b42 );
 		e[ 11 ] = ( a41 * b13 ) + ( a42 * b23 ) + ( a43 * b33 ) + ( a44 * b43 );
 		e[ 15 ] = ( a41 * b14 ) + ( a42 * b24 ) + ( a43 * b34 ) + ( a44 * b44 );
 
@@ -129,7 +129,7 @@ class Matrix4 {
 
 	}
 
-	multiplyScalar ( s ) {
+	multiplyScalar( s ) {
 
 		const e = this.elements;
 
@@ -142,7 +142,7 @@ class Matrix4 {
 
 	}
 
-	compose ( position, quaternion, scale ) {
+	compose( position, quaternion, scale ) {
 
 		this.makeRotationFromQuaternion( quaternion );
 		this.scale( scale );
@@ -152,7 +152,7 @@ class Matrix4 {
 
 	}
 
-	makeRotationFromQuaternion ( q ) {
+	makeRotationFromQuaternion( q ) {
 
 		const e = this.elements;
 
@@ -187,7 +187,7 @@ class Matrix4 {
 
 	}
 
-	scale ( v ) {
+	scale( v ) {
 
 		const e = this.elements;
 
@@ -202,7 +202,7 @@ class Matrix4 {
 
 	}
 
-	setPosition ( v ) {
+	setPosition( v ) {
 
 		const e = this.elements;
 
@@ -214,7 +214,7 @@ class Matrix4 {
 
 	}
 
-	transpose () {
+	transpose() {
 
 		const e = this.elements;
 		let t;
@@ -232,7 +232,7 @@ class Matrix4 {
 
 	}
 
-	getInverse ( m ) {
+	getInverse( m ) {
 
 		const e = this.elements;
 		const me = m.elements;
@@ -282,7 +282,7 @@ class Matrix4 {
 
 	}
 
-	lookAt ( eye, target, up ) {
+	lookAt( eye, target, up ) {
 
 		z.subVectors( eye, target );
 
@@ -321,15 +321,15 @@ class Matrix4 {
 
 		const e = this.elements;
 
-			e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
-			e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
-			e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
+		e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
+		e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
+		e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
 
-			return this;
+		return this;
 
 	 }
 
-	equals ( m ) {
+	equals( m ) {
 
 		const e = this.elements;
 		const me = m.elements;
@@ -344,7 +344,7 @@ class Matrix4 {
 
 	}
 
-	fromArray ( array, offset = 0 ) {
+	fromArray( array, offset = 0 ) {
 
 		const e = this.elements;
 
@@ -358,7 +358,7 @@ class Matrix4 {
 
 	}
 
-	toArray ( array = [], offset = 0 ) {
+	toArray( array = [], offset = 0 ) {
 
 		const e = this.elements;
 

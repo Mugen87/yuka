@@ -2,15 +2,15 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from '../SteeringBehavior';
-import { Vector3 } from '../../Math/Vector3';
+import { SteeringBehavior } from '../SteeringBehavior.js';
+import { Vector3 } from '../../Math/Vector3.js';
 
 const desiredVelocity = new Vector3();
 const displacement = new Vector3();
 
 class ArriveBehavior extends SteeringBehavior {
 
-	constructor ( target, deceleration = 3 ) {
+	constructor( target, deceleration = 3 ) {
 
 		super();
 
@@ -19,7 +19,7 @@ class ArriveBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const target = this.target;
 		const deceleration = this.deceleration;

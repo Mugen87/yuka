@@ -2,14 +2,14 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from '../SteeringBehavior';
-import { Vector3 } from '../../Math/Vector3';
+import { SteeringBehavior } from '../SteeringBehavior.js';
+import { Vector3 } from '../../Math/Vector3.js';
 
 const desiredVelocity = new Vector3();
 
 class FleeBehavior extends SteeringBehavior {
 
-	constructor ( target, panicDistance = 10 ) {
+	constructor( target, panicDistance = 10 ) {
 
 		super();
 
@@ -18,7 +18,7 @@ class FleeBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const target = this.target;
 

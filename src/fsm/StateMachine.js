@@ -2,11 +2,11 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { State } from './State';
+import { State } from './State.js';
 
 class StateMachine {
 
-	constructor ( owner ) {
+	constructor( owner ) {
 
 		this.owner = owner; // a reference to the agent that owns this instance
 		this.currentState = null; // the current state of the agent
@@ -15,7 +15,7 @@ class StateMachine {
 
 	}
 
-	update () {
+	update() {
 
 		if ( this.globalState !== null ) {
 
@@ -31,7 +31,7 @@ class StateMachine {
 
 	}
 
-	changeState ( newState ) {
+	changeState( newState ) {
 
 		if ( newState instanceof State ) {
 
@@ -51,19 +51,19 @@ class StateMachine {
 
 	}
 
-	revertToPrevoiusState () {
+	revertToPrevoiusState() {
 
 		this.changeState( this.previousState );
 
 	}
 
-	inState ( state ) {
+	inState( state ) {
 
 		return ( state === this.currentState );
 
 	}
 
-	handleMessage ( telegram ) {
+	handleMessage( telegram ) {
 
 		// first see, if the current state is valid and that it can handle the message
 

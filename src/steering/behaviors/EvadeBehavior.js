@@ -2,9 +2,9 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from '../SteeringBehavior';
-import { FleeBehavior } from './FleeBehavior';
-import { Vector3 } from '../../Math/Vector3';
+import { SteeringBehavior } from '../SteeringBehavior.js';
+import { FleeBehavior } from './FleeBehavior.js';
+import { Vector3 } from '../../Math/Vector3.js';
 
 const displacement = new Vector3();
 const newPuruserVelocity = new Vector3();
@@ -12,7 +12,7 @@ const predcitedPosition = new Vector3();
 
 class EvadeBehavior extends SteeringBehavior {
 
-	constructor ( target , pursuer ) {
+	constructor( target, pursuer ) {
 
 		super();
 
@@ -25,7 +25,7 @@ class EvadeBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		const pursuer = this.pursuer;
 

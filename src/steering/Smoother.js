@@ -2,11 +2,11 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Vector3 } from '../Math/Vector3';
+import { Vector3 } from '../Math/Vector3.js';
 
 class Smoother {
 
-	constructor ( count = 10 ) {
+	constructor( count = 10 ) {
 
 		this.count = count; // how many samples the smoother will use to average a value
 		this._history = []; // this holds the history
@@ -22,7 +22,7 @@ class Smoother {
 
 	}
 
-	update ( value, average ) {
+	update( value, average ) {
 
 		// ensure, average is a zero vector
 

@@ -2,12 +2,12 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { MovingEntity } from '../core/MovingEntity';
-import { SteeringManager } from './SteeringManager';
-import { Smoother } from './Smoother';
-import { Vector3 } from '../math/Vector3';
-import { Quaternion } from '../math/Quaternion';
-import { Matrix4 } from '../math/Matrix4';
+import { MovingEntity } from '../core/MovingEntity.js';
+import { SteeringManager } from './SteeringManager.js';
+import { Smoother } from './Smoother.js';
+import { Vector3 } from '../math/Vector3.js';
+import { Quaternion } from '../math/Quaternion.js';
+import { Matrix4 } from '../math/Matrix4.js';
 
 const steeringForce = new Vector3();
 const displacement = new Vector3();
@@ -17,7 +17,7 @@ const rotationMatrix = new Matrix4();
 
 class Vehicle extends MovingEntity {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -29,19 +29,19 @@ class Vehicle extends MovingEntity {
 
 	}
 
-	enableSmoothing ( sampleCount ) {
+	enableSmoothing( sampleCount ) {
 
 		this._smoother = new Smoother( sampleCount );
 
 	}
 
-	disableSmoothing () {
+	disableSmoothing() {
 
 		this._smoother = null;
 
 	}
 
-	update ( delta ) {
+	update( delta ) {
 
 		// calculate steering force
 

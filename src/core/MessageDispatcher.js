@@ -2,18 +2,18 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Telegram } from './Telegram';
+import { Telegram } from './Telegram.js';
 
 class MessageDispatcher {
 
-	constructor ( entityManager ) {
+	constructor( entityManager ) {
 
 		this.delayedTelegrams = new Array();
 		this.entityManager = entityManager;
 
 	}
 
-	deliver ( receiver, telegram ) {
+	deliver( receiver, telegram ) {
 
 		if ( receiver.handleMessage( telegram ) === false ) {
 
@@ -25,7 +25,7 @@ class MessageDispatcher {
 
 	// send a message to another agent
 
-	dispatch ( sender, receiver, message, delay, data ) {
+	dispatch( sender, receiver, message, delay, data ) {
 
 		const telegram = new Telegram( sender.id, receiver.id, message, data, 0 );
 
@@ -45,7 +45,7 @@ class MessageDispatcher {
 
 	// process delayed messages
 
-	dispatchDelayedMessages ( delta ) {
+	dispatchDelayedMessages( delta ) {
 
 		let i = this.delayedTelegrams.length;
 

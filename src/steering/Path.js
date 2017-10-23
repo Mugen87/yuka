@@ -4,7 +4,7 @@
 
 class Path {
 
-	constructor () {
+	constructor() {
 
 		this.loop = false;
 		this._waypoints = [];
@@ -12,7 +12,7 @@ class Path {
 
 	}
 
-	add ( waypoint ) {
+	add( waypoint ) {
 
 		this._waypoints.push( waypoint );
 
@@ -20,7 +20,7 @@ class Path {
 
 	}
 
-	clear () {
+	clea() {
 
 		this._waypoints.length = 0;
 
@@ -28,21 +28,21 @@ class Path {
 
 	}
 
-	finished () {
+	finished() {
 
-		const lastIndex =  this._waypoints.length - 1;
+		const lastIndex = this._waypoints.length - 1;
 
 		return ( this.loop === true ) ? false : ( this._index === lastIndex );
 
 	}
 
-	advance () {
+	advance() {
 
 		this._index ++;
 
 		if ( ( this._index === this._waypoints.length ) ) {
 
-			if (  this.loop === true ) {
+			if ( this.loop === true ) {
 
 				this._index = 0;
 
@@ -58,7 +58,7 @@ class Path {
 
 	}
 
-	current () {
+	current() {
 
 		return this._waypoints[ this._index ];
 

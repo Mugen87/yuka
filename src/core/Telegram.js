@@ -4,7 +4,7 @@
 
 class Telegram {
 
-	constructor ( senderId, receiverId, message, data, delay ) {
+	constructor( senderId, receiverId, message, data, delay ) {
 
 		this.senderId = senderId;
 		this.receiverId = receiverId;

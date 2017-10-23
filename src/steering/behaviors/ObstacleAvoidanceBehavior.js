@@ -2,10 +2,10 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { SteeringBehavior } from '../SteeringBehavior';
-import { Vector3 } from '../../Math/Vector3';
-import { Matrix4 } from '../../Math/Matrix4';
-import { Ray } from '../../Math/Ray';
+import { SteeringBehavior } from '../SteeringBehavior.js';
+import { Vector3 } from '../../Math/Vector3.js';
+import { Matrix4 } from '../../Math/Matrix4.js';
+import { Ray } from '../../Math/Ray.js';
 
 const inverse = new Matrix4();
 const localPositionOfObstacle = new Vector3();
@@ -18,7 +18,7 @@ const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
-	constructor ( entityManager ) {
+	constructor( entityManager ) {
 
 		super();
 
@@ -29,7 +29,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	}
 
-	calculate ( vehicle, force, delta ) {
+	calculate( vehicle, force /*, delta */ ) {
 
 		// this will keep track of the closest intersecting obstacle
 
@@ -41,7 +41,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		// the obstacles in the game world
 
-		const obstacles = entityManager.entities.values();
+		const obstacles = this.entityManager.entities.values();
 
 		// the detection box length is proportional to the agent's velocity
 
@@ -103,7 +103,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 			// the closer the agent is to an object, the stronger the steering force should be
 
-			const multiplier =  1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
+			const multiplier = 1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
 
 			// calculate the lateral force
 
