@@ -103,14 +103,37 @@ class EntityManager {
 	constructor() {
 
 		this.entities = new Map();
+		this.tagDirectory = new Map();
 		this.messageDispatcher = new MessageDispatcher( this );
 
 	}
 
 	add( entity ) {
 
+		// add entity to manager
+
 		this.entities.set( entity.id, entity );
+
+		// let the entity know its manager
+
 		entity.manager = this;
+
+		// update tag directory
+
+		const tag = entity.tag;
+
+		if ( this.tagDirectory.has( tag ) === true ) {
+
+			const entities = this.tagDirectory.get( tag );
+			entities.add( entity );
+
+		} else {
+
+			const entities = new Set();
+			entities.add( entity );
+			this.tagDirectory.set( tag, entities );
+
+		}
 
 		return this;
 
@@ -118,8 +141,28 @@ class EntityManager {
 
 	remove( entity ) {
 
+		// remove entity from manager
+
 		this.entities.delete( entity.id );
+
+		// remove the reference to the manager
+
 		entity.manager = null;
+
+		// update tag directory
+
+		const tag = entity.tag;
+		const entities = this.tagDirectory.get( tag );
+
+		if ( entities.size === 1 ) {
+
+			this.tagDirectory.delete( tag );
+
+		} else {
+
+			entities.delete( entity );
+
+		}
 
 		return this;
 
@@ -140,6 +183,12 @@ class EntityManager {
 		}
 
 		return null;
+
+	}
+
+	getEntitiesByTag( tag ) {
+
+		return this.tagDirectory.get( tag );
 
 	}
 
@@ -1158,6 +1207,7 @@ class GameEntity {
 
 		this.id = GameEntity.__nextId ++;
 		this.name = '';
+		this.tag = '';
 
 		this.position = new Vector3();
 		this.rotation = new Quaternion();

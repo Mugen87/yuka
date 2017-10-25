@@ -14,6 +14,7 @@ class GameEntity {
 
 		this.id = GameEntity.__nextId ++;
 		this.name = '';
+		this.tag = '';
 
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
