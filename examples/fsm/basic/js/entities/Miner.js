@@ -4,7 +4,7 @@
 
 class Miner extends YUKA.GameEntity {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -21,44 +21,44 @@ class Miner extends YUKA.GameEntity {
 
 	}
 
-	update () {
+	update() {
 
 		this.stateMachine.update();
 
 	}
 
-	pocketsFull () {
+	pocketsFull() {
 
 		return this.gold >= Miner.MAX_GOLD;
 
 	}
 
-	fatigued () {
+	fatigued() {
 
 		return this.fatigueLevel >= Miner.TIREDNESS_THRESHOLD;
 
 	}
 
-	thirsty () {
+	thirsty() {
 
 		return this.thirstLevel >= Miner.THIRST_THRESHOLD;
 
 	}
 
-	enoughMoney () {
+	enoughMoney() {
 
 		return this.money >= Miner.COMFORT_LEVEL;
 
 	}
 
-	buyAndDrinkAWhiskey () {
+	buyAndDrinkAWhiskey() {
 
 		this.thirstLevel = 0;
 		this.money -= 2;
 
 	}
 
-	depositGold () {
+	depositGold() {
 
 		this.money += this.gold;
 		this.gold = 0;

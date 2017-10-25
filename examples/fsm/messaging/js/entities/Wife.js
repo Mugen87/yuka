@@ -4,7 +4,7 @@
 
 class Wife extends YUKA.GameEntity {
 
-	constructor () {
+	constructor() {
 
 		super();
 
@@ -18,13 +18,13 @@ class Wife extends YUKA.GameEntity {
 
 	}
 
-	update () {
+	update() {
 
 		this.stateMachine.update();
 
 	}
 
-	handleMessage ( telegram ) {
+	handleMessage( telegram ) {
 
 		return this.stateMachine.handleMessage( telegram );
 

@@ -2,15 +2,15 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
- class MinerGlobalState extends YUKA.State {
+class MinerGlobalState extends YUKA.State {
 
-	 execute ( miner ) {
+	execute( miner ) {
 
-		 miner.thirstLevel ++;
+		miner.thirstLevel ++;
 
-	 }
+	}
 
- }
+}
 
 /**
  * In this state the miner will walk to a goldmine and pick up a nugget
@@ -21,7 +21,7 @@
 
 class EnterMineAndDigForGold extends YUKA.State {
 
-	enter ( miner ) {
+	enter( miner ) {
 
 		// if the miner is not already located at the gold mine, he must change location to the gold mine
 
@@ -35,7 +35,7 @@ class EnterMineAndDigForGold extends YUKA.State {
 
 	}
 
-	execute ( miner ) {
+	execute( miner ) {
 
 		// The miner digs for gold until he is carrying in excess of maxNuggets.
 		// If he gets thirsty during his digging he stops work and changes state to go to the saloon for a whiskey.
@@ -66,14 +66,14 @@ class EnterMineAndDigForGold extends YUKA.State {
 
 	}
 
-	exit ( miner ) {
+	exit( miner ) {
 
 		console.log( 'Miner: Leaving the goldmine.' );
 
 
 	}
 
-	onMessage ( miner, telegram ) {
+	onMessage( miner, telegram ) {
 
 		return false;
 
@@ -89,7 +89,7 @@ class EnterMineAndDigForGold extends YUKA.State {
 
 class VisitBankAndDepositGold extends YUKA.State {
 
-	enter ( miner ) {
+	enter( miner ) {
 
 		// on entry the miner makes sure he is located at the bank
 
@@ -103,7 +103,7 @@ class VisitBankAndDepositGold extends YUKA.State {
 
 	}
 
-	execute ( miner ) {
+	execute( miner ) {
 
 		// deposit the gold
 
@@ -129,14 +129,14 @@ class VisitBankAndDepositGold extends YUKA.State {
 
 	}
 
-	exit ( miner ) {
+	exit( miner ) {
 
 		console.log( 'Miner: Leaving the bank.' );
 
 
 	}
 
-	onMessage ( miner, telegram ) {
+	onMessage( miner, telegram ) {
 
 		return false;
 
@@ -150,7 +150,7 @@ class VisitBankAndDepositGold extends YUKA.State {
 
 class GoHomeAndSleepTillRested extends YUKA.State {
 
-	enter ( miner ) {
+	enter( miner ) {
 
 		if ( miner.location !== 'shack' ) {
 
@@ -166,7 +166,7 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 	}
 
-	execute ( miner ) {
+	execute( miner ) {
 
 		// if miner is not fatigued start to dig for nuggets again
 
@@ -189,19 +189,17 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 	}
 
-	onMessage ( miner, telegram ) {
+	onMessage( miner, telegram ) {
 
 		const message = telegram.message;
 
 		switch ( message ) {
 
 			case 'StewReady':
+				console.log( 'Miner: Okay, honey. I am coming.' );
+				miner.stateMachine.changeState( MINER_STATES.EAT_STEW );
 
-			console.log( 'Miner: Okay, honey. I am coming.' );
-
-			miner.stateMachine.changeState( MINER_STATES.EAT_STEW );
-
-			return true;
+				return true;
 
 		}
 
@@ -221,7 +219,7 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 class QuenchThirst extends YUKA.State {
 
-	enter ( miner ) {
+	enter( miner ) {
 
 		if ( miner.location !== 'saloon' ) {
 
@@ -233,7 +231,7 @@ class QuenchThirst extends YUKA.State {
 
 	}
 
-	execute ( miner ) {
+	execute( miner ) {
 
 		miner.buyAndDrinkAWhiskey();
 
@@ -243,13 +241,13 @@ class QuenchThirst extends YUKA.State {
 
 	}
 
-	exit ( miner ) {
+	exit( miner ) {
 
 		console.log( 'Miner: Leaving the saloon, feeling good.' );
 
 	}
 
-	onMessage ( miner, telegram ) {
+	onMessage( miner, telegram ) {
 
 		return false;
 
@@ -264,13 +262,13 @@ class QuenchThirst extends YUKA.State {
 
 class EatStew extends YUKA.State {
 
-	enter ( miner ) {
+	enter( miner ) {
 
 		console.log( 'Miner: Smells Reaaal goood Elsa!' );
 
 	}
 
-	execute ( miner ) {
+	execute( miner ) {
 
 		miner.buyAndDrinkAWhiskey();
 
@@ -280,13 +278,13 @@ class EatStew extends YUKA.State {
 
 	}
 
-	exit ( miner ) {
+	exit( miner ) {
 
 		console.log( 'Miner: Thank you, Elsa. I better get back to whatever i was doing.' );
 
 	}
 
-	onMessage ( miner, telegram ) {
+	onMessage( miner, telegram ) {
 
 		return false;
 

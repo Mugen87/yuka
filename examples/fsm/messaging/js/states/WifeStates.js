@@ -2,27 +2,27 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
- class WifeGlobalState extends YUKA.State {
+class WifeGlobalState extends YUKA.State {
 
-	 execute ( wife ) {
+	execute( wife ) {
 
-		 // 1 in 10 chance of needing the bathroom (provided she is not already in the bathroom)
+		// 1 in 10 chance of needing the bathroom (provided she is not already in the bathroom)
 
-		 if ( Math.random() < 0.1 && wife.stateMachine.inState(  WIFE_STATES.VISIT_BATHROOM ) === false ) {
+		if ( Math.random() < 0.1 && wife.stateMachine.inState( WIFE_STATES.VISIT_BATHROOM ) === false ) {
 
-			 wife.stateMachine.changeState( WIFE_STATES.VISIT_BATHROOM );
+			wife.stateMachine.changeState( WIFE_STATES.VISIT_BATHROOM );
 
-		 }
+		}
 
-	 }
+	}
 
-	 onMessage ( wife, telegram ) {
+	onMessage( wife, telegram ) {
 
-		 const message = telegram.message;
+		const message = telegram.message;
 
-		 switch ( message ) {
+		switch ( message ) {
 
-		 	case 'Home':
+			case 'Home':
 
 				console.log( 'Wife: Hi honey. Let me make you some of my fine country stew.' );
 
@@ -30,47 +30,47 @@
 
 				return true;
 
-		 	default:
+			default:
 
-		 }
-
-		 return false;
-
-	 }
-
- }
-
- class DoHouseWork extends YUKA.State {
-
-	 enter ( wife ) {
-
-		 console.log( 'Wife: Time to do some more housework!' );
-
-	 }
-
-	execute ( wife ) {
-
-		console.log( 'Wife: Mopping the floor.' );
-
-	}
-
-	onMessage ( wife, telegram ) {
+		}
 
 		return false;
 
 	}
 
- }
+}
 
- class VisitBathroom extends YUKA.State {
+class DoHouseWork extends YUKA.State {
 
-	 enter ( wife ) {
+	enter( wife ) {
 
-		 console.log( 'Wife: Walking to the bathroom. Need to powder my pretty nose.' );
+		console.log( 'Wife: Time to do some more housework!' );
 
-	 }
+	}
 
-	execute ( wife ) {
+	execute( wife ) {
+
+		console.log( 'Wife: Mopping the floor.' );
+
+	}
+
+	onMessage( wife, telegram ) {
+
+		return false;
+
+	}
+
+}
+
+class VisitBathroom extends YUKA.State {
+
+	enter( wife ) {
+
+		console.log( 'Wife: Walking to the bathroom. Need to powder my pretty nose.' );
+
+	}
+
+	execute( wife ) {
 
 		console.log( 'Wife: Ahhhhhh! Sweet relief!' );
 
@@ -78,46 +78,46 @@
 
 	}
 
-	exit ( wife ) {
+	exit( wife ) {
 
 		console.log( 'Wife: Leaving the bathroom.' );
 
 	}
 
-	onMessage ( wife, telegram ) {
+	onMessage( wife, telegram ) {
 
 		return false;
 
 	}
 
- }
+}
 
- class CookStew extends YUKA.State {
+class CookStew extends YUKA.State {
 
-	 enter ( wife ) {
+	enter( wife ) {
 
-		 // if not already cooking put the stew in the oven
+		// if not already cooking put the stew in the oven
 
-		 if ( wife.cooking === false ) {
+		if ( wife.cooking === false ) {
 
-			 console.log( 'Wife: Putting the stew in the oven.' );
+			console.log( 'Wife: Putting the stew in the oven.' );
 
-			 wife.cooking = true;
+			wife.cooking = true;
 
-			 wife.sendMessage( wife, 'StewReady', 1500 );
+			wife.sendMessage( wife, 'StewReady', 1500 );
 
-		 }
+		}
 
-	 }
+	}
 
-	execute ( wife ) {
+	execute( wife ) {
 
 		console.log( 'Wife: Make stew.' );
 
 	}
 
 
-	onMessage ( wife, telegram ) {
+	onMessage( wife, telegram ) {
 
 		const message = telegram.message;
 
@@ -143,11 +143,11 @@
 
 	}
 
- }
+}
 
 const WIFE_STATES = {
 	GLOBAL_STATE: new WifeGlobalState(),
 	DO_HOUSE_WORK: new DoHouseWork(),
 	VISIT_BATHROOM: new VisitBathroom(),
 	COOK_STEW: new CookStew()
- };
+};
