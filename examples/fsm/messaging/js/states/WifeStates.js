@@ -129,7 +129,7 @@ class CookStew extends YUKA.State {
 
 				// let miner know the stew is ready
 
-				wife.sendMessage( miner, 'StewReady' );
+				wife.sendMessage( wife.miner, 'StewReady' );
 
 				wife.cooking = false;
 

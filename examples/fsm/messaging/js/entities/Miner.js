@@ -8,6 +8,8 @@ class Miner extends YUKA.GameEntity {
 
 		super();
 
+		this.wife = null;
+
 		this.location = 'shack';
 		this.gold = 0; // how many gold the miner has in his pockets
 		this.money = 0; // how many gold the miner has in its bank
@@ -68,6 +70,12 @@ class Miner extends YUKA.GameEntity {
 
 		this.money += this.gold;
 		this.gold = 0;
+
+	}
+
+	setWife( wife ) {
+
+		this.wife = wife;
 
 	}
 

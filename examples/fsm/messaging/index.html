@@ -22,6 +22,9 @@
 	const miner = new Miner();
 	const wife = new Wife();
 
+	miner.setWife( wife );
+	wife.setMiner( miner );
+
 	entityManager.add( miner );
 	entityManager.add( wife );
 
