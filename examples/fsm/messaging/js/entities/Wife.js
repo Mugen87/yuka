@@ -8,8 +8,6 @@ class Wife extends YUKA.GameEntity {
 
 		super();
 
-		this.miner = null;
-
 		this.location = 'shack';
 		this.cooking = false; // is she presently cooking?
 
@@ -29,12 +27,6 @@ class Wife extends YUKA.GameEntity {
 	handleMessage( telegram ) {
 
 		return this.stateMachine.handleMessage( telegram );
-
-	}
-
-	setMiner( miner ) {
-
-		this.miner = miner;
 
 	}
 

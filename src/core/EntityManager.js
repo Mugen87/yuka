@@ -16,8 +16,7 @@ class EntityManager {
 	add( entity ) {
 
 		this.entities.set( entity.id, entity );
-
-		entity.addEventListener( 'message', this.onMessage, this );
+		entity.manager = this;
 
 		return this;
 
@@ -26,8 +25,7 @@ class EntityManager {
 	remove( entity ) {
 
 		this.entities.delete( entity.id );
-
-		entity.removeEventListener( 'message', this.onMessage );
+		entity.manager = null;
 
 		return this;
 
@@ -36,6 +34,18 @@ class EntityManager {
 	getEntityById( id ) {
 
 		return this.entities.get( id );
+
+	}
+
+	getEntityByName( name ) {
+
+		for ( let entity of this.entities.values() ) {
+
+			if ( entity.name === name ) return entity;
+
+		}
+
+		return null;
 
 	}
 
@@ -53,13 +63,7 @@ class EntityManager {
 
 	}
 
-	onMessage( event ) {
-
-		const sender = event.target;
-		const receiver = event.receiver;
-		const message = event.message;
-		const delay = event.delay;
-		const data = event.data;
+	sendMessage( sender, receiver, message, delay, data ) {
 
 		this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
 

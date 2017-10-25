@@ -129,7 +129,9 @@ class CookStew extends YUKA.State {
 
 				// let miner know the stew is ready
 
-				wife.sendMessage( wife.miner, 'StewReady' );
+				const miner = wife.manager.getEntityByName( 'miner' );
+
+				wife.sendMessage( miner, 'StewReady' );
 
 				wife.cooking = false;
 

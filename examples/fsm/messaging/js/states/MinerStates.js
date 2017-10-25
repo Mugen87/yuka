@@ -160,7 +160,9 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 			// let the wife know miner is home
 
-			miner.sendMessage( miner.wife, 'Home' );
+			const wife = miner.manager.getEntityByName( 'wife' );
+
+			miner.sendMessage( wife, 'Home' );
 
 		}
 
