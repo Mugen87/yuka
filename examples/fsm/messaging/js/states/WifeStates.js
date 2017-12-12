@@ -8,9 +8,9 @@ class WifeGlobalState extends YUKA.State {
 
 		// 1 in 10 chance of needing the bathroom (provided she is not already in the bathroom)
 
-		if ( Math.random() < 0.1 && wife.stateMachine.inState( WIFE_STATES.VISIT_BATHROOM ) === false ) {
+		if ( Math.random() < 0.1 && wife.stateMachine.in( 'VISIT_BATHROOM' ) === false ) {
 
-			wife.stateMachine.changeState( WIFE_STATES.VISIT_BATHROOM );
+			wife.stateMachine.changeTo( 'VISIT_BATHROOM' );
 
 		}
 
@@ -26,7 +26,7 @@ class WifeGlobalState extends YUKA.State {
 
 				console.log( 'Wife: Hi honey. Let me make you some of my fine country stew.' );
 
-				wife.stateMachine.changeState( WIFE_STATES.COOK_STEW );
+				wife.stateMachine.changeTo( 'COOK_STEW' );
 
 				return true;
 
@@ -74,7 +74,7 @@ class VisitBathroom extends YUKA.State {
 
 		console.log( 'Wife: Ahhhhhh! Sweet relief!' );
 
-		wife.stateMachine.revertToPrevoiusState();
+		wife.stateMachine.revert();
 
 	}
 
@@ -135,7 +135,7 @@ class CookStew extends YUKA.State {
 
 				wife.cooking = false;
 
-				wife.stateMachine.changeState( WIFE_STATES.DO_HOUSE_WORK );
+				wife.stateMachine.changeTo( 'DO_HOUSE_WORK' );
 
 				return true;
 
@@ -146,10 +146,3 @@ class CookStew extends YUKA.State {
 	}
 
 }
-
-const WIFE_STATES = {
-	GLOBAL_STATE: new WifeGlobalState(),
-	DO_HOUSE_WORK: new DoHouseWork(),
-	VISIT_BATHROOM: new VisitBathroom(),
-	COOK_STEW: new CookStew()
-};

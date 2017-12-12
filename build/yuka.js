@@ -3023,6 +3023,8 @@ class StateMachine {
 		this.previousState = null; // a reference to the last state the agent was in
 		this.globalState = null; // this state logic is called every time the FSM is updated
 
+		this.states = new Map();
+
 	}
 
 	update() {
@@ -3041,33 +3043,49 @@ class StateMachine {
 
 	}
 
-	changeState( newState ) {
+	add( id, state ) {
 
-		if ( newState instanceof State ) {
+		if ( state instanceof State ) {
 
-			this.previousState = this.currentState;
-
-			this.currentState.exit( this.owner );
-
-			this.currentState = newState;
-
-			this.currentState.enter( this.owner );
+			this.states.set( id, state );
 
 		} else {
 
-			console.warn( 'YUKA.StateMachine: .changeState() needs a parameter of type "YUKA.State".' );
+			console.warn( 'YUKA.StateMachine: .add() needs a parameter of type "YUKA.State".' );
 
 		}
 
 	}
 
-	revertToPrevoiusState() {
+	remove( id ) {
 
-		this.changeState( this.previousState );
+		this.states.delete( id );
 
 	}
 
-	inState( state ) {
+	get( id ) {
+
+		return this.states.get( id );
+
+	}
+
+	changeTo( id ) {
+
+		const state = this.get( id );
+
+		this._change( state );
+
+	}
+
+	revert() {
+
+		this._change( this.previousState );
+
+	}
+
+	in( id ) {
+
+		const state = this.get( id );
 
 		return ( state === this.currentState );
 
@@ -3092,6 +3110,18 @@ class StateMachine {
 		}
 
 		return false;
+
+	}
+
+	_change( state ) {
+
+		this.previousState = this.currentState;
+
+		this.currentState.exit( this.owner );
+
+		this.currentState = state;
+
+		this.currentState.enter( this.owner );
 
 	}
 

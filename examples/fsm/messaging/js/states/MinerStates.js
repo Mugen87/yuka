@@ -52,7 +52,7 @@ class EnterMineAndDigForGold extends YUKA.State {
 
 		if ( miner.pocketsFull() === true ) {
 
-			miner.stateMachine.changeState( MINER_STATES.VISIT_BANK_AND_DEPOSIT_GOLD );
+			miner.stateMachine.changeTo( 'VISIT_BANK_AND_DEPOSIT_GOLD' );
 
 		}
 
@@ -60,7 +60,7 @@ class EnterMineAndDigForGold extends YUKA.State {
 
 		if ( miner.thirsty() === true ) {
 
-			miner.stateMachine.changeState( MINER_STATES.QUENCH_THIRST );
+			miner.stateMachine.changeTo( 'QUENCH_THIRST' );
 
 		}
 
@@ -117,13 +117,13 @@ class VisitBankAndDepositGold extends YUKA.State {
 
 			console.log( 'Miner: WooHoo! Rich enough for now. Back home now.' );
 
-			miner.stateMachine.changeState( MINER_STATES.GO_HOME_AND_SLEEP_TILL_RESTED );
+			miner.stateMachine.changeTo( 'GO_HOME_AND_SLEEP_TILL_RESTED' );
 
 		} else {
 
 			// otherwise get more gold
 
-			miner.stateMachine.changeState( MINER_STATES.ENTER_MINE_AND_DIG_FOR_GOLD );
+			miner.stateMachine.changeTo( 'ENTER_MINE_AND_DIG_FOR_GOLD' );
 
 		}
 
@@ -176,7 +176,7 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 			console.log( 'Miner: All my fatigue has drained away. Time to find more gold!' );
 
-			miner.stateMachine.changeState( MINER_STATES.ENTER_MINE_AND_DIG_FOR_GOLD );
+			miner.stateMachine.changeTo( 'ENTER_MINE_AND_DIG_FOR_GOLD' );
 
 		} else {
 
@@ -199,7 +199,7 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 			case 'StewReady':
 				console.log( 'Miner: Okay, honey. I am coming.' );
-				miner.stateMachine.changeState( MINER_STATES.EAT_STEW );
+				miner.stateMachine.changeTo( 'EAT_STEW' );
 
 				return true;
 
@@ -239,7 +239,7 @@ class QuenchThirst extends YUKA.State {
 
 		console.log( 'Miner: That is mighty fine sipping liquer.' );
 
-		miner.stateMachine.changeState( MINER_STATES.ENTER_MINE_AND_DIG_FOR_GOLD );
+		miner.stateMachine.changeTo( 'ENTER_MINE_AND_DIG_FOR_GOLD' );
 
 	}
 
@@ -276,7 +276,7 @@ class EatStew extends YUKA.State {
 
 		console.log( 'Miner: Tastes real good too!' );
 
-		miner.stateMachine.revertToPrevoiusState();
+		miner.stateMachine.revert();
 
 	}
 
@@ -293,14 +293,3 @@ class EatStew extends YUKA.State {
 	}
 
 }
-
-// states
-
-const MINER_STATES = {
-	GLOBAL_STATE: new MinerGlobalState(),
-	ENTER_MINE_AND_DIG_FOR_GOLD: new EnterMineAndDigForGold(),
-	VISIT_BANK_AND_DEPOSIT_GOLD: new VisitBankAndDepositGold(),
-	GO_HOME_AND_SLEEP_TILL_RESTED: new GoHomeAndSleepTillRested(),
-	QUENCH_THIRST: new QuenchThirst(),
-	EAT_STEW: new EatStew()
-};

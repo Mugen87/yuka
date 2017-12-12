@@ -16,8 +16,15 @@ class Miner extends YUKA.GameEntity {
 
 		this.stateMachine = new YUKA.StateMachine( this );
 
-		this.stateMachine.currentState = MINER_STATES.GO_HOME_AND_SLEEP_TILL_RESTED;
-		this.stateMachine.globalState = MINER_STATES.GLOBAL_STATE;
+		this.stateMachine.add( 'GLOBAL_STATE', new MinerGlobalState() );
+		this.stateMachine.add( 'ENTER_MINE_AND_DIG_FOR_GOLD', new EnterMineAndDigForGold() );
+		this.stateMachine.add( 'VISIT_BANK_AND_DEPOSIT_GOLD', new VisitBankAndDepositGold() );
+		this.stateMachine.add( 'GO_HOME_AND_SLEEP_TILL_RESTED', new GoHomeAndSleepTillRested() );
+		this.stateMachine.add( 'QUENCH_THIRST', new QuenchThirst() );
+		this.stateMachine.add( 'EAT_STEW', new EatStew() );
+
+		this.stateMachine.currentState = this.stateMachine.get( 'GO_HOME_AND_SLEEP_TILL_RESTED' );
+		this.stateMachine.globalState = this.stateMachine.get( 'GLOBAL_STATE' );
 
 	}
 

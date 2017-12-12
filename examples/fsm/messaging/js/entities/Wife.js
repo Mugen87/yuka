@@ -13,8 +13,13 @@ class Wife extends YUKA.GameEntity {
 
 		this.stateMachine = new YUKA.StateMachine( this );
 
-		this.stateMachine.currentState = WIFE_STATES.DO_HOUSE_WORK;
-		this.stateMachine.globalState = WIFE_STATES.GLOBAL_STATE;
+		this.stateMachine.add( 'GLOBAL_STATE', new WifeGlobalState() );
+		this.stateMachine.add( 'DO_HOUSE_WORK', new DoHouseWork() );
+		this.stateMachine.add( 'VISIT_BATHROOM', new VisitBathroom() );
+		this.stateMachine.add( 'COOK_STEW', new CookStew() );
+
+		this.stateMachine.currentState = this.stateMachine.get( 'DO_HOUSE_WORK' );
+		this.stateMachine.globalState = this.stateMachine.get( 'GLOBAL_STATE' );
 
 	}
 
