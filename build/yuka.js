@@ -186,11 +186,13 @@ class EntityManager {
 
 	}
 
-	getEntitiesByTag( tag ) {
+	getEntitiesByTag( tag, result ) {
 
 		const entities = this.tagDirectory.get( tag );
 
-		return Array.from( entities );
+		result.length = 0;
+
+		result.push( ...entities );
 
 	}
 
