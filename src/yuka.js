@@ -10,7 +10,6 @@ export { FollowPathBehavior } from './steering/behaviors/FollowPathBehavior.js';
 export { ObstacleAvoidanceBehavior } from './steering/behaviors/ObstacleAvoidanceBehavior.js';
 export { PursuitBehavior } from './steering/behaviors/PursuitBehavior.js';
 export { SeekBehavior } from './steering/behaviors/SeekBehavior.js';
-export { WanderBehavior } from './steering/behaviors/WanderBehavior.js';
 export { State } from './fsm/State.js';
 export { StateMachine } from './fsm/StateMachine.js';
 export { _Math } from './math/Math.js';
