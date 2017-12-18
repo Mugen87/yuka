@@ -37,6 +37,12 @@ class Vector3 {
 
 	}
 
+	clone() {
+
+		return new this.constructor( this.x, this.y, this.z );
+
+	}
+
 	add( v ) {
 
 		this.x += v.x;

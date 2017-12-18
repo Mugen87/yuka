@@ -4,16 +4,12 @@
 
 import { MovingEntity } from '../core/MovingEntity.js';
 import { SteeringManager } from './SteeringManager.js';
-import { Smoother } from './Smoother.js';
 import { Vector3 } from '../math/Vector3.js';
-import { Quaternion } from '../math/Quaternion.js';
-import { Matrix4 } from '../math/Matrix4.js';
 
 const steeringForce = new Vector3();
 const displacement = new Vector3();
 const acceleration = new Vector3();
 const target = new Vector3();
-const rotationMatrix = new Matrix4();
 
 class Vehicle extends MovingEntity {
 
@@ -22,22 +18,6 @@ class Vehicle extends MovingEntity {
 		super();
 
 		this.steering = new SteeringManager( this );
-
-		this._smoother = null;
-		this._smoothedVelocity = new Vector3();
-		this.rotationSmooth = new Quaternion();
-
-	}
-
-	enableSmoothing( sampleCount ) {
-
-		this._smoother = new Smoother( sampleCount );
-
-	}
-
-	disableSmoothing() {
-
-		this._smoother = null;
 
 	}
 
@@ -83,20 +63,6 @@ class Vehicle extends MovingEntity {
 		// update position
 
 		this.position.copy( target );
-
-		// smoothing
-
-		if ( this._smoother !== null ) {
-
-			this._smoother.update( this.velocity, this._smoothedVelocity );
-
-			displacement.copy( this._smoothedVelocity ).multiplyScalar( delta );
-			target.copy( this.position ).add( displacement );
-
-			rotationMatrix.lookAt( target, this.position, this.up );
-			this.rotationSmooth.setFromRotationMatrix( rotationMatrix );
-
-		}
 
 	}
 

@@ -3,6 +3,7 @@
  */
 
 import { SteeringBehavior } from '../SteeringBehavior.js';
+import { SeekBehavior } from './SeekBehavior.js';
 import { Vector3 } from '../../Math/Vector3.js';
 import { Matrix4 } from '../../Math/Matrix4.js';
 import { Ray } from '../../Math/Ray.js';
@@ -24,8 +25,13 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		this.entityManager = entityManager;
 		this.weigth = 3; // this behavior needs a higher value in order to prioritize the produced force
-		this.brakingWeight = 0.2; // controls the amount of braking force
 		this.dBoxMinLength = 5; // minimum length of the detection box
+
+		this._waypoint = null;
+
+		// internal behaviors
+
+		this._seek = new SeekBehavior();
 
 	}
 
@@ -97,25 +103,42 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		}
 
-		// if we have found an intersecting obstacle, calculate a steering force away from it
+		// if there an obstacle was detected, calculate a proper waypoint next to the obstacle
 
 		if ( closestObstacle !== null ) {
 
-			// the closer the agent is to an object, the stronger the steering force should be
+			this._waypoint = localPositionOfClosestObstacle.clone();
 
-			const multiplier = 1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
+			// check if it's better to steer left or right next to the obstacle
 
-			// calculate the lateral force
+			const sign = Math.sign( localPositionOfClosestObstacle.x );
 
-			force.x = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.x ) * multiplier;
+			this._waypoint.x -= ( closestObstacle.boundingRadius + vehicle.boundingRadius ) * sign;
 
-			// apply a braking force proportional to the obstacles distance from the vehicle
+			this._waypoint.applyMatrix4( vehicle.matrix );
 
-			force.z = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.z ) * this.brakingWeight;
+		}
 
-			// finally, convert the steering vector from local to world space (just apply the rotation)
+		// proceed if there is an active waypoint
 
-			force.applyQuaternion( vehicle.rotation );
+		if ( this._waypoint !== null ) {
+
+			var distanceSq = this._waypoint.distanceToSquared( vehicle.position );
+
+			// if we are close enough, delete the current waypoint
+
+			if ( distanceSq < 1 ) {
+
+				this._waypoint = null;
+
+			} else {
+
+				// otherwise steer towards it
+
+				this._seek.target = this._waypoint;
+				this._seek.calculate( vehicle, force );
+
+			}
 
 		}
 

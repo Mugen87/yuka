@@ -90,12 +90,12 @@
 
 			entity = new YUKA.Vehicle();
 			entity.maxSpeed = 2;
-			entity.enableSmoothing( 20 );
 			entity.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( entity );
 
 			const obstacleAvoidance = new YUKA.ObstacleAvoidanceBehavior( entityManager );
-			obstacleAvoidance.weight = 2;
+			obstacleAvoidance.weight = 1.5;
+			obstacleAvoidance.dBoxMinLength = 4;
 			entity.steering.add( obstacleAvoidance );
 
 			const followPath = new YUKA.FollowPathBehavior( path );
@@ -139,7 +139,7 @@
 				entityManager.update( delta );
 
 				mesh.position.copy( entity.position );
-				mesh.quaternion.copy( entity.rotationSmooth );
+				mesh.quaternion.copy( entity.rotation );
 				mesh.scale.copy( entity.scale );
 
 				renderer.render( scene, camera );
@@ -148,7 +148,7 @@
 
 		function setupObstacles() {
 
-			const geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );
+			const geometry = new THREE.BoxBufferGeometry( 2, 2, 2 );
 			geometry.computeBoundingSphere();
 			const material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
 
@@ -157,7 +157,7 @@
 			const mesh3 = new THREE.Mesh( geometry, material );
 
 			mesh1.position.set( - 10, 0, 0 );
-			mesh2.position.set( 10, 0, 0 );
+			mesh2.position.set( 12, 0, 0 );
 			mesh3.position.set( 4, 0, - 10 );
 
 			scene.add( mesh1 );
