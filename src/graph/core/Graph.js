@@ -57,7 +57,7 @@ class Graph {
 
 		if ( this.hasNode( from ) && this.hasNode( to ) ) {
 
-			const edges = this._edges[ from ];
+			const edges = this._edges.get( from );
 
 			for ( let edge of edges ) {
 
@@ -98,7 +98,7 @@ class Graph {
 
 		let count = 0;
 
-		for ( let edges in this._edges.values() ) {
+		for ( let edges of this._edges.values() ) {
 
 			count += edges.size;
 
@@ -120,7 +120,7 @@ class Graph {
 
 			for ( let edge of edges ) {
 
-				const edgesOfNeighbor = this._edges[ edge.to ];
+				const edgesOfNeighbor = this._edges.get( edge.to );
 
 				for ( let edgeNeighbor of edgesOfNeighbor ) {
 

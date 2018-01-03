@@ -1,6 +1,11 @@
 export { EntityManager } from './core/EntityManager.js';
 export { GameEntity } from './core/GameEntity.js';
 export { MovingEntity } from './core/MovingEntity.js';
+export { Node } from './graph/core/Node.js';
+export { Edge } from './graph/core/Edge.js';
+export { Graph } from './graph/core/Graph.js';
+export { NavNode } from './graph/navigation/NavNode.js';
+export { NavEdge } from './graph/navigation/NavEdge.js';
 export { Path } from './steering/Path.js';
 export { Vehicle } from './steering/Vehicle.js';
 export { ArriveBehavior } from './steering/behaviors/ArriveBehavior.js';
