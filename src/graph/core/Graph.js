@@ -9,7 +9,7 @@ class Graph {
 		this.digraph = false;
 
 		this._nodes = new Map();
-		this._edges = new Map();
+		this._edges = new Map(); // adjacency list for each node
 
 	}
 
@@ -110,11 +110,13 @@ class Graph {
 
 	removeNode( node ) {
 
+		this._nodes.delete( node.index );
+
 		if ( this.digraph === false ) {
 
 			// if the graph is not directed, remove all edges leading to this node
 
-			const edges = this._edges.get( node.form );
+			const edges = this._edges.get( node.index );
 
 			for ( let edge of edges ) {
 
@@ -125,6 +127,7 @@ class Graph {
 					if ( edgeNeighbor.to === node.index ) {
 
 						edgesOfNeighbor.delete( edgeNeighbor );
+						break;
 
 					}
 
@@ -152,9 +155,8 @@ class Graph {
 
 		}
 
-		// delete node and respective edge list (edges leading from this node)
+		// delete edge list of node (edges leading from this node)
 
-		this._nodes.delete( node.index );
 		this._edges.delete( node.index );
 
 		return this;
@@ -163,9 +165,14 @@ class Graph {
 
 	removeEdge( edge ) {
 
-		if ( this.digraph === false ) {
+		// delete the edge from the node's edge list
 
-			// delete the edge connecting the nodes in the opposite direction
+		const edges = this._edges.get( edge.from );
+		edges.delete( edge );
+
+		// if the graph is not directed, delete the edge connecting the node in the opposite direction
+
+		if ( this.digraph === false ) {
 
 			const edges = this._edges.get( edge.to );
 
@@ -174,18 +181,13 @@ class Graph {
 				if ( e.to === edge.from ) {
 
 					edges.delete( e );
+					break;
 
 				}
 
 			}
 
-
 		}
-
-		// delete the edge from the node's edge list
-
-		const edges = this._edges.get( edge.from );
-		edges.delete( edge );
 
 		return this;
 
