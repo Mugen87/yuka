@@ -1464,6 +1464,13 @@ class Graph {
 
 	}
 
+	getNodes( result ) {
+
+		result.length = 0;
+		result.push( ...this._nodes.values() );
+
+	}
+
 	getEdgesOfNode( index, result ) {
 
 		const edges = this._edges.get( index );
