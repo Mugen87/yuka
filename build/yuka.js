@@ -1797,9 +1797,6 @@ class DFS {
 
 	clear() {
 
-		this.graph = undefined;
-		this.source = undefined;
-		this.target = undefined;
 		this.found = false;
 
 		this._route.clear();
