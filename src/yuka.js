@@ -7,6 +7,7 @@ export { Graph } from './graph/core/Graph.js';
 export { NavNode } from './graph/navigation/NavNode.js';
 export { NavEdge } from './graph/navigation/NavEdge.js';
 export { DFS } from './graph/search/DFS.js';
+export { BFS } from './graph/search/BFS.js';
 export { Path } from './steering/Path.js';
 export { Vehicle } from './steering/Vehicle.js';
 export { ArriveBehavior } from './steering/behaviors/ArriveBehavior.js';
