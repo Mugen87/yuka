@@ -74,7 +74,7 @@ class Dijkstra {
 				newCost = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
 
 				// We enhance our search frontier in two cases:
-				// 1. If the node was never on the search fontier
+				// 1. If the node was never on the search frontier
 				// 2. If the cost the this node is better than before
 
 				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || newCost < ( this._cost.get( edge.to ) || Infinity ) ) {

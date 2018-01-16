@@ -1,5 +1,7 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * binary heap priority queue (see https://github.com/mourner/tinyqueue)
  */
 
 class PriorityQueue {
