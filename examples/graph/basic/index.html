@@ -61,7 +61,8 @@
 		const graphHelper = GraphUtils.createGraphHelper( graph, 0.2 );
 		scene.add( graphHelper );
 
-		const graphSearch = new YUKA.BFS( graph, 60, 100 );
+		const graphSearch = new YUKA.Dijkstra( graph, 60, 100 );
+		//const graphSearch = new YUKA.BFS( graph, 60, 104 );
 		// const graphSearch = new YUKA.DFS( graph, 60, 100 );
 
 		graphSearch.search();

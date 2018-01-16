@@ -39,7 +39,7 @@ class GraphUtils {
 		// edges
 
 		const count = graph.getNodeCount();
-		const segmentSizeSquared = ( segmentSize * segmentSize ) + Number.EPSILON;
+		const range = Math.pow( segmentSize + ( segmentSize / 2 ), 2 );
 
 		for ( let i = 0; i < count; i ++ ) {
 
@@ -55,7 +55,7 @@ class GraphUtils {
 
 					const distanceSquared = neighbor.position.distanceToSquared( node.position );
 
-					if ( distanceSquared <= segmentSizeSquared ) {
+					if ( distanceSquared <= range ) {
 
 						const distance = Math.sqrt( distanceSquared );
 
