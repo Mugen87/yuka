@@ -16,7 +16,6 @@ class Dijkstra {
 		this._cost = new Map(); // total cost of the bast path so far for a given node
 		this._shortestPathTree = new Map();
 		this._searchFrontier = new Map();
-		this._visited = new Set(); // holds the visited nodes
 
 	}
 
@@ -39,10 +38,10 @@ class Dijkstra {
 			const nextNode = pQueue.pop();
 			const nextNodeIndex = nextNode.index;
 
-			// if the node was visited in the past, we already found the shortest
-			// path to this particular node
+			// if the shortest path tree has the given node, we already found the shortest
+			// path to this particular one
 
-			if ( this._visited.has( nextNodeIndex ) ) continue;
+			if ( this._shortestPathTree.has( nextNodeIndex ) ) continue;
 
 			// move this edge from the frontier to the shortest path tree
 
@@ -75,7 +74,7 @@ class Dijkstra {
 
 				// We enhance our search frontier in two cases:
 				// 1. If the node was never on the search frontier
-				// 2. If the cost the this node is better than before
+				// 2. If the cost to this node is better than before
 
 				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || newCost < ( this._cost.get( edge.to ) || Infinity ) ) {
 
@@ -91,8 +90,6 @@ class Dijkstra {
 				}
 
 			}
-
-			this._visited.add( nextNodeIndex );
 
 		}
 
@@ -149,7 +146,6 @@ class Dijkstra {
 		this._cost.clear();
 		this._shortestPathTree.clear();
 		this._searchFrontier.clear();
-		this._visited.clear();
 
 	}
 
