@@ -457,6 +457,12 @@ class Vector3 {
 
 	}
 
+	manhattanLength() {
+
+		return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
+
+	}
+
 	distanceTo( v ) {
 
 		return Math.sqrt( this.distanceToSquared( v ) );
@@ -468,6 +474,14 @@ class Vector3 {
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
 		return ( dx * dx ) + ( dy * dy ) + ( dz * dz );
+
+	}
+
+	manhattanDistanceTo( v ) {
+
+		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
+
+		return Math.abs( dx ) + Math.abs( dy ) + Math.abs( dz );
 
 	}
 
@@ -2089,9 +2103,7 @@ class Dijkstra {
 	search() {
 
 		const outgoingEdges = [];
-		let newCost = 0;
-
-		var pQueue = new PriorityQueue( compare );
+		const pQueue = new PriorityQueue( compare );
 
 		pQueue.push( {
 			cost: 0,
@@ -2137,11 +2149,11 @@ class Dijkstra {
 				// the total cost to the node this edge points to is the cost to the
 				// current node plus the cost of the edge connecting them.
 
-				newCost = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
+				const newCost = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
 
 				// We enhance our search frontier in two cases:
 				// 1. If the node was never on the search frontier
-				// 2. If the cost the this node is better than before
+				// 2. If the cost to this node is better than before
 
 				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || newCost < ( this._cost.get( edge.to ) || Infinity ) ) {
 
@@ -2220,6 +2232,232 @@ class Dijkstra {
 
 
 function compare( a, b ) {
+
+	return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ */
+
+class HeuristicPolicyEuclid {
+
+	static calculate( graph, source, target ) {
+
+		const sourceNode = graph.getNode( source );
+		const targetNode = graph.getNode( target );
+
+		return sourceNode.position.distanceTo( targetNode.position );
+
+	}
+
+}
+
+class HeuristicPolicyEuclidSquared {
+
+	static calculate( graph, source, target ) {
+
+		const sourceNode = graph.getNode( source );
+		const targetNode = graph.getNode( target );
+
+		return sourceNode.position.distanceToSquared( targetNode.position );
+
+	}
+
+}
+
+class HeuristicPolicyEuclidManhatten {
+
+	static calculate( graph, source, target ) {
+
+		const sourceNode = graph.getNode( source );
+		const targetNode = graph.getNode( target );
+
+		return sourceNode.position.manhattanDistanceTo( targetNode.position );
+
+	}
+
+}
+
+class HeuristicPolicyDijkstra {
+
+	static calculate( /* graph, source, target */ ) {
+
+		return 0;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class AStar {
+
+	constructor( graph, source, target ) {
+
+		this.graph = graph;
+		this.source = source;
+		this.target = target;
+		this.heuristic = HeuristicPolicyEuclid;
+		this.found = false;
+
+		this._cost = new Map(); // contains the "real" accumulative cost to a node
+		this._shortestPathTree = new Map();
+		this._searchFrontier = new Map();
+
+	}
+
+	search() {
+
+		const outgoingEdges = [];
+		const pQueue = new PriorityQueue( compare$1 );
+
+		pQueue.push( {
+			cost: 0,
+			index: this.source
+		} );
+
+		// while the queue is not empty
+
+		while ( pQueue.length > 0 ) {
+
+			const nextNode = pQueue.pop();
+			const nextNodeIndex = nextNode.index;
+
+			// if the shortest path tree has the given node, we already found the shortest
+			// path to this particular one
+
+			if ( this._shortestPathTree.has( nextNodeIndex ) ) continue;
+
+			// move this edge from the frontier to the shortest path tree
+
+			if ( this._searchFrontier.has( nextNodeIndex ) === true ) {
+
+				this._shortestPathTree.set( nextNodeIndex, this._searchFrontier.get( nextNodeIndex ) );
+
+			}
+
+			// if the target has been found exit
+
+			if ( nextNodeIndex === this.target ) {
+
+				this.found = true;
+
+				return this;
+
+			}
+
+			// now relax the edges
+
+			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
+
+			for ( let edge of outgoingEdges ) {
+
+				// A* cost formula : F = G + H
+
+				// G is the cumulative cost to reach a node
+
+				const G = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
+
+				// H is the heuristic estimate of the distance to the target
+
+				const H = this.heuristic.calculate( this.graph, edge.to, this.target );
+
+				// F is the sum of G and H
+
+				const F = G + H;
+
+				// We enhance our search frontier in two cases:
+				// 1. If the node was never on the search frontier
+				// 2. If the cost to this node is better than before
+
+				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || G < ( this._cost.get( edge.to ) || Infinity ) ) {
+
+					this._cost.set( edge.to, G );
+
+					this._searchFrontier.set( edge.to, edge );
+
+					pQueue.push( {
+						cost: F,
+						index: edge.to
+					} );
+
+				}
+
+			}
+
+		}
+
+		this.found = false;
+
+		return this;
+
+	}
+
+	getPath() {
+
+		// array of node indices that comprise the shortest path from the source to the target
+
+		const path = [];
+
+		// just return an empty path if no path to target found or if no target has been specified
+
+		if ( this.found === false || this.target === undefined ) return path;
+
+		// start with the target of the path
+
+		let currentNode = this.target;
+
+		path.push( currentNode );
+
+		// while the current node is not the source node keep processing
+
+		while ( currentNode !== this.source ) {
+
+			// determine the parent of the current node
+
+			currentNode = this._shortestPathTree.get( currentNode ).from;
+
+			// push the new current node at the beginning of the array
+
+			path.unshift( currentNode );
+
+		}
+
+		return path;
+
+	}
+
+	getSearchTree() {
+
+		return [ ...this._shortestPathTree.values() ];
+
+	}
+
+	setHeuristic( heuristic ) {
+
+		this.heuristic = heuristic;
+
+	}
+
+	clear() {
+
+		this.found = false;
+
+		this._cost.clear();
+		this._shortestPathTree.clear();
+		this._searchFrontier.clear();
+
+	}
+
+}
+
+
+function compare$1( a, b ) {
 
 	return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
 
@@ -2532,6 +2770,12 @@ class Vector3$1 {
 
 	}
 
+	manhattanLength() {
+
+		return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
+
+	}
+
 	distanceTo( v ) {
 
 		return Math.sqrt( this.distanceToSquared( v ) );
@@ -2543,6 +2787,14 @@ class Vector3$1 {
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
 		return ( dx * dx ) + ( dy * dy ) + ( dz * dz );
+
+	}
+
+	manhattanDistanceTo( v ) {
+
+		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
+
+		return Math.abs( dx ) + Math.abs( dy ) + Math.abs( dz );
 
 	}
 
@@ -3978,6 +4230,7 @@ exports.NavEdge = NavEdge;
 exports.DFS = DFS;
 exports.BFS = BFS;
 exports.Dijkstra = Dijkstra;
+exports.AStar = AStar;
 exports.Path = Path;
 exports.Vehicle = Vehicle;
 exports.ArriveBehavior = ArriveBehavior;
@@ -3994,6 +4247,10 @@ exports.Matrix4 = Matrix4;
 exports.Quaternion = Quaternion;
 exports.Ray = Ray$1;
 exports.Vector3 = Vector3;
+exports.HeuristicPolicyEuclid = HeuristicPolicyEuclid;
+exports.HeuristicPolicyEuclidSquared = HeuristicPolicyEuclidSquared;
+exports.HeuristicPolicyEuclidManhatten = HeuristicPolicyEuclidManhatten;
+exports.HeuristicPolicyDijkstra = HeuristicPolicyDijkstra;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

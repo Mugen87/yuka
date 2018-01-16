@@ -9,6 +9,8 @@ export { NavEdge } from './graph/navigation/NavEdge.js';
 export { DFS } from './graph/search/DFS.js';
 export { BFS } from './graph/search/BFS.js';
 export { Dijkstra } from './graph/search/Dijkstra.js';
+export { AStar } from './graph/search/AStar.js';
+export * from './graph/extra/HeuristicPolicy.js';
 export { Path } from './steering/Path.js';
 export { Vehicle } from './steering/Vehicle.js';
 export { ArriveBehavior } from './steering/behaviors/ArriveBehavior.js';

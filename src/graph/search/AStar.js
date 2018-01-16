@@ -3,17 +3,19 @@
  */
 
 import { PriorityQueue } from '../extra/PriorityQueue.js';
+import { HeuristicPolicyEuclid } from '../extra/HeuristicPolicy.js';
 
-class Dijkstra {
+class AStar {
 
 	constructor( graph, source, target ) {
 
 		this.graph = graph;
 		this.source = source;
 		this.target = target;
+		this.heuristic = HeuristicPolicyEuclid;
 		this.found = false;
 
-		this._cost = new Map(); // total cost of the bast path so far for a given node
+		this._cost = new Map(); // contains the "real" accumulative cost to a node
 		this._shortestPathTree = new Map();
 		this._searchFrontier = new Map();
 
@@ -65,23 +67,32 @@ class Dijkstra {
 
 			for ( let edge of outgoingEdges ) {
 
-				// the total cost to the node this edge points to is the cost to the
-				// current node plus the cost of the edge connecting them.
+				// A* cost formula : F = G + H
 
-				const newCost = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
+				// G is the cumulative cost to reach a node
+
+				const G = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
+
+				// H is the heuristic estimate of the distance to the target
+
+				const H = this.heuristic.calculate( this.graph, edge.to, this.target );
+
+				// F is the sum of G and H
+
+				const F = G + H;
 
 				// We enhance our search frontier in two cases:
 				// 1. If the node was never on the search frontier
 				// 2. If the cost to this node is better than before
 
-				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || newCost < ( this._cost.get( edge.to ) || Infinity ) ) {
+				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || G < ( this._cost.get( edge.to ) || Infinity ) ) {
 
-					this._cost.set( edge.to, newCost );
+					this._cost.set( edge.to, G );
 
 					this._searchFrontier.set( edge.to, edge );
 
 					pQueue.push( {
-						cost: newCost,
+						cost: F,
 						index: edge.to
 					} );
 
@@ -137,6 +148,12 @@ class Dijkstra {
 
 	}
 
+	setHeuristic( heuristic ) {
+
+		this.heuristic = heuristic;
+
+	}
+
 	clear() {
 
 		this.found = false;
@@ -157,4 +174,4 @@ function compare( a, b ) {
 }
 
 
-export { Dijkstra };
+export { AStar };

@@ -216,6 +216,12 @@ class Vector3 {
 
 	}
 
+	manhattanLength() {
+
+		return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
+
+	}
+
 	distanceTo( v ) {
 
 		return Math.sqrt( this.distanceToSquared( v ) );
@@ -227,6 +233,14 @@ class Vector3 {
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
 		return ( dx * dx ) + ( dy * dy ) + ( dz * dz );
+
+	}
+
+	manhattanDistanceTo( v ) {
+
+		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
+
+		return Math.abs( dx ) + Math.abs( dy ) + Math.abs( dz );
 
 	}
 
