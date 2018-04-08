@@ -53,7 +53,7 @@ class GraphUtils {
 
 					const neighbor = graph.getNode( j );
 
-					const distanceSquared = neighbor.position.distanceToSquared( node.position );
+					const distanceSquared = neighbor.position.squaredDistanceTo( node.position );
 
 					if ( distanceSquared <= range ) {
 

@@ -123,7 +123,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		if ( this._waypoint !== null ) {
 
-			var distanceSq = this._waypoint.distanceToSquared( vehicle.position );
+			var distanceSq = this._waypoint.squaredDistanceTo( vehicle.position );
 
 			// if we are close enough, delete the current waypoint
 

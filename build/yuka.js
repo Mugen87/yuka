@@ -514,11 +514,11 @@ class Vector3 {
 
 	distanceTo( v ) {
 
-		return Math.sqrt( this.distanceToSquared( v ) );
+		return Math.sqrt( this.squaredDistanceTo( v ) );
 
 	}
 
-	distanceToSquared( v ) {
+	squaredDistanceTo( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
@@ -2318,7 +2318,7 @@ class HeuristicPolicyEuclidSquared {
 		const sourceNode = graph.getNode( source );
 		const targetNode = graph.getNode( target );
 
-		return sourceNode.position.distanceToSquared( targetNode.position );
+		return sourceNode.position.squaredDistanceTo( targetNode.position );
 
 	}
 
@@ -2834,11 +2834,11 @@ class Vector3$1 {
 
 	distanceTo( v ) {
 
-		return Math.sqrt( this.distanceToSquared( v ) );
+		return Math.sqrt( this.squaredDistanceTo( v ) );
 
 	}
 
-	distanceToSquared( v ) {
+	squaredDistanceTo( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 
@@ -3196,7 +3196,7 @@ class FleeBehavior extends SteeringBehavior {
 
 		// only flee if the target is within panic distance
 
-		const distanceToTargetSq = vehicle.position.distanceToSquared( target );
+		const distanceToTargetSq = vehicle.position.squaredDistanceTo( target );
 
 		if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
 
@@ -3333,7 +3333,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		// calculate distance in square space from current waypoint to vehicle
 
-		var distanceSq = path.current().distanceToSquared( vehicle.position );
+		var distanceSq = path.current().squaredDistanceTo( vehicle.position );
 
 		// move to next waypoint if close enough to current target
 
@@ -3953,7 +3953,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		if ( this._waypoint !== null ) {
 
-			var distanceSq = this._waypoint.distanceToSquared( vehicle.position );
+			var distanceSq = this._waypoint.squaredDistanceTo( vehicle.position );
 
 			// if we are close enough, delete the current waypoint
 

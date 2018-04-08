@@ -24,7 +24,7 @@ class FleeBehavior extends SteeringBehavior {
 
 		// only flee if the target is within panic distance
 
-		const distanceToTargetSq = vehicle.position.distanceToSquared( target );
+		const distanceToTargetSq = vehicle.position.squaredDistanceTo( target );
 
 		if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
 

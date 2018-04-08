@@ -224,11 +224,11 @@ class Vector3 {
 
 	distanceTo( v ) {
 
-		return Math.sqrt( this.distanceToSquared( v ) );
+		return Math.sqrt( this.squaredDistanceTo( v ) );
 
 	}
 
-	distanceToSquared( v ) {
+	squaredDistanceTo( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
 

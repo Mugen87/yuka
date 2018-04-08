@@ -29,7 +29,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		// calculate distance in square space from current waypoint to vehicle
 
-		var distanceSq = path.current().distanceToSquared( vehicle.position );
+		var distanceSq = path.current().squaredDistanceTo( vehicle.position );
 
 		// move to next waypoint if close enough to current target
 

@@ -23,7 +23,7 @@ class HeuristicPolicyEuclidSquared {
 		const sourceNode = graph.getNode( source );
 		const targetNode = graph.getNode( target );
 
-		return sourceNode.position.distanceToSquared( targetNode.position );
+		return sourceNode.position.squaredDistanceTo( targetNode.position );
 
 	}
 
