@@ -6,11 +6,7 @@ class State {
 
 	enter() {}
 
-	execute() {
-
-		console.warn( 'YUKA.State: .execute() must be implemented in derived class.' );
-
-	}
+	execute() {}
 
 	exit() {}
 

@@ -109,13 +109,9 @@ class EntityManager {
 
 	add( entity ) {
 
-		// add entity to manager
-
 		this.entities.set( entity.id, entity );
 
-		// let the entity know its manager
-
-		entity.manager = this;
+		entity.addEventListener( 'message', this.onMessage, this );
 
 		return this;
 
@@ -123,13 +119,9 @@ class EntityManager {
 
 	remove( entity ) {
 
-		// remove entity from manager
-
 		this.entities.delete( entity.id );
 
-		// remove the reference to the manager
-
-		entity.manager = null;
+		entity.removeEventListener( 'message', this.onMessage );
 
 		return this;
 
@@ -167,9 +159,109 @@ class EntityManager {
 
 	}
 
-	sendMessage( sender, receiver, message, delay, data ) {
+	onMessage( event ) {
 
-		this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
+		const sender = event.target;
+		const name = event.name;
+		const message = event.message;
+		const delay = event.delay;
+		const data = event.data;
+
+		const receiver = this.getEntityByName( name );
+
+		if ( receiver !== null ) {
+
+			this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
+
+		} else {
+
+			console.warn( 'YUKA.EntityManager: Unable to send message to receiver. Could not find game entity for name:', name );
+
+		}
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class EventDispatcher {
+
+	constructor() {
+
+		this.listeners = {};
+
+	}
+
+	addEventListener( type, listener, scope ) {
+
+		const listeners = this.listeners;
+
+		if ( listeners[ type ] === undefined ) {
+
+			listeners[ type ] = [];
+
+		}
+
+		if ( listeners[ type ].indexOf( listener ) === - 1 ) {
+
+			listener.scope = scope;
+
+			listeners[ type ].push( listener );
+
+		}
+
+	}
+
+	hasEventListener( type, listener ) {
+
+		const listeners = this.listeners;
+
+		return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
+
+	}
+
+	removeEventListener( type, listener ) {
+
+		const listeners = this.listeners;
+		const listenerArray = listeners[ type ];
+
+		if ( listenerArray !== undefined ) {
+
+			const index = listenerArray.indexOf( listener );
+
+			if ( index !== - 1 ) {
+
+				listenerArray.splice( index, 1 );
+
+			}
+
+		}
+
+	}
+
+	dispatchEvent( event ) {
+
+		const listeners = this.listeners;
+		const listenerArray = listeners[ event.type ];
+
+		if ( listenerArray !== undefined ) {
+
+			event.target = this;
+
+			const array = listenerArray.slice( 0 );
+
+			for ( let i = 0, l = array.length; i < l; i ++ ) {
+
+				const listener = array[ i ];
+
+				listener.call( listener.scope || this, event );
+
+			}
+
+		}
 
 	}
 
@@ -1182,11 +1274,11 @@ class Matrix4 {
 
 let nextId = 0;
 
-class GameEntity {
+class GameEntity extends EventDispatcher {
 
 	constructor() {
 
-		this.manager = null;
+		super();
 
 		this.id = nextId ++;
 		this.name = '';
@@ -1204,9 +1296,17 @@ class GameEntity {
 
 	update() {}
 
-	sendMessage( receiver, message, delay = 0, data = null ) {
+	sendMessage( name, message, delay = 0, data = null ) {
 
-		this.manager.sendMessage( this, receiver, message, delay, data );
+		const event = {
+			type: 'message',
+			name: name,
+			message: message,
+			delay: delay,
+			data: data
+		};
+
+		this.dispatchEvent( event );
 
 	}
 
@@ -3957,11 +4057,7 @@ class State {
 
 	enter() {}
 
-	execute() {
-
-		console.warn( 'YUKA.State: .execute() must be implemented in derived class.' );
-
-	}
+	execute() {}
 
 	exit() {}
 

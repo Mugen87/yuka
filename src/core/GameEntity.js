@@ -2,17 +2,18 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+import { EventDispatcher } from './EventDispatcher.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Matrix4 } from '../math/Matrix4.js';
 
 let nextId = 0;
 
-class GameEntity {
+class GameEntity extends EventDispatcher {
 
 	constructor() {
 
-		this.manager = null;
+		super();
 
 		this.id = nextId ++;
 		this.name = '';
@@ -30,9 +31,17 @@ class GameEntity {
 
 	update() {}
 
-	sendMessage( receiver, message, delay = 0, data = null ) {
+	sendMessage( name, message, delay = 0, data = null ) {
 
-		this.manager.sendMessage( this, receiver, message, delay, data );
+		const event = {
+			type: 'message',
+			name: name,
+			message: message,
+			delay: delay,
+			data: data
+		};
+
+		this.dispatchEvent( event );
 
 	}
 
