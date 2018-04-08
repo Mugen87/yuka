@@ -35,7 +35,7 @@ class FleeBehavior extends SteeringBehavior {
 
 			// if target and vehicle position are identical, choose default velocity
 
-			if ( desiredVelocity.lengthSquared() === 0 ) {
+			if ( desiredVelocity.squaredLength() === 0 ) {
 
 				desiredVelocity.set( 0, 0, 1 );
 

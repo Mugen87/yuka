@@ -62,11 +62,11 @@ class Quaternion {
 
 	length() {
 
-		return Math.sqrt( this.lengthSquared() );
+		return Math.sqrt( this.squaredLength() );
 
 	}
 
-	lengthSquared() {
+	squaredLength() {
 
 		return this.dot( this );
 

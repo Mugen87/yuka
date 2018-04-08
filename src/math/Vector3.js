@@ -196,7 +196,7 @@ class Vector3 {
 
 	angleTo( v ) {
 
-		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+		const theta = this.dot( v ) / ( Math.sqrt( this.squaredLength() * v.squaredLength() ) );
 
 		// clamp, to handle numerical problems
 
@@ -206,11 +206,11 @@ class Vector3 {
 
 	length() {
 
-		return Math.sqrt( this.lengthSquared() );
+		return Math.sqrt( this.squaredLength() );
 
 	}
 
-	lengthSquared() {
+	squaredLength() {
 
 		return this.dot( this );
 

@@ -486,7 +486,7 @@ class Vector3 {
 
 	angleTo( v ) {
 
-		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+		const theta = this.dot( v ) / ( Math.sqrt( this.squaredLength() * v.squaredLength() ) );
 
 		// clamp, to handle numerical problems
 
@@ -496,11 +496,11 @@ class Vector3 {
 
 	length() {
 
-		return Math.sqrt( this.lengthSquared() );
+		return Math.sqrt( this.squaredLength() );
 
 	}
 
-	lengthSquared() {
+	squaredLength() {
 
 		return this.dot( this );
 
@@ -675,11 +675,11 @@ class Quaternion {
 
 	length() {
 
-		return Math.sqrt( this.lengthSquared() );
+		return Math.sqrt( this.squaredLength() );
 
 	}
 
-	lengthSquared() {
+	squaredLength() {
 
 		return this.dot( this );
 
@@ -1166,7 +1166,7 @@ class Matrix4 {
 
 		z.subVectors( eye, target );
 
-		if ( z.lengthSquared() === 0 ) {
+		if ( z.squaredLength() === 0 ) {
 
 			// eye and target are in the same position
 
@@ -1177,7 +1177,7 @@ class Matrix4 {
 		z.normalize();
 		x.crossVectors( up, z );
 
-		if ( x.lengthSquared() === 0 ) {
+		if ( x.squaredLength() === 0 ) {
 
 			// up and z are parallel
 
@@ -1405,7 +1405,7 @@ class MovingEntity extends GameEntity {
 
 	getSpeedSquared() {
 
-		return this.velocity.lengthSquared();
+		return this.velocity.squaredLength();
 
 	}
 
@@ -2806,7 +2806,7 @@ class Vector3$1 {
 
 	angleTo( v ) {
 
-		const theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+		const theta = this.dot( v ) / ( Math.sqrt( this.squaredLength() * v.squaredLength() ) );
 
 		// clamp, to handle numerical problems
 
@@ -2816,11 +2816,11 @@ class Vector3$1 {
 
 	length() {
 
-		return Math.sqrt( this.lengthSquared() );
+		return Math.sqrt( this.squaredLength() );
 
 	}
 
-	lengthSquared() {
+	squaredLength() {
 
 		return this.dot( this );
 
@@ -3207,7 +3207,7 @@ class FleeBehavior extends SteeringBehavior {
 
 			// if target and vehicle position are identical, choose default velocity
 
-			if ( desiredVelocity$1.lengthSquared() === 0 ) {
+			if ( desiredVelocity$1.squaredLength() === 0 ) {
 
 				desiredVelocity$1.set( 0, 0, 1 );
 
@@ -3647,7 +3647,7 @@ class Matrix4$1 {
 
 		z$1.subVectors( eye, target );
 
-		if ( z$1.lengthSquared() === 0 ) {
+		if ( z$1.squaredLength() === 0 ) {
 
 			// eye and target are in the same position
 
@@ -3658,7 +3658,7 @@ class Matrix4$1 {
 		z$1.normalize();
 		x$1.crossVectors( up, z$1 );
 
-		if ( x$1.lengthSquared() === 0 ) {
+		if ( x$1.squaredLength() === 0 ) {
 
 			// up and z are parallel
 

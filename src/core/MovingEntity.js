@@ -84,7 +84,7 @@ class MovingEntity extends GameEntity {
 
 	getSpeedSquared() {
 
-		return this.velocity.lengthSquared();
+		return this.velocity.squaredLength();
 
 	}
 

@@ -286,7 +286,7 @@ class Matrix4 {
 
 		z.subVectors( eye, target );
 
-		if ( z.lengthSquared() === 0 ) {
+		if ( z.squaredLength() === 0 ) {
 
 			// eye and target are in the same position
 
@@ -297,7 +297,7 @@ class Matrix4 {
 		z.normalize();
 		x.crossVectors( up, z );
 
-		if ( x.lengthSquared() === 0 ) {
+		if ( x.squaredLength() === 0 ) {
 
 			// up and z are parallel
 
