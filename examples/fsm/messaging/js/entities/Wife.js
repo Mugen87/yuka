@@ -8,6 +8,8 @@ class Wife extends YUKA.GameEntity {
 
 		super();
 
+		this.name = 'wife';
+
 		this.location = 'shack';
 		this.cooking = false; // is she presently cooking?
 

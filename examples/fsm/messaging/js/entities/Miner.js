@@ -8,6 +8,8 @@ class Miner extends YUKA.GameEntity {
 
 		super();
 
+		this.name = 'miner';
+
 		this.location = 'shack';
 		this.gold = 0; // how many gold the miner has in his pockets
 		this.money = 0; // how many gold the miner has in its bank

@@ -9,7 +9,6 @@ class EntityManager {
 	constructor() {
 
 		this.entities = new Map();
-		this.tagDirectory = new Map();
 		this.messageDispatcher = new MessageDispatcher( this );
 
 	}
@@ -24,23 +23,6 @@ class EntityManager {
 
 		entity.manager = this;
 
-		// update tag directory
-
-		const tag = entity.tag;
-
-		if ( this.tagDirectory.has( tag ) === true ) {
-
-			const entities = this.tagDirectory.get( tag );
-			entities.add( entity );
-
-		} else {
-
-			const entities = new Set();
-			entities.add( entity );
-			this.tagDirectory.set( tag, entities );
-
-		}
-
 		return this;
 
 	}
@@ -54,21 +36,6 @@ class EntityManager {
 		// remove the reference to the manager
 
 		entity.manager = null;
-
-		// update tag directory
-
-		const tag = entity.tag;
-		const entities = this.tagDirectory.get( tag );
-
-		if ( entities.size === 1 ) {
-
-			this.tagDirectory.delete( tag );
-
-		} else {
-
-			entities.delete( entity );
-
-		}
 
 		return this;
 
@@ -89,16 +56,6 @@ class EntityManager {
 		}
 
 		return null;
-
-	}
-
-	getEntitiesByTag( tag, result ) {
-
-		const entities = this.tagDirectory.get( tag );
-
-		result.length = 0;
-
-		result.push( ...entities );
 
 	}
 

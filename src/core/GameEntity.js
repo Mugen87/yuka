@@ -6,15 +6,16 @@ import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Matrix4 } from '../math/Matrix4.js';
 
+let nextId = 0;
+
 class GameEntity {
 
 	constructor() {
 
 		this.manager = null;
 
-		this.id = GameEntity.__nextId ++;
+		this.id = nextId ++;
 		this.name = '';
-		this.tag = '';
 
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
@@ -48,7 +49,5 @@ class GameEntity {
 	}
 
 }
-
-GameEntity.__nextId = 0;
 
 export { GameEntity };
