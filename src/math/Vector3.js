@@ -265,7 +265,7 @@ class Vector3 {
 
 	}
 
-	applyQuaternion( q ) {
+	applyRotation( q ) {
 
 		const x = this.x, y = this.y, z = this.z;
 		const qx = q.x, qy = q.y, qz = q.z, qw = q.w;

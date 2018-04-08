@@ -55,7 +55,7 @@ class MovingEntity extends GameEntity {
 
 		// adjust velocity
 
-		this.velocity.applyQuaternion( this.rotation );
+		this.velocity.applyRotation( this.rotation );
 
 		return false;
 
@@ -72,7 +72,7 @@ class MovingEntity extends GameEntity {
 
 	getDirection( result = new Vector3() ) {
 
-		return result.set( 0, 0, 1 ).applyQuaternion( this.rotation ).normalize();
+		return result.set( 0, 0, 1 ).applyRotation( this.rotation ).normalize();
 
 	}
 
