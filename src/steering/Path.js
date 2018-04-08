@@ -20,7 +20,7 @@ class Path {
 
 	}
 
-	clea() {
+	clear() {
 
 		this._waypoints.length = 0;
 
