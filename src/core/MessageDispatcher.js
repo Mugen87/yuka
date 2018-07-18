@@ -13,7 +13,9 @@ class MessageDispatcher {
 
 	}
 
-	deliver( receiver, telegram ) {
+	deliver( telegram ) {
+
+		const receiver = telegram.receiver;
 
 		if ( receiver.handleMessage( telegram ) === false ) {
 
@@ -27,11 +29,11 @@ class MessageDispatcher {
 
 	dispatch( sender, receiver, message, delay, data ) {
 
-		const telegram = new Telegram( sender.id, receiver.id, message, data, 0 );
+		const telegram = new Telegram( sender, receiver, message, data, 0 );
 
 		if ( delay <= 0 ) {
 
-			this.deliver( receiver, telegram );
+			this.deliver( telegram );
 
 		} else {
 
@@ -57,9 +59,7 @@ class MessageDispatcher {
 
 			if ( telegram.delay <= 0 ) {
 
-				const receiver = this.entityManager.getEntityById( telegram.receiverId );
-
-				this.deliver( receiver, telegram );
+				this.deliver( telegram );
 
 				this.delayedTelegrams.pop();
 
