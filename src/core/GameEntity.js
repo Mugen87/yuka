@@ -15,6 +15,8 @@ class GameEntity {
 		this.id = nextId ++;
 		this.name = '';
 
+		this.active = true;
+
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
 		this.scale = new Vector3( 1, 1, 1 );

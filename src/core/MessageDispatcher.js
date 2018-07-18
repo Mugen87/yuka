@@ -6,10 +6,9 @@ import { Telegram } from './Telegram.js';
 
 class MessageDispatcher {
 
-	constructor( entityManager ) {
+	constructor() {
 
 		this.delayedTelegrams = new Array();
-		this.entityManager = entityManager;
 
 	}
 
@@ -69,6 +68,11 @@ class MessageDispatcher {
 
 	}
 
+	clear() {
+
+		this.delayedTelegrams.length = 0;
+
+	}
 
 }
 

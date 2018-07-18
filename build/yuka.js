@@ -28,10 +28,9 @@ class Telegram {
 
 class MessageDispatcher {
 
-	constructor( entityManager ) {
+	constructor() {
 
 		this.delayedTelegrams = new Array();
-		this.entityManager = entityManager;
 
 	}
 
@@ -91,6 +90,11 @@ class MessageDispatcher {
 
 	}
 
+	clear() {
+
+		this.delayedTelegrams.length = 0;
+
+	}
 
 }
 
@@ -103,9 +107,9 @@ class EntityManager {
 	constructor() {
 
 		this.entities = new Map();
-		this.messageDispatcher = new MessageDispatcher( this );
+		this._started = new Set();
 
-		this._active = new Set();
+		this.messageDispatcher = new MessageDispatcher();
 
 	}
 
@@ -122,11 +126,20 @@ class EntityManager {
 	remove( entity ) {
 
 		this.entities.delete( entity.id );
-		this._active.delete( entity );
+		this._started.delete( entity );
 
 		entity.manager = null;
 
 		return this;
+
+	}
+
+	clear() {
+
+		this.entities.clear();
+		this._started.clear();
+
+		this.messageDispatcher.clear();
 
 	}
 
@@ -152,17 +165,21 @@ class EntityManager {
 
 		for ( let entity of this.entities.values() ) {
 
-			if ( this._active.has( entity ) === false ) {
+			if ( entity.active === true ) {
 
-				entity.start();
+				if ( this._started.has( entity ) === false ) {
 
-				this._active.add( entity );
+					entity.start();
+
+					this._started.add( entity );
+
+				}
+
+				entity.update( delta );
+
+				entity.updateMatrix();
 
 			}
-
-			entity.update( delta );
-
-			entity.updateMatrix();
 
 		}
 
@@ -1191,6 +1208,8 @@ class GameEntity {
 
 		this.id = nextId ++;
 		this.name = '';
+
+		this.active = true;
 
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
