@@ -113,8 +113,6 @@ class EntityManager {
 
 		this.entities.set( entity.id, entity );
 
-		entity.addEventListener( 'message', this.onMessage, this );
-
 		entity.manager = this;
 
 		return this;
@@ -124,12 +122,9 @@ class EntityManager {
 	remove( entity ) {
 
 		this.entities.delete( entity.id );
-
-		entity.removeEventListener( 'message', this.onMessage );
+		this._active.delete( entity );
 
 		entity.manager = null;
-
-		this._active.delete( entity );
 
 		return this;
 
@@ -175,107 +170,9 @@ class EntityManager {
 
 	}
 
-	onMessage( event ) {
+	sendMessage( sender, receiver, message, delay, data ) {
 
-		const sender = event.target;
-		const receiver = event.receiver;
-		const message = event.message;
-		const delay = event.delay;
-		const data = event.data;
-
-		if ( receiver !== null ) {
-
-			this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
-
-		} else {
-
-			console.warn( 'YUKA.EntityManager: Unable to send message to receiver. Could not find game entity for name:', name );
-
-		}
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class EventDispatcher {
-
-	constructor() {
-
-		this.listeners = {};
-
-	}
-
-	addEventListener( type, listener, scope ) {
-
-		const listeners = this.listeners;
-
-		if ( listeners[ type ] === undefined ) {
-
-			listeners[ type ] = [];
-
-		}
-
-		if ( listeners[ type ].indexOf( listener ) === - 1 ) {
-
-			listener.scope = scope;
-
-			listeners[ type ].push( listener );
-
-		}
-
-	}
-
-	hasEventListener( type, listener ) {
-
-		const listeners = this.listeners;
-
-		return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
-
-	}
-
-	removeEventListener( type, listener ) {
-
-		const listeners = this.listeners;
-		const listenerArray = listeners[ type ];
-
-		if ( listenerArray !== undefined ) {
-
-			const index = listenerArray.indexOf( listener );
-
-			if ( index !== - 1 ) {
-
-				listenerArray.splice( index, 1 );
-
-			}
-
-		}
-
-	}
-
-	dispatchEvent( event ) {
-
-		const listeners = this.listeners;
-		const listenerArray = listeners[ event.type ];
-
-		if ( listenerArray !== undefined ) {
-
-			event.target = this;
-
-			const array = listenerArray.slice( 0 );
-
-			for ( let i = 0, l = array.length; i < l; i ++ ) {
-
-				const listener = array[ i ];
-
-				listener.call( listener.scope || this, event );
-
-			}
-
-		}
+		this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
 
 	}
 
@@ -1288,11 +1185,9 @@ class Matrix4 {
 
 let nextId = 0;
 
-class GameEntity extends EventDispatcher {
+class GameEntity {
 
 	constructor() {
-
-		super();
 
 		this.id = nextId ++;
 		this.name = '';
@@ -1316,15 +1211,7 @@ class GameEntity extends EventDispatcher {
 
 	sendMessage( receiver, message, delay = 0, data = null ) {
 
-		const event = {
-			type: 'message',
-			receiver: receiver,
-			message: message,
-			delay: delay,
-			data: data
-		};
-
-		this.dispatchEvent( event );
+		this.manager.sendMessage( this, receiver, message, delay, data );
 
 	}
 

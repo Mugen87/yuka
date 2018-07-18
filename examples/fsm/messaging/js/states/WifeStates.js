@@ -106,7 +106,7 @@ class CookStew extends YUKA.State {
 
 			// this will send a message to herself
 
-			wife.sendMessage( wife, 'StewReady', 1500 );
+			wife.sendMessage( wife, 'StewReady', 4000 );
 
 		}
 

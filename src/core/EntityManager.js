@@ -19,8 +19,6 @@ class EntityManager {
 
 		this.entities.set( entity.id, entity );
 
-		entity.addEventListener( 'message', this.onMessage, this );
-
 		entity.manager = this;
 
 		return this;
@@ -30,12 +28,9 @@ class EntityManager {
 	remove( entity ) {
 
 		this.entities.delete( entity.id );
-
-		entity.removeEventListener( 'message', this.onMessage );
+		this._active.delete( entity );
 
 		entity.manager = null;
-
-		this._active.delete( entity );
 
 		return this;
 
@@ -81,23 +76,9 @@ class EntityManager {
 
 	}
 
-	onMessage( event ) {
+	sendMessage( sender, receiver, message, delay, data ) {
 
-		const sender = event.target;
-		const receiver = event.receiver;
-		const message = event.message;
-		const delay = event.delay;
-		const data = event.data;
-
-		if ( receiver !== null ) {
-
-			this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
-
-		} else {
-
-			console.warn( 'YUKA.EntityManager: Unable to send message to receiver. Could not find game entity for name:', name );
-
-		}
+		this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
 
 	}
 
