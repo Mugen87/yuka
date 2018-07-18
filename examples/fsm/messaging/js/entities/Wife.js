@@ -10,6 +10,8 @@ class Wife extends YUKA.GameEntity {
 
 		this.name = 'wife';
 
+		this.miner = null;
+
 		this.location = 'shack';
 		this.cooking = false; // is she presently cooking?
 
@@ -22,6 +24,12 @@ class Wife extends YUKA.GameEntity {
 
 		this.stateMachine.currentState = this.stateMachine.get( 'DO_HOUSE_WORK' );
 		this.stateMachine.globalState = this.stateMachine.get( 'GLOBAL_STATE' );
+
+	}
+
+	start() {
+
+		this.miner = this.manager.getEntityByName( 'miner' );
 
 	}
 

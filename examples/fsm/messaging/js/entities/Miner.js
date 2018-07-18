@@ -30,6 +30,12 @@ class Miner extends YUKA.GameEntity {
 
 	}
 
+	start() {
+
+		this.wife = this.manager.getEntityByName( 'wife' );
+
+	}
+
 	update() {
 
 		this.stateMachine.update();

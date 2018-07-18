@@ -27,15 +27,19 @@ class GameEntity extends EventDispatcher {
 
 		this.matrix = new Matrix4();
 
+		this.manager = null;
+
 	}
+
+	start() {}
 
 	update() {}
 
-	sendMessage( name, message, delay = 0, data = null ) {
+	sendMessage( receiver, message, delay = 0, data = null ) {
 
 		const event = {
 			type: 'message',
-			name: name,
+			receiver: receiver,
 			message: message,
 			delay: delay,
 			data: data

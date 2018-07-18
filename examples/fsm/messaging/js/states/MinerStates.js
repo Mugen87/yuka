@@ -160,7 +160,7 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 			// let the wife know miner is home
 
-			miner.sendMessage( 'wife', 'Home' );
+			miner.sendMessage( miner.wife, 'Home' );
 
 		}
 

@@ -105,6 +105,8 @@ class EntityManager {
 		this.entities = new Map();
 		this.messageDispatcher = new MessageDispatcher( this );
 
+		this._active = new Set();
+
 	}
 
 	add( entity ) {
@@ -112,6 +114,8 @@ class EntityManager {
 		this.entities.set( entity.id, entity );
 
 		entity.addEventListener( 'message', this.onMessage, this );
+
+		entity.manager = this;
 
 		return this;
 
@@ -122,6 +126,10 @@ class EntityManager {
 		this.entities.delete( entity.id );
 
 		entity.removeEventListener( 'message', this.onMessage );
+
+		entity.manager = null;
+
+		this._active.delete( entity );
 
 		return this;
 
@@ -149,6 +157,14 @@ class EntityManager {
 
 		for ( let entity of this.entities.values() ) {
 
+			if ( this._active.has( entity ) === false ) {
+
+				entity.start();
+
+				this._active.add( entity );
+
+			}
+
 			entity.update( delta );
 
 			entity.updateMatrix();
@@ -162,12 +178,10 @@ class EntityManager {
 	onMessage( event ) {
 
 		const sender = event.target;
-		const name = event.name;
+		const receiver = event.receiver;
 		const message = event.message;
 		const delay = event.delay;
 		const data = event.data;
-
-		const receiver = this.getEntityByName( name );
 
 		if ( receiver !== null ) {
 
@@ -1292,15 +1306,19 @@ class GameEntity extends EventDispatcher {
 
 		this.matrix = new Matrix4();
 
+		this.manager = null;
+
 	}
+
+	start() {}
 
 	update() {}
 
-	sendMessage( name, message, delay = 0, data = null ) {
+	sendMessage( receiver, message, delay = 0, data = null ) {
 
 		const event = {
 			type: 'message',
-			name: name,
+			receiver: receiver,
 			message: message,
 			delay: delay,
 			data: data
