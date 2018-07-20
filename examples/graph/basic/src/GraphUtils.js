@@ -2,11 +2,14 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+import { Graph, NavNode, NavEdge, Vector3 } from '../lib/yuka.module.js';
+import * as THREE from '../lib/three.module.js';
+
 class GraphUtils {
 
 	static createGridLayout( size, segments ) {
 
-		const graph = new YUKA.Graph();
+		const graph = new Graph();
 		graph.digraph = true;
 
 		const halfSize = size / 2;
@@ -24,9 +27,9 @@ class GraphUtils {
 
 				const x = ( j * segmentSize ) - halfSize;
 
-				const position = new YUKA.Vector3( x, 0, z );
+				const position = new Vector3( x, 0, z );
 
-				const node = new YUKA.NavNode( index, position );
+				const node = new NavNode( index, position );
 
 				graph.addNode( node );
 
@@ -59,7 +62,7 @@ class GraphUtils {
 
 						const distance = Math.sqrt( distanceSquared );
 
-						const edge = new YUKA.NavEdge( i, j, distance );
+						const edge = new NavEdge( i, j, distance );
 
 						graph.addEdge( edge );
 
@@ -214,3 +217,5 @@ class GraphUtils {
 	}
 
 }
+
+export { GraphUtils };

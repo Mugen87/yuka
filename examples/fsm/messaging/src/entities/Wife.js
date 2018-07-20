@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { GameEntity, StateMachine } from '../../build/yuka.module.js';
+import { GameEntity, StateMachine } from '../../lib/yuka.module.js';
 
 import { WifeGlobalState, DoHouseWork, VisitBathroom, CookStew } from '../states/WifeStates.js';
 

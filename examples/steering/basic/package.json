@@ -1,0 +1,17 @@
+{
+  "name": "graph_basic",
+  "version": "0.0.1",
+  "description": "Basic example for graph and search algorithms",
+  "repository": "Mugen87/yuka",
+  "scripts": {
+    "start": "http-server"
+  },
+  "eslintConfig": {
+    "extends": "mdcs"
+  },
+  "author": "Mugen87",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "0.11.1"
+  }
+}
