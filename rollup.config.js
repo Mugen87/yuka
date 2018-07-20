@@ -1,6 +1,14 @@
 export default {
-	entry: 'src/yuka.js',
-	format: 'umd',
-	moduleName: 'YUKA',
-	dest: 'build/yuka.js'
+	input: 'src/yuka.js',
+	output: [
+		{
+			format: 'umd',
+			name: 'YUKA',
+			file: 'build/yuka.js'
+		},
+		{
+			format: 'es',
+			file: 'build/yuka.module.js'
+		}
+	]
 };

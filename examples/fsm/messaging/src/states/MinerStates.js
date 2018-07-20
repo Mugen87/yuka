@@ -2,13 +2,15 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class GlobalState extends YUKA.State {
+import { State } from '../../build/yuka.module.js';
+
+class MinerGlobalState extends State {
 
 	execute( miner ) {
 
 		miner.thirstLevel ++;
 
-	 }
+	}
 
 }
 
@@ -19,7 +21,7 @@ class GlobalState extends YUKA.State {
  * to QuenchThirst.
  */
 
-class EnterMineAndDigForGold extends YUKA.State {
+class EnterMineAndDigForGold extends State {
 
 	enter( miner ) {
 
@@ -66,10 +68,16 @@ class EnterMineAndDigForGold extends YUKA.State {
 
 	}
 
-	exit( miner ) {
+	exit( /* miner */ ) {
 
 		console.log( 'Miner: Leaving the goldmine.' );
 
+
+	}
+
+	onMessage( /* miner, telegram */ ) {
+
+		return false;
 
 	}
 
@@ -81,7 +89,7 @@ class EnterMineAndDigForGold extends YUKA.State {
  * keep going to get more gold.
  */
 
-class VisitBankAndDepositGold extends YUKA.State {
+class VisitBankAndDepositGold extends State {
 
 	enter( miner ) {
 
@@ -123,10 +131,16 @@ class VisitBankAndDepositGold extends YUKA.State {
 
 	}
 
-	exit( miner ) {
+	exit( /* miner */ ) {
 
 		console.log( 'Miner: Leaving the bank.' );
 
+
+	}
+
+	onMessage( /* miner, telegram */ ) {
+
+		return false;
 
 	}
 
@@ -136,7 +150,7 @@ class VisitBankAndDepositGold extends YUKA.State {
  * Miner will go home and sleep until his fatigue is decreased sufficiently.
  */
 
-class GoHomeAndSleepTillRested extends YUKA.State {
+class GoHomeAndSleepTillRested extends State {
 
 	enter( miner ) {
 
@@ -145,6 +159,10 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 			console.log( 'Miner: Walking home. Fatigue level: %i', miner.fatigueLevel );
 
 			miner.location = 'shack';
+
+			// let the wife know miner is home
+
+			miner.sendMessage( miner.wife, 'Home' );
 
 		}
 
@@ -173,9 +191,23 @@ class GoHomeAndSleepTillRested extends YUKA.State {
 
 	}
 
-	exit( miner ) {
+	onMessage( miner, telegram ) {
 
-		console.log( 'Miner: Leaving my sweet home.' );
+		const message = telegram.message;
+
+		switch ( message ) {
+
+			case 'StewReady':
+				console.log( 'Miner: Okay, honey. I am coming.' );
+				miner.stateMachine.changeTo( 'EAT_STEW' );
+
+				return true;
+
+		}
+
+		// send message to global message handler
+
+		return false;
 
 	}
 
@@ -187,7 +219,7 @@ class GoHomeAndSleepTillRested extends YUKA.State {
  * and resumes his quest for nuggets.
  */
 
-class QuenchThirst extends YUKA.State {
+class QuenchThirst extends State {
 
 	enter( miner ) {
 
@@ -211,10 +243,62 @@ class QuenchThirst extends YUKA.State {
 
 	}
 
-	exit( miner ) {
+	exit( /* miner */ ) {
 
 		console.log( 'Miner: Leaving the saloon, feeling good.' );
 
 	}
 
+	onMessage( /* miner, telegram */ ) {
+
+		return false;
+
+	}
+
 }
+
+/**
+ * This is implemented as a state blip. The miner eats the stew,
+ * gives Elsa some compliments and then returns to his previous state.
+ */
+
+class EatStew extends State {
+
+	enter( /* miner */ ) {
+
+		console.log( 'Miner: Smells Reaaal goood Elsa!' );
+
+	}
+
+	execute( miner ) {
+
+		miner.buyAndDrinkAWhiskey();
+
+		console.log( 'Miner: Tastes real good too!' );
+
+		miner.stateMachine.revert();
+
+	}
+
+	exit( /* miner */ ) {
+
+		console.log( 'Miner: Thank you, Elsa. I better get back to whatever i was doing.' );
+
+	}
+
+	onMessage( /* miner, telegram */ ) {
+
+		return false;
+
+	}
+
+}
+
+export {
+	MinerGlobalState,
+	EnterMineAndDigForGold,
+	VisitBankAndDepositGold,
+	GoHomeAndSleepTillRested,
+	QuenchThirst,
+	EatStew
+};

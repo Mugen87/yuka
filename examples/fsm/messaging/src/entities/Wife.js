@@ -2,7 +2,11 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class Wife extends YUKA.GameEntity {
+import { GameEntity, StateMachine } from '../../build/yuka.module.js';
+
+import { WifeGlobalState, DoHouseWork, VisitBathroom, CookStew } from '../states/WifeStates.js';
+
+class Wife extends GameEntity {
 
 	constructor() {
 
@@ -15,7 +19,7 @@ class Wife extends YUKA.GameEntity {
 		this.location = 'shack';
 		this.cooking = false; // is she presently cooking?
 
-		this.stateMachine = new YUKA.StateMachine( this );
+		this.stateMachine = new StateMachine( this );
 
 		this.stateMachine.add( 'GLOBAL_STATE', new WifeGlobalState() );
 		this.stateMachine.add( 'DO_HOUSE_WORK', new DoHouseWork() );
@@ -46,3 +50,5 @@ class Wife extends YUKA.GameEntity {
 	}
 
 }
+
+export { Wife };

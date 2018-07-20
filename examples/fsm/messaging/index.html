@@ -1,43 +1,39 @@
 <html lang="en">
 	<head>
-		<title>Yuka | FSM</title>
+		<title>Yuka | FSM Messaging</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-
-		<script src="../../../build/yuka.js"></script>
-
-		<script src="./js/states/MinerStates.js"></script>
-		<script src="./js/states/WifeStates.js"></script>
-
-		<script src="./js/entities/Miner.js"></script>
-		<script src="./js/entities/Wife.js"></script>
-
 	</head>
 <body>
 
-	<script>
+	<script type="module">
 
-	const entityManager = new YUKA.EntityManager();
+		import { EntityManager } from './build/yuka.module.js';
 
-	const miner = new Miner();
-	const wife = new Wife();
+		import { Miner } from './src/entities/Miner.js';
+		import { Wife } from './src/entities/Wife.js';
 
-	entityManager.add( miner );
-	entityManager.add( wife );
+		const entityManager = new EntityManager();
 
-	let lastTimestap = 0;
+		const miner = new Miner();
+		const wife = new Wife();
 
-	setInterval( function() {
+		entityManager.add( miner );
+		entityManager.add( wife );
 
-		const now = performance.now()
+		let lastTimestap = 0;
 
-		const delta = now - lastTimestap;
+		setInterval( function() {
 
-		entityManager.update( delta );
+			const now = performance.now()
 
-		lastTimestap = now;
+			const delta = now - lastTimestap;
 
-	}, 2000 );
+			entityManager.update( delta );
+
+			lastTimestap = now;
+
+		}, 2000 );
 
 	</script>
 

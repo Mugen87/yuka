@@ -2,7 +2,9 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class WifeGlobalState extends YUKA.State {
+import { State } from '../../build/yuka.module.js';
+
+class WifeGlobalState extends State {
 
 	execute( wife ) {
 
@@ -40,21 +42,21 @@ class WifeGlobalState extends YUKA.State {
 
 }
 
-class DoHouseWork extends YUKA.State {
+class DoHouseWork extends State {
 
-	enter( wife ) {
+	enter( /* wife */ ) {
 
 		console.log( 'Wife: Time to do some more housework!' );
 
 	}
 
-	execute( wife ) {
+	execute( /* wife */ ) {
 
 		console.log( 'Wife: Mopping the floor.' );
 
 	}
 
-	onMessage( wife, telegram ) {
+	onMessage( /* wife, telegram */ ) {
 
 		return false;
 
@@ -62,9 +64,9 @@ class DoHouseWork extends YUKA.State {
 
 }
 
-class VisitBathroom extends YUKA.State {
+class VisitBathroom extends State {
 
-	enter( wife ) {
+	enter( /* wife */ ) {
 
 		console.log( 'Wife: Walking to the bathroom. Need to powder my pretty nose.' );
 
@@ -78,13 +80,13 @@ class VisitBathroom extends YUKA.State {
 
 	}
 
-	exit( wife ) {
+	exit( /* wife */ ) {
 
 		console.log( 'Wife: Leaving the bathroom.' );
 
 	}
 
-	onMessage( wife, telegram ) {
+	onMessage( /* wife, telegram */ ) {
 
 		return false;
 
@@ -92,7 +94,7 @@ class VisitBathroom extends YUKA.State {
 
 }
 
-class CookStew extends YUKA.State {
+class CookStew extends State {
 
 	enter( wife ) {
 
@@ -112,7 +114,7 @@ class CookStew extends YUKA.State {
 
 	}
 
-	execute( wife ) {
+	execute( /* wife */ ) {
 
 		console.log( 'Wife: Make stew.' );
 
@@ -146,3 +148,10 @@ class CookStew extends YUKA.State {
 	}
 
 }
+
+export {
+	WifeGlobalState,
+	DoHouseWork,
+	VisitBathroom,
+	CookStew
+};
