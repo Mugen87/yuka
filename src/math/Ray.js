@@ -36,13 +36,13 @@ class Ray {
 
 	}
 
-	at( t, result = new Vector3() ) {
+	at( t, result ) {
 
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere( center, radius, result = new Vector3() ) {
+	intersectSphere( center, radius, result ) {
 
 		v1.subVectors( center, this.origin );
 		const tca = v1.dot( this.direction );

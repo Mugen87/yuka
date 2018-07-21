@@ -10,7 +10,7 @@
     "build-uglify": "rollup -c && uglifyjs build/yuka.js > build/yuka.min.js",
     "dev": "rollup -c -w",
     "lint": "eslint src examples --ext .js",
-		"start": "http-server ./examples",
+		"start": "http-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

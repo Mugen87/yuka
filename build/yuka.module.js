@@ -505,6 +505,18 @@ class Vector3 {
 
 	}
 
+	setFromSpherical( radius, phi, theta ) {
+
+		var sinPhiRadius = Math.sin( phi ) * radius;
+
+		this.x = sinPhiRadius * Math.sin( theta );
+		this.y = Math.cos( phi ) * radius;
+		this.z = sinPhiRadius * Math.cos( theta );
+
+		return this;
+
+	}
+
 	equals( v ) {
 
 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
@@ -526,275 +538,6 @@ class Vector3 {
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;
 		array[ offset + 2 ] = this.z;
-
-		return array;
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js
- *
- */
-
-class Quaternion {
-
-	constructor( x = 0, y = 0, z = 0, w = 1 ) {
-
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
-
-	}
-
-	set( x, y, z, w ) {
-
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
-
-		return this;
-
-	}
-
-	copy( q ) {
-
-		this.x = q.x;
-		this.y = q.y;
-		this.z = q.z;
-		this.w = q.w;
-
-		return this;
-
-	}
-
-	inverse() {
-
-		return this.conjugate().normalize();
-
-	}
-
-	conjugate() {
-
-		this.x *= - 1;
-		this.y *= - 1;
-		this.z *= - 1;
-
-		return this;
-
-	}
-
-	dot( q ) {
-
-		return ( this.x * q.x ) + ( this.y * q.y ) + ( this.z * q.z ) + ( this.w * q.w );
-
-	}
-
-	length() {
-
-		return Math.sqrt( this.squaredLength() );
-
-	}
-
-	squaredLength() {
-
-		return this.dot( this );
-
-	}
-
-	normalize() {
-
-		let l = this.length();
-
-		if ( l === 0 ) {
-
-			this.x = 0;
-			this.y = 0;
-			this.z = 0;
-			this.w = 1;
-
-		} else {
-
-			l = 1 / l;
-
-			this.x = this.x * l;
-			this.y = this.y * l;
-			this.z = this.z * l;
-			this.w = this.w * l;
-
-		}
-
-		return this;
-
-	}
-
-	multiply( q ) {
-
-		return this.multiplyQuaternions( this, q );
-
-	}
-
-	premultiply( q ) {
-
-		return this.multiplyQuaternions( q, this );
-
-	}
-
-	multiplyQuaternions( a, b ) {
-
-		const qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
-		const qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
-
-		this.x = ( qax * qbw ) + ( qaw * qbx ) + ( qay * qbz ) - ( qaz * qby );
-		this.y = ( qay * qbw ) + ( qaw * qby ) + ( qaz * qbx ) - ( qax * qbz );
-		this.z = ( qaz * qbw ) + ( qaw * qbz ) + ( qax * qby ) - ( qay * qbx );
-		this.w = ( qaw * qbw ) - ( qax * qbx ) - ( qay * qby ) - ( qaz * qbz );
-
-		return this;
-
-	}
-
-	slerp( q, t ) {
-
-		if ( t === 0 ) return this;
-		if ( t === 1 ) return this.copy( q );
-
-		const x = this.x, y = this.y, z = this.z, w = this.w;
-
-		let cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
-
-		if ( cosHalfTheta < 0 ) {
-
-			this.w = - q.w;
-			this.x = - q.x;
-			this.y = - q.y;
-			this.z = - q.z;
-
-			cosHalfTheta = - cosHalfTheta;
-
-		} else {
-
-			this.copy( q );
-
-		}
-
-		if ( cosHalfTheta >= 1.0 ) {
-
-			this.w = w;
-			this.x = x;
-			this.y = y;
-			this.z = z;
-
-			return this;
-
-		}
-
-		const sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
-
-		if ( Math.abs( sinHalfTheta ) < 0.001 ) {
-
-			this.w = 0.5 * ( w + this.w );
-			this.x = 0.5 * ( x + this.x );
-			this.y = 0.5 * ( y + this.y );
-			this.z = 0.5 * ( z + this.z );
-
-			return this;
-
-		}
-
-		const halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
-		const ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta;
-		const ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
-
-		this.w = ( w * ratioA ) + ( this.w * ratioB );
-		this.x = ( x * ratioA ) + ( this.x * ratioB );
-		this.y = ( y * ratioA ) + ( this.y * ratioB );
-		this.z = ( z * ratioA ) + ( this.z * ratioB );
-
-		return this;
-
-	}
-
-	setFromRotationMatrix( m ) {
-
-		const e = m.elements;
-
-		const m11 = e[ 0 ], m12 = e[ 4 ], m13 = e[ 8 ];
-		const m21 = e[ 1 ], m22 = e[ 5 ], m23 = e[ 9 ];
-		const m31 = e[ 2 ], m32 = e[ 6 ], m33 = e[ 10 ];
-
-		const trace = m11 + m22 + m33;
-
-		if ( trace > 0 ) {
-
-			let s = 0.5 / Math.sqrt( trace + 1.0 );
-
-			this.w = 0.25 / s;
-			this.x = ( m32 - m23 ) * s;
-			this.y = ( m13 - m31 ) * s;
-			this.z = ( m21 - m12 ) * s;
-
-		} else if ( ( m11 > m22 ) && ( m11 > m33 ) ) {
-
-			let s = 2.0 * Math.sqrt( 1.0 + m11 - m22 - m33 );
-
-			this.w = ( m32 - m23 ) / s;
-			this.x = 0.25 * s;
-			this.y = ( m12 + m21 ) / s;
-			this.z = ( m13 + m31 ) / s;
-
-		} else if ( m22 > m33 ) {
-
-			let s = 2.0 * Math.sqrt( 1.0 + m22 - m11 - m33 );
-
-			this.w = ( m13 - m31 ) / s;
-			this.x = ( m12 + m21 ) / s;
-			this.y = 0.25 * s;
-			this.z = ( m23 + m32 ) / s;
-
-		} else {
-
-			let s = 2.0 * Math.sqrt( 1.0 + m33 - m11 - m22 );
-
-			this.w = ( m21 - m12 ) / s;
-			this.x = ( m13 + m31 ) / s;
-			this.y = ( m23 + m32 ) / s;
-			this.z = 0.25 * s;
-
-		}
-
-		return this;
-
-	}
-
-	equals( q ) {
-
-		return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );
-
-	}
-
-	fromArray( array, offset = 0 ) {
-
-		this.x = array[ offset + 0 ];
-		this.y = array[ offset + 1 ];
-		this.z = array[ offset + 2 ];
-		this.w = array[ offset + 3 ];
-
-		return this;
-
-	}
-
-	toArray( array = [], offset = 0 ) {
-
-		array[ offset + 0 ] = this.x;
-		array[ offset + 1 ] = this.y;
-		array[ offset + 2 ] = this.z;
-		array[ offset + 3 ] = this.w;
 
 		return array;
 
@@ -1192,6 +935,304 @@ class Matrix4 {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js
+ *
+ */
+
+const matrix = new Matrix4();
+
+class Quaternion {
+
+	constructor( x = 0, y = 0, z = 0, w = 1 ) {
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+
+	}
+
+	set( x, y, z, w ) {
+
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+
+		return this;
+
+	}
+
+	copy( q ) {
+
+		this.x = q.x;
+		this.y = q.y;
+		this.z = q.z;
+		this.w = q.w;
+
+		return this;
+
+	}
+
+	inverse() {
+
+		return this.conjugate().normalize();
+
+	}
+
+	conjugate() {
+
+		this.x *= - 1;
+		this.y *= - 1;
+		this.z *= - 1;
+
+		return this;
+
+	}
+
+	dot( q ) {
+
+		return ( this.x * q.x ) + ( this.y * q.y ) + ( this.z * q.z ) + ( this.w * q.w );
+
+	}
+
+	length() {
+
+		return Math.sqrt( this.squaredLength() );
+
+	}
+
+	squaredLength() {
+
+		return this.dot( this );
+
+	}
+
+	normalize() {
+
+		let l = this.length();
+
+		if ( l === 0 ) {
+
+			this.x = 0;
+			this.y = 0;
+			this.z = 0;
+			this.w = 1;
+
+		} else {
+
+			l = 1 / l;
+
+			this.x = this.x * l;
+			this.y = this.y * l;
+			this.z = this.z * l;
+			this.w = this.w * l;
+
+		}
+
+		return this;
+
+	}
+
+	multiply( q ) {
+
+		return this.multiplyQuaternions( this, q );
+
+	}
+
+	premultiply( q ) {
+
+		return this.multiplyQuaternions( q, this );
+
+	}
+
+	multiplyQuaternions( a, b ) {
+
+		const qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
+		const qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
+
+		this.x = ( qax * qbw ) + ( qaw * qbx ) + ( qay * qbz ) - ( qaz * qby );
+		this.y = ( qay * qbw ) + ( qaw * qby ) + ( qaz * qbx ) - ( qax * qbz );
+		this.z = ( qaz * qbw ) + ( qaw * qbz ) + ( qax * qby ) - ( qay * qbx );
+		this.w = ( qaw * qbw ) - ( qax * qbx ) - ( qay * qby ) - ( qaz * qbz );
+
+		return this;
+
+	}
+
+	angleTo( q ) {
+
+		return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+	}
+
+	rotateTowards( q, step ) {
+
+		const angle = this.angleTo( q );
+
+		if ( angle === 0 ) return this;
+
+		const t = Math.min( 1, step / angle );
+
+		this.slerp( q, t );
+
+		return this;
+
+	}
+
+	lookAt( eye, target, up ) {
+
+		matrix.lookAt( eye, target, up );
+		this.setFromRotationMatrix( matrix );
+
+	}
+
+	slerp( q, t ) {
+
+		if ( t === 0 ) return this;
+		if ( t === 1 ) return this.copy( q );
+
+		const x = this.x, y = this.y, z = this.z, w = this.w;
+
+		let cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
+
+		if ( cosHalfTheta < 0 ) {
+
+			this.w = - q.w;
+			this.x = - q.x;
+			this.y = - q.y;
+			this.z = - q.z;
+
+			cosHalfTheta = - cosHalfTheta;
+
+		} else {
+
+			this.copy( q );
+
+		}
+
+		if ( cosHalfTheta >= 1.0 ) {
+
+			this.w = w;
+			this.x = x;
+			this.y = y;
+			this.z = z;
+
+			return this;
+
+		}
+
+		const sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+
+		if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+
+			this.w = 0.5 * ( w + this.w );
+			this.x = 0.5 * ( x + this.x );
+			this.y = 0.5 * ( y + this.y );
+			this.z = 0.5 * ( z + this.z );
+
+			return this;
+
+		}
+
+		const halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
+		const ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta;
+		const ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
+
+		this.w = ( w * ratioA ) + ( this.w * ratioB );
+		this.x = ( x * ratioA ) + ( this.x * ratioB );
+		this.y = ( y * ratioA ) + ( this.y * ratioB );
+		this.z = ( z * ratioA ) + ( this.z * ratioB );
+
+		return this;
+
+	}
+
+	setFromRotationMatrix( m ) {
+
+		const e = m.elements;
+
+		const m11 = e[ 0 ], m12 = e[ 4 ], m13 = e[ 8 ];
+		const m21 = e[ 1 ], m22 = e[ 5 ], m23 = e[ 9 ];
+		const m31 = e[ 2 ], m32 = e[ 6 ], m33 = e[ 10 ];
+
+		const trace = m11 + m22 + m33;
+
+		if ( trace > 0 ) {
+
+			let s = 0.5 / Math.sqrt( trace + 1.0 );
+
+			this.w = 0.25 / s;
+			this.x = ( m32 - m23 ) * s;
+			this.y = ( m13 - m31 ) * s;
+			this.z = ( m21 - m12 ) * s;
+
+		} else if ( ( m11 > m22 ) && ( m11 > m33 ) ) {
+
+			let s = 2.0 * Math.sqrt( 1.0 + m11 - m22 - m33 );
+
+			this.w = ( m32 - m23 ) / s;
+			this.x = 0.25 * s;
+			this.y = ( m12 + m21 ) / s;
+			this.z = ( m13 + m31 ) / s;
+
+		} else if ( m22 > m33 ) {
+
+			let s = 2.0 * Math.sqrt( 1.0 + m22 - m11 - m33 );
+
+			this.w = ( m13 - m31 ) / s;
+			this.x = ( m12 + m21 ) / s;
+			this.y = 0.25 * s;
+			this.z = ( m23 + m32 ) / s;
+
+		} else {
+
+			let s = 2.0 * Math.sqrt( 1.0 + m33 - m11 - m22 );
+
+			this.w = ( m21 - m12 ) / s;
+			this.x = ( m13 + m31 ) / s;
+			this.y = ( m23 + m32 ) / s;
+			this.z = 0.25 * s;
+
+		}
+
+		return this;
+
+	}
+
+	equals( q ) {
+
+		return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );
+
+	}
+
+	fromArray( array, offset = 0 ) {
+
+		this.x = array[ offset + 0 ];
+		this.y = array[ offset + 1 ];
+		this.z = array[ offset + 2 ];
+		this.w = array[ offset + 3 ];
+
+		return this;
+
+	}
+
+	toArray( array = [], offset = 0 ) {
+
+		array[ offset + 0 ] = this.x;
+		array[ offset + 1 ] = this.y;
+		array[ offset + 2 ] = this.z;
+		array[ offset + 3 ] = this.w;
+
+		return array;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
  */
 
 let nextId = 0;
@@ -1246,8 +1287,6 @@ class GameEntity {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-const direction = new Vector3();
-const rotationMatrix = new Matrix4();
 const targetRotation = new Quaternion();
 
 class MovingEntity extends GameEntity {
@@ -1269,47 +1308,26 @@ class MovingEntity extends GameEntity {
 
 	rotateToTarget( target ) {
 
-		this.getDirection( direction );
-
-		// first determine the angle between the look vector and the target
-
-		const angle = target.angleTo( direction );
-
-		// return true if the player is facing the target
-
-		if ( angle < 0.00001 ) return true;
-
-		// clamp the amount to turn to the max turn rate
-
-		const t = ( angle > this.maxTurnRate ) ? ( this.maxTurnRate / angle ) : 1;
-
-		// get target rotation
-
-		rotationMatrix.lookAt( target, this.position, this.up );
-		targetRotation.setFromRotationMatrix( rotationMatrix );
-
-		// interpolate
-
-		this.rotation.slerp( targetRotation, t );
+		targetRotation.lookAt( target, this.position, this.up );
+		this.rotation.rotateTowards( targetRotation, this.maxTurnRate );
 
 		// adjust velocity
 
 		this.velocity.applyRotation( this.rotation );
 
-		return false;
+		return this;
 
 	}
 
 	lookAt( target ) {
 
-		rotationMatrix.lookAt( target, this.position, this.up );
-		this.rotation.setFromRotationMatrix( rotationMatrix );
+		this.rotation.lookAt( target, this.position, this.up );
 
 		return this;
 
 	}
 
-	getDirection( result = new Vector3() ) {
+	getDirection( result ) {
 
 		return result.set( 0, 0, 1 ).applyRotation( this.rotation ).normalize();
 
@@ -2821,6 +2839,18 @@ class Vector3$1 {
 
 	}
 
+	setFromSpherical( radius, phi, theta ) {
+
+		var sinPhiRadius = Math.sin( phi ) * radius;
+
+		this.x = sinPhiRadius * Math.sin( theta );
+		this.y = Math.cos( phi ) * radius;
+		this.z = sinPhiRadius * Math.cos( theta );
+
+		return this;
+
+	}
+
 	equals( v ) {
 
 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
@@ -3703,13 +3733,13 @@ class Ray {
 
 	}
 
-	at( t, result = new Vector3$1() ) {
+	at( t, result ) {
 
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere( center, radius, result = new Vector3$1() ) {
+	intersectSphere( center, radius, result ) {
 
 		v1.subVectors( center, this.origin );
 		const tca = v1.dot( this.direction );
@@ -4140,13 +4170,13 @@ class Ray$1 {
 
 	}
 
-	at( t, result = new Vector3() ) {
+	at( t, result ) {
 
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere( center, radius, result = new Vector3() ) {
+	intersectSphere( center, radius, result ) {
 
 		v1$1.subVectors( center, this.origin );
 		const tca = v1$1.dot( this.direction );

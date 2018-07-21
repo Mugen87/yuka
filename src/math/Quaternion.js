@@ -5,6 +5,11 @@
  *
  */
 
+import { _Math } from './Math.js';
+import { Matrix4 } from './Matrix4.js';
+
+const matrix = new Matrix4();
+
 class Quaternion {
 
 	constructor( x = 0, y = 0, z = 0, w = 1 ) {
@@ -121,6 +126,33 @@ class Quaternion {
 		this.w = ( qaw * qbw ) - ( qax * qbx ) - ( qay * qby ) - ( qaz * qbz );
 
 		return this;
+
+	}
+
+	angleTo( q ) {
+
+		return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+	}
+
+	rotateTowards( q, step ) {
+
+		const angle = this.angleTo( q );
+
+		if ( angle === 0 ) return this;
+
+		const t = Math.min( 1, step / angle );
+
+		this.slerp( q, t );
+
+		return this;
+
+	}
+
+	lookAt( eye, target, up ) {
+
+		matrix.lookAt( eye, target, up );
+		this.setFromRotationMatrix( matrix );
 
 	}
 

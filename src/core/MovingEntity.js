@@ -3,12 +3,9 @@
  */
 
 import { GameEntity } from './GameEntity.js';
-import { Matrix4 } from '../math/Matrix4.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Vector3 } from '../math/Vector3.js';
 
-const direction = new Vector3();
-const rotationMatrix = new Matrix4();
 const targetRotation = new Quaternion();
 
 class MovingEntity extends GameEntity {
@@ -30,47 +27,26 @@ class MovingEntity extends GameEntity {
 
 	rotateToTarget( target ) {
 
-		this.getDirection( direction );
-
-		// first determine the angle between the look vector and the target
-
-		const angle = target.angleTo( direction );
-
-		// return true if the player is facing the target
-
-		if ( angle < 0.00001 ) return true;
-
-		// clamp the amount to turn to the max turn rate
-
-		const t = ( angle > this.maxTurnRate ) ? ( this.maxTurnRate / angle ) : 1;
-
-		// get target rotation
-
-		rotationMatrix.lookAt( target, this.position, this.up );
-		targetRotation.setFromRotationMatrix( rotationMatrix );
-
-		// interpolate
-
-		this.rotation.slerp( targetRotation, t );
+		targetRotation.lookAt( target, this.position, this.up );
+		this.rotation.rotateTowards( targetRotation, this.maxTurnRate );
 
 		// adjust velocity
 
 		this.velocity.applyRotation( this.rotation );
 
-		return false;
+		return this;
 
 	}
 
 	lookAt( target ) {
 
-		rotationMatrix.lookAt( target, this.position, this.up );
-		this.rotation.setFromRotationMatrix( rotationMatrix );
+		this.rotation.lookAt( target, this.position, this.up );
 
 		return this;
 
 	}
 
-	getDirection( result = new Vector3() ) {
+	getDirection( result ) {
 
 		return result.set( 0, 0, 1 ).applyRotation( this.rotation ).normalize();
 
