@@ -1067,7 +1067,7 @@ class Quaternion {
 
 	}
 
-	rotateTowards( q, step ) {
+	rotateTo( q, step ) {
 
 		const angle = this.angleTo( q );
 
@@ -1306,10 +1306,10 @@ class MovingEntity extends GameEntity {
 	// given a target position, this method rotates the entity by an amount not
 	// greater than maxTurnRate until it directly faces the target
 
-	rotateToTarget( target ) {
+	rotateTo( target ) {
 
 		targetRotation.lookAt( target, this.position, this.up );
-		this.rotation.rotateTowards( targetRotation, this.maxTurnRate );
+		this.rotation.rotateTo( targetRotation, this.maxTurnRate );
 
 		// adjust velocity
 

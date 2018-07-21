@@ -114,7 +114,7 @@
 
 		requestAnimationFrame( animate );
 
-		movingEntity.rotateToTarget( target );
+		movingEntity.rotateTo( target );
 
 		entityManager.update();
 
@@ -129,9 +129,9 @@
 
 		// generate a random points on a sphere
 
-		const theta = Math.random() * Math.PI * 2;
-		const phi = Math.acos( ( 2 * Math.random() ) - 1 );
 		const radius = 2;
+		const phi = Math.acos( ( 2 * Math.random() ) - 1 );
+		const theta = Math.random() * Math.PI * 2;
 
 		target.setFromSpherical( radius, phi, theta );
 

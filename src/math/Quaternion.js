@@ -135,7 +135,7 @@ class Quaternion {
 
 	}
 
-	rotateTowards( q, step ) {
+	rotateTo( q, step ) {
 
 		const angle = this.angleTo( q );
 
