@@ -38,7 +38,7 @@
 
 	let renderer, scene, camera, entityMesh, targetMesh;
 
-	let entityManager, movingEntity, target;
+	let entityManager, time, movingEntity, target;
 
 	init();
 	animate();
@@ -64,8 +64,9 @@
 		// game entity setup
 
 		entityManager = new YUKA.EntityManager();
+		time = new YUKA.Time();
 		movingEntity = new YUKA.MovingEntity();
-		movingEntity.maxTurnRate = Math.PI / 100;
+		movingEntity.maxTurnRate = Math.PI * 0.5;
 		entityManager.add( movingEntity );
 
 		target = new YUKA.Vector3();
@@ -114,7 +115,9 @@
 
 		requestAnimationFrame( animate );
 
-		movingEntity.rotateTo( target );
+		const delta = time.update().getDelta();
+
+		movingEntity.rotateTo( target, delta );
 
 		entityManager.update();
 

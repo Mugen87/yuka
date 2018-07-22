@@ -1325,10 +1325,10 @@ class MovingEntity extends GameEntity {
 	// given a target position, this method rotates the entity by an amount not
 	// greater than maxTurnRate until it directly faces the target
 
-	rotateTo( target ) {
+	rotateTo( target, delta ) {
 
 		targetRotation.lookAt( target, this.position, this.up );
-		this.rotation.rotateTo( targetRotation, this.maxTurnRate );
+		this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta );
 
 		// adjust velocity
 
