@@ -3279,12 +3279,12 @@ class SeekBehavior extends SteeringBehavior {
 
 class FollowPathBehavior extends SteeringBehavior {
 
-	constructor( path ) {
+	constructor( path, nextWaypointDistance = 1 ) {
 
 		super();
 
 		this.path = path; // list of waypoints to follow
-		this._nextWaypointDistance = 1; // the distance a waypoint is set to the new target
+		this.nextWaypointDistance = nextWaypointDistance; // the distance a waypoint is set to the new target
 
 		// internal behaviors
 
@@ -3296,7 +3296,6 @@ class FollowPathBehavior extends SteeringBehavior {
 	calculate( vehicle, force /*, delta */ ) {
 
 		const path = this.path;
-		const nextWaypointDistance = this._nextWaypointDistance;
 
 		// calculate distance in square space from current waypoint to vehicle
 
@@ -3304,7 +3303,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		// move to next waypoint if close enough to current target
 
-		if ( distanceSq < ( nextWaypointDistance * nextWaypointDistance ) ) {
+		if ( distanceSq < ( this.nextWaypointDistance * this.nextWaypointDistance ) ) {
 
 			path.advance();
 

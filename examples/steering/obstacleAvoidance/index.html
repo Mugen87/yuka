@@ -1,6 +1,6 @@
 <html lang="en">
 	<head>
-		<title>Yuka | Steering</title>
+		<title>Yuka | Steering Behaviors | Obstacle Avoidance</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -77,7 +77,18 @@
 			arrowHelper = new THREE.ArrowHelper( new THREE.Vector3( 0, 0, 1 ), new THREE.Vector3(), 3 );
 			mesh.add( arrowHelper );
 
-			// game
+			// renderer
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			// game setup
 
 			entityManager = new YUKA.EntityManager();
 
@@ -103,17 +114,6 @@
 			// obstacles
 
 			setupObstacles();
-
-			// renderer
-
-			renderer = new THREE.WebGLRenderer( { antialias: true } );
-			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			document.body.appendChild( renderer.domElement );
-
-			//
-
-			window.addEventListener( 'resize', onWindowResize, false );
 
 
 		}

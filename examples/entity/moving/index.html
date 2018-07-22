@@ -53,7 +53,7 @@
 
 		//
 
-		const entityGeometry = new THREE.ConeBufferGeometry( 0.2, 1, 8 );
+		const entityGeometry = new THREE.ConeBufferGeometry( 0.1, 0.5, 8 );
 		entityGeometry.rotateX( Math.PI * 0.5 );
 		const entityMaterial = new THREE.MeshNormalMaterial();
 
@@ -127,7 +127,7 @@
 
 	function generateTarget() {
 
-		// generate a random points on a sphere
+		// generate a random point on a sphere
 
 		const radius = 2;
 		const phi = Math.acos( ( 2 * Math.random() ) - 1 );

@@ -1,0 +1,146 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Steering Behaviors | Flee</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#777;
+				padding:0;
+				margin:0;
+				font-weight: bold;
+				overflow:hidden;
+				touch-action: none;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px;
+				width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+			}
+
+			a {
+				color: #ffffff;
+			}
+		</style>
+
+	</head>
+<body>
+
+	<script type="module">
+
+		import * as YUKA from '../../../build/yuka.module.js';
+		import * as THREE from '../../lib/three.module.js';
+
+		let renderer, scene, camera, clock, entityMesh, targetMesh;
+		let pointer, raycaster, plane;
+
+		let entityManager, vehicle, target;
+
+		init();
+		animate();
+
+		function init() {
+
+			scene = new THREE.Scene();
+
+			clock = new THREE.Clock();
+
+			pointer = new THREE.Vector2( 10, 10 );
+
+			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 100 );
+			camera.position.set( 0, 10, 0 );
+			camera.lookAt( scene.position );
+
+			//
+
+			const entityGeometry = new THREE.ConeBufferGeometry( 0.1, 0.5, 8 );
+			entityGeometry.rotateX( Math.PI * 0.5 );
+			const entityMaterial = new THREE.MeshNormalMaterial();
+
+			entityMesh = new THREE.Mesh( entityGeometry, entityMaterial );
+			entityMesh.matrixAutoUpdate = false;
+			scene.add( entityMesh );
+
+			const grid = new THREE.GridHelper( 10, 25 );
+			scene.add( grid );
+
+			//
+
+			raycaster = new THREE.Raycaster();
+
+			plane = new THREE.Plane();
+			plane.normal.set( 0, 1, 0 );
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//
+
+			document.addEventListener( 'mousemove', onPointerMove, false );
+			document.addEventListener( 'touchmove', onPointerMove, false );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			// game setup
+
+			target = new YUKA.Vector3();
+
+			entityManager = new YUKA.EntityManager();
+			vehicle = new YUKA.Vehicle();
+
+			const fleeBehavior = new YUKA.FleeBehavior( target, 5 );
+			vehicle.steering.add( fleeBehavior );
+
+			entityManager.add( vehicle );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function onPointerMove( event ) {
+
+			var clientX = event.clientX || event.touches[ 0 ].clientX;
+			var clientY = event.clientY || event.touches[ 0 ].clientY;
+
+			pointer.x = ( clientX / window.innerWidth ) * 2 - 1;
+			pointer.y = - ( clientY / window.innerHeight ) * 2 + 1;
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			raycaster.setFromCamera( pointer, camera );
+			raycaster.ray.intersectPlane( plane, target );
+
+			const delta = clock.getDelta();
+
+			entityManager.update( delta );
+
+			entityMesh.matrix.copy( vehicle.matrix );
+
+			renderer.render( scene, camera );
+
+		}
+
+
+	</script>
+
+</body>
+</html>
