@@ -37,10 +37,10 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, clock, entityMesh, targetMesh;
+		let renderer, scene, camera, entityMesh, targetMesh;
 		let pointer, raycaster, plane;
 
-		let entityManager, vehicle, target;
+		let entityManager, time, vehicle, target;
 
 		init();
 		animate();
@@ -48,8 +48,6 @@
 		function init() {
 
 			scene = new THREE.Scene();
-
-			clock = new THREE.Clock();
 
 			pointer = new THREE.Vector2( 10, 10 );
 
@@ -95,6 +93,7 @@
 			target = new YUKA.Vector3();
 
 			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
 			vehicle = new YUKA.Vehicle();
 
 			const fleeBehavior = new YUKA.FleeBehavior( target, 5 );
@@ -130,7 +129,7 @@
 			raycaster.setFromCamera( pointer, camera );
 			raycaster.ray.intersectPlane( plane, target );
 
-			const delta = clock.getDelta();
+			const delta = time.update().getDelta();
 
 			entityManager.update( delta );
 

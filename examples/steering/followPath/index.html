@@ -36,9 +36,9 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, clock, entityMesh, targetMesh;
+		let renderer, scene, camera, entityMesh, targetMesh;
 
-		let entityManager, vehicle, target;
+		let entityManager, time, vehicle;
 
 		init();
 		animate();
@@ -46,8 +46,6 @@
 		function init() {
 
 			scene = new THREE.Scene();
-
-			clock = new THREE.Clock();
 
 			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 100 );
 			camera.position.set( 0, 20, 0 );
@@ -76,9 +74,8 @@
 
 			// game setup
 
-			target = new YUKA.Vector3();
-
 			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
 			vehicle = new YUKA.Vehicle();
 
 			const path = new YUKA.Path();
@@ -134,7 +131,7 @@
 
 			requestAnimationFrame( animate );
 
-			const delta = clock.getDelta();
+			const delta = time.update().getDelta();
 
 			entityManager.update( delta );
 

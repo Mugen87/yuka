@@ -36,9 +36,9 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, clock;
+		let renderer, scene, camera;
 
-		let entity, entityManager, mesh, arrowHelper;
+		let entity, entityManager, time, mesh, arrowHelper;
 
 		const direction = new THREE.Vector3();
 
@@ -52,8 +52,6 @@
 			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			camera.position.set( 30, 25, 0 );
 			camera.lookAt( scene.position );
-
-			clock = new THREE.Clock();
 
 			const geometry = new THREE.CylinderBufferGeometry( 0.5, 0.5, 3 );
 			geometry.computeBoundingSphere();
@@ -91,6 +89,7 @@
 			// game setup
 
 			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
 
 			const path = new YUKA.Path();
 			path.add( new YUKA.Vector3(   10, 0,   10 ) );
@@ -131,7 +130,7 @@
 
 				requestAnimationFrame( animate );
 
-				const delta = clock.getDelta();
+				const delta = time.update().getDelta();
 
 				entityManager.update( delta );
 

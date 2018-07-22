@@ -1370,6 +1370,50 @@ class MovingEntity extends GameEntity {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+class Time {
+
+	constructor() {
+
+		this.startTime = 0;
+
+		this.previousTime = 0;
+		this.currentTime = 0;
+
+	}
+
+	getDelta() {
+
+		return ( this.currentTime - this.previousTime ) / 1000;
+
+	}
+
+	getTime() {
+
+		return ( this.currentTime - this.startTime ) / 1000;
+
+	}
+
+	update() {
+
+		this.previousTime = this.currentTime;
+		this.currentTime = this.now();
+
+		return this;
+
+	}
+
+	now() {
+
+		return ( typeof performance === 'undefined' ? Date : performance ).now();
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 class Node {
 
 	constructor( index ) {
@@ -4313,4 +4357,4 @@ class Ray$1 {
 
 }
 
-export { EntityManager, GameEntity, MovingEntity, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix4, Quaternion, Ray$1 as Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix4, Quaternion, Ray$1 as Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
