@@ -287,13 +287,13 @@ class Vector3 {
 
 	}
 
-	setFromMatrixColumn( m, i ) {
+	fromMatrixColumn( m, i ) {
 
 		return this.fromArray( m.elements, i * 4 );
 
 	}
 
-	setFromSpherical( radius, phi, theta ) {
+	fromSpherical( radius, phi, theta ) {
 
 		var sinPhiRadius = Math.sin( phi ) * radius;
 

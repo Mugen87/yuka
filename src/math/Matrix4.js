@@ -56,9 +56,9 @@ class Matrix4 {
 
 	extractBasis( xAxis, yAxis, zAxis ) {
 
-		xAxis.setFromMatrixColumn( this, 0 );
-		yAxis.setFromMatrixColumn( this, 1 );
-		zAxis.setFromMatrixColumn( this, 2 );
+		xAxis.fromMatrixColumn( this, 0 );
+		yAxis.fromMatrixColumn( this, 1 );
+		zAxis.fromMatrixColumn( this, 2 );
 
 		return this;
 

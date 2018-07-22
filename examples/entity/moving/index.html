@@ -133,7 +133,7 @@
 		const phi = Math.acos( ( 2 * Math.random() ) - 1 );
 		const theta = Math.random() * Math.PI * 2;
 
-		target.setFromSpherical( radius, phi, theta );
+		target.fromSpherical( radius, phi, theta );
 
 		setTimeout( generateTarget, 2000 );
 
