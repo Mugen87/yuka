@@ -121,7 +121,7 @@
 			requestAnimationFrame( animate );
 
 			const delta = time.update().getDelta();
-			const elapsedTime = time.update().getTime();
+			const elapsedTime = time.getTime();
 
 			target.x = Math.cos( elapsedTime ) * Math.sin( elapsedTime * 0.2 ) * 6;
 			target.z = Math.sin( elapsedTime * 0.8 ) * 6;
