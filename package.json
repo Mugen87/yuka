@@ -10,7 +10,7 @@
     "build-uglify": "rollup -c && uglifyjs build/yuka.js > build/yuka.min.js",
     "dev": "rollup -c -w",
     "lint": "eslint src examples --ext .js",
-		"start": "http-server",
+    "start": "http-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -20,7 +20,10 @@
   "eslintConfig": {
     "extends": "mdcs"
   },
-	"eslintIgnore": [ "yuka.module.js", "three.module.js" ],
+  "eslintIgnore": [
+    "yuka.module.js",
+    "three.module.js"
+  ],
   "directories": {
     "example": "examples"
   },
@@ -32,7 +35,7 @@
   "devDependencies": {
     "eslint": "5.1.0",
     "eslint-config-mdcs": "4.2.3",
-    "http-server": "^0.11.1",
+    "http-server": "0.11.1",
     "rollup": "0.63.3",
     "rollup-watch": "4.3.1",
     "uglify-es": "3.3.9"

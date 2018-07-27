@@ -3,8 +3,8 @@
  */
 
 import { SteeringBehavior } from '../SteeringBehavior.js';
-import { Vector3 } from '../../Math/Vector3.js';
-import { _Math } from '../../Math/Math.js';
+import { Vector3 } from '../../math/Vector3.js';
+import { _Math } from '../../math/Math.js';
 
 const targetWorld = new Vector3();
 const randomDisplacement = new Vector3();

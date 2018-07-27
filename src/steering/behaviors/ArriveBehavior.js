@@ -3,7 +3,7 @@
  */
 
 import { SteeringBehavior } from '../SteeringBehavior.js';
-import { Vector3 } from '../../Math/Vector3.js';
+import { Vector3 } from '../../math/Vector3.js';
 
 const desiredVelocity = new Vector3();
 const displacement = new Vector3();

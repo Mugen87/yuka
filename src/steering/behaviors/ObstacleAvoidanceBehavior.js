@@ -4,9 +4,9 @@
 
 import { SteeringBehavior } from '../SteeringBehavior.js';
 import { SeekBehavior } from './SeekBehavior.js';
-import { Vector3 } from '../../Math/Vector3.js';
-import { Matrix4 } from '../../Math/Matrix4.js';
-import { Ray } from '../../Math/Ray.js';
+import { Vector3 } from '../../math/Vector3.js';
+import { Matrix4 } from '../../math/Matrix4.js';
+import { Ray } from '../../math/Ray.js';
 
 const inverse = new Matrix4();
 const localPositionOfObstacle = new Vector3();

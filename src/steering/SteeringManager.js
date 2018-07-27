@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Vector3 } from '../Math/Vector3.js';
+import { Vector3 } from '../math/Vector3.js';
 
 const force = new Vector3();
 

@@ -4,7 +4,7 @@
 
 import { SteeringBehavior } from '../SteeringBehavior.js';
 import { SeekBehavior } from './SeekBehavior.js';
-import { Vector3 } from '../../Math/Vector3.js';
+import { Vector3 } from '../../math/Vector3.js';
 
 const displacement = new Vector3();
 const vehicleDirection = new Vector3();
@@ -14,12 +14,12 @@ const predcitedPosition = new Vector3();
 
 class PursuitBehavior extends SteeringBehavior {
 
-	constructor( target, evader ) {
+	constructor( evader, predictionFactor = 1 ) {
 
 		super();
 
-		this.target = target;
 		this.evader = evader;
+		this.predictionFactor = predictionFactor;
 
 		// internal behaviors
 
@@ -48,7 +48,8 @@ class PursuitBehavior extends SteeringBehavior {
 
 		if ( evaderAhead === true && facing === true ) {
 
-			this._seek( force, evader.position );
+			this._seek.target = evader.position;
+			this._seek.calculate( vehicle, force );
 			return;
 
 		}
@@ -59,7 +60,8 @@ class PursuitBehavior extends SteeringBehavior {
 		// and the pursuer. and is inversely proportional to the sum of the
 		// agent's velocities
 
-		const lookAheadTime = displacement.length() / ( vehicle.maxSpeed + evader.getSpeed() );
+		let lookAheadTime = displacement.length() / ( vehicle.maxSpeed + evader.getSpeed() );
+		lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
 
 		// calculate new velocity and predicted future position
 
@@ -69,7 +71,7 @@ class PursuitBehavior extends SteeringBehavior {
 		// now seek to the predicted future position of the evader
 
 		this._seek.target = predcitedPosition;
-		this._seek.calculate( force );
+		this._seek.calculate( vehicle, force );
 
 	}
 
