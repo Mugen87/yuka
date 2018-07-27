@@ -36,7 +36,7 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, entityMesh, targetMesh;
+		let renderer, scene, camera, vehicleMesh, targetMesh;
 
 		let entityManager, time, vehicle, target;
 
@@ -53,13 +53,13 @@
 
 			//
 
-			const entityGeometry = new THREE.ConeBufferGeometry( 0.1, 0.5, 8 );
-			entityGeometry.rotateX( Math.PI * 0.5 );
-			const entityMaterial = new THREE.MeshNormalMaterial();
+			const vehicleGeometry = new THREE.ConeBufferGeometry( 0.1, 0.5, 8 );
+			vehicleGeometry.rotateX( Math.PI * 0.5 );
+			const vehicleMaterial = new THREE.MeshNormalMaterial();
 
-			entityMesh = new THREE.Mesh( entityGeometry, entityMaterial );
-			entityMesh.matrixAutoUpdate = false;
-			scene.add( entityMesh );
+			vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+			vehicleMesh.matrixAutoUpdate = false;
+			scene.add( vehicleMesh );
 
 			const targetGeometry = new THREE.SphereBufferGeometry( 0.05 );
 			const targetMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
@@ -118,7 +118,7 @@
 
 			entityManager.update( delta );
 
-			entityMesh.matrix.copy( vehicle.matrix );
+			vehicleMesh.matrix.copy( vehicle.matrix );
 			targetMesh.position.copy( target );
 
 			renderer.render( scene, camera );
