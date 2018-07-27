@@ -120,13 +120,13 @@
 
 			requestAnimationFrame( animate );
 
-			const delta = time.update().getDelta();
-			const elapsedTime = time.getTime();
+			const deltaTime = time.update().getDelta();
+			const elapsedTime = time.getElapsed();
 
 			target.x = Math.cos( elapsedTime ) * Math.sin( elapsedTime * 0.2 ) * 6;
 			target.z = Math.sin( elapsedTime * 0.8 ) * 6;
 
-			entityManager.update( delta );
+			entityManager.update( deltaTime );
 
 			pursuerMesh.matrix.copy( pursuer.matrix );
 			evaderMesh.matrix.copy( evader.matrix );

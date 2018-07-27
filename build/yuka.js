@@ -1393,7 +1393,7 @@
 
 		}
 
-		getTime() {
+		getElapsed() {
 
 			return ( this.currentTime - this.startTime ) / 1000;
 
@@ -2894,11 +2894,12 @@
 
 	class EvadeBehavior extends SteeringBehavior {
 
-		constructor( pursuer ) {
+		constructor( pursuer, predictionFactor = 1 ) {
 
 			super();
 
 			this.pursuer = pursuer;
+			this.predictionFactor = predictionFactor;
 
 			// internal behaviors
 
@@ -2912,7 +2913,8 @@
 
 			displacement$2.subVectors( pursuer.position, vehicle.position );
 
-			const lookAheadTime = displacement$2.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+			let lookAheadTime = displacement$2.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+			lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
 
 			// calculate new velocity and predicted future position
 

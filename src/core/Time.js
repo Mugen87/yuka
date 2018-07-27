@@ -19,7 +19,7 @@ class Time {
 
 	}
 
-	getTime() {
+	getElapsed() {
 
 		return ( this.currentTime - this.startTime ) / 1000;
 
