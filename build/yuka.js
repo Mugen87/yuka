@@ -3054,7 +3054,7 @@
 
 			// first we need to figure out where the two entities are going to be
 			// in the future. This is approximated by determining the time
-			// taken to reach the mid way point at the current time at at max speed
+			// taken to reach the mid way point at the current time at max speed
 
 			midPoint.addVectors( entity1.position, entity2.position ).multiplyScalar( 0.5 );
 			const time = vehicle.position.distanceTo( midPoint ) / vehicle.maxSpeed;
