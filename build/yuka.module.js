@@ -3018,6 +3018,66 @@ class FollowPathBehavior extends SteeringBehavior {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ */
+
+const midPoint = new Vector3();
+const translation = new Vector3();
+const predcitedPosition1 = new Vector3();
+const predcitedPosition2 = new Vector3();
+
+class InterposeBehavior extends SteeringBehavior {
+
+	constructor( entity1, entity2, deceleration = 3 ) {
+
+		super();
+
+		this.entity1 = entity1;
+		this.entity2 = entity2;
+		this.deceleration = deceleration;
+
+		// internal behaviors
+
+		this._arrive = new ArriveBehavior();
+
+	}
+
+	calculate( vehicle, force /*, delta */ ) {
+
+		const entity1 = this.entity1;
+		const entity2 = this.entity2;
+
+		// first we need to figure out where the two entities are going to be
+		// in the future. This is approximated by determining the time
+		// taken to reach the mid way point at the current time at at max speed
+
+		midPoint.addVectors( entity1.position, entity2.position ).multiplyScalar( 0.5 );
+		const time = vehicle.position.distanceTo( midPoint ) / vehicle.maxSpeed;
+
+		// now we have the time, we assume that entity 1 and entity 2 will
+		// continue on a straight trajectory and extrapolate to get their future positions
+
+		translation.copy( entity1.velocity ).multiplyScalar( time );
+		predcitedPosition1.addVectors( entity1.position, translation );
+
+		translation.copy( entity2.velocity ).multiplyScalar( time );
+		predcitedPosition2.addVectors( entity2.position, translation );
+
+		// calculate the mid point of these predicted positions
+
+		midPoint.addVectors( predcitedPosition1, predcitedPosition2 ).multiplyScalar( 0.5 );
+
+		// then steer to arrive at it
+
+		this._arrive.deceleration = this.deceleration;
+		this._arrive.target = midPoint;
+		this._arrive.calculate( vehicle, force );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
  *
  * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
  *
@@ -3531,4 +3591,4 @@ class StateMachine {
 
 }
 
-export { EntityManager, GameEntity, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };

@@ -1,0 +1,176 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Steering Behaviors | Interpose</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#777;
+				padding:0;
+				margin:0;
+				font-weight: bold;
+				overflow:hidden;
+				touch-action: none;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px;
+				width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+			}
+
+			a {
+				color: #ffffff;
+			}
+		</style>
+
+	</head>
+<body>
+
+	<script type="module">
+
+		import * as YUKA from '../../../build/yuka.module.js';
+		import * as THREE from '../../lib/three.module.js';
+
+		let renderer, scene, camera, pursuerMesh, targetMesh1, targetMesh2, line;
+
+		let entityManager, time, pursuer, entity1, entity2, target1, target2;
+
+		const position = new THREE.Vector3();
+
+		init();
+		animate();
+
+		function init() {
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 100 );
+			camera.position.set( 0, 20, 0 );
+			camera.lookAt( scene.position );
+
+			// meshes
+
+			const pursuerGeometry = new THREE.ConeBufferGeometry( 0.2, 1, 8 );
+			pursuerGeometry.rotateX( Math.PI * 0.5 );
+			const pursuerMaterial = new THREE.MeshNormalMaterial();
+
+			pursuerMesh = new THREE.Mesh( pursuerGeometry, pursuerMaterial );
+			pursuerMesh.matrixAutoUpdate = false;
+			scene.add( pursuerMesh );
+
+			const targetGeometry = new THREE.BoxBufferGeometry( 0.2, 0.2, 0.2 );
+			const targetMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+
+			targetMesh1 = new THREE.Mesh( targetGeometry, targetMaterial );
+			targetMesh1.matrixAutoUpdate = false;
+			scene.add( targetMesh1 );
+
+			targetMesh2 = new THREE.Mesh( targetGeometry, targetMaterial );
+			targetMesh2.matrixAutoUpdate = false;
+			scene.add( targetMesh2 );
+
+			// helper
+
+			const grid = new THREE.GridHelper( 10, 25 );
+			scene.add( grid );
+
+			const lineGeometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3(), new THREE.Vector3() ] )
+			const lineMaterial = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+			line = new THREE.Line( lineGeometry, lineMaterial );
+			scene.add( line );
+
+			//
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			// game setup
+
+			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
+
+			target1 = new YUKA.Vector3();
+			target2 = new YUKA.Vector3();
+
+			entity1 = new YUKA.Vehicle();
+			entity1.maxSpeed = 2;
+			const seekBehavior1 = new YUKA.SeekBehavior( target1 );
+			entity1.steering.add( seekBehavior1 );
+
+			entity2 = new YUKA.Vehicle();
+			entity2.maxSpeed = 2;
+			const seekBehavior2 = new YUKA.SeekBehavior( target2 );
+			entity2.steering.add( seekBehavior2 );
+
+			pursuer = new YUKA.Vehicle();
+			pursuer.maxSpeed = 3;
+			const interposeBehavior = new YUKA.InterposeBehavior( entity1, entity2, 1 );
+			pursuer.steering.add( interposeBehavior );
+
+			entityManager.add( entity1 );
+			entityManager.add( entity2 );
+			entityManager.add( pursuer );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			const delta = time.update().getDelta();
+			const elapsedTime = time.getElapsed();
+
+			target1.x = Math.cos( elapsedTime * 0.1 ) * Math.sin( elapsedTime * 0.1 ) * 6;
+			target1.z = Math.sin( elapsedTime * 0.3 ) * 6;
+
+			target2.x = 1 + Math.cos( elapsedTime * 0.5 ) * Math.sin( elapsedTime * 0.3 ) * 4;
+			target2.z = 1 + Math.sin( elapsedTime * 0.3 ) * 6;
+
+			entityManager.update( delta );
+
+			targetMesh1.matrix.copy( entity1.matrix );
+			targetMesh2.matrix.copy( entity2.matrix );
+			pursuerMesh.matrix.copy( pursuer.matrix );
+
+			// update line helper
+
+			const positionAttribute = line.geometry.attributes.position;
+
+			position.setFromMatrixPosition( targetMesh1.matrix );
+			positionAttribute.setXYZ( 0, position.x, position.y, position.z );
+
+			position.setFromMatrixPosition( targetMesh2.matrix );
+			positionAttribute.setXYZ( 1, position.x, position.y, position.z );
+
+			positionAttribute.needsUpdate = true;
+
+			renderer.render( scene, camera );
+
+		}
+
+
+	</script>
+
+</body>
+</html>
