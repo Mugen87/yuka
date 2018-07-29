@@ -6,6 +6,7 @@
  */
 
 import { Vector3 } from './Vector3.js';
+import { Logger } from '../core/Logger.js';
 
 const x = new Vector3();
 const y = new Vector3();
@@ -251,7 +252,7 @@ class Matrix4 {
 
 		if ( det === 0 ) {
 
-			console.warn( 'YUKA.Matrix4: .getInverse() can not invert matrix, determinant is 0.' );
+			Logger.warn( 'YUKA.Matrix4: .getInverse() can not invert matrix, determinant is 0.' );
 			return this.identity();
 
 		}

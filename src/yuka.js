@@ -1,5 +1,6 @@
 export { EntityManager } from './core/EntityManager.js';
 export { GameEntity } from './core/GameEntity.js';
+export { Logger } from './core/Logger.js';
 export { MovingEntity } from './core/MovingEntity.js';
 export { Time } from './core/Time.js';
 export { Node } from './graph/core/Node.js';

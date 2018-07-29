@@ -3,6 +3,7 @@
  */
 
 import { State } from './State.js';
+import { Logger } from '../core/Logger.js';
 
 class StateMachine {
 
@@ -41,7 +42,7 @@ class StateMachine {
 
 		} else {
 
-			console.warn( 'YUKA.StateMachine: .add() needs a parameter of type "YUKA.State".' );
+			Logger.warn( 'YUKA.StateMachine: .add() needs a parameter of type "YUKA.State".' );
 
 		}
 

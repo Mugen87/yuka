@@ -20,6 +20,47 @@ class Telegram {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+class Logger {
+
+	static setLevel( level ) {
+
+		currentLevel = level;
+
+	}
+
+	static log( ...args ) {
+
+		if ( currentLevel <= Logger.LEVEL.LOG ) console.log( ...args );
+
+	}
+
+	static warn( ...args ) {
+
+		if ( currentLevel <= Logger.LEVEL.WARN ) console.warn( ...args );
+
+	}
+
+	static error( ...args ) {
+
+		if ( currentLevel <= Logger.LEVEL.ERROR ) console.error( ...args );
+
+	}
+
+}
+
+Logger.LEVEL = {
+	LOG: 0,
+	WARN: 1,
+	ERROR: 2,
+	SILENT: 3
+};
+
+let currentLevel = Logger.LEVEL.SILENT;
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 class MessageDispatcher {
 
 	constructor() {
@@ -34,7 +75,7 @@ class MessageDispatcher {
 
 		if ( receiver.handleMessage( telegram ) === false ) {
 
-			console.warn( 'YUKA.MessageDispatcher: Message not handled by receiver: %o', receiver );
+			Logger.warn( 'YUKA.MessageDispatcher: Message not handled by receiver: %o', receiver );
 
 		}
 
@@ -796,7 +837,7 @@ class Matrix4 {
 
 		if ( det === 0 ) {
 
-			console.warn( 'YUKA.Matrix4: .getInverse() can not invert matrix, determinant is 0.' );
+			Logger.warn( 'YUKA.Matrix4: .getInverse() can not invert matrix, determinant is 0.' );
 			return this.identity();
 
 		}
@@ -3515,7 +3556,7 @@ class StateMachine {
 
 		} else {
 
-			console.warn( 'YUKA.StateMachine: .add() needs a parameter of type "YUKA.State".' );
+			Logger.warn( 'YUKA.StateMachine: .add() needs a parameter of type "YUKA.State".' );
 
 		}
 
@@ -3591,4 +3632,4 @@ class StateMachine {
 
 }
 
-export { EntityManager, GameEntity, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };

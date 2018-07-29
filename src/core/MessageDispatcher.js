@@ -3,6 +3,7 @@
  */
 
 import { Telegram } from './Telegram.js';
+import { Logger } from './Logger.js';
 
 class MessageDispatcher {
 
@@ -18,7 +19,7 @@ class MessageDispatcher {
 
 		if ( receiver.handleMessage( telegram ) === false ) {
 
-			console.warn( 'YUKA.MessageDispatcher: Message not handled by receiver: %o', receiver );
+			Logger.warn( 'YUKA.MessageDispatcher: Message not handled by receiver: %o', receiver );
 
 		}
 
