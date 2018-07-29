@@ -37,7 +37,7 @@ Logger.LEVEL = {
 	SILENT: 3
 };
 
-let currentLevel = Logger.LEVEL.SILENT;
+let currentLevel = Logger.LEVEL.WARN;
 
 
 export { Logger };

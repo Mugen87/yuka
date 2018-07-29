@@ -61,7 +61,7 @@
 		SILENT: 3
 	};
 
-	let currentLevel = Logger.LEVEL.SILENT;
+	let currentLevel = Logger.LEVEL.WARN;
 
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
