@@ -36,6 +36,12 @@ class Ray {
 
 	}
 
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
 	at( t, result ) {
 
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );

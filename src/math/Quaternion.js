@@ -6,9 +6,9 @@
  */
 
 import { _Math } from './Math.js';
-import { Matrix4 } from './Matrix4.js';
+import { Matrix3 } from './Matrix3.js';
 
-const matrix = new Matrix4();
+const matrix = new Matrix3();
 
 class Quaternion {
 
@@ -40,6 +40,12 @@ class Quaternion {
 		this.w = q.w;
 
 		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
 
 	}
 
@@ -149,10 +155,10 @@ class Quaternion {
 
 	}
 
-	lookAt( eye, target, up ) {
+	lookAt( localForward, targetDirection, localUp ) {
 
-		matrix.lookAt( eye, target, up );
-		this.fromRotationMatrix( matrix );
+		matrix.lookAt( localForward, targetDirection, localUp );
+		this.fromMatrix3( matrix );
 
 	}
 
@@ -236,13 +242,13 @@ class Quaternion {
 
 	}
 
-	fromRotationMatrix( m ) {
+	fromMatrix3( m ) {
 
 		const e = m.elements;
 
-		const m11 = e[ 0 ], m12 = e[ 4 ], m13 = e[ 8 ];
-		const m21 = e[ 1 ], m22 = e[ 5 ], m23 = e[ 9 ];
-		const m31 = e[ 2 ], m32 = e[ 6 ], m33 = e[ 10 ];
+		const m11 = e[ 0 ], m12 = e[ 3 ], m13 = e[ 6 ];
+		const m21 = e[ 1 ], m22 = e[ 4 ], m23 = e[ 7 ];
+		const m31 = e[ 2 ], m32 = e[ 5 ], m33 = e[ 8 ];
 
 		const trace = m11 + m22 + m33;
 
@@ -288,12 +294,6 @@ class Quaternion {
 
 	}
 
-	equals( q ) {
-
-		return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );
-
-	}
-
 	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
@@ -313,6 +313,12 @@ class Quaternion {
 		array[ offset + 3 ] = this.w;
 
 		return array;
+
+	}
+
+	equals( q ) {
+
+		return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );
 
 	}
 

@@ -39,7 +39,7 @@ class Vector3 {
 
 	clone() {
 
-		return new this.constructor( this.x, this.y, this.z );
+		return new this.constructor().copy( this );
 
 	}
 
@@ -287,7 +287,13 @@ class Vector3 {
 
 	}
 
-	fromMatrixColumn( m, i ) {
+	fromMatrix3Column( m, i ) {
+
+		return this.fromArray( m.elements, i * 3 );
+
+	}
+
+	fromMatrix4Column( m, i ) {
 
 		return this.fromArray( m.elements, i * 4 );
 
@@ -302,12 +308,6 @@ class Vector3 {
 		this.z = sinPhiRadius * Math.cos( theta );
 
 		return this;
-
-	}
-
-	equals( v ) {
-
-		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
 
 	}
 
@@ -328,6 +328,12 @@ class Vector3 {
 		array[ offset + 2 ] = this.z;
 
 		return array;
+
+	}
+
+	equals( v ) {
+
+		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
 
 	}
 

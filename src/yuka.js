@@ -27,6 +27,7 @@ export { WanderBehavior } from './steering/behaviors/WanderBehavior.js';
 export { State } from './fsm/State.js';
 export { StateMachine } from './fsm/StateMachine.js';
 export { _Math } from './math/Math.js';
+export { Matrix3 } from './math/Matrix3.js';
 export { Matrix4 } from './math/Matrix4.js';
 export { Quaternion } from './math/Quaternion.js';
 export { Ray } from './math/Ray.js';

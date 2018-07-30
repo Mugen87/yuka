@@ -7,6 +7,7 @@ import { Quaternion } from '../math/Quaternion.js';
 import { Vector3 } from '../math/Vector3.js';
 
 const targetRotation = new Quaternion();
+const targetDirection = new Vector3();
 
 class MovingEntity extends GameEntity {
 
@@ -22,12 +23,30 @@ class MovingEntity extends GameEntity {
 
 	}
 
+	// directly rotates the entity so it faces the target
+
+	lookAt( target ) {
+
+		targetDirection.subVectors( target, this.position ).normalize();
+
+		this.rotation.lookAt( this.forward, targetDirection, this.up );
+
+		// adjust velocity
+
+		this.velocity.applyRotation( this.rotation );
+
+		return this;
+
+	}
+
 	// given a target position, this method rotates the entity by an amount not
 	// greater than maxTurnRate until it directly faces the target
 
 	rotateTo( target, deltaTime ) {
 
-		targetRotation.lookAt( target, this.position, this.up );
+		targetDirection.subVectors( target, this.position ).normalize();
+		targetRotation.lookAt( this.forward, targetDirection, this.up );
+
 		this.rotation.rotateTo( targetRotation, this.maxTurnRate * deltaTime );
 
 		// adjust velocity
@@ -38,17 +57,9 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	lookAt( target ) {
-
-		this.rotation.lookAt( target, this.position, this.up );
-
-		return this;
-
-	}
-
 	getDirection( result ) {
 
-		return result.set( 0, 0, 1 ).applyRotation( this.rotation ).normalize();
+		return result.copy( this.forward ).applyRotation( this.rotation ).normalize();
 
 	}
 

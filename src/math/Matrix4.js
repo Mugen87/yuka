@@ -5,12 +5,7 @@
  *
  */
 
-import { Vector3 } from './Vector3.js';
 import { Logger } from '../core/Logger.js';
-
-const x = new Vector3();
-const y = new Vector3();
-const z = new Vector3();
 
 class Matrix4 {
 
@@ -40,6 +35,26 @@ class Matrix4 {
 
 	}
 
+	copy( m ) {
+
+		var e = this.elements;
+		var me = m.elements;
+
+		e[ 0 ] = me[ 0 ]; e[ 1 ] = me[ 1 ]; e[ 2 ] = me[ 2 ]; e[ 3 ] = me[ 3 ];
+		e[ 4 ] = me[ 4 ]; e[ 5 ] = me[ 5 ]; e[ 6 ] = me[ 6 ]; e[ 7 ] = me[ 7 ];
+		e[ 8 ] = me[ 8 ]; e[ 9 ] = me[ 9 ]; e[ 10 ] = me[ 10 ]; e[ 11 ] = me[ 11 ];
+		e[ 12 ] = me[ 12 ]; e[ 13 ] = me[ 13 ]; e[ 14 ] = me[ 14 ]; e[ 15 ] = me[ 15 ];
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
 	identity() {
 
 		this.set(
@@ -57,9 +72,9 @@ class Matrix4 {
 
 	extractBasis( xAxis, yAxis, zAxis ) {
 
-		xAxis.fromMatrixColumn( this, 0 );
-		yAxis.fromMatrixColumn( this, 1 );
-		zAxis.fromMatrixColumn( this, 2 );
+		xAxis.fromMatrix4Column( this, 0 );
+		yAxis.fromMatrix4Column( this, 1 );
+		zAxis.fromMatrix4Column( this, 2 );
 
 		return this;
 
@@ -145,44 +160,9 @@ class Matrix4 {
 
 	compose( position, quaternion, scale ) {
 
-		this.makeRotationFromQuaternion( quaternion );
+		this.fromQuaternion( quaternion );
 		this.scale( scale );
 		this.setPosition( position );
-
-		return this;
-
-	}
-
-	makeRotationFromQuaternion( q ) {
-
-		const e = this.elements;
-
-		const x = q.x, y = q.y, z = q.z, w = q.w;
-		const x2 = x + x, y2 = y + y, z2 = z + z;
-		const xx = x * x2, xy = x * y2, xz = x * z2;
-		const yy = y * y2, yz = y * z2, zz = z * z2;
-		const wx = w * x2, wy = w * y2, wz = w * z2;
-
-		e[ 0 ] = 1 - ( yy + zz );
-		e[ 4 ] = xy - wz;
-		e[ 8 ] = xz + wy;
-
-		e[ 1 ] = xy + wz;
-		e[ 5 ] = 1 - ( xx + zz );
-		e[ 9 ] = yz - wx;
-
-		e[ 2 ] = xz - wy;
-		e[ 6 ] = yz + wx;
-		e[ 10 ] = 1 - ( xx + yy );
-
-		e[ 3 ] = 0;
-		e[ 7 ] = 0;
-		e[ 11 ] = 0;
-
-		e[ 12 ] = 0;
-		e[ 13 ] = 0;
-		e[ 14 ] = 0;
-		e[ 15 ] = 1;
 
 		return this;
 
@@ -283,65 +263,38 @@ class Matrix4 {
 
 	}
 
-	lookAt( eye, target, up ) {
-
-		z.subVectors( eye, target );
-
-		if ( z.squaredLength() === 0 ) {
-
-			// eye and target are in the same position
-
-			z.z = 1;
-
-		}
-
-		z.normalize();
-		x.crossVectors( up, z );
-
-		if ( x.squaredLength() === 0 ) {
-
-			// up and z are parallel
-
-			if ( Math.abs( up.z ) === 1 ) {
-
-				z.x += 0.0001;
-
-			} else {
-
-				z.z += 0.0001;
-
-			}
-
-			z.normalize();
-			x.crossVectors( up, z );
-
-		}
-
-		x.normalize();
-		y.crossVectors( z, x );
+	fromQuaternion( q ) {
 
 		const e = this.elements;
 
-		e[ 0 ] = x.x; e[ 4 ] = y.x; e[ 8 ] = z.x;
-		e[ 1 ] = x.y; e[ 5 ] = y.y; e[ 9 ] = z.y;
-		e[ 2 ] = x.z; e[ 6 ] = y.z; e[ 10 ] = z.z;
+		const x = q.x, y = q.y, z = q.z, w = q.w;
+		const x2 = x + x, y2 = y + y, z2 = z + z;
+		const xx = x * x2, xy = x * y2, xz = x * z2;
+		const yy = y * y2, yz = y * z2, zz = z * z2;
+		const wx = w * x2, wy = w * y2, wz = w * z2;
+
+		e[ 0 ] = 1 - ( yy + zz );
+		e[ 4 ] = xy - wz;
+		e[ 8 ] = xz + wy;
+
+		e[ 1 ] = xy + wz;
+		e[ 5 ] = 1 - ( xx + zz );
+		e[ 9 ] = yz - wx;
+
+		e[ 2 ] = xz - wy;
+		e[ 6 ] = yz + wx;
+		e[ 10 ] = 1 - ( xx + yy );
+
+		e[ 3 ] = 0;
+		e[ 7 ] = 0;
+		e[ 11 ] = 0;
+
+		e[ 12 ] = 0;
+		e[ 13 ] = 0;
+		e[ 14 ] = 0;
+		e[ 15 ] = 1;
 
 		return this;
-
-	 }
-
-	equals( m ) {
-
-		const e = this.elements;
-		const me = m.elements;
-
-		for ( let i = 0; i < 16; i ++ ) {
-
-			if ( e[ i ] !== me[ i ] ) return false;
-
-		}
-
-		return true;
 
 	}
 
@@ -384,6 +337,21 @@ class Matrix4 {
 		array[ offset + 15 ] = e[ 15 ];
 
 		return array;
+
+	}
+
+	equals( m ) {
+
+		const e = this.elements;
+		const me = m.elements;
+
+		for ( let i = 0; i < 16; i ++ ) {
+
+			if ( e[ i ] !== me[ i ] ) return false;
+
+		}
+
+		return true;
 
 	}
 
