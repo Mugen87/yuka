@@ -609,6 +609,7 @@
 	const worldRight = new Vector3();
 	const perpWorldUp = new Vector3();
 	const worldUp = new Vector3( 0, 1, 0 );
+	const temp = new Vector3();
 
 	class Matrix3 {
 
@@ -749,15 +750,23 @@
 
 			localRight.crossVectors( localUp, localForward ).normalize();
 
-			// A: Now we have an orthonormal linear basis { localRight, localUp, localForward } for the object local space.
+			// orthonormal linear basis A { localRight, localUp, localForward } for the object local space
 
 			worldRight.crossVectors( worldUp, targetDirection ).normalize();
 
-			if ( worldRight.squaredLength() === 0 ) worldRight.set( 1, 0, 0 );
+			if ( worldRight.squaredLength() === 0 ) {
+
+				// handle case when it's not possible to build a basis from targetDirection and worldUp
+				// slightly shift targetDirection in order to avoid collinearity
+
+				temp.copy( targetDirection ).addScalar( Number.EPSILON );
+				worldRight.crossVectors( worldUp, temp ).normalize();
+
+			}
 
 			perpWorldUp.crossVectors( targetDirection, worldRight ).normalize();
 
-			// B: Now we have an orthonormal linear basis { worldRight, perpWorldUp, targetDirection } for the desired target orientation.
+			// orthonormal linear basis B { worldRight, perpWorldUp, targetDirection } for the desired target orientation
 
 			m1.makeBasis( worldRight, perpWorldUp, targetDirection );
 			m2.makeBasis( localRight, localUp, localForward );
