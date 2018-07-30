@@ -31,10 +31,6 @@ class MovingEntity extends GameEntity {
 
 		this.rotation.lookAt( this.forward, targetDirection, this.up );
 
-		// adjust velocity
-
-		this.velocity.applyRotation( this.rotation );
-
 		return this;
 
 	}
@@ -48,10 +44,6 @@ class MovingEntity extends GameEntity {
 		targetRotation.lookAt( this.forward, targetDirection, this.up );
 
 		this.rotation.rotateTo( targetRotation, this.maxTurnRate * deltaTime );
-
-		// adjust velocity
-
-		this.velocity.applyRotation( this.rotation );
 
 		return this;
 

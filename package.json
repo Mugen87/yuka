@@ -8,7 +8,7 @@
   "scripts": {
     "build": "rollup -c",
     "build-uglify": "rollup -c && uglifyjs build/yuka.js > build/yuka.min.js",
-    "dev": "rollup -c -w",
+    "dev": "concurrently \"rollup -c -w\" \"http-server\"",
     "lint": "eslint src examples --ext .js",
     "start": "http-server",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -33,6 +33,7 @@
     "url": "https://github.com/Mugen87/yuka/issues"
   },
   "devDependencies": {
+    "concurrently": "3.6.1",
     "eslint": "5.1.0",
     "eslint-config-mdcs": "4.2.3",
     "http-server": "0.11.1",

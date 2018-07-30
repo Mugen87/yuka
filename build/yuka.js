@@ -1633,10 +1633,6 @@
 
 			this.rotation.lookAt( this.forward, targetDirection, this.up );
 
-			// adjust velocity
-
-			this.velocity.applyRotation( this.rotation );
-
 			return this;
 
 		}
@@ -1650,10 +1646,6 @@
 			targetRotation.lookAt( this.forward, targetDirection, this.up );
 
 			this.rotation.rotateTo( targetRotation, this.maxTurnRate * deltaTime );
-
-			// adjust velocity
-
-			this.velocity.applyRotation( this.rotation );
 
 			return this;
 
@@ -3021,6 +3013,7 @@
 			super();
 
 			this.steering = new SteeringManager( this );
+			this.updateOrientation = true;
 
 		}
 
@@ -3057,7 +3050,7 @@
 
 			// update the orientation if the vehicle has a non zero velocity
 
-			if ( this.getSpeedSquared() > 0.00000001 ) {
+			if ( this.updateOrientation && this.getSpeedSquared() > 0.00000001 ) {
 
 				this.lookAt( target );
 
