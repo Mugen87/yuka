@@ -746,6 +746,9 @@ class Matrix3 {
 		// A: Now we have an orthonormal linear basis { localRight, localUp, localForward } for the object local space.
 
 		worldRight.crossVectors( worldUp, targetDirection ).normalize();
+
+		if ( worldRight.squaredLength() === 0 ) worldRight.set( 1, 0, 0 );
+
 		perpWorldUp.crossVectors( targetDirection, worldRight ).normalize();
 
 		// B: Now we have an orthonormal linear basis { worldRight, perpWorldUp, targetDirection } for the desired target orientation.
