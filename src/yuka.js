@@ -14,6 +14,7 @@ export { Dijkstra } from './graph/search/Dijkstra.js';
 export { AStar } from './graph/search/AStar.js';
 export * from './graph/extra/HeuristicPolicy.js';
 export { Path } from './steering/Path.js';
+export { SteeringBehavior } from './steering/SteeringBehavior.js';
 export { Vehicle } from './steering/Vehicle.js';
 export { ArriveBehavior } from './steering/behaviors/ArriveBehavior.js';
 export { EvadeBehavior } from './steering/behaviors/EvadeBehavior.js';

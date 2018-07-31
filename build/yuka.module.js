@@ -2889,6 +2889,25 @@ class Path {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+class SteeringBehavior {
+
+	constructor() {
+
+		// use this value to tweak the amount that a steering force
+		// contributes to the total steering force
+
+		this.weigth = 1;
+
+	}
+
+	calculate() {}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 const force = new Vector3();
 
 class SteeringManager {
@@ -3055,25 +3074,6 @@ class Vehicle extends MovingEntity {
 		this.position.copy( target );
 
 	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class SteeringBehavior {
-
-	constructor() {
-
-		// use this value to tweak the amount that a steering force
-		// contributes to the total steering force
-
-		this.weigth = 1;
-
-	}
-
-	calculate() {}
 
 }
 
@@ -3897,4 +3897,4 @@ class StateMachine {
 
 }
 
-export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, State, StateMachine, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };

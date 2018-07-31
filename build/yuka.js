@@ -2895,6 +2895,25 @@
 	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
+	class SteeringBehavior {
+
+		constructor() {
+
+			// use this value to tweak the amount that a steering force
+			// contributes to the total steering force
+
+			this.weigth = 1;
+
+		}
+
+		calculate() {}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
 	const force = new Vector3();
 
 	class SteeringManager {
@@ -3061,25 +3080,6 @@
 			this.position.copy( target );
 
 		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class SteeringBehavior {
-
-		constructor() {
-
-			// use this value to tweak the amount that a steering force
-			// contributes to the total steering force
-
-			this.weigth = 1;
-
-		}
-
-		calculate() {}
 
 	}
 
@@ -3918,6 +3918,7 @@
 	exports.Dijkstra = Dijkstra;
 	exports.AStar = AStar;
 	exports.Path = Path;
+	exports.SteeringBehavior = SteeringBehavior;
 	exports.Vehicle = Vehicle;
 	exports.ArriveBehavior = ArriveBehavior;
 	exports.EvadeBehavior = EvadeBehavior;
