@@ -110,7 +110,7 @@
 			vehicle.boundingRadius = vehicleGeometry.boundingSphere.radius;
 
 			const obstacleAvoidance = new YUKA.ObstacleAvoidanceBehavior( entityManager );
-			obstacleAvoidance.weight = 10;
+			obstacleAvoidance.weight = 5;
 			obstacleAvoidance.dBoxMinLength = 4;
 			const hideBehavior = new HideBehavior( entityManager, pursuer, 2, 1 );
 
