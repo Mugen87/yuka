@@ -67,13 +67,13 @@
 
 		graphSearch.search();
 
-		var searchTree = graphSearch.getSearchTree();
-		var path = graphSearch.getPath();
+		const searchTree = graphSearch.getSearchTree();
+		const path = graphSearch.getPath();
 
-		var searchTreeHelper = GraphUtils.createSearchTreeHelper( graph, searchTree );
+		const searchTreeHelper = GraphUtils.createSearchTreeHelper( graph, searchTree );
 		scene.add( searchTreeHelper );
 
-		var pathHelper = GraphUtils.createPathHelper( graph, path, 0.4 );
+		const pathHelper = GraphUtils.createPathHelper( graph, path, 0.4 );
 		scene.add( pathHelper );
 
 		graphSearch.clear();

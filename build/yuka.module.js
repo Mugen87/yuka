@@ -554,7 +554,7 @@ class Vector3 {
 
 	fromSpherical( radius, phi, theta ) {
 
-		var sinPhiRadius = Math.sin( phi ) * radius;
+		const sinPhiRadius = Math.sin( phi ) * radius;
 
 		this.x = sinPhiRadius * Math.sin( theta );
 		this.y = Math.cos( phi ) * radius;
@@ -633,8 +633,8 @@ class Matrix3 {
 
 	copy( m ) {
 
-		var e = this.elements;
-		var me = m.elements;
+		const e = this.elements;
+		const me = m.elements;
 
 		e[ 0 ] = me[ 0 ]; e[ 1 ] = me[ 1 ]; e[ 2 ] = me[ 2 ];
 		e[ 3 ] = me[ 3 ]; e[ 4 ] = me[ 4 ]; e[ 5 ] = me[ 5 ];
@@ -1088,13 +1088,13 @@ class Quaternion {
 
 	fromEuler( x, y, z ) {
 
-		var c1 = Math.cos( x / 2 );
-		var c2 = Math.cos( y / 2 );
-		var c3 = Math.cos( z / 2 );
+		const c1 = Math.cos( x / 2 );
+		const c2 = Math.cos( y / 2 );
+		const c3 = Math.cos( z / 2 );
 
-		var s1 = Math.sin( x / 2 );
-		var s2 = Math.sin( y / 2 );
-		var s3 = Math.sin( z / 2 );
+		const s1 = Math.sin( x / 2 );
+		const s2 = Math.sin( y / 2 );
+		const s3 = Math.sin( z / 2 );
 
 		this.x = s1 * c2 * c3 + c1 * s2 * s3;
 		this.y = c1 * s2 * c3 - s1 * c2 * s3;
@@ -1224,8 +1224,8 @@ class Matrix4 {
 
 	copy( m ) {
 
-		var e = this.elements;
-		var me = m.elements;
+		const e = this.elements;
+		const me = m.elements;
 
 		e[ 0 ] = me[ 0 ]; e[ 1 ] = me[ 1 ]; e[ 2 ] = me[ 2 ]; e[ 3 ] = me[ 3 ];
 		e[ 4 ] = me[ 4 ]; e[ 5 ] = me[ 5 ]; e[ 6 ] = me[ 6 ]; e[ 7 ] = me[ 7 ];
@@ -3288,7 +3288,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		// calculate distance in square space from current waypoint to vehicle
 
-		var distanceSq = path.current().squaredDistanceTo( vehicle.position );
+		const distanceSq = path.current().squaredDistanceTo( vehicle.position );
 
 		// move to next waypoint if close enough to current target
 
@@ -3586,7 +3586,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		if ( this._waypoint !== null ) {
 
-			var distanceSq = this._waypoint.squaredDistanceTo( vehicle.position );
+			const distanceSq = this._waypoint.squaredDistanceTo( vehicle.position );
 
 			// if we are close enough, delete the current waypoint
 
@@ -3748,7 +3748,7 @@ class WanderBehavior extends SteeringBehavior {
 
 	_setup() {
 
-		var theta = Math.random() * Math.PI * 2;
+		const theta = Math.random() * Math.PI * 2;
 
 		// setup a vector to a target position on the wander sphere
 		// target lies always in the XZ plane

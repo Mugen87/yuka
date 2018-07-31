@@ -37,8 +37,8 @@ class Matrix4 {
 
 	copy( m ) {
 
-		var e = this.elements;
-		var me = m.elements;
+		const e = this.elements;
+		const me = m.elements;
 
 		e[ 0 ] = me[ 0 ]; e[ 1 ] = me[ 1 ]; e[ 2 ] = me[ 2 ]; e[ 3 ] = me[ 3 ];
 		e[ 4 ] = me[ 4 ]; e[ 5 ] = me[ 5 ]; e[ 6 ] = me[ 6 ]; e[ 7 ] = me[ 7 ];

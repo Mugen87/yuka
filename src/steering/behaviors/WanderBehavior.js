@@ -66,7 +66,7 @@ class WanderBehavior extends SteeringBehavior {
 
 	_setup() {
 
-		var theta = Math.random() * Math.PI * 2;
+		const theta = Math.random() * Math.PI * 2;
 
 		// setup a vector to a target position on the wander sphere
 		// target lies always in the XZ plane

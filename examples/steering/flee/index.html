@@ -115,8 +115,8 @@
 
 		function onPointerMove( event ) {
 
-			var clientX = event.clientX || event.touches[ 0 ].clientX;
-			var clientY = event.clientY || event.touches[ 0 ].clientY;
+			const clientX = event.clientX || event.touches[ 0 ].clientX;
+			const clientY = event.clientY || event.touches[ 0 ].clientY;
 
 			pointer.x = ( clientX / window.innerWidth ) * 2 - 1;
 			pointer.y = - ( clientY / window.innerHeight ) * 2 + 1;
