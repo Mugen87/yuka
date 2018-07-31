@@ -103,7 +103,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		}
 
-		// if there an obstacle was detected, calculate a proper waypoint next to the obstacle
+		// if an obstacle was detected, calculate a proper waypoint next to the obstacle
 
 		if ( closestObstacle !== null ) {
 
