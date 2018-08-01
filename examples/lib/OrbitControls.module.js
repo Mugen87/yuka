@@ -505,7 +505,7 @@ function OrbitControls( object, domElement ) {
 
 	}
 
-	function handleMouseUp( event ) {
+	function handleMouseUp( /* event */ ) {
 
 		// console.log( 'handleMouseUp' );
 
@@ -653,7 +653,7 @@ function OrbitControls( object, domElement ) {
 
 	}
 
-	function handleTouchEnd( event ) {
+	function handleTouchEnd( /* event */ ) {
 
 		//console.log( 'handleTouchEnd' );
 
