@@ -7,7 +7,7 @@ describe( 'Vector3', function () {
 
 	describe( '#add()', function () {
 
-  	it( 'should return an unaltered vector when a zero vector is added', function () {
+		it( 'should return an unaltered vector when a zero vector is added', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
 			const v0 = new Vector3();

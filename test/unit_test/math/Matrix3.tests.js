@@ -7,7 +7,7 @@ describe( 'Matrix3', function () {
 
 	describe( '#identity()', function () {
 
-  	it( 'should transform the matrix to an identity matrix', function () {
+		it( 'should transform the matrix to an identity matrix', function () {
 
 			const matrix = new Matrix3();
 			matrix.identity();
