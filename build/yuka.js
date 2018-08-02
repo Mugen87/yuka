@@ -1618,9 +1618,7 @@
 			super();
 
 			this.velocity = new Vector3();
-			this.mass = 1;
 			this.maxSpeed = 1; // the maximum speed at which this entity may travel
-			this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 			this.maxTurnRate = Math.PI; // the maximum rate (radians per second) at which this vehicle can rotate
 
 		}
@@ -2899,6 +2897,8 @@
 
 		constructor() {
 
+			this.active = true;
+
 			// use this value to tweak the amount that a steering force
 			// contributes to the total steering force
 
@@ -2945,9 +2945,7 @@
 
 		}
 
-		_calculate( delta, optionalTarget ) {
-
-			const result = optionalTarget || new Vector3();
+		_calculate( delta, result = new Vector3() ) {
 
 			this._calculateByOrder( delta );
 
@@ -3002,13 +3000,17 @@
 
 			for ( let behavior of this.behaviors ) {
 
-				force.set( 0, 0, 0 );
+				if ( behavior.active === true ) {
 
-				behavior.calculate( this.vehicle, force, delta );
+					force.set( 0, 0, 0 );
 
-				force.multiplyScalar( behavior.weigth );
+					behavior.calculate( this.vehicle, force, delta );
 
-				if ( this._accumulate( force ) === false ) return;
+					force.multiplyScalar( behavior.weigth );
+
+					if ( this._accumulate( force ) === false ) return;
+
+				}
 
 			}
 
@@ -3030,6 +3032,9 @@
 		constructor() {
 
 			super();
+
+			this.mass = 1;
+			this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 
 			this.steering = new SteeringManager( this );
 			this.updateOrientation = true;
