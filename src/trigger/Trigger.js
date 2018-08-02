@@ -25,7 +25,7 @@ class Trigger {
 
 	execute( /* entity */ ) {}
 
-	update() {}
+	update( /* delta */ ) {}
 
 }
 

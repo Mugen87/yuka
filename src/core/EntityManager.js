@@ -110,7 +110,7 @@ class EntityManager {
 
 		for ( let trigger of this.triggers.values() ) {
 
-			trigger.update();
+			trigger.update( delta );
 
 			for ( let entity of this.entities.values() ) {
 
