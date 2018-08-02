@@ -35,9 +35,7 @@ class SteeringManager {
 
 	}
 
-	_calculate( delta, optionalTarget ) {
-
-		const result = optionalTarget || new Vector3();
+	_calculate( delta, result = new Vector3() ) {
 
 		this._calculateByOrder( delta );
 
@@ -92,13 +90,17 @@ class SteeringManager {
 
 		for ( let behavior of this.behaviors ) {
 
-			force.set( 0, 0, 0 );
+			if ( behavior.active === true ) {
 
-			behavior.calculate( this.vehicle, force, delta );
+				force.set( 0, 0, 0 );
 
-			force.multiplyScalar( behavior.weigth );
+				behavior.calculate( this.vehicle, force, delta );
 
-			if ( this._accumulate( force ) === false ) return;
+				force.multiplyScalar( behavior.weigth );
+
+				if ( this._accumulate( force ) === false ) return;
+
+			}
 
 		}
 
