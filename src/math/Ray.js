@@ -20,8 +20,8 @@ class Ray {
 
 	set( origin, direction ) {
 
-		this.origin.copy( origin );
-		this.direction.copy( direction );
+		this.origin = origin;
+		this.direction = direction;
 
 		return this;
 

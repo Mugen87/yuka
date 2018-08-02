@@ -148,6 +148,7 @@
 		constructor() {
 
 			this.entities = new Map();
+			this.triggers = new Set();
 			this._started = new Set();
 
 			this.messageDispatcher = new MessageDispatcher();
@@ -167,6 +168,7 @@
 		remove( entity ) {
 
 			this.entities.delete( entity.id );
+
 			this._started.delete( entity );
 
 			entity.manager = null;
@@ -175,9 +177,26 @@
 
 		}
 
+		addTrigger( trigger ) {
+
+			this.triggers.add( trigger );
+
+			return this;
+
+		}
+
+		removeTrigger( trigger ) {
+
+			this.triggers.delete( trigger );
+
+			return this;
+
+		}
+
 		clear() {
 
 			this.entities.clear();
+			this.triggers.clear();
 			this._started.clear();
 
 			this.messageDispatcher.clear();
@@ -204,6 +223,8 @@
 
 		update( delta ) {
 
+			// update entities
+
 			for ( let entity of this.entities.values() ) {
 
 				if ( entity.active === true ) {
@@ -223,6 +244,26 @@
 				}
 
 			}
+
+			// update triggers
+
+			for ( let trigger of this.triggers.values() ) {
+
+				trigger.update();
+
+				for ( let entity of this.entities.values() ) {
+
+					if ( entity.active === true ) {
+
+						trigger.check( entity );
+
+					}
+
+				}
+
+			}
+
+			// handle messaging
 
 			this.messageDispatcher.dispatchDelayedMessages( delta );
 
@@ -3407,8 +3448,8 @@
 
 		set( origin, direction ) {
 
-			this.origin.copy( origin );
-			this.direction.copy( direction );
+			this.origin = origin;
+			this.direction = direction;
 
 			return this;
 
@@ -3775,6 +3816,158 @@
 	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
+	class TriggerRegion {
+
+		touching( /* entity */ ) {
+
+			return false;
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
+	 *
+	 */
+
+	class BoundingSphere {
+
+		constructor( center = new Vector3(), radius = 0 ) {
+
+			this.center = center;
+			this.radius = radius;
+
+		}
+
+		set( center, radius ) {
+
+			this.center = center;
+			this.radius = radius;
+
+		}
+
+		copy( sphere ) {
+
+			this.center.copy( sphere.center );
+			this.radius = sphere.radius;
+
+		}
+
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		containsPoint( point ) {
+
+			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
+
+		}
+
+		intersectsBoundingSphere( sphere ) {
+
+			const radius = this.radius + sphere.radius;
+
+			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+		}
+
+		equals( sphere ) {
+
+			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	const boundingSphereEntity = new BoundingSphere();
+
+	class SphericalTriggerRegion extends TriggerRegion {
+
+		constructor( position = new Vector3(), radius ) {
+
+			super();
+
+			this._boundingSphere = new BoundingSphere( position, radius );
+
+		}
+
+		get position() {
+
+			return this._boundingSphere.center;
+
+		}
+
+		set position( position ) {
+
+			this._boundingSphere.center = position;
+
+		}
+
+		get radius() {
+
+			return this._boundingSphere.radius;
+
+		}
+
+		set radius( radius ) {
+
+			this._boundingSphere.radius = radius;
+
+		}
+
+		touching( entity ) {
+
+			boundingSphereEntity.set( entity.position, entity.boundingRadius );
+
+			return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity );
+
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class Trigger {
+
+		constructor( triggerRegion = new TriggerRegion() ) {
+
+			this.active = true;
+			this.triggerRegion = triggerRegion;
+
+		}
+
+		check( entity ) {
+
+			if ( ( this.active === true ) && ( this.triggerRegion.touching( entity ) === true ) ) {
+
+				this.execute( entity );
+
+			}
+
+		}
+
+		execute( /* entity */ ) {}
+
+		update() {}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
 	class State {
 
 		enter() {}
@@ -3934,8 +4127,12 @@
 	exports.PursuitBehavior = PursuitBehavior;
 	exports.SeekBehavior = SeekBehavior;
 	exports.WanderBehavior = WanderBehavior;
+	exports.SphericalTriggerRegion = SphericalTriggerRegion;
+	exports.TriggerRegion = TriggerRegion;
+	exports.Trigger = Trigger;
 	exports.State = State;
 	exports.StateMachine = StateMachine;
+	exports.BoundingSphere = BoundingSphere;
 	exports._Math = _Math;
 	exports.Matrix3 = Matrix3;
 	exports.Matrix4 = Matrix4;

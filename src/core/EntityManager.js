@@ -9,6 +9,7 @@ class EntityManager {
 	constructor() {
 
 		this.entities = new Map();
+		this.triggers = new Set();
 		this._started = new Set();
 
 		this.messageDispatcher = new MessageDispatcher();
@@ -28,6 +29,7 @@ class EntityManager {
 	remove( entity ) {
 
 		this.entities.delete( entity.id );
+
 		this._started.delete( entity );
 
 		entity.manager = null;
@@ -36,9 +38,26 @@ class EntityManager {
 
 	}
 
+	addTrigger( trigger ) {
+
+		this.triggers.add( trigger );
+
+		return this;
+
+	}
+
+	removeTrigger( trigger ) {
+
+		this.triggers.delete( trigger );
+
+		return this;
+
+	}
+
 	clear() {
 
 		this.entities.clear();
+		this.triggers.clear();
 		this._started.clear();
 
 		this.messageDispatcher.clear();
@@ -65,6 +84,8 @@ class EntityManager {
 
 	update( delta ) {
 
+		// update entities
+
 		for ( let entity of this.entities.values() ) {
 
 			if ( entity.active === true ) {
@@ -84,6 +105,26 @@ class EntityManager {
 			}
 
 		}
+
+		// update triggers
+
+		for ( let trigger of this.triggers.values() ) {
+
+			trigger.update();
+
+			for ( let entity of this.entities.values() ) {
+
+				if ( entity.active === true ) {
+
+					trigger.check( entity );
+
+				}
+
+			}
+
+		}
+
+		// handle messaging
 
 		this.messageDispatcher.dispatchDelayedMessages( delta );
 
