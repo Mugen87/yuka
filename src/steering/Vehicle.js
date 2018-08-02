@@ -21,7 +21,6 @@ class Vehicle extends MovingEntity {
 		this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 
 		this.steering = new SteeringManager( this );
-		this.updateOrientation = true;
 
 	}
 

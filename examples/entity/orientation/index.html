@@ -1,6 +1,6 @@
 <html lang="en">
 	<head>
-		<title>Yuka | Moving Entity</title>
+		<title>Yuka | Orientation</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -38,7 +38,7 @@
 
 	let renderer, scene, camera, entityMesh, targetMesh;
 
-	let entityManager, time, movingEntity, target;
+	let entityManager, time, entity, target;
 
 	init();
 	animate();
@@ -65,9 +65,9 @@
 
 		entityManager = new YUKA.EntityManager();
 		time = new YUKA.Time();
-		movingEntity = new YUKA.MovingEntity();
-		movingEntity.maxTurnRate = Math.PI * 0.5;
-		entityManager.add( movingEntity );
+		entity = new YUKA.GameEntity();
+		entity.maxTurnRate = Math.PI * 0.5;
+		entityManager.add( entity );
 
 		target = new YUKA.Vector3();
 
@@ -117,11 +117,11 @@
 
 		const delta = time.update().getDelta();
 
-		movingEntity.rotateTo( target, delta );
+		entity.rotateTo( target, delta );
 
 		entityManager.update();
 
-		entityMesh.matrix.copy( movingEntity.matrix );
+		entityMesh.matrix.copy( entity.matrix );
 		targetMesh.position.copy( target );
 
 		renderer.render( scene, camera );

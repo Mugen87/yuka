@@ -1591,6 +1591,9 @@ class Matrix4 {
 
 let nextId = 0;
 
+const targetRotation = new Quaternion();
+const targetDirection = new Vector3();
+
 class GameEntity {
 
 	constructor() {
@@ -1608,6 +1611,7 @@ class GameEntity {
 		this.up = new Vector3( 0, 1, 0 );
 
 		this.boundingRadius = 0;
+		this.maxTurnRate = Math.PI;
 
 		this.matrix = new Matrix4();
 
@@ -1615,46 +1619,17 @@ class GameEntity {
 
 	}
 
+	// lifecycle callbacks
+
 	start() {}
 
-	update() {}
+	update( /* delta */ ) {}
 
-	sendMessage( receiver, message, delay = 0, data = null ) {
+	//
 
-		this.manager.sendMessage( this, receiver, message, delay, data );
+	getDirection( result ) {
 
-	}
-
-	handleMessage() {
-
-		return false;
-
-	}
-
-	updateMatrix() {
-
-		this.matrix.compose( this.position, this.rotation, this.scale );
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-const targetRotation = new Quaternion();
-const targetDirection = new Vector3();
-
-class MovingEntity extends GameEntity {
-
-	constructor() {
-
-		super();
-
-		this.velocity = new Vector3();
-		this.maxSpeed = 1; // the maximum speed at which this entity may travel
-		this.maxTurnRate = Math.PI; // the maximum rate (radians per second) at which this vehicle can rotate
+		return result.copy( this.forward ).applyRotation( this.rotation ).normalize();
 
 	}
 
@@ -1684,9 +1659,80 @@ class MovingEntity extends GameEntity {
 
 	}
 
-	getDirection( result ) {
+	// updates the internal transformation matrix
 
-		return result.copy( this.forward ).applyRotation( this.rotation ).normalize();
+	updateMatrix() {
+
+		this.matrix.compose( this.position, this.rotation, this.scale );
+
+	}
+
+	// messaging
+
+	handleMessage() {
+
+		return false;
+
+	}
+
+	sendMessage( receiver, message, delay = 0, data = null ) {
+
+		this.manager.sendMessage( this, receiver, message, delay, data );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+const displacement = new Vector3();
+const target = new Vector3();
+
+class MovingEntity extends GameEntity {
+
+	constructor() {
+
+		super();
+
+		this.velocity = new Vector3();
+		this.maxSpeed = 1; // the maximum speed at which this entity may travel
+
+		this.updateOrientation = true;
+
+	}
+
+	update( delta ) {
+
+		// make sure vehicle does not exceed maximum speed
+
+		if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
+
+			this.velocity.normalize();
+			this.velocity.multiplyScalar( this.maxSpeed );
+
+		}
+
+		// calculate displacement
+
+		displacement.copy( this.velocity ).multiplyScalar( delta );
+
+		// calculate target position
+
+		target.copy( this.position ).add( displacement );
+
+		// update the orientation if the vehicle has a non zero velocity
+
+		if ( this.updateOrientation && this.getSpeedSquared() > 0.00000001 ) {
+
+			this.lookAt( target );
+
+		}
+
+		// update position
+
+		this.position.copy( target );
 
 	}
 
@@ -3058,9 +3104,9 @@ class SteeringManager {
  */
 
 const steeringForce = new Vector3();
-const displacement = new Vector3();
+const displacement$1 = new Vector3();
 const acceleration = new Vector3();
-const target = new Vector3();
+const target$1 = new Vector3();
 
 class Vehicle extends MovingEntity {
 
@@ -3072,7 +3118,6 @@ class Vehicle extends MovingEntity {
 		this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 
 		this.steering = new SteeringManager( this );
-		this.updateOrientation = true;
 
 	}
 
@@ -3101,23 +3146,23 @@ class Vehicle extends MovingEntity {
 
 		// calculate displacement
 
-		displacement.copy( this.velocity ).multiplyScalar( delta );
+		displacement$1.copy( this.velocity ).multiplyScalar( delta );
 
 		// calculate target position
 
-		target.copy( this.position ).add( displacement );
+		target$1.copy( this.position ).add( displacement$1 );
 
 		// update the orientation if the vehicle has a non zero velocity
 
 		if ( this.updateOrientation && this.getSpeedSquared() > 0.00000001 ) {
 
-			this.lookAt( target );
+			this.lookAt( target$1 );
 
 		}
 
 		// update position
 
-		this.position.copy( target );
+		this.position.copy( target$1 );
 
 	}
 
@@ -3128,7 +3173,7 @@ class Vehicle extends MovingEntity {
  */
 
 const desiredVelocity = new Vector3();
-const displacement$1 = new Vector3();
+const displacement$2 = new Vector3();
 
 class ArriveBehavior extends SteeringBehavior {
 
@@ -3146,9 +3191,9 @@ class ArriveBehavior extends SteeringBehavior {
 		const target = this.target;
 		const deceleration = this.deceleration;
 
-		displacement$1.subVectors( target, vehicle.position );
+		displacement$2.subVectors( target, vehicle.position );
 
-		const distance = displacement$1.length();
+		const distance = displacement$2.length();
 
 		if ( distance > 0 ) {
 
@@ -3164,7 +3209,7 @@ class ArriveBehavior extends SteeringBehavior {
 			// the "displacement" vector because we have already gone to the trouble
 			// of calculating its length.
 
-			desiredVelocity.copy( displacement$1 ).multiplyScalar( speed / distance );
+			desiredVelocity.copy( displacement$2 ).multiplyScalar( speed / distance );
 
 			force.subVectors( desiredVelocity, vehicle.velocity );
 
@@ -3228,7 +3273,7 @@ class FleeBehavior extends SteeringBehavior {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-const displacement$2 = new Vector3();
+const displacement$3 = new Vector3();
 const newPuruserVelocity = new Vector3();
 const predcitedPosition = new Vector3();
 
@@ -3251,9 +3296,9 @@ class EvadeBehavior extends SteeringBehavior {
 
 		const pursuer = this.pursuer;
 
-		displacement$2.subVectors( pursuer.position, vehicle.position );
+		displacement$3.subVectors( pursuer.position, vehicle.position );
 
-		let lookAheadTime = displacement$2.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+		let lookAheadTime = displacement$3.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
 		lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
 
 		// calculate new velocity and predicted future position
@@ -3659,7 +3704,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-const displacement$3 = new Vector3();
+const displacement$4 = new Vector3();
 const vehicleDirection = new Vector3();
 const evaderDirection = new Vector3();
 const newEvaderVelocity = new Vector3();
@@ -3684,7 +3729,7 @@ class PursuitBehavior extends SteeringBehavior {
 
 		const evader = this.evader;
 
-		displacement$3.subVectors( evader.position, vehicle.position );
+		displacement$4.subVectors( evader.position, vehicle.position );
 
 		// 1. if the evader is ahead and facing the agent then we can just seek for the evader's current position
 
@@ -3693,7 +3738,7 @@ class PursuitBehavior extends SteeringBehavior {
 
 		// first condition: evader must be in front of the pursuer
 
-		const evaderAhead = displacement$3.dot( vehicleDirection ) > 0;
+		const evaderAhead = displacement$4.dot( vehicleDirection ) > 0;
 
 		// second condition: evader must almost directly facing the agent
 
@@ -3713,7 +3758,7 @@ class PursuitBehavior extends SteeringBehavior {
 		// and the pursuer. and is inversely proportional to the sum of the
 		// agent's velocities
 
-		let lookAheadTime = displacement$3.length() / ( vehicle.maxSpeed + evader.getSpeed() );
+		let lookAheadTime = displacement$4.length() / ( vehicle.maxSpeed + evader.getSpeed() );
 		lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
 
 		// calculate new velocity and predicted future position

@@ -8,6 +8,9 @@ import { Matrix4 } from '../math/Matrix4.js';
 
 let nextId = 0;
 
+const targetRotation = new Quaternion();
+const targetDirection = new Vector3();
+
 class GameEntity {
 
 	constructor() {
@@ -25,6 +28,7 @@ class GameEntity {
 		this.up = new Vector3( 0, 1, 0 );
 
 		this.boundingRadius = 0;
+		this.maxTurnRate = Math.PI;
 
 		this.matrix = new Matrix4();
 
@@ -32,15 +36,55 @@ class GameEntity {
 
 	}
 
+	// lifecycle callbacks
+
 	start() {}
 
-	update() {}
+	update( /* delta */ ) {}
 
-	sendMessage( receiver, message, delay = 0, data = null ) {
+	//
 
-		this.manager.sendMessage( this, receiver, message, delay, data );
+	getDirection( result ) {
+
+		return result.copy( this.forward ).applyRotation( this.rotation ).normalize();
 
 	}
+
+	// directly rotates the entity so it faces the target
+
+	lookAt( target ) {
+
+		targetDirection.subVectors( target, this.position ).normalize();
+
+		this.rotation.lookAt( this.forward, targetDirection, this.up );
+
+		return this;
+
+	}
+
+	// given a target position, this method rotates the entity by an amount not
+	// greater than maxTurnRate until it directly faces the target
+
+	rotateTo( target, deltaTime ) {
+
+		targetDirection.subVectors( target, this.position ).normalize();
+		targetRotation.lookAt( this.forward, targetDirection, this.up );
+
+		this.rotation.rotateTo( targetRotation, this.maxTurnRate * deltaTime );
+
+		return this;
+
+	}
+
+	// updates the internal transformation matrix
+
+	updateMatrix() {
+
+		this.matrix.compose( this.position, this.rotation, this.scale );
+
+	}
+
+	// messaging
 
 	handleMessage() {
 
@@ -48,9 +92,9 @@ class GameEntity {
 
 	}
 
-	updateMatrix() {
+	sendMessage( receiver, message, delay = 0, data = null ) {
 
-		this.matrix.compose( this.position, this.rotation, this.scale );
+		this.manager.sendMessage( this, receiver, message, delay, data );
 
 	}
 

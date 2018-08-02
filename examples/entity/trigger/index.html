@@ -40,7 +40,7 @@
 
 	let renderer, scene, camera, entityMesh;
 
-	let entityManager, time, movingEntity;
+	let entityManager, time, entity;
 
 	init();
 	animate();
@@ -70,9 +70,9 @@
 		entityManager = new YUKA.EntityManager();
 		time = new YUKA.Time();
 
-		movingEntity = new YUKA.MovingEntity();
-		movingEntity.boundingRadius = 0.5;
-		entityManager.add( movingEntity );
+		entity = new YUKA.GameEntity();
+		entity.boundingRadius = 0.5;
+		entityManager.add( entity );
 
 		const triggerRegion = new YUKA.SphericalTriggerRegion();
 		triggerRegion.position.set( 3, 0, 0 );
@@ -120,11 +120,11 @@
 		const delta = time.update().getDelta();
 		const elapsedTime = time.getElapsed();
 
-		movingEntity.position.x = Math.sin( elapsedTime ) * 2;
+		entity.position.x = Math.sin( elapsedTime ) * 2;
 
 		entityManager.update( delta );
 
-		entityMesh.matrix.copy( movingEntity.matrix );
+		entityMesh.matrix.copy( entity.matrix );
 
 		renderer.render( scene, camera );
 

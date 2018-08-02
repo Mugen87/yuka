@@ -3,11 +3,10 @@
  */
 
 import { GameEntity } from './GameEntity.js';
-import { Quaternion } from '../math/Quaternion.js';
 import { Vector3 } from '../math/Vector3.js';
 
-const targetRotation = new Quaternion();
-const targetDirection = new Vector3();
+const displacement = new Vector3();
+const target = new Vector3();
 
 class MovingEntity extends GameEntity {
 
@@ -17,39 +16,41 @@ class MovingEntity extends GameEntity {
 
 		this.velocity = new Vector3();
 		this.maxSpeed = 1; // the maximum speed at which this entity may travel
-		this.maxTurnRate = Math.PI; // the maximum rate (radians per second) at which this vehicle can rotate
+
+		this.updateOrientation = true;
 
 	}
 
-	// directly rotates the entity so it faces the target
+	update( delta ) {
 
-	lookAt( target ) {
+		// make sure vehicle does not exceed maximum speed
 
-		targetDirection.subVectors( target, this.position ).normalize();
+		if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
 
-		this.rotation.lookAt( this.forward, targetDirection, this.up );
+			this.velocity.normalize();
+			this.velocity.multiplyScalar( this.maxSpeed );
 
-		return this;
+		}
 
-	}
+		// calculate displacement
 
-	// given a target position, this method rotates the entity by an amount not
-	// greater than maxTurnRate until it directly faces the target
+		displacement.copy( this.velocity ).multiplyScalar( delta );
 
-	rotateTo( target, deltaTime ) {
+		// calculate target position
 
-		targetDirection.subVectors( target, this.position ).normalize();
-		targetRotation.lookAt( this.forward, targetDirection, this.up );
+		target.copy( this.position ).add( displacement );
 
-		this.rotation.rotateTo( targetRotation, this.maxTurnRate * deltaTime );
+		// update the orientation if the vehicle has a non zero velocity
 
-		return this;
+		if ( this.updateOrientation && this.getSpeedSquared() > 0.00000001 ) {
 
-	}
+			this.lookAt( target );
 
-	getDirection( result ) {
+		}
 
-		return result.copy( this.forward ).applyRotation( this.rotation ).normalize();
+		// update position
+
+		this.position.copy( target );
 
 	}
 
