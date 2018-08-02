@@ -10,7 +10,7 @@ const boundingSphereEntity = new BoundingSphere();
 
 class SphericalTriggerRegion extends TriggerRegion {
 
-	constructor( position = new Vector3(), radius ) {
+	constructor( position = new Vector3(), radius = 0 ) {
 
 		super();
 

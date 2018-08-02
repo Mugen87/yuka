@@ -74,22 +74,35 @@
 		entity.boundingRadius = 0.5;
 		entityManager.add( entity );
 
-		const triggerRegion = new YUKA.SphericalTriggerRegion();
-		triggerRegion.position.set( 3, 0, 0 );
-		triggerRegion.radius = 2;
+		const sphericalTriggerRegion = new YUKA.SphericalTriggerRegion();
+		sphericalTriggerRegion.position.set( 3, 0, 0 );
+		sphericalTriggerRegion.radius = 2;
 
-		const trigger = new CustomTrigger( triggerRegion );
-		entityManager.addTrigger( trigger );
+		const rectangularTriggerRegion = new YUKA.RectangularTriggerRegion();
+		rectangularTriggerRegion.min.set( - 3, - 1, - 1 );
+		rectangularTriggerRegion.max.set( - 2, 1, 1 );
 
-		// visualize trigger
+		const trigger1 = new CustomTrigger( sphericalTriggerRegion );
+		entityManager.addTrigger( trigger1 );
 
-		const sphereGeometry = new THREE.SphereBufferGeometry( triggerRegion.radius, 16, 16 );
+		const trigger2 = new CustomTrigger( rectangularTriggerRegion );
+		entityManager.addTrigger( trigger2 );
+
+		// visualize triggers
+
+		const sphereGeometry = new THREE.SphereBufferGeometry( sphericalTriggerRegion.radius, 16, 16 );
 		const sphereMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-		const triggerMesh = new THREE.Mesh( sphereGeometry, sphereMaterial );
-		triggerMesh.position.copy( triggerRegion.position );
+		const triggerMesh1 = new THREE.Mesh( sphereGeometry, sphereMaterial );
+		triggerMesh1.position.copy( sphericalTriggerRegion.position );
 
-		scene.add( triggerMesh );
+		scene.add( triggerMesh1 );
 
+		const boxGeometry = new THREE.BoxBufferGeometry( 2, 2, 2 );
+		const boxMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+		const triggerMesh2 = new THREE.Mesh( boxGeometry, boxMaterial );
+		triggerMesh2.position.set( - 2.5, 0, 0 );
+
+		scene.add( triggerMesh2 );
 
 		// renderer
 

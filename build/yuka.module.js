@@ -457,6 +457,16 @@ class Vector3 {
 
 	}
 
+	clamp( min, max ) {
+
+		this.x = Math.max( min.x, Math.min( max.x, this.x ) );
+		this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+		this.z = Math.max( min.z, Math.min( max.z, this.z ) );
+
+		return this;
+
+	}
+
 	dot( v ) {
 
 		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
@@ -3868,6 +3878,84 @@ class TriggerRegion {
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Box3.js
+ *
+ */
+
+const vector = new Vector3();
+
+class AABB {
+
+	constructor( min = new Vector3(), max = new Vector3() ) {
+
+		this.min = min;
+		this.max = max;
+
+	}
+
+	set( min, max ) {
+
+		this.min = min;
+		this.max = max;
+
+		return this;
+
+	}
+
+	copy( aabb ) {
+
+		this.min.copy( aabb.min );
+		this.max.copy( aabb.max );
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	clampPoint( point, result ) {
+
+		result.copy( point ).clamp( this.min, this.max );
+
+		return this;
+
+	}
+
+	containsPoint( point ) {
+
+		return point.x < this.min.x || point.x > this.max.x ||
+			point.y < this.min.y || point.y > this.max.y ||
+			point.z < this.min.z || point.z > this.max.z ? false : true;
+
+	}
+
+	intersectsBoundingSphere( sphere ) {
+
+		// find the point on the AABB closest to the sphere center
+
+		this.clampPoint( sphere.center, vector );
+
+		// if that point is inside the sphere, the AABB and sphere intersect.
+
+		return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+	}
+
+	equals( aabb ) {
+
+		return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
  * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
  *
  */
@@ -3886,12 +3974,16 @@ class BoundingSphere {
 		this.center = center;
 		this.radius = radius;
 
+		return this;
+
 	}
 
 	copy( sphere ) {
 
 		this.center.copy( sphere.center );
 		this.radius = sphere.radius;
+
+		return this;
 
 	}
 
@@ -3929,9 +4021,60 @@ class BoundingSphere {
 
 const boundingSphereEntity = new BoundingSphere();
 
+class RectangularTriggerRegion extends TriggerRegion {
+
+	constructor( min = new Vector3(), max = new Vector3() ) {
+
+		super();
+
+		this._aabb = new AABB( min, max );
+
+	}
+
+	get min() {
+
+		return this._aabb.min;
+
+	}
+
+	set min( min ) {
+
+		this._aabb.min = min;
+
+	}
+
+	get max() {
+
+		return this._aabb.max;
+
+	}
+
+	set max( max ) {
+
+		this._aabb.max = max;
+
+	}
+
+	touching( entity ) {
+
+		boundingSphereEntity.set( entity.position, entity.boundingRadius );
+
+		return this._aabb.intersectsBoundingSphere( boundingSphereEntity );
+
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+const boundingSphereEntity$1 = new BoundingSphere();
+
 class SphericalTriggerRegion extends TriggerRegion {
 
-	constructor( position = new Vector3(), radius ) {
+	constructor( position = new Vector3(), radius = 0 ) {
 
 		super();
 
@@ -3965,9 +4108,9 @@ class SphericalTriggerRegion extends TriggerRegion {
 
 	touching( entity ) {
 
-		boundingSphereEntity.set( entity.position, entity.boundingRadius );
+		boundingSphereEntity$1.set( entity.position, entity.boundingRadius );
 
-		return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity );
+		return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity$1 );
 
 
 	}
@@ -4140,4 +4283,4 @@ class StateMachine {
 
 }
 
-export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };

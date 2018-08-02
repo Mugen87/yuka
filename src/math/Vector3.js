@@ -163,6 +163,16 @@ class Vector3 {
 
 	}
 
+	clamp( min, max ) {
+
+		this.x = Math.max( min.x, Math.min( max.x, this.x ) );
+		this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+		this.z = Math.max( min.z, Math.min( max.z, this.z ) );
+
+		return this;
+
+	}
+
 	dot( v ) {
 
 		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );

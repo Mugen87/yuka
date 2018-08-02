@@ -21,12 +21,16 @@ class BoundingSphere {
 		this.center = center;
 		this.radius = radius;
 
+		return this;
+
 	}
 
 	copy( sphere ) {
 
 		this.center.copy( sphere.center );
 		this.radius = sphere.radius;
+
+		return this;
 
 	}
 

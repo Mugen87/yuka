@@ -25,7 +25,8 @@ export { ObstacleAvoidanceBehavior } from './steering/behaviors/ObstacleAvoidanc
 export { PursuitBehavior } from './steering/behaviors/PursuitBehavior.js';
 export { SeekBehavior } from './steering/behaviors/SeekBehavior.js';
 export { WanderBehavior } from './steering/behaviors/WanderBehavior.js';
-export { SphericalTriggerRegion } from './trigger/triggerRegions/SphericalTriggerRegion.js';
+export { RectangularTriggerRegion } from './trigger/regions/RectangularTriggerRegion.js';
+export { SphericalTriggerRegion } from './trigger/regions/SphericalTriggerRegion.js';
 export { TriggerRegion } from './trigger/TriggerRegion.js';
 export { Trigger } from './trigger/Trigger.js';
 export { State } from './fsm/State.js';
