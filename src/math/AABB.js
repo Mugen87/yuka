@@ -70,6 +70,17 @@ class AABB {
 
 	}
 
+	fromCenterAndSize( center, size ) {
+
+		vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
+
+		this.min.copy( center ).sub( vector );
+		this.max.copy( center ).add( vector );
+
+		return this;
+
+	}
+
 	equals( aabb ) {
 
 		return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );

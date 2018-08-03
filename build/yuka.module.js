@@ -243,13 +243,17 @@ class EntityManager {
 
 		for ( let trigger of this.triggers.values() ) {
 
-			trigger.update( delta );
+			if ( trigger.active === true ) {
 
-			for ( let entity of this.entities.values() ) {
+				trigger.update( delta );
 
-				if ( entity.active === true ) {
+				for ( let entity of this.entities.values() ) {
 
-					trigger.check( entity );
+					if ( entity.active === true ) {
+
+						trigger.check( entity );
+
+					}
 
 				}
 
@@ -3945,6 +3949,17 @@ class AABB {
 
 	}
 
+	fromCenterAndSize( center, size ) {
+
+		vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
+
+		this.min.copy( center ).sub( vector );
+		this.max.copy( center ).add( vector );
+
+		return this;
+
+	}
+
 	equals( aabb ) {
 
 		return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
@@ -4052,6 +4067,12 @@ class RectangularTriggerRegion extends TriggerRegion {
 	set max( max ) {
 
 		this._aabb.max = max;
+
+	}
+
+	fromPositionAndSize( position = new Vector3(), size = new Vector3() ) {
+
+		this._aabb.fromCenterAndSize( position, size );
 
 	}
 

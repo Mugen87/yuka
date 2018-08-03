@@ -110,13 +110,17 @@ class EntityManager {
 
 		for ( let trigger of this.triggers.values() ) {
 
-			trigger.update( delta );
+			if ( trigger.active === true ) {
 
-			for ( let entity of this.entities.values() ) {
+				trigger.update( delta );
 
-				if ( entity.active === true ) {
+				for ( let entity of this.entities.values() ) {
 
-					trigger.check( entity );
+					if ( entity.active === true ) {
+
+						trigger.check( entity );
+
+					}
 
 				}
 

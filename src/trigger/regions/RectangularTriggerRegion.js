@@ -43,6 +43,12 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 	}
 
+	fromPositionAndSize( position = new Vector3(), size = new Vector3() ) {
+
+		this._aabb.fromCenterAndSize( position, size );
+
+	}
+
 	touching( entity ) {
 
 		boundingSphereEntity.set( entity.position, entity.boundingRadius );
