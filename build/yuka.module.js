@@ -4304,4 +4304,218 @@ class StateMachine {
 
 }
 
-export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class Goal {
+
+	constructor( owner ) {
+
+		this.owner = owner; // a reference to the agent that owns this instance
+		this.status = Goal.STATUS.INACTIVE;
+
+	}
+
+	addSubgoal( /* goal */ ) {
+
+		Logger.warn( 'YUKA.Goal: Unable to add goal to atomic goals.' );
+
+	}
+
+	//
+
+	activate() {} // logic to run when the goal is activated
+
+	execute() {} // logic to run each update step
+
+	terminate() {} // logic to run when the goal is satisfied
+
+	// goals can handle messages. Many don't though, so this defines a default behavior
+
+	handleMessage( /* telegram */ ) {
+
+		return false;
+
+	}
+
+	//
+
+	active() {
+
+		return this.status === Goal.STATUS.ACTIVE;
+
+	}
+
+	inactive() {
+
+		return this.status === Goal.STATUS.INACTIVE;
+
+	}
+
+	completed() {
+
+		return this.status === Goal.STATUS.COMPLETED;
+
+	}
+
+	failed() {
+
+		return this.status === Goal.STATUS.FAILED;
+
+	}
+
+	// logic often used within execute()
+
+	replanIfFailed() {
+
+		if ( this.failed() === true ) {
+
+			this.status = Goal.STATUS.INACTIVE;
+
+		}
+
+		return this;
+
+	}
+
+	activateIfInactive() {
+
+		if ( this.inactive() === true ) {
+
+			this.activate();
+
+		}
+
+		return this;
+
+	}
+
+}
+
+Goal.STATUS = Object.freeze( {
+	ACTIVE: 'active', // the goal has been activated and will be processed each update step
+	INACTIVE: 'inactive', // the goal is waiting to be activated
+	COMPLETED: 'completed', // the goal has completed and will be removed on the next update
+	FAILED: 'failed' // the goal has failed and will either replan or be removed on the next update
+} );
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class CompositeGoal extends Goal {
+
+	constructor( owner ) {
+
+		super( owner );
+
+		this.subgoals = new Array(); // used as a stack (LIFO)
+
+	}
+
+	// subgoal related methods
+
+	addSubgoal( goal ) {
+
+		this.subgoals.push( goal );
+
+		return this;
+
+	}
+
+	clearSubgoals() {
+
+		const subgoals = this.subgoals;
+
+		for ( let subgoal of subgoals ) {
+
+			subgoal.terminate();
+
+		}
+
+		subgoals.length = 0;
+
+		return this;
+
+	}
+
+	executeSubgoals() {
+
+		const subgoals = this.subgoals;
+
+		// remove all completed and failed goals from the back of the subgoal list
+
+		for ( let i = subgoals.length - 1; i >= 0; i -- ) {
+
+			const subgoal = subgoals[ i ];
+
+			if ( subgoal.completed() === true || subgoal.failed() === true ) {
+
+				subgoal.terminate();
+				subgoals.pop();
+
+			} else {
+
+				break;
+
+			}
+
+		}
+
+		// if any subgoals remain, process the one at the back of the list
+
+		if ( subgoals.length > 0 ) {
+
+			const subgoal = subgoals[ subgoals.length - 1 ];
+			subgoal.execute();
+
+			// if subgoal is completed but more subgoals are in the list, return 'active'
+			// status in order to keep processing the list of subgoals
+
+			if ( ( subgoal.status === Goal.STATUS.COMPLETED ) && ( subgoals.length > 1 ) ) {
+
+				return Goal.STATUS.ACTIVE;
+
+			} else {
+
+				return subgoal.status;
+
+			}
+
+
+		} else {
+
+			return Goal.STATUS.COMPLETED;
+
+		}
+
+	}
+
+	// messaging
+
+	handleMessage( telegram ) {
+
+		return this.forwardMessage( telegram );
+
+	}
+
+	forwardMessage( telegram ) {
+
+		const subgoals = this.subgoals;
+		const length = subgoals.length;
+
+		if ( length > 0 ) {
+
+			const subgoal = subgoals[ length - 1 ]; // pick last goal
+			subgoal.handleMessage( telegram );
+
+		}
+
+		return false;
+
+	}
+
+}
+
+export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
