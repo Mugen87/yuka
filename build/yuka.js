@@ -4150,16 +4150,16 @@
 
 	class Trigger {
 
-		constructor( triggerRegion = new TriggerRegion() ) {
+		constructor( region = new TriggerRegion() ) {
 
 			this.active = true;
-			this.triggerRegion = triggerRegion;
+			this.region = region;
 
 		}
 
 		check( entity ) {
 
-			if ( ( this.active === true ) && ( this.triggerRegion.touching( entity ) === true ) ) {
+			if ( ( this.active === true ) && ( this.region.touching( entity ) === true ) ) {
 
 				this.execute( entity );
 
