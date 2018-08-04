@@ -35,6 +35,7 @@ export { Goal } from './goal/Goal.js';
 export { CompositeGoal } from './goal/CompositeGoal.js';
 export { GoalEvaluator } from './goal/GoalEvaluator.js';
 export { Think } from './goal/Think.js';
+export { AABB } from './math/AABB.js';
 export { BoundingSphere } from './math/BoundingSphere.js';
 export { _Math } from './math/Math.js';
 export { Matrix3 } from './math/Matrix3.js';

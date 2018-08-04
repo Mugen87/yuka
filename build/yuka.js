@@ -4656,6 +4656,7 @@
 	exports.CompositeGoal = CompositeGoal;
 	exports.GoalEvaluator = GoalEvaluator;
 	exports.Think = Think;
+	exports.AABB = AABB;
 	exports.BoundingSphere = BoundingSphere;
 	exports._Math = _Math;
 	exports.Matrix3 = Matrix3;
