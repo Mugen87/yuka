@@ -1,3 +1,8 @@
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ * @author robp94 / https://github.com/robp94
+ */
+
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.min.js' );
 
