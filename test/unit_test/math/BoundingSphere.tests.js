@@ -17,7 +17,7 @@ describe( 'BoundingSphere', function () {
 
 	describe( '#constructor()', function () {
 
-		it( 'should create objects with correct default values', function () {
+		it( 'should create an object with correct default values', function () {
 
 			const sphere = new BoundingSphere();
 			expect( sphere.center ).to.deep.equal( zero3 );
@@ -25,7 +25,7 @@ describe( 'BoundingSphere', function () {
 
 		} );
 
-		it( 'should create objects with properties according to the given values', function () {
+		it( 'should create an object with properties according to the given values', function () {
 
 			const sphere = new BoundingSphere( one3, 1 );
 			expect( sphere.center ).to.deep.equal( one3 );
@@ -154,7 +154,7 @@ describe( 'BoundingSphere', function () {
 		it( 'should execute a deep comparison between two objects', function () {
 
 			const sphere1 = new BoundingSphere( one3, 1 );
-			const sphere2 = new BoundingSphere( one3, 1 );
+			const sphere2 = new BoundingSphere( new Vector3( 1, 1, 1 ), 1 );
 			const sphere3 = new BoundingSphere( two3, 3 );
 
 			expect( sphere1.equals( sphere2 ) ).to.equal( true );
