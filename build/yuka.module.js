@@ -4518,4 +4518,100 @@ class CompositeGoal extends Goal {
 
 }
 
-export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class GoalEvaluator {
+
+	constructor( characterBias = 1 ) {
+
+		// when the desirability score for a goal has been evaluated, it is multiplied
+		// by this value. It can be used to create bots with preferences based upon
+		// their personality
+		this.characterBias = characterBias;
+
+	}
+
+	calculateDesirability( /* entity */ ) {
+
+		// returns a score between 0 and 1 representing the desirability of a goal
+
+		return 0;
+
+	}
+
+	setGoal( /* entity */ ) {}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class Think extends Goal {
+
+	constructor( owner ) {
+
+		super( owner );
+
+		this.evaluators = new Set();
+
+	}
+
+	addEvaluator( evaluator ) {
+
+		this.evaluators.add( evaluator );
+
+		return this;
+
+	}
+
+	removeEvaluator( evaluator ) {
+
+		this.evaluators.delete( evaluator );
+
+		return this;
+
+	}
+
+	arbitrate() {
+
+		let bestDesirabilty = - 1;
+		let bestEvaluator = null;
+
+		// try to find the best top-level goal/strategy for the entity
+
+		for ( let evaluator of this.evaluators ) {
+
+			const desirabilty = evaluator.calculateDesirability( this.owner );
+			desirabilty *= evaluator.characterBias;
+
+			if ( desirabilty >= bestDesirabilty ) {
+
+				bestDesirabilty = desirabilty;
+				bestEvaluator = evaluator;
+
+			}
+
+		}
+
+		// use the evaluator to set the respective goal
+
+		if ( bestEvaluator !== null ) {
+
+			bestEvaluator.setGoal( this.owner );
+
+		} else {
+
+			Logger.error( 'YUKA.Think: Unable to determine goal evaluator for game entity:', this.owner );
+
+		}
+
+		return this;
+
+	}
+
+}
+
+export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
