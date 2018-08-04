@@ -4,7 +4,7 @@
  */
 
 const expect = require( 'chai' ).expect;
-const YUKA = require( '../../../build/yuka.min.js' );
+const YUKA = require( '../../../build/yuka.js' );
 
 const BoundingSphere = YUKA.BoundingSphere;
 const Vector3 = YUKA.Vector3;
