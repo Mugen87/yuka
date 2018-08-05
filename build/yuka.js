@@ -10,13 +10,13 @@
 
 	class Telegram {
 
-		constructor( sender, receiver, message, data, delay ) {
+		constructor( sender, receiver, message, delay, data ) {
 
 			this.sender = sender;
 			this.receiver = receiver;
 			this.message = message;
-			this.data = data;
 			this.delay = delay;
+			this.data = data;
 
 		}
 
@@ -91,15 +91,13 @@
 
 		dispatch( sender, receiver, message, delay, data ) {
 
-			const telegram = new Telegram( sender, receiver, message, data, 0 );
+			const telegram = new Telegram( sender, receiver, message, delay, data );
 
 			if ( delay <= 0 ) {
 
 				this.deliver( telegram );
 
 			} else {
-
-				telegram.delay = delay;
 
 				this.delayedTelegrams.push( telegram );
 
@@ -3022,7 +3020,7 @@
 		constructor( vehicle ) {
 
 			this.vehicle = vehicle;
-			this.behaviors = [];
+			this.behaviors = new Array();
 
 			this._steeringForce = new Vector3(); // the calculated steering force per simulation step
 
@@ -3046,7 +3044,7 @@
 
 		}
 
-		_calculate( delta, result = new Vector3() ) {
+		calculate( delta, result = new Vector3() ) {
 
 			this._calculateByOrder( delta );
 
@@ -3145,7 +3143,7 @@
 
 			// calculate steering force
 
-			this.steering._calculate( delta, steeringForce );
+			this.steering.calculate( delta, steeringForce );
 
 			// acceleration = force / mass
 
@@ -4623,7 +4621,9 @@
 	exports.EntityManager = EntityManager;
 	exports.GameEntity = GameEntity;
 	exports.Logger = Logger;
+	exports.MessageDispatcher = MessageDispatcher;
 	exports.MovingEntity = MovingEntity;
+	exports.Telegram = Telegram;
 	exports.Time = Time;
 	exports.Node = Node;
 	exports.Edge = Edge;
@@ -4636,6 +4636,7 @@
 	exports.AStar = AStar;
 	exports.Path = Path;
 	exports.SteeringBehavior = SteeringBehavior;
+	exports.SteeringManager = SteeringManager;
 	exports.Vehicle = Vehicle;
 	exports.ArriveBehavior = ArriveBehavior;
 	exports.EvadeBehavior = EvadeBehavior;

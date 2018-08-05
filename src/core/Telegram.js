@@ -4,13 +4,13 @@
 
 class Telegram {
 
-	constructor( sender, receiver, message, data, delay ) {
+	constructor( sender, receiver, message, delay, data ) {
 
 		this.sender = sender;
 		this.receiver = receiver;
 		this.message = message;
-		this.data = data;
 		this.delay = delay;
+		this.data = data;
 
 	}
 

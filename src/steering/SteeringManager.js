@@ -11,7 +11,7 @@ class SteeringManager {
 	constructor( vehicle ) {
 
 		this.vehicle = vehicle;
-		this.behaviors = [];
+		this.behaviors = new Array();
 
 		this._steeringForce = new Vector3(); // the calculated steering force per simulation step
 
@@ -35,7 +35,7 @@ class SteeringManager {
 
 	}
 
-	_calculate( delta, result = new Vector3() ) {
+	calculate( delta, result = new Vector3() ) {
 
 		this._calculateByOrder( delta );
 
