@@ -48,12 +48,12 @@ class Logger {
 
 }
 
-Logger.LEVEL = {
+Logger.LEVEL = Object.freeze( {
 	LOG: 0,
 	WARN: 1,
 	ERROR: 2,
 	SILENT: 3
-};
+} );
 
 let currentLevel = Logger.LEVEL.WARN;
 
