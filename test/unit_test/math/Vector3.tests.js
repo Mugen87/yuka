@@ -15,8 +15,9 @@ describe( 'Vector3', function () {
 
 		it( 'set(x,y,z) should return Vector x,y,z', function () {
 
-        	const v1 = new Vector3( 1, 2, 3 );
-        	expect( v1 ).to.deep.equal( { x: 1, y: 2, z: 3 } );
+        	const v1 = new Vector3( );
+        	v1.set( x, y, z );
+        	expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
 
 		} );
 
@@ -26,8 +27,8 @@ describe( 'Vector3', function () {
 
 		it( 'should return a copy of the vector', function () {
 
-			var v1 = new Vector3( x, y, z );
-			var v2 = new Vector3().copy( v1 );
+			const v1 = new Vector3( x, y, z );
+			const v2 = new Vector3().copy( v1 );
 
 			expect( v2 ).to.deep.equal( { x: v1.x, y: v1.y, z: v1.z } );
 
@@ -44,8 +45,8 @@ describe( 'Vector3', function () {
 
 		it( 'should return a clone of the vector', function () {
 
-			var v1 = new Vector3( x, y, z );
-			var v2 = v1.clone();
+			const v1 = new Vector3( x, y, z );
+			const v2 = v1.clone();
 
 			expect( v2 ).to.deep.equal( { x: v1.x, y: v1.y, z: v1.z } );
 
@@ -260,10 +261,10 @@ describe( 'Vector3', function () {
 
 		it( 'should return dot Product', function () {
 
-			var v1 = new Vector3( x, y, z );
-			var v2 = new Vector3( - x, - y, - z );
+			const v1 = new Vector3( x, y, z );
+			const v2 = new Vector3( - x, - y, - z );
 
-			var v3 = v1.dot( v2 );
+			const v3 = v1.dot( v2 );
 			expect( v3 ).to.be.equal( ( - x * x - y * y - z * z ) );
 
 
@@ -275,8 +276,8 @@ describe( 'Vector3', function () {
 
 		it( 'should return cross Product', function () {
 
-			var v1 = new Vector3( 1, 1, 1 );
-			var v2 = new Vector3( 2, - 1, 0.5 );
+			const v1 = new Vector3( 1, 1, 1 );
+			const v2 = new Vector3( 2, - 1, 0.5 );
 
 			v1.cross( v2 );//1.5,1.5,-3
 			expect( v1 ).to.deep.equal( { x: 1.5, y: 1.5, z: - 3 } );
@@ -289,8 +290,8 @@ describe( 'Vector3', function () {
 
 		it( 'should return cross Product', function () {
 
-			var v1 = new Vector3( 1, 1, 1 );
-			var v2 = new Vector3( 2, - 1, 0.5 );
+			const v1 = new Vector3( 1, 1, 1 );
+			const v2 = new Vector3( 2, - 1, 0.5 );
 			const v3 = new Vector3().crossVectors( v1, v2 );//1.5,1.5,-3
 
 			expect( v3 ).to.deep.equal( { x: 1.5, y: 1.5, z: - 3 } );
@@ -299,7 +300,211 @@ describe( 'Vector3', function () {
 
 	} );
 
+	describe( '#angleTo()', function () {
 
+		it( 'should return angle to the Vector', function () {
+
+        	const v1 = new Vector3( 1, 0, 0 );
+        	const v2 = new Vector3( 0, 1, 0 );
+
+			expect( v1.angleTo( v1 ) ).to.be.equal( 0 );
+			expect( v1.angleTo( v2 ) ).to.be.equal( Math.PI / 2 );
+
+
+
+		} );
+
+	} );
+	describe( '#length()', function () {
+
+		it( 'should return length of Vector', function () {
+
+			const v1 = new Vector3( 1, 0, 0 );
+
+			expect( v1.length() ).to.be.equal( 1 );
+
+		} );
+
+	} );
+
+	describe( '#squaredLength()', function () {
+
+		it( 'should return squared length of vector', function () {
+
+			const v1 = new Vector3( 1, 0, 0 );
+
+			expect( v1.squaredLength() ).to.be.equal( 1 );
+
+		} );
+
+	} );
+
+	describe( '#manhattanLength()', function () {
+
+		it( 'should return manhattan length of vector', function () {
+
+			const v1 = new Vector3( 1, 1, 1 );
+
+			expect( v1.manhattanLength() ).to.be.equal( 3 );
+
+		} );
+
+	} );
+
+	describe( '#distanceTo()', function () {
+
+		it( 'should return distance to the vector', function () {
+
+			const v0 = new Vector3();
+			const v1 = new Vector3( 1, 1, 1 );
+
+			expect( v0.distanceTo( v1 ) ).to.be.equal( Math.sqrt( 3 ) );
+
+		} );
+
+	} );
+
+	describe( '#squaredDistanceTo()', function () {
+
+		it( 'should return squared distance to the vector', function () {
+
+			const v0 = new Vector3();
+			const v1 = new Vector3( 1, 1, 1 );
+
+			expect( v0.squaredDistanceTo( v1 ) ).to.be.equal( 3 );
+
+		} );
+
+	} );
+
+	describe( '#manhattanDistanceTo()', function () {
+
+		it( 'should return manhattan distance to the vector', function () {
+
+			const v0 = new Vector3();
+			const v1 = new Vector3( 1, 1, 1 );
+
+			expect( v0.manhattanDistanceTo( v1 ) ).to.be.equal( 3 );
+
+		} );
+
+	} );
+
+	describe( '#normalize()', function () {
+
+		it( 'should return normalized vector', function () {
+
+			const v2 = new Vector3( 4, 3, 0 );
+
+			expect( v2.normalize() ).to.deep.equal( { x: 0.8, y: 0.6, z: 0 } );
+
+		} );
+
+	} );
+
+	describe( '#applyMatrix4()', function () {
+
+		it( 'should apply matrix4 to vector', function () {
+
+			const v1 = new Vector3( 1, 1, 1 );
+			const m1 = new YUKA.Matrix4();
+
+			expect( v1.applyMatrix4( m1 ) ).to.deep.equal( { x: 1, y: 1, z: 1 } );
+
+		} );
+
+	} );
+
+	describe( '#applyRotation()', function () {
+
+		it( 'should apply rotation to vector', function () {
+
+			const m1 = new YUKA.Quaternion();
+			const v1 = new Vector3( 1, 1, 1 );
+
+			expect( v1.applyRotation( m1 ) ).to.deep.equal( { x: 1, y: 1, z: 1 } );
+
+		} );
+
+	} );
+
+	describe( '#fromMatrix3Column()', function () {
+
+		it( 'should return vector from matrix column', function () {
+
+			const m1 = new YUKA.Matrix3();
+
+			expect( new Vector3().fromMatrix3Column( m1, 0 ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
+
+		} );
+
+	} );
+
+	describe( '#fromMatrix4Column()', function () {
+
+		it( 'should return vector from matrix column', function () {
+
+			const m1 = new YUKA.Matrix4();
+
+			expect( new Vector3().fromMatrix4Column( m1, 0 ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
+
+		} );
+
+	} );
+
+	describe( '#fromSpherical()', function () {
+
+		it( 'should return vector from sphere', function () {
+
+			const a = new Vector3();
+			const phi = Math.acos( - 0.5 );
+			const theta = Math.sqrt( Math.PI ) * phi;
+			const radius = 10;
+			const expected = new Vector3( - 4.677914006701843, - 5.000000000000002, - 7.288149322420796 );
+
+			expect( a.fromSpherical( radius, phi, theta ) ).to.deep.equal( { x: expected.x, y: expected.y, z: expected.z } );
+
+		} );
+
+	} );
+
+	describe( '#fromArray()', function () {
+
+		it( 'should return vector from array', function () {
+
+			const arr = [ x, y, z ];
+			const v1 = new Vector3();
+
+			expect( v1.fromArray( arr ) ).to.deep.equal( { x: x, y: y, z: z } );
+
+		} );
+
+	} );
+	describe( '#toArray()', function () {
+
+		it( 'should return array with vector values', function () {
+
+			const v0 = new Vector3();
+
+			expect( v0.toArray() ).to.eql( [ 0, 0, 0 ] );
+
+		} );
+
+	} );
+
+	describe( '#equals()', function () {
+
+		it( 'should return true if equal else false', function () {
+
+			const v0 = new Vector3();
+			const v1 = new Vector3( 1, 1, 1 );
+
+			expect( v0.equals( v0 ) ).to.be.equal( true );
+			expect( v0.equals( v1 ) ).to.be.equal( false );
+
+		} );
+
+	} );
 
 } );
 
