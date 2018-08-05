@@ -3022,7 +3022,7 @@
 		constructor( vehicle ) {
 
 			this.vehicle = vehicle;
-			this.behaviors = [];
+			this.behaviors = new Array();
 
 			this._steeringForce = new Vector3(); // the calculated steering force per simulation step
 
@@ -3046,7 +3046,7 @@
 
 		}
 
-		_calculate( delta, result = new Vector3() ) {
+		calculate( delta, result = new Vector3() ) {
 
 			this._calculateByOrder( delta );
 
@@ -3145,7 +3145,7 @@
 
 			// calculate steering force
 
-			this.steering._calculate( delta, steeringForce );
+			this.steering.calculate( delta, steeringForce );
 
 			// acceleration = force / mass
 
@@ -4624,6 +4624,7 @@
 	exports.GameEntity = GameEntity;
 	exports.Logger = Logger;
 	exports.MovingEntity = MovingEntity;
+	exports.Telegram = Telegram;
 	exports.Time = Time;
 	exports.Node = Node;
 	exports.Edge = Edge;
@@ -4636,6 +4637,7 @@
 	exports.AStar = AStar;
 	exports.Path = Path;
 	exports.SteeringBehavior = SteeringBehavior;
+	exports.SteeringManager = SteeringManager;
 	exports.Vehicle = Vehicle;
 	exports.ArriveBehavior = ArriveBehavior;
 	exports.EvadeBehavior = EvadeBehavior;

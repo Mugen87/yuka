@@ -3016,7 +3016,7 @@ class SteeringManager {
 	constructor( vehicle ) {
 
 		this.vehicle = vehicle;
-		this.behaviors = [];
+		this.behaviors = new Array();
 
 		this._steeringForce = new Vector3(); // the calculated steering force per simulation step
 
@@ -3040,7 +3040,7 @@ class SteeringManager {
 
 	}
 
-	_calculate( delta, result = new Vector3() ) {
+	calculate( delta, result = new Vector3() ) {
 
 		this._calculateByOrder( delta );
 
@@ -3139,7 +3139,7 @@ class Vehicle extends MovingEntity {
 
 		// calculate steering force
 
-		this.steering._calculate( delta, steeringForce );
+		this.steering.calculate( delta, steeringForce );
 
 		// acceleration = force / mass
 
@@ -4614,4 +4614,4 @@ class Think extends Goal {
 
 }
 
-export { EntityManager, GameEntity, Logger, MovingEntity, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MovingEntity, Telegram, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };

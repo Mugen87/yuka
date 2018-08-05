@@ -28,7 +28,7 @@ class Vehicle extends MovingEntity {
 
 		// calculate steering force
 
-		this.steering._calculate( delta, steeringForce );
+		this.steering.calculate( delta, steeringForce );
 
 		// acceleration = force / mass
 
