@@ -10,13 +10,13 @@
 
 	class Telegram {
 
-		constructor( sender, receiver, message, data, delay ) {
+		constructor( sender, receiver, message, delay, data ) {
 
 			this.sender = sender;
 			this.receiver = receiver;
 			this.message = message;
-			this.data = data;
 			this.delay = delay;
+			this.data = data;
 
 		}
 
@@ -91,15 +91,13 @@
 
 		dispatch( sender, receiver, message, delay, data ) {
 
-			const telegram = new Telegram( sender, receiver, message, data, 0 );
+			const telegram = new Telegram( sender, receiver, message, delay, data );
 
 			if ( delay <= 0 ) {
 
 				this.deliver( telegram );
 
 			} else {
-
-				telegram.delay = delay;
 
 				this.delayedTelegrams.push( telegram );
 
@@ -4623,6 +4621,7 @@
 	exports.EntityManager = EntityManager;
 	exports.GameEntity = GameEntity;
 	exports.Logger = Logger;
+	exports.MessageDispatcher = MessageDispatcher;
 	exports.MovingEntity = MovingEntity;
 	exports.Telegram = Telegram;
 	exports.Time = Time;

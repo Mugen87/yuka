@@ -29,15 +29,13 @@ class MessageDispatcher {
 
 	dispatch( sender, receiver, message, delay, data ) {
 
-		const telegram = new Telegram( sender, receiver, message, data, 0 );
+		const telegram = new Telegram( sender, receiver, message, delay, data );
 
 		if ( delay <= 0 ) {
 
 			this.deliver( telegram );
 
 		} else {
-
-			telegram.delay = delay;
 
 			this.delayedTelegrams.push( telegram );
 

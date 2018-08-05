@@ -18,8 +18,8 @@ describe( 'Telegram', function () {
 			expect( telegram ).to.have.a.property( 'sender' );
 			expect( telegram ).to.have.a.property( 'receiver' );
 			expect( telegram ).to.have.a.property( 'message' );
-			expect( telegram ).to.have.a.property( 'data' );
 			expect( telegram ).to.have.a.property( 'delay' );
+			expect( telegram ).to.have.a.property( 'data' );
 
 		} );
 

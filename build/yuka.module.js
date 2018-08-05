@@ -4,13 +4,13 @@
 
 class Telegram {
 
-	constructor( sender, receiver, message, data, delay ) {
+	constructor( sender, receiver, message, delay, data ) {
 
 		this.sender = sender;
 		this.receiver = receiver;
 		this.message = message;
-		this.data = data;
 		this.delay = delay;
+		this.data = data;
 
 	}
 
@@ -85,15 +85,13 @@ class MessageDispatcher {
 
 	dispatch( sender, receiver, message, delay, data ) {
 
-		const telegram = new Telegram( sender, receiver, message, data, 0 );
+		const telegram = new Telegram( sender, receiver, message, delay, data );
 
 		if ( delay <= 0 ) {
 
 			this.deliver( telegram );
 
 		} else {
-
-			telegram.delay = delay;
 
 			this.delayedTelegrams.push( telegram );
 
@@ -4614,4 +4612,4 @@ class Think extends Goal {
 
 }
 
-export { EntityManager, GameEntity, Logger, MovingEntity, Telegram, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Telegram, Time, Node, Edge, Graph, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyEuclidManhatten, HeuristicPolicyDijkstra };
