@@ -34,8 +34,8 @@ describe( 'MessageDispatcher', function () {
 
 			messageDispatcher.deliver( telegram );
 
-			expect( entity.messageHandled ).to.equal( true );
-			expect( entity.validTelegram ).to.equal( true );
+			expect( entity.messageHandled ).to.be.true
+			expect( entity.validTelegram ).to.be.true;
 
 		} );
 
@@ -52,8 +52,8 @@ describe( 'MessageDispatcher', function () {
 
 			messageDispatcher.dispatch( sender, receiver, 'test', 0, {} );
 
-			expect( receiver.messageHandled ).to.equal( true );
-			expect( receiver.validTelegram ).to.equal( true );
+			expect( receiver.messageHandled ).to.be.true
+			expect( receiver.validTelegram ).to.be.true;
 
 		} );
 

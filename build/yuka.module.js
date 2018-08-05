@@ -1689,7 +1689,15 @@ class GameEntity {
 
 	sendMessage( receiver, message, delay = 0, data = null ) {
 
-		this.manager.sendMessage( this, receiver, message, delay, data );
+		if ( this.manager !== null ) {
+
+			this.manager.sendMessage( this, receiver, message, delay, data );
+
+		} else {
+
+			Logger.error( 'YUKA.GameEntity: The game entity must be added to a manager in order to send a message.' );
+
+		}
 
 	}
 
