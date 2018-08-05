@@ -203,7 +203,7 @@
 
 		getEntityById( id ) {
 
-			return this.entities.get( id );
+			return this.entities.get( id ) || null;
 
 		}
 
