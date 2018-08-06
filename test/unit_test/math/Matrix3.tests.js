@@ -59,7 +59,7 @@ describe( 'Matrix3', function () {
 			const m1 = new Matrix3().set( 0, 1, 2, 3, 4, 5, 6, 7, 8 );
 			const m2 = new Matrix3().copy( m1 );
 
-			expect( m1 ).to.eql( m2 );
+			expect( m1 ).to.deep.equal( m2 );
 
 		} );
 
