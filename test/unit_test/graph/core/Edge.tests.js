@@ -15,8 +15,8 @@ describe( 'Edge', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const edge = new Edge();
-			expect( edge ).to.have.a.property( 'from' );
-			expect( edge ).to.have.a.property( 'to' );
+			expect( edge ).to.have.a.property( 'from' ).that.is.equal( - 1 );
+			expect( edge ).to.have.a.property( 'to' ).that.is.equal( - 1 );
 			expect( edge ).to.have.a.property( 'cost' ).that.is.equal( 0 );
 
 		} );

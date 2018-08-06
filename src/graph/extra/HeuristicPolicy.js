@@ -29,7 +29,7 @@ class HeuristicPolicyEuclidSquared {
 
 }
 
-class HeuristicPolicyEuclidManhatten {
+class HeuristicPolicyManhatten {
 
 	static calculate( graph, source, target ) {
 
@@ -55,6 +55,6 @@ class HeuristicPolicyDijkstra {
 export {
 	HeuristicPolicyEuclid,
 	HeuristicPolicyEuclidSquared,
-	HeuristicPolicyEuclidManhatten,
+	HeuristicPolicyManhatten,
 	HeuristicPolicyDijkstra
 };

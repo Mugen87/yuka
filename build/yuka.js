@@ -1826,7 +1826,7 @@
 
 	class Node {
 
-		constructor( index ) {
+		constructor( index = - 1 ) {
 
 			this.index = index;
 
@@ -1840,7 +1840,7 @@
 
 	class Edge {
 
-		constructor( from, to, cost = 0 ) {
+		constructor( from = - 1, to = - 1, cost = 0 ) {
 
 			this.from = from;
 			this.to = to;
@@ -2113,11 +2113,121 @@
 
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * binary heap priority queue (see https://github.com/mourner/tinyqueue)
+	 */
+
+	class PriorityQueue {
+
+		constructor( compare = defaultCompare ) {
+
+			this.data = [];
+			this.length = 0;
+			this.compare = compare;
+
+		}
+
+		push( entry ) {
+
+			this.data.push( entry );
+			this.length ++;
+			this._up( this.length - 1 );
+
+		}
+
+		pop() {
+
+			if ( this.length === 0 ) return undefined;
+
+			const top = this.data[ 0 ];
+			this.length --;
+
+			if ( this.length > 0 ) {
+
+				this.data[ 0 ] = this.data[ this.length ];
+				this._down( 0 );
+
+			}
+
+			this.data.pop();
+
+			return top;
+
+		}
+
+		peek() {
+
+			return this.data[ 0 ];
+
+		}
+
+		_up( index ) {
+
+			const data = this.data;
+			const compare = this.compare;
+			const entry = data[ index ];
+
+			while ( index > 0 ) {
+
+				const parent = ( index - 1 ) >> 1;
+				const current = data[ parent ];
+				if ( compare( entry, current ) >= 0 ) break;
+				data[ index ] = current;
+				index = parent;
+
+			}
+
+			data[ index ] = entry;
+
+		}
+
+		_down( index ) {
+
+			const data = this.data;
+			const compare = this.compare;
+			const entry = data[ index ];
+			const halfLength = this.length >> 1;
+
+			while ( index < halfLength ) {
+
+				let left = ( index << 1 ) + 1;
+				let right = left + 1;
+				let best = data[ left ];
+
+				if ( right < this.length && compare( data[ right ], best ) < 0 ) {
+
+					left = right;
+					best = data[ right ];
+
+				}
+
+				if ( compare( best, entry ) >= 0 ) break;
+
+				data[ index ] = best;
+				index = left;
+
+			}
+
+
+			data[ index ] = entry;
+
+		}
+
+	}
+
+	function defaultCompare( a, b ) {
+
+		return ( a < b ) ? - 1 : ( a > b ) ? 1 : 0;
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
 	class NavNode extends Node {
 
-		constructor( index, position, userData = {} ) {
+		constructor( index = - 1, position = new Vector3(), userData = {} ) {
 
 			super( index );
 
@@ -2134,7 +2244,7 @@
 
 	class NavEdge extends Edge {
 
-		constructor( from, to, cost ) {
+		constructor( from = - 1, to = - 1, cost = 0 ) {
 
 			super( from, to, cost );
 
@@ -2438,116 +2548,6 @@
 
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * binary heap priority queue (see https://github.com/mourner/tinyqueue)
-	 */
-
-	class PriorityQueue {
-
-		constructor( compare = defaultCompare ) {
-
-			this.data = [];
-			this.length = 0;
-			this.compare = compare;
-
-		}
-
-		push( entry ) {
-
-			this.data.push( entry );
-			this.length ++;
-			this._up( this.length - 1 );
-
-		}
-
-		pop() {
-
-			if ( this.length === 0 ) return undefined;
-
-			const top = this.data[ 0 ];
-			this.length --;
-
-			if ( this.length > 0 ) {
-
-				this.data[ 0 ] = this.data[ this.length ];
-				this._down( 0 );
-
-			}
-
-			this.data.pop();
-
-			return top;
-
-		}
-
-		peek() {
-
-			return this.data[ 0 ];
-
-		}
-
-		_up( index ) {
-
-			const data = this.data;
-			const compare = this.compare;
-			const entry = data[ index ];
-
-			while ( index > 0 ) {
-
-				const parent = ( index - 1 ) >> 1;
-				const current = data[ parent ];
-				if ( compare( entry, current ) >= 0 ) break;
-				data[ index ] = current;
-				index = parent;
-
-			}
-
-			data[ index ] = entry;
-
-		}
-
-		_down( index ) {
-
-			const data = this.data;
-			const compare = this.compare;
-			const entry = data[ index ];
-			const halfLength = this.length >> 1;
-
-			while ( index < halfLength ) {
-
-				let left = ( index << 1 ) + 1;
-				let right = left + 1;
-				let best = data[ left ];
-
-				if ( right < this.length && compare( data[ right ], best ) < 0 ) {
-
-					left = right;
-					best = data[ right ];
-
-				}
-
-				if ( compare( best, entry ) >= 0 ) break;
-
-				data[ index ] = best;
-				index = left;
-
-			}
-
-
-			data[ index ] = entry;
-
-		}
-
-	}
-
-	function defaultCompare( a, b ) {
-
-		return ( a < b ) ? - 1 : ( a > b ) ? 1 : 0;
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
 	class Dijkstra {
@@ -2733,7 +2733,7 @@
 
 	}
 
-	class HeuristicPolicyEuclidManhatten {
+	class HeuristicPolicyManhatten {
 
 		static calculate( graph, source, target ) {
 
@@ -4638,6 +4638,7 @@
 	exports.Node = Node;
 	exports.Edge = Edge;
 	exports.Graph = Graph;
+	exports.PriorityQueue = PriorityQueue;
 	exports.NavNode = NavNode;
 	exports.NavEdge = NavEdge;
 	exports.DFS = DFS;
@@ -4677,7 +4678,7 @@
 	exports.Vector3 = Vector3;
 	exports.HeuristicPolicyEuclid = HeuristicPolicyEuclid;
 	exports.HeuristicPolicyEuclidSquared = HeuristicPolicyEuclidSquared;
-	exports.HeuristicPolicyEuclidManhatten = HeuristicPolicyEuclidManhatten;
+	exports.HeuristicPolicyManhatten = HeuristicPolicyManhatten;
 	exports.HeuristicPolicyDijkstra = HeuristicPolicyDijkstra;
 
 	Object.defineProperty(exports, '__esModule', { value: true });

@@ -8,6 +8,7 @@ export { Time } from './core/Time.js';
 export { Node } from './graph/core/Node.js';
 export { Edge } from './graph/core/Edge.js';
 export { Graph } from './graph/core/Graph.js';
+export { PriorityQueue } from './graph/extra/PriorityQueue.js';
 export { NavNode } from './graph/navigation/NavNode.js';
 export { NavEdge } from './graph/navigation/NavEdge.js';
 export { DFS } from './graph/search/DFS.js';

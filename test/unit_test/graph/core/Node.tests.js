@@ -15,7 +15,7 @@ describe( 'Node', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const node = new Node();
-			expect( node ).to.have.a.property( 'index' );
+			expect( node ).to.have.a.property( 'index' ).that.is.equal( - 1 );
 
 		} );
 

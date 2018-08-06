@@ -4,7 +4,7 @@
 
 class Node {
 
-	constructor( index ) {
+	constructor( index = - 1 ) {
 
 		this.index = index;
 

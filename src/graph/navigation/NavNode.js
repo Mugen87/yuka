@@ -3,10 +3,11 @@
  */
 
 import { Node } from '../core/Node.js';
+import { Vector3 } from '../../math/Vector3.js';
 
 class NavNode extends Node {
 
-	constructor( index, position, userData = {} ) {
+	constructor( index = - 1, position = new Vector3(), userData = {} ) {
 
 		super( index );
 

@@ -4,7 +4,7 @@
 
 class Edge {
 
-	constructor( from, to, cost = 0 ) {
+	constructor( from = - 1, to = - 1, cost = 0 ) {
 
 		this.from = from;
 		this.to = to;

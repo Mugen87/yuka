@@ -16,9 +16,9 @@ describe( 'NavNode', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const node = new NavNode();
-			expect( node ).to.have.a.property( 'index' );
-			expect( node ).to.have.a.property( 'position' );
-			expect( node ).to.have.a.property( 'userData' );
+			expect( node ).to.have.a.property( 'index' ).that.is.equal( - 1 );
+			expect( node ).to.have.a.property( 'position' ).that.is.an.instanceof( Vector3 );
+			expect( node ).to.have.a.property( 'userData' ).that.is.a( 'object' );
 
 		} );
 

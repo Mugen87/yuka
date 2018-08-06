@@ -6,7 +6,7 @@ import { Edge } from '../core/Edge.js';
 
 class NavEdge extends Edge {
 
-	constructor( from, to, cost ) {
+	constructor( from = - 1, to = - 1, cost = 0 ) {
 
 		super( from, to, cost );
 
