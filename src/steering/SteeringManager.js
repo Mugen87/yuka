@@ -35,7 +35,7 @@ class SteeringManager {
 
 	}
 
-	calculate( delta, result = new Vector3() ) {
+	calculate( delta, result ) {
 
 		this._calculateByOrder( delta );
 

@@ -3052,7 +3052,7 @@
 
 		}
 
-		calculate( delta, result = new Vector3() ) {
+		calculate( delta, result ) {
 
 			this._calculateByOrder( delta );
 
@@ -3203,7 +3203,7 @@
 
 	class ArriveBehavior extends SteeringBehavior {
 
-		constructor( target, deceleration = 3 ) {
+		constructor( target = new Vector3(), deceleration = 3 ) {
 
 			super();
 
@@ -3253,7 +3253,7 @@
 
 	class FleeBehavior extends SteeringBehavior {
 
-		constructor( target, panicDistance = 10 ) {
+		constructor( target = new Vector3(), panicDistance = 10 ) {
 
 			super();
 
@@ -3270,7 +3270,7 @@
 
 			const distanceToTargetSq = vehicle.position.squaredDistanceTo( target );
 
-			if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
+			if ( distanceToTargetSq <= ( this.panicDistance * this.panicDistance ) ) {
 
 				// from here, the only difference compared to seek is that the desired
 				// velocity is calculated using a vector pointing in the opposite direction
@@ -3349,7 +3349,7 @@
 
 	class SeekBehavior extends SteeringBehavior {
 
-		constructor( target ) {
+		constructor( target = new Vector3() ) {
 
 			super();
 

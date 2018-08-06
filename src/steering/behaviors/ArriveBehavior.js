@@ -10,7 +10,7 @@ const displacement = new Vector3();
 
 class ArriveBehavior extends SteeringBehavior {
 
-	constructor( target, deceleration = 3 ) {
+	constructor( target = new Vector3(), deceleration = 3 ) {
 
 		super();
 

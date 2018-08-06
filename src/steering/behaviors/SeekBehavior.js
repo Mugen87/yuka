@@ -9,7 +9,7 @@ const desiredVelocity = new Vector3();
 
 class SeekBehavior extends SteeringBehavior {
 
-	constructor( target ) {
+	constructor( target = new Vector3() ) {
 
 		super();
 

@@ -9,6 +9,9 @@ const YUKA = require( '../../../build/yuka.js' );
 const SteeringManager = YUKA.SteeringManager;
 const SteeringBehavior = YUKA.SteeringBehavior;
 const Vector3 = YUKA.Vector3;
+const Vehicle = YUKA.Vehicle;
+
+let count = 0;
 
 describe( 'SteeringManager', function () {
 
@@ -33,7 +36,7 @@ describe( 'SteeringManager', function () {
 			const steeringBehavior = new SteeringBehavior();
 
 			steeringManager.add( steeringBehavior );
-			expect( steeringManager.behaviors[ 0 ] ).is.equal( steeringBehavior );
+			expect( steeringManager.behaviors[ 0 ] ).to.equal( steeringBehavior );
 
 		} );
 
@@ -48,10 +51,162 @@ describe( 'SteeringManager', function () {
 
 			steeringManager.add( steeringBehavior );
 			steeringManager.remove( steeringBehavior );
-			expect( steeringManager.behaviors ).is.empty;
+			expect( steeringManager.behaviors ).to.be.empty;
+
+		} );
+
+	} );
+
+	describe( '#calculate()', function () {
+
+		it( 'should calculate the steering force for the internal vehicle', function () {
+
+			const vehicle = new Vehicle();
+			const steeringManager = new SteeringManager( vehicle );
+
+			const steeringBehavior1 = new CustomSteeringBehavior1();
+			steeringManager.add( steeringBehavior1 );
+
+			const steeringBehavior2 = new CustomSteeringBehavior2();
+			steeringManager.add( steeringBehavior2 );
+
+			const force = new Vector3();
+			steeringManager.calculate( 1, force );
+
+			expect( force ).to.deep.equal( { x: 0, y: 0, z: 60 } );
+
+		} );
+
+		it( 'should use the time delta value for force calculation', function () {
+
+			const vehicle = new Vehicle();
+			const steeringManager = new SteeringManager( vehicle );
+
+			const steeringBehavior1 = new CustomSteeringBehavior1();
+			steeringManager.add( steeringBehavior1 );
+
+			const steeringBehavior2 = new CustomSteeringBehavior2();
+			steeringManager.add( steeringBehavior2 );
+
+			steeringManager._calculateByOrder( 0.5 );
+
+			expect( steeringManager._steeringForce ).to.deep.equal( { x: 0, y: 0, z: 30 } );
+
+		} );
+
+	} );
+
+	describe( '#_accumulate()', function () {
+
+		it( 'should add a force to the main steering force vector', function () {
+
+			const vehicle = new Vehicle();
+			const steeringManager = new SteeringManager( vehicle );
+
+			const force = new Vector3( 0, 0, 50 );
+
+			expect( steeringManager._accumulate( force ) ).to.be.true;
+			expect( steeringManager._steeringForce ).to.deep.equal( { x: 0, y: 0, z: 50 } );
+
+		} );
+
+		it( 'should add a force to the main steering force vector without exceeding the maximum force of the vehicle ', function () {
+
+			const vehicle = new Vehicle();
+			const steeringManager = new SteeringManager( vehicle );
+
+			const force = new Vector3( 0, 0, 200 );
+
+			expect( steeringManager._accumulate( force ) ).to.be.true;
+			expect( steeringManager._steeringForce ).to.deep.equal( { x: 0, y: 0, z: 100 } );
+
+			expect( steeringManager._accumulate( force ) ).to.be.false;
+			expect( steeringManager._steeringForce ).to.deep.equal( { x: 0, y: 0, z: 100 } );
+
+		} );
+
+	} );
+
+	describe( '#_calculateByOrder()', function () {
+
+		it( 'should process the internal steering behaviors according to their internal order and accumulate their force', function () {
+
+			const vehicle = new Vehicle();
+			const steeringManager = new SteeringManager( vehicle );
+
+			const steeringBehavior1 = new CustomSteeringBehavior1();
+			steeringManager.add( steeringBehavior1 );
+
+			const steeringBehavior2 = new CustomSteeringBehavior2();
+			steeringManager.add( steeringBehavior2 );
+
+			count = 0; // module scope variable
+			steeringManager._calculateByOrder( 1 );
+
+			expect( steeringManager._steeringForce ).to.deep.equal( { x: 0, y: 0, z: 60 } );
+			expect( steeringBehavior1.order ).to.equal( 0 );
+			expect( steeringBehavior2.order ).to.equal( 1 );
+
+		} );
+
+		it( 'should use the weight property of a steering behavior for force calculation', function () {
+
+			const vehicle = new Vehicle();
+			const steeringManager = new SteeringManager( vehicle );
+
+			const steeringBehavior1 = new CustomSteeringBehavior1();
+			steeringBehavior1.weigth = 2; // this will double the steering force for this behavior
+			steeringManager.add( steeringBehavior1 );
+
+			const steeringBehavior2 = new CustomSteeringBehavior2();
+			steeringManager.add( steeringBehavior2 );
+
+			steeringManager._calculateByOrder( 1 );
+
+			expect( steeringManager._steeringForce ).to.deep.equal( { x: 0, y: 0, z: 70 } );
 
 		} );
 
 	} );
 
 } );
+
+//
+
+class CustomSteeringBehavior1 extends SteeringBehavior {
+
+	constructor() {
+
+		super();
+
+		this.order = 0;
+
+	}
+
+	calculate( vehicle, force, delta ) {
+
+		this.order = count ++;
+		force.set( 0, 0, 10 ).multiplyScalar( delta );
+
+	}
+
+}
+
+class CustomSteeringBehavior2 extends SteeringBehavior {
+
+	constructor() {
+
+		super();
+
+		this.order = 0;
+
+	}
+
+	calculate( vehicle, force, delta ) {
+
+		this.order = count ++;
+		force.set( 0, 0, 50 ).multiplyScalar( delta );
+
+	}
+
+}

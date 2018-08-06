@@ -9,7 +9,7 @@ const desiredVelocity = new Vector3();
 
 class FleeBehavior extends SteeringBehavior {
 
-	constructor( target, panicDistance = 10 ) {
+	constructor( target = new Vector3(), panicDistance = 10 ) {
 
 		super();
 
@@ -26,7 +26,7 @@ class FleeBehavior extends SteeringBehavior {
 
 		const distanceToTargetSq = vehicle.position.squaredDistanceTo( target );
 
-		if ( distanceToTargetSq < ( this.panicDistance * this.panicDistance ) ) {
+		if ( distanceToTargetSq <= ( this.panicDistance * this.panicDistance ) ) {
 
 			// from here, the only difference compared to seek is that the desired
 			// velocity is calculated using a vector pointing in the opposite direction
