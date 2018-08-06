@@ -3299,11 +3299,12 @@ const predcitedPosition = new Vector3();
 
 class EvadeBehavior extends SteeringBehavior {
 
-	constructor( pursuer, predictionFactor = 1 ) {
+	constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
 
 		super();
 
 		this.pursuer = pursuer;
+		this.panicDistance = panicDistance;
 		this.predictionFactor = predictionFactor;
 
 		// internal behaviors
@@ -3329,6 +3330,7 @@ class EvadeBehavior extends SteeringBehavior {
 		// now flee away from predicted future position of the pursuer
 
 		this._flee.target = predcitedPosition;
+		this._flee.panicDistance = this.panicDistance;
 		this._flee.calculate( vehicle, force );
 
 	}
@@ -3379,7 +3381,7 @@ class SeekBehavior extends SteeringBehavior {
 
 class FollowPathBehavior extends SteeringBehavior {
 
-	constructor( path, nextWaypointDistance = 1 ) {
+	constructor( path = new Path(), nextWaypointDistance = 1 ) {
 
 		super();
 
@@ -3388,8 +3390,8 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		// internal behaviors
 
-		this._seek = new SeekBehavior();
 		this._arrive = new ArriveBehavior();
+		this._seek = new SeekBehavior();
 
 	}
 
@@ -3438,7 +3440,7 @@ const predcitedPosition2 = new Vector3();
 
 class InterposeBehavior extends SteeringBehavior {
 
-	constructor( entity1, entity2, deceleration = 3 ) {
+	constructor( entity1 = null, entity2 = null, deceleration = 3 ) {
 
 		super();
 
@@ -3593,7 +3595,7 @@ const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
-	constructor( entityManager ) {
+	constructor( entityManager = null ) {
 
 		super();
 
@@ -3732,7 +3734,7 @@ const predcitedPosition$1 = new Vector3();
 
 class PursuitBehavior extends SteeringBehavior {
 
-	constructor( evader, predictionFactor = 1 ) {
+	constructor( evader = null, predictionFactor = 1 ) {
 
 		super();
 

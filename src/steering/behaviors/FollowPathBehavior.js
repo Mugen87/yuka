@@ -3,12 +3,13 @@
  */
 
 import { SteeringBehavior } from '../SteeringBehavior.js';
+import { Path } from '../Path.js';
 import { SeekBehavior } from './SeekBehavior.js';
 import { ArriveBehavior } from './ArriveBehavior.js';
 
 class FollowPathBehavior extends SteeringBehavior {
 
-	constructor( path, nextWaypointDistance = 1 ) {
+	constructor( path = new Path(), nextWaypointDistance = 1 ) {
 
 		super();
 
@@ -17,8 +18,8 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		// internal behaviors
 
-		this._seek = new SeekBehavior();
 		this._arrive = new ArriveBehavior();
+		this._seek = new SeekBehavior();
 
 	}
 

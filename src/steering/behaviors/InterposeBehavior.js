@@ -13,7 +13,7 @@ const predcitedPosition2 = new Vector3();
 
 class InterposeBehavior extends SteeringBehavior {
 
-	constructor( entity1, entity2, deceleration = 3 ) {
+	constructor( entity1 = null, entity2 = null, deceleration = 3 ) {
 
 		super();
 

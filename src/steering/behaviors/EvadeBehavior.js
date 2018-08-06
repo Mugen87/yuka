@@ -12,11 +12,12 @@ const predcitedPosition = new Vector3();
 
 class EvadeBehavior extends SteeringBehavior {
 
-	constructor( pursuer, predictionFactor = 1 ) {
+	constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
 
 		super();
 
 		this.pursuer = pursuer;
+		this.panicDistance = panicDistance;
 		this.predictionFactor = predictionFactor;
 
 		// internal behaviors
@@ -42,6 +43,7 @@ class EvadeBehavior extends SteeringBehavior {
 		// now flee away from predicted future position of the pursuer
 
 		this._flee.target = predcitedPosition;
+		this._flee.panicDistance = this.panicDistance;
 		this._flee.calculate( vehicle, force );
 
 	}

@@ -3305,11 +3305,12 @@
 
 	class EvadeBehavior extends SteeringBehavior {
 
-		constructor( pursuer, predictionFactor = 1 ) {
+		constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
 
 			super();
 
 			this.pursuer = pursuer;
+			this.panicDistance = panicDistance;
 			this.predictionFactor = predictionFactor;
 
 			// internal behaviors
@@ -3335,6 +3336,7 @@
 			// now flee away from predicted future position of the pursuer
 
 			this._flee.target = predcitedPosition;
+			this._flee.panicDistance = this.panicDistance;
 			this._flee.calculate( vehicle, force );
 
 		}
@@ -3385,7 +3387,7 @@
 
 	class FollowPathBehavior extends SteeringBehavior {
 
-		constructor( path, nextWaypointDistance = 1 ) {
+		constructor( path = new Path(), nextWaypointDistance = 1 ) {
 
 			super();
 
@@ -3394,8 +3396,8 @@
 
 			// internal behaviors
 
-			this._seek = new SeekBehavior();
 			this._arrive = new ArriveBehavior();
+			this._seek = new SeekBehavior();
 
 		}
 
@@ -3444,7 +3446,7 @@
 
 	class InterposeBehavior extends SteeringBehavior {
 
-		constructor( entity1, entity2, deceleration = 3 ) {
+		constructor( entity1 = null, entity2 = null, deceleration = 3 ) {
 
 			super();
 
@@ -3599,7 +3601,7 @@
 
 	class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
-		constructor( entityManager ) {
+		constructor( entityManager = null ) {
 
 			super();
 
@@ -3738,7 +3740,7 @@
 
 	class PursuitBehavior extends SteeringBehavior {
 
-		constructor( evader, predictionFactor = 1 ) {
+		constructor( evader = null, predictionFactor = 1 ) {
 
 			super();
 

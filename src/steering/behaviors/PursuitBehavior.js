@@ -14,7 +14,7 @@ const predcitedPosition = new Vector3();
 
 class PursuitBehavior extends SteeringBehavior {
 
-	constructor( evader, predictionFactor = 1 ) {
+	constructor( evader = null, predictionFactor = 1 ) {
 
 		super();
 

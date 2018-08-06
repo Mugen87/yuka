@@ -19,7 +19,7 @@ const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
-	constructor( entityManager ) {
+	constructor( entityManager = null ) {
 
 		super();
 
