@@ -33,7 +33,7 @@ describe( 'Matrix3', function () {
 			const m1 = new Matrix3();
 			const m2 = new Matrix3();
 
-			expect( m1.equals( m2 ) ).to.be.equal( true );
+			expect( m1.equals( m2 ) ).to.be.true;
 
 		} );
 
@@ -46,7 +46,7 @@ describe( 'Matrix3', function () {
 			const m1 = new Matrix3();
 			m1.set( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
-			expect( m1 ).to.deep.equal( { elements: [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ] } );
+			expect( m1.elements ).to.deep.equal( [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
 
 		} );
 
@@ -84,10 +84,10 @@ describe( 'Matrix3', function () {
 
 			const m1 = new Matrix3().set( 2, 3, 5, 7, 11, 13, 17, 19, 23 );
 			const m2 = new Matrix3().set( 29, 31, 37, 41, 43, 47, 53, 59, 61 );
-			const r1 = [ 446, 1343, 2491, 486, 1457, 2701, 520, 1569, 2925 ];
 
 			m1.multiply( m2 );
-			expect( m1 ).to.deep.equal( { elements: r1 } );
+
+			expect( m1.elements ).to.deep.equal( [ 446, 1343, 2491, 486, 1457, 2701, 520, 1569, 2925 ] );
 
 		} );
 
@@ -99,11 +99,10 @@ describe( 'Matrix3', function () {
 
 			const m1 = new Matrix3().set( 2, 3, 5, 7, 11, 13, 17, 19, 23 );
 			const m2 = new Matrix3().set( 29, 31, 37, 41, 43, 47, 53, 59, 61 );
-			const r1 = [ 904, 1182, 1556, 1131, 1489, 1967, 1399, 1845, 2435 ];
 
 			m1.premultiply( m2 );
 
-			expect( m1 ).to.deep.equal( { elements: r1 } );
+			expect( m1.elements ).to.deep.equal( [ 904, 1182, 1556, 1131, 1489, 1967, 1399, 1845, 2435 ] );
 
 		} );
 
@@ -115,10 +114,9 @@ describe( 'Matrix3', function () {
 
 			const m1 = new Matrix3().set( 2, 3, 5, 7, 11, 13, 17, 19, 23 );
 			const m2 = new Matrix3().set( 29, 31, 37, 41, 43, 47, 53, 59, 61 );
-			const r1 = [ 446, 1343, 2491, 486, 1457, 2701, 520, 1569, 2925 ];
 			const m3 = new Matrix3().multiplyMatrices( m1, m2 );
 
-			expect( m3 ).to.deep.equal( { elements: r1 } );
+			expect( m3.elements ).to.deep.equal( [ 446, 1343, 2491, 486, 1457, 2701, 520, 1569, 2925 ] );
 
 		} );
 
@@ -128,9 +126,9 @@ describe( 'Matrix3', function () {
 
 		it( 'should return matrix multiplied by scalar', function () {
 
-			const m1 = new Matrix3().multiplyScalar( 1 );
+			const m1 = new Matrix3().multiplyScalar( 2 );
 
-			expect( m1 ).to.deep.equal( new Matrix3() );
+			expect( m1.elements ).to.deep.equal( [ 2, 0, 0, 0, 2, 0, 0, 0, 2 ] );
 
 		} );
 
@@ -159,12 +157,12 @@ describe( 'Matrix3', function () {
 
 		it( 'should build matrix of three given vectors', function () {
 
-			const v0 = new Vector3( 1, 0, 0 );
-			const v1 = new Vector3( 0, 0, 0 );
-			const v2 = new Vector3( 0, 0, 0 );
+			const v0 = new Vector3( - 1, 0, 0 );
+			const v1 = new Vector3( 0, 1, 0 );
+			const v2 = new Vector3( 0, 0, - 1 );
 			const m1 = new Matrix3().makeBasis( v0, v1, v2 );
 
-			expect( m1 ).to.deep.equal( { elements: [ 1, 0, 0, 0, 0, 0, 0, 0, 0 ] } );
+			expect( m1.elements ).to.deep.equal( [ - 1, 0, 0, 0, 1, 0, 0, 0, - 1 ] );
 
 		} );
 
@@ -172,14 +170,39 @@ describe( 'Matrix3', function () {
 
 	describe( '#lookAt()', function () {
 
-		it( 'spec name', function () {
+		it( 'should create an orthonormal basis that rotates an entity towards the given target direction', function () {
 
 			const m1 = new Matrix3();
-			const v0 = new Vector3( 1, 2, 3 );
-			const v1 = new Vector3( 3, 2, 1 );
-			const v2 = new Vector3( 0, 0, 1 );
+			const v0 = new Vector3( 0, 0, 1 );
+			const v1 = new Vector3( 0, 0, - 1 );
+			const v2 = new Vector3( 0, 1, 0 );
+
 			m1.lookAt( v0, v1, v2 );
-			expect( m1 ).to.deep.equal( { elements: [ 2.717157287525381, 2, 1.8485281374238571, 6.141421356237309,	4,	1.5757359312880714,	8.49290744716289, 6.8451542547285165, 2.8309691490542965 ] } );
+
+			expect( m1.elements ).to.deep.equal( [ - 1, 0, 0, 0, 1, 0, 0, 0, - 1 ] );
+
+		} );
+
+		it( 'should produce a valid result when target rotation is collinear to worldUp', function () {
+
+			const m1 = new Matrix3();
+			const v0 = new Vector3( 0, 0, 1 );
+			const v1 = new Vector3( 0, 1, 0 );
+			const v2 = new Vector3( 0, 1, 0 );
+
+			m1.lookAt( v0, v1, v2 );
+
+			const e = m1.elements;
+
+			expect( e[ 0 ] ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+			expect( e[ 1 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 2 ] ).to.closeTo( - 0.7071067811865475, Number.EPSILON );
+			expect( e[ 3 ] ).to.closeTo( - 0.7071067811865476, Number.EPSILON );
+			expect( e[ 4 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 5 ] ).to.closeTo( - 0.7071067811865476, Number.EPSILON );
+			expect( e[ 6 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 7 ] ).to.closeTo( 1, Number.EPSILON );
+			expect( e[ 8 ] ).to.closeTo( 0, Number.EPSILON );
 
 		} );
 
@@ -187,12 +210,13 @@ describe( 'Matrix3', function () {
 
 	describe( '#transpose()', function () {
 
-		it( 'should transpose matrix', function () {
+		it( 'should transpose the matrix', function () {
 
 			const m1 = new Matrix3().set( 1, 2, 3, 4, 5, 6, 7, 8, 9 );
 			m1.transpose();
+
 			//sequence of set and elements is different
-			expect( m1 ).to.deep.equal( { elements: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] } );
+			expect( m1.elements ).to.deep.equal( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
 
 		} );
 
@@ -200,12 +224,12 @@ describe( 'Matrix3', function () {
 
 	describe( '#fromQuaternion()', function () {
 
-		it( 'spec name', function () {
+		it( 'should create a matrix from a given quaternion', function () {
 
-			const q1 = new Quaternion( 1, 2, 3, 4 );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const m1 = new Matrix3().fromQuaternion( q1 );
 
-			expect( m1 ).to.deep.equal( { elements: [ - 25, 28, - 10, - 20, - 19, 20, 22, 4, - 9 ] } );
+			expect( m1.elements ).to.deep.equal( [ - 1, 0, 0, 0, 1, 0, 0, 0, - 1 ] );
 
 		} );
 
@@ -217,7 +241,7 @@ describe( 'Matrix3', function () {
 
 			const m1 = new Matrix3().fromArray( [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
 
-			expect( m1 ).to.deep.equal( { elements: [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ] } );
+			expect( m1.elements ).to.deep.equal( [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
 
 		} );
 

@@ -459,8 +459,6 @@ describe( 'Vector3', function () {
 			m1.setPosition( new Vector3( 2, 5, 6 ) );
 			m1.scale( new Vector3( 2, 2, 2 ) );
 
-			console.log( m1.elements );
-
 			expect( v1.applyMatrix4( m1 ) ).to.deep.equal( { x: 4, y: 7, z: 8 } );
 
 		} );
@@ -471,7 +469,7 @@ describe( 'Vector3', function () {
 
 		it( 'should apply rotation to vector', function () {
 
-			const m1 = new YUKA.Quaternion( 0, 1, 0, 0 );
+			const m1 = new Quaternion( 0, 1, 0, 0 );
 			const v1 = new Vector3( 1, 1, 1 );
 
 			expect( v1.applyRotation( m1 ) ).to.deep.equal( { x: - 1, y: 1, z: - 1 } );
@@ -551,8 +549,8 @@ describe( 'Vector3', function () {
 			const v0 = new Vector3();
 			const v1 = new Vector3( 1, 1, 1 );
 
-			expect( v0.equals( v0 ) ).to.be.equal( true );
-			expect( v0.equals( v1 ) ).to.be.equal( false );
+			expect( v0.equals( v0 ) ).to.be.true;
+			expect( v0.equals( v1 ) ).to.be.false;
 
 		} );
 

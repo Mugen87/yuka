@@ -31,7 +31,7 @@ describe( 'Matrix4', function () {
 			const m1 = new Matrix4();
 			const m2 = new Matrix4();
 
-			expect( m1.equals( m2 ) ).to.be.equal( true );
+			expect( m1.equals( m2 ) ).to.be.true;
 
 		} );
 
@@ -44,7 +44,7 @@ describe( 'Matrix4', function () {
 			const m1 = new Matrix4();
 			m1.set( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
-			expect( m1 ).to.deep.equal( { elements: [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] } );
+			expect( m1.elements ).to.deep.equal( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
 
 		} );
 
@@ -101,7 +101,7 @@ describe( 'Matrix4', function () {
 
 			m1.premultiply( m2 );
 
-			expect( m1 ).to.deep.equal( { elements: r1 } );
+			expect( m1.elements ).to.deep.equal( r1 );
 
 		} );
 
@@ -162,7 +162,7 @@ describe( 'Matrix4', function () {
 			const v2 = new Vector3( 0, 0, 0 );
 			const m1 = new Matrix4().makeBasis( v0, v1, v2 );
 
-			expect( m1 ).to.deep.equal( { elements: [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ] } );
+			expect( m1.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ] );
 
 		} );
 
@@ -175,8 +175,9 @@ describe( 'Matrix4', function () {
 
 			const m1 = new Matrix4().set( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 );
 			m1.transpose();
+
 			//sequence of set and elements is different
-			expect( m1 ).to.deep.equal( { elements: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ] } );
+			expect( m1.elements ).to.deep.equal( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ] );
 
 		} );
 
@@ -202,12 +203,12 @@ describe( 'Matrix4', function () {
 
 	describe( '#fromQuaternion()', function () {
 
-		it( 'spec name', function () {
+		it( 'should create a matrix from a given quaternion', function () {
 
-			const q1 = new Quaternion( 1, 2, 3, 4 );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const m1 = new Matrix4().fromQuaternion( q1 );
 
-			expect( m1 ).to.deep.equal( { elements: [ - 25, 28, - 10, 0, - 20, - 19, 20, 0, 22, 4, - 9, 0, 0, 0, 0, 1 ] } );
+			expect( m1.elements ).to.deep.equal( [ - 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, - 1, 0, 0, 0, 0, 1 ] );
 
 		} );
 
@@ -219,7 +220,7 @@ describe( 'Matrix4', function () {
 
 			const m1 = new Matrix4().fromArray( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
 
-			expect( m1 ).to.deep.equal( { elements: [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] } );
+			expect( m1.elements ).to.deep.equal( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
 
 		} );
 
@@ -238,4 +239,3 @@ describe( 'Matrix4', function () {
 	} );
 
 } );
-
