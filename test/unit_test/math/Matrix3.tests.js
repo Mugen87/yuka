@@ -72,7 +72,7 @@ describe( 'Matrix3', function () {
 			const m1 = new Matrix3().set( 0, 1, 2, 3, 4, 5, 6, 7, 8 );
 			const m2 = m1.clone();
 
-			expect( m1 ).to.eql( m2 );
+			expect( m1 ).to.deep.equal( m2 );
 
 		} );
 
@@ -82,10 +82,12 @@ describe( 'Matrix3', function () {
 
 		it( 'should return matrix multiplied with other matrix', function () {
 
-			const m1 = new Matrix3();
-			const m2 = new Matrix3();
+			const m1 = new Matrix3().set( 2, 3, 5, 7, 11, 13, 17, 19, 23 );
+			const m2 = new Matrix3().set( 29, 31, 37, 41, 43, 47, 53, 59, 61 );
+			const r1 = [ 446, 1343, 2491, 486, 1457, 2701, 520, 1569, 2925 ];
+
 			m1.multiply( m2 );
-			expect( m1 ).to.eql( m2 );
+			expect( m1 ).to.deep.equal( { elements: r1 } );
 
 		} );
 
@@ -95,10 +97,13 @@ describe( 'Matrix3', function () {
 
 		it( 'should return other matrix multiplied with matrix', function () {
 
-			const m1 = new Matrix3();
-			const m2 = new Matrix3();
+			const m1 = new Matrix3().set( 2, 3, 5, 7, 11, 13, 17, 19, 23 );
+			const m2 = new Matrix3().set( 29, 31, 37, 41, 43, 47, 53, 59, 61 );
+			const r1 = [ 904, 1182, 1556, 1131, 1489, 1967, 1399, 1845, 2435 ];
+
 			m1.premultiply( m2 );
-			expect( m1 ).to.eql( m2 );
+
+			expect( m1 ).to.deep.equal( { elements: r1 } );
 
 		} );
 
@@ -108,10 +113,12 @@ describe( 'Matrix3', function () {
 
 		it( 'should return multiplied matrix of two matrices', function () {
 
-			const m1 = new Matrix3();
-			const m2 = new Matrix3();
+			const m1 = new Matrix3().set( 2, 3, 5, 7, 11, 13, 17, 19, 23 );
+			const m2 = new Matrix3().set( 29, 31, 37, 41, 43, 47, 53, 59, 61 );
+			const r1 = [ 446, 1343, 2491, 486, 1457, 2701, 520, 1569, 2925 ];
 			const m3 = new Matrix3().multiplyMatrices( m1, m2 );
-			expect( m3 ).to.eql( m1 );
+
+			expect( m3 ).to.deep.equal( { elements: r1 } );
 
 		} );
 
@@ -123,7 +130,7 @@ describe( 'Matrix3', function () {
 
 			const m1 = new Matrix3().multiplyScalar( 1 );
 
-			expect( m1 ).to.eql( new Matrix3() );
+			expect( m1 ).to.deep.equal( new Matrix3() );
 
 		} );
 
@@ -168,11 +175,11 @@ describe( 'Matrix3', function () {
 		it( 'spec name', function () {
 
 			const m1 = new Matrix3();
-			const v0 = new Vector3();
-			const v1 = new Vector3();
-			const v2 = new Vector3();
+			const v0 = new Vector3( 1, 2, 3 );
+			const v1 = new Vector3( 3, 2, 1 );
+			const v2 = new Vector3( 0, 0, 1 );
 			m1.lookAt( v0, v1, v2 );
-			expect( m1 ).to.deep.equal( { elements: [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ] } );
+			expect( m1 ).to.deep.equal( { elements: [ 2.717157287525381, 2, 1.8485281374238571, 6.141421356237309,	4,	1.5757359312880714,	8.49290744716289, 6.8451542547285165, 2.8309691490542965 ] } );
 
 		} );
 
@@ -182,9 +189,10 @@ describe( 'Matrix3', function () {
 
 		it( 'should transpose matrix', function () {
 
-			const m1 = new Matrix3().transpose();
-
-			expect( m1 ).to.eql( new Matrix3() );
+			const m1 = new Matrix3().set( 1, 2, 3, 4, 5, 6, 7, 8, 9 );
+			m1.transpose();
+			//sequence of set and elements is different
+			expect( m1 ).to.deep.equal( { elements: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] } );
 
 		} );
 
@@ -194,10 +202,10 @@ describe( 'Matrix3', function () {
 
 		it( 'spec name', function () {
 
-			const q1 = new Quaternion();
+			const q1 = new Quaternion( 1, 2, 3, 4 );
 			const m1 = new Matrix3().fromQuaternion( q1 );
 
-			expect( m1 ).to.eql( new Matrix3() );
+			expect( m1 ).to.deep.equal( { elements: [ - 25, 28, - 10, - 20, - 19, 20, 22, 4, - 9 ] } );
 
 		} );
 
@@ -221,7 +229,7 @@ describe( 'Matrix3', function () {
 
 			const m1 = new Matrix3();
 
-			expect( m1.toArray() ).to.eql( [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ] );
+			expect( m1.toArray() ).to.deep.equal( [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ] );
 
 		} );
 
