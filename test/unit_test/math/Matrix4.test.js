@@ -182,6 +182,19 @@ describe( 'Matrix4', function () {
 
 	} );
 
+	describe( '#getInverse()', function () {
+
+		it( 'should return inverse of matrix', function () {
+
+			const m1 = new Matrix4().set( 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, 1 );
+			const m2 = new Matrix4().getInverse( m1 );
+
+			expect( m2 ).to.deep.equal( m1.multiplyScalar( 0.25 ) );
+
+		} );
+
+	} );
+
 	describe( '#fromQuaternion()', function () {
 
 		it( 'spec name', function () {
