@@ -7,17 +7,21 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const Vector3 = YUKA.Vector3;
+const Matrix3 = YUKA.Matrix3;
+const Matrix4 = YUKA.Matrix4;
+const Quaternion = YUKA.Quaternion;
+
 const x = 1, y = 2, z = 3;
 
 describe( 'Vector3', function () {
 
 	describe( '#set()', function () {
 
-		it( 'set(x,y,z) should return Vector x,y,z', function () {
+		it( 'should apply the given parameters to the vector', function () {
 
-        	const v1 = new Vector3( );
-        	v1.set( x, y, z );
-        	expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
+			const v1 = new Vector3( );
+			v1.set( x, y, z );
+			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
 
 		} );
 
@@ -41,6 +45,7 @@ describe( 'Vector3', function () {
 		} );
 
 	} );
+
 	describe( '#clone()', function () {
 
 		it( 'should return a clone of the vector', function () {
@@ -88,7 +93,6 @@ describe( 'Vector3', function () {
 
 		} );
 
-
 	} );
 
 	describe( '#addVectors()', function () {
@@ -113,6 +117,7 @@ describe( 'Vector3', function () {
 		} );
 
 	} );
+
 	describe( '#sub', function () {
 
 		it( 'should return zero vector when same vector is subtracted', function () {
@@ -139,9 +144,7 @@ describe( 'Vector3', function () {
 
 		} );
 
-
 	} );
-
 
 	describe( '#subVectors()', function () {
 
@@ -155,19 +158,18 @@ describe( 'Vector3', function () {
 
 		} );
 
-
 	} );
 
 	describe( '#multiply()', function () {
 
 		it( 'should return product of vector multiplication', function () {
 
-        	const v1 = new Vector3( x, y, z );
-        	const v2 = new Vector3( x, y, z );
+			const v1 = new Vector3( x, y, z );
+			const v2 = new Vector3( x, y, z );
 
-        	v1.multiply( v2 );
+			v1.multiply( v2 );
 
-        	expect( v1 ).to.deep.equal( { x: Math.pow( v2.x, 2 ), y: Math.pow( v2.y, 2 ), z: Math.pow( v2.z, 2 ) } );
+			expect( v1 ).to.deep.equal( { x: Math.pow( v2.x, 2 ), y: Math.pow( v2.y, 2 ), z: Math.pow( v2.z, 2 ) } );
 
 		} );
 
@@ -203,10 +205,10 @@ describe( 'Vector3', function () {
 
 		it( 'should return unaltered vector when dividing with vector1', function () {
 
-        	const v1 = new Vector3( x, y, z );
-        	const v2 = new Vector3( 1, 1, 1 );
+			const v1 = new Vector3( x, y, z );
+			const v2 = new Vector3( 1, 1, 1 );
 
-        	v1.divide( v2 );
+			v1.divide( v2 );
 
 			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
 
@@ -257,16 +259,42 @@ describe( 'Vector3', function () {
 		} );
 
 	} );
+
 	describe( '#dot()', function () {
 
-		it( 'should return dot Product', function () {
+		it( 'should return dot product', function () {
 
 			const v1 = new Vector3( x, y, z );
 			const v2 = new Vector3( - x, - y, - z );
 
-			const v3 = v1.dot( v2 );
-			expect( v3 ).to.be.equal( ( - x * x - y * y - z * z ) );
+			expect( v1.dot( v2 ) ).to.be.equal( ( ( - x * x ) + ( - y * y ) + ( - z * z ) ) );
 
+		} );
+
+		it( 'should return zero when both vectors are perpendicular', function () {
+
+			const v1 = new Vector3( 0, 1, 0 );
+			const v2 = new Vector3( 1, 0, 0 );
+
+			expect( v1.dot( v2 ) ).to.be.equal( 0 );
+
+		} );
+
+		it( 'should return a positive result if both vectors head in similar directions', function () {
+
+			const v1 = new Vector3( 0, 1, 0 );
+			const v2 = new Vector3( 0, 0.9, 0 );
+
+			expect( v1.dot( v2 ) ).to.be.above( 0 );
+
+		} );
+
+		it( 'should return a negative result if both vectors are turned away', function () {
+
+			const v1 = new Vector3( 0, 1, 0 );
+			const v2 = new Vector3( 0, - 0.9, 0 );
+
+			expect( v1.dot( v2 ) ).to.be.below( 0 );
 
 		} );
 
@@ -274,13 +302,23 @@ describe( 'Vector3', function () {
 
 	describe( '#cross()', function () {
 
-		it( 'should return cross Product', function () {
+		it( 'should return cross product', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
 			const v2 = new Vector3( 2, - 1, 0.5 );
 
-			v1.cross( v2 );//1.5,1.5,-3
+			v1.cross( v2 );
 			expect( v1 ).to.deep.equal( { x: 1.5, y: 1.5, z: - 3 } );
+
+		} );
+
+		it( 'should return a degenarted zero vector if both vectors are coplanar', function () {
+
+			const v1 = new Vector3( 0, 1, 0 );
+			const v2 = new Vector3( 0, 2, 0 );
+
+			v1.cross( v2 );
+			expect( v1 ).to.deep.equal( { x: 0, y: 0, z: 0 } );
 
 		} );
 
@@ -288,13 +326,23 @@ describe( 'Vector3', function () {
 
 	describe( '#crossVectors', function () {
 
-		it( 'should return cross Product', function () {
+		it( 'should return cross product', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
 			const v2 = new Vector3( 2, - 1, 0.5 );
-			const v3 = new Vector3().crossVectors( v1, v2 );//1.5,1.5,-3
+			const v3 = new Vector3().crossVectors( v1, v2 );
 
 			expect( v3 ).to.deep.equal( { x: 1.5, y: 1.5, z: - 3 } );
+
+		} );
+
+		it( 'should return a degenarted zero vector if both vectors are coplanar', function () {
+
+			const v1 = new Vector3( 0, 1, 0 );
+			const v2 = new Vector3( 0, 2, 0 );
+			const v3 = new Vector3().crossVectors( v1, v2 );
+
+			expect( v3 ).to.deep.equal( { x: 0, y: 0, z: 0 } );
 
 		} );
 
@@ -304,24 +352,23 @@ describe( 'Vector3', function () {
 
 		it( 'should return angle to the Vector', function () {
 
-        	const v1 = new Vector3( 1, 0, 0 );
-        	const v2 = new Vector3( 0, 1, 0 );
+			const v1 = new Vector3( 1, 0, 0 );
+			const v2 = new Vector3( 0, 1, 0 );
 
 			expect( v1.angleTo( v1 ) ).to.be.equal( 0 );
 			expect( v1.angleTo( v2 ) ).to.be.equal( Math.PI / 2 );
 
-
-
 		} );
 
 	} );
+
 	describe( '#length()', function () {
 
 		it( 'should return length of Vector', function () {
 
-			const v1 = new Vector3( 1, 0, 0 );
+			const v1 = new Vector3( 2, 0, 0 );
 
-			expect( v1.length() ).to.be.equal( 1 );
+			expect( v1.length() ).to.be.equal( 2 );
 
 		} );
 
@@ -331,9 +378,9 @@ describe( 'Vector3', function () {
 
 		it( 'should return squared length of vector', function () {
 
-			const v1 = new Vector3( 1, 0, 0 );
+			const v1 = new Vector3( 2, 0, 0 );
 
-			expect( v1.squaredLength() ).to.be.equal( 1 );
+			expect( v1.squaredLength() ).to.be.equal( 4 );
 
 		} );
 
@@ -407,9 +454,14 @@ describe( 'Vector3', function () {
 		it( 'should apply matrix4 to vector', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
-			const m1 = new YUKA.Matrix4();
+			const m1 = new Matrix4();
 
-			expect( v1.applyMatrix4( m1 ) ).to.deep.equal( { x: 1, y: 1, z: 1 } );
+			m1.setPosition( new Vector3( 2, 5, 6 ) );
+			m1.scale( new Vector3( 2, 2, 2 ) );
+
+			console.log( m1.elements );
+
+			expect( v1.applyMatrix4( m1 ) ).to.deep.equal( { x: 4, y: 7, z: 8 } );
 
 		} );
 
@@ -419,10 +471,10 @@ describe( 'Vector3', function () {
 
 		it( 'should apply rotation to vector', function () {
 
-			const m1 = new YUKA.Quaternion();
+			const m1 = new YUKA.Quaternion( 0, 1, 0, 0 );
 			const v1 = new Vector3( 1, 1, 1 );
 
-			expect( v1.applyRotation( m1 ) ).to.deep.equal( { x: 1, y: 1, z: 1 } );
+			expect( v1.applyRotation( m1 ) ).to.deep.equal( { x: - 1, y: 1, z: - 1 } );
 
 		} );
 
@@ -432,7 +484,7 @@ describe( 'Vector3', function () {
 
 		it( 'should return vector from matrix column', function () {
 
-			const m1 = new YUKA.Matrix3();
+			const m1 = new Matrix3();
 
 			expect( new Vector3().fromMatrix3Column( m1, 0 ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
 
@@ -444,7 +496,7 @@ describe( 'Vector3', function () {
 
 		it( 'should return vector from matrix column', function () {
 
-			const m1 = new YUKA.Matrix4();
+			const m1 = new Matrix4();
 
 			expect( new Vector3().fromMatrix4Column( m1, 0 ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
 
@@ -507,5 +559,3 @@ describe( 'Vector3', function () {
 	} );
 
 } );
-
-
