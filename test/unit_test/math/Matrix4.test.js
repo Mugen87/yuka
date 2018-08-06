@@ -184,12 +184,17 @@ describe( 'Matrix4', function () {
 
 	describe( '#getInverse()', function () {
 
-		it( 'should return inverse of matrix', function () {
+		it( 'should return inverse of matrix or identity if det is 0', function () {
 
 			const m1 = new Matrix4().set( 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, 1 );
 			const m2 = new Matrix4().getInverse( m1 );
 
 			expect( m2 ).to.deep.equal( m1.multiplyScalar( 0.25 ) );
+
+			const m3 = new Matrix4().set( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+			m2.getInverse( m3 );
+
+			expect( m2 ).to.deep.equal( new Matrix4() );
 
 		} );
 
