@@ -44,16 +44,17 @@ class Ray {
 
 	at( t, result ) {
 
+		//t has to be zero or positive
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere( center, radius, result ) {
+	intersectSphere( sphere, result ) {
 
-		v1.subVectors( center, this.origin );
+		v1.subVectors( sphere.center, this.origin );
 		const tca = v1.dot( this.direction );
 		const d2 = v1.dot( v1 ) - tca * tca;
-		const radius2 = radius * radius;
+		const radius2 = sphere.radius * sphere.radius;
 
 		if ( d2 > radius2 ) return null;
 

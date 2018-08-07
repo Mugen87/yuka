@@ -3492,6 +3492,68 @@ class InterposeBehavior extends SteeringBehavior {
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
+ *
+ */
+
+class BoundingSphere {
+
+	constructor( center = new Vector3(), radius = 0 ) {
+
+		this.center = center;
+		this.radius = radius;
+
+	}
+
+	set( center, radius ) {
+
+		this.center = center;
+		this.radius = radius;
+
+		return this;
+
+	}
+
+	copy( sphere ) {
+
+		this.center.copy( sphere.center );
+		this.radius = sphere.radius;
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	containsPoint( point ) {
+
+		return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
+
+	}
+
+	intersectsBoundingSphere( sphere ) {
+
+		const radius = this.radius + sphere.radius;
+
+		return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+	}
+
+	equals( sphere ) {
+
+		return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
  * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
  *
  */
@@ -3533,16 +3595,17 @@ class Ray {
 
 	at( t, result ) {
 
+		//t has to be zero or positive
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
-	intersectSphere( center, radius, result ) {
+	intersectSphere( sphere, result ) {
 
-		v1.subVectors( center, this.origin );
+		v1.subVectors( sphere.center, this.origin );
 		const tca = v1.dot( this.direction );
 		const d2 = v1.dot( v1 ) - tca * tca;
-		const radius2 = radius * radius;
+		const radius2 = sphere.radius * sphere.radius;
 
 		if ( d2 > radius2 ) return null;
 
@@ -3588,6 +3651,7 @@ const inverse = new Matrix4();
 const localPositionOfObstacle = new Vector3();
 const localPositionOfClosestObstacle = new Vector3();
 const intersectionPoint = new Vector3();
+const boundingSphere = new BoundingSphere();
 
 // this will be later used for a ray/sphere intersection test
 
@@ -3653,7 +3717,9 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 					// do intersection test in local space of the vehicle
 
-					ray.intersectSphere( localPositionOfObstacle, expandedRadius, intersectionPoint );
+					boundingSphere.set( localPositionOfObstacle, expandedRadius );
+
+					ray.intersectSphere( boundingSphere, intersectionPoint );
 
 					// compare distances
 
@@ -3971,68 +4037,6 @@ class AABB {
 	equals( aabb ) {
 
 		return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
- *
- */
-
-class BoundingSphere {
-
-	constructor( center = new Vector3(), radius = 0 ) {
-
-		this.center = center;
-		this.radius = radius;
-
-	}
-
-	set( center, radius ) {
-
-		this.center = center;
-		this.radius = radius;
-
-		return this;
-
-	}
-
-	copy( sphere ) {
-
-		this.center.copy( sphere.center );
-		this.radius = sphere.radius;
-
-		return this;
-
-	}
-
-	clone() {
-
-		return new this.constructor().copy( this );
-
-	}
-
-	containsPoint( point ) {
-
-		return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
-
-	}
-
-	intersectsBoundingSphere( sphere ) {
-
-		const radius = this.radius + sphere.radius;
-
-		return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
-
-	}
-
-	equals( sphere ) {
-
-		return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
 
 	}
 

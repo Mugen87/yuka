@@ -312,7 +312,7 @@ describe( 'Vector3', function () {
 
 		} );
 
-		it( 'should return a degenarted zero vector if both vectors are coplanar', function () {
+		it( 'should return a degenerated zero vector if both vectors are coplanar', function () {
 
 			const v1 = new Vector3( 0, 1, 0 );
 			const v2 = new Vector3( 0, 2, 0 );
@@ -336,7 +336,7 @@ describe( 'Vector3', function () {
 
 		} );
 
-		it( 'should return a degenarted zero vector if both vectors are coplanar', function () {
+		it( 'should return a degenerated zero vector if both vectors are coplanar', function () {
 
 			const v1 = new Vector3( 0, 1, 0 );
 			const v2 = new Vector3( 0, 2, 0 );
@@ -469,10 +469,10 @@ describe( 'Vector3', function () {
 
 		it( 'should apply rotation to vector', function () {
 
-			const m1 = new Quaternion( 0, 1, 0, 0 );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const v1 = new Vector3( 1, 1, 1 );
 
-			expect( v1.applyRotation( m1 ) ).to.deep.equal( { x: - 1, y: 1, z: - 1 } );
+			expect( v1.applyRotation( q1 ) ).to.deep.equal( { x: - 1, y: 1, z: - 1 } );
 
 		} );
 
@@ -510,9 +510,12 @@ describe( 'Vector3', function () {
 			const phi = Math.acos( - 0.5 );
 			const theta = Math.sqrt( Math.PI ) * phi;
 			const radius = 10;
-			const expected = new Vector3( - 4.677914006701843, - 5.000000000000002, - 7.288149322420796 );
 
-			expect( a.fromSpherical( radius, phi, theta ) ).to.deep.equal( { x: expected.x, y: expected.y, z: expected.z } );
+			a.fromSpherical( radius, phi, theta );
+			expect( a.x ).to.closeTo( - 4.677914006701843, Number.EPSILON );
+			expect( a.y ).to.closeTo( - 5.000000000000002, Number.EPSILON );
+			expect( a.z ).to.closeTo( - 7.288149322420796, Number.EPSILON );
+
 
 		} );
 

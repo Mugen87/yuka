@@ -4,6 +4,7 @@
 
 import { SteeringBehavior } from '../SteeringBehavior.js';
 import { SeekBehavior } from './SeekBehavior.js';
+import { BoundingSphere } from '../../math/BoundingSphere';
 import { Vector3 } from '../../math/Vector3.js';
 import { Matrix4 } from '../../math/Matrix4.js';
 import { Ray } from '../../math/Ray.js';
@@ -12,6 +13,7 @@ const inverse = new Matrix4();
 const localPositionOfObstacle = new Vector3();
 const localPositionOfClosestObstacle = new Vector3();
 const intersectionPoint = new Vector3();
+const boundingSphere = new BoundingSphere();
 
 // this will be later used for a ray/sphere intersection test
 
@@ -77,7 +79,9 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 					// do intersection test in local space of the vehicle
 
-					ray.intersectSphere( localPositionOfObstacle, expandedRadius, intersectionPoint );
+					boundingSphere.set( localPositionOfObstacle, expandedRadius );
+
+					ray.intersectSphere( boundingSphere, intersectionPoint );
 
 					// compare distances
 
