@@ -2115,15 +2115,15 @@ class PriorityQueue {
 
 	constructor( compare = defaultCompare ) {
 
-		this.data = [];
+		this.data = new Array();
 		this.length = 0;
 		this.compare = compare;
 
 	}
 
-	push( entry ) {
+	push( item ) {
 
-		this.data.push( entry );
+		this.data.push( item );
 		this.length ++;
 		this._up( this.length - 1 );
 
@@ -2131,7 +2131,7 @@ class PriorityQueue {
 
 	pop() {
 
-		if ( this.length === 0 ) return undefined;
+		if ( this.length === 0 ) return null;
 
 		const top = this.data[ 0 ];
 		this.length --;
@@ -2151,7 +2151,7 @@ class PriorityQueue {
 
 	peek() {
 
-		return this.data[ 0 ];
+		return this.data[ 0 ] || null;
 
 	}
 
@@ -2159,19 +2159,19 @@ class PriorityQueue {
 
 		const data = this.data;
 		const compare = this.compare;
-		const entry = data[ index ];
+		const item = data[ index ];
 
 		while ( index > 0 ) {
 
 			const parent = ( index - 1 ) >> 1;
 			const current = data[ parent ];
-			if ( compare( entry, current ) >= 0 ) break;
+			if ( compare( item, current ) >= 0 ) break;
 			data[ index ] = current;
 			index = parent;
 
 		}
 
-		data[ index ] = entry;
+		data[ index ] = item;
 
 	}
 
@@ -2179,7 +2179,7 @@ class PriorityQueue {
 
 		const data = this.data;
 		const compare = this.compare;
-		const entry = data[ index ];
+		const item = data[ index ];
 		const halfLength = this.length >> 1;
 
 		while ( index < halfLength ) {
@@ -2195,7 +2195,7 @@ class PriorityQueue {
 
 			}
 
-			if ( compare( best, entry ) >= 0 ) break;
+			if ( compare( best, item ) >= 0 ) break;
 
 			data[ index ] = best;
 			index = left;
@@ -2203,7 +2203,7 @@ class PriorityQueue {
 		}
 
 
-		data[ index ] = entry;
+		data[ index ] = item;
 
 	}
 
@@ -4626,4 +4626,4 @@ class Think extends Goal {
 
 }
 
-export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Telegram, Time, Node, Edge, Graph, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Telegram, Time, Node, Edge, Graph, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra };

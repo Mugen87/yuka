@@ -41,7 +41,7 @@ export { GoalEvaluator } from './goal/GoalEvaluator.js';
 export { Think } from './goal/Think.js';
 export { AABB } from './math/AABB.js';
 export { BoundingSphere } from './math/BoundingSphere.js';
-export { _Math } from './math/Math.js';
+export { _Math as Math } from './math/Math.js';
 export { Matrix3 } from './math/Matrix3.js';
 export { Matrix4 } from './math/Matrix4.js';
 export { Quaternion } from './math/Quaternion.js';

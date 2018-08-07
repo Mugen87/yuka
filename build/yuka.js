@@ -2121,15 +2121,15 @@
 
 		constructor( compare = defaultCompare ) {
 
-			this.data = [];
+			this.data = new Array();
 			this.length = 0;
 			this.compare = compare;
 
 		}
 
-		push( entry ) {
+		push( item ) {
 
-			this.data.push( entry );
+			this.data.push( item );
 			this.length ++;
 			this._up( this.length - 1 );
 
@@ -2137,7 +2137,7 @@
 
 		pop() {
 
-			if ( this.length === 0 ) return undefined;
+			if ( this.length === 0 ) return null;
 
 			const top = this.data[ 0 ];
 			this.length --;
@@ -2157,7 +2157,7 @@
 
 		peek() {
 
-			return this.data[ 0 ];
+			return this.data[ 0 ] || null;
 
 		}
 
@@ -2165,19 +2165,19 @@
 
 			const data = this.data;
 			const compare = this.compare;
-			const entry = data[ index ];
+			const item = data[ index ];
 
 			while ( index > 0 ) {
 
 				const parent = ( index - 1 ) >> 1;
 				const current = data[ parent ];
-				if ( compare( entry, current ) >= 0 ) break;
+				if ( compare( item, current ) >= 0 ) break;
 				data[ index ] = current;
 				index = parent;
 
 			}
 
-			data[ index ] = entry;
+			data[ index ] = item;
 
 		}
 
@@ -2185,7 +2185,7 @@
 
 			const data = this.data;
 			const compare = this.compare;
-			const entry = data[ index ];
+			const item = data[ index ];
 			const halfLength = this.length >> 1;
 
 			while ( index < halfLength ) {
@@ -2201,7 +2201,7 @@
 
 				}
 
-				if ( compare( best, entry ) >= 0 ) break;
+				if ( compare( best, item ) >= 0 ) break;
 
 				data[ index ] = best;
 				index = left;
@@ -2209,7 +2209,7 @@
 			}
 
 
-			data[ index ] = entry;
+			data[ index ] = item;
 
 		}
 
@@ -4674,7 +4674,7 @@
 	exports.Think = Think;
 	exports.AABB = AABB;
 	exports.BoundingSphere = BoundingSphere;
-	exports._Math = _Math;
+	exports.Math = _Math;
 	exports.Matrix3 = Matrix3;
 	exports.Matrix4 = Matrix4;
 	exports.Quaternion = Quaternion;
