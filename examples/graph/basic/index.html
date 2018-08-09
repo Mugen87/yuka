@@ -36,7 +36,7 @@
 	import * as YUKA from '../../../build/yuka.module.js';
 	import * as THREE from '../../lib/three.module.js';
 
-	import { GraphUtils } from './src/GraphUtils.js';
+	import { createGraphHelper, createPathHelper, createSearchTreeHelper } from './src/GraphHelper.js';
 
 	let renderer, scene, camera;
 
@@ -55,9 +55,9 @@
 
 		// graph
 
-		const graph = GraphUtils.createGridLayout( 50, 10 );
+		const graph = YUKA.GraphUtils.createGridLayout( 50, 10 );
 
-		const graphHelper = GraphUtils.createGraphHelper( graph, 0.2 );
+		const graphHelper = createGraphHelper( graph, 0.2 );
 		scene.add( graphHelper );
 
 		const graphSearch = new YUKA.AStar( graph, 60, 104 );
@@ -70,10 +70,10 @@
 		const searchTree = graphSearch.getSearchTree();
 		const path = graphSearch.getPath();
 
-		const searchTreeHelper = GraphUtils.createSearchTreeHelper( graph, searchTree );
+		const searchTreeHelper = createSearchTreeHelper( graph, searchTree );
 		scene.add( searchTreeHelper );
 
-		const pathHelper = GraphUtils.createPathHelper( graph, path, 0.4 );
+		const pathHelper = createPathHelper( graph, path, 0.4 );
 		scene.add( pathHelper );
 
 		graphSearch.clear();

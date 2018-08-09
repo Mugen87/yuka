@@ -2107,6 +2107,169 @@ class Graph {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class NavNode extends Node {
+
+	constructor( index = - 1, position = new Vector3(), userData = {} ) {
+
+		super( index );
+
+		this.position = position;
+		this.userData = userData;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class NavEdge extends Edge {
+
+	constructor( from = - 1, to = - 1, cost = 0 ) {
+
+		super( from, to, cost );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class GraphUtils {
+
+	static createGridLayout( size, segments ) {
+
+		const graph = new Graph();
+		graph.digraph = true;
+
+		const halfSize = size / 2;
+		const segmentSize = size / segments;
+
+		// nodes
+
+		let index = 0;
+
+		for ( let i = 0; i <= segments; i ++ ) {
+
+			const z = ( i * segmentSize ) - halfSize;
+
+			for ( let j = 0; j <= segments; j ++ ) {
+
+				const x = ( j * segmentSize ) - halfSize;
+
+				const position = new Vector3( x, 0, z );
+
+				const node = new NavNode( index, position );
+
+				graph.addNode( node );
+
+				index ++;
+
+			}
+
+		}
+
+		// edges
+
+		const count = graph.getNodeCount();
+		const range = Math.pow( segmentSize + ( segmentSize / 2 ), 2 );
+
+		for ( let i = 0; i < count; i ++ ) {
+
+			const node = graph.getNode( i );
+
+			// check distance to all other nodes
+
+			for ( let j = 0; j < count; j ++ ) {
+
+				if ( i !== j ) {
+
+					const neighbor = graph.getNode( j );
+
+					const distanceSquared = neighbor.position.squaredDistanceTo( node.position );
+
+					if ( distanceSquared <= range ) {
+
+						const distance = Math.sqrt( distanceSquared );
+
+						const edge = new NavEdge( i, j, distance );
+
+						graph.addEdge( edge );
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return graph;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class HeuristicPolicyEuclid {
+
+	static calculate( graph, source, target ) {
+
+		const sourceNode = graph.getNode( source );
+		const targetNode = graph.getNode( target );
+
+		return sourceNode.position.distanceTo( targetNode.position );
+
+	}
+
+}
+
+class HeuristicPolicyEuclidSquared {
+
+	static calculate( graph, source, target ) {
+
+		const sourceNode = graph.getNode( source );
+		const targetNode = graph.getNode( target );
+
+		return sourceNode.position.squaredDistanceTo( targetNode.position );
+
+	}
+
+}
+
+class HeuristicPolicyManhatten {
+
+	static calculate( graph, source, target ) {
+
+		const sourceNode = graph.getNode( source );
+		const targetNode = graph.getNode( target );
+
+		return sourceNode.position.manhattanDistanceTo( targetNode.position );
+
+	}
+
+}
+
+class HeuristicPolicyDijkstra {
+
+	static calculate( /* graph, source, target */ ) {
+
+		return 0;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
  *
  * binary heap priority queue (see https://github.com/mourner/tinyqueue)
  */
@@ -2212,37 +2375,6 @@ class PriorityQueue {
 function defaultCompare( a, b ) {
 
 	return ( a < b ) ? - 1 : ( a > b ) ? 1 : 0;
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class NavNode extends Node {
-
-	constructor( index = - 1, position = new Vector3(), userData = {} ) {
-
-		super( index );
-
-		this.position = position;
-		this.userData = userData;
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class NavEdge extends Edge {
-
-	constructor( from = - 1, to = - 1, cost = 0 ) {
-
-		super( from, to, cost );
-
-	}
 
 }
 
@@ -2693,60 +2825,6 @@ class Dijkstra {
 function compare( a, b ) {
 
 	return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- */
-
-class HeuristicPolicyEuclid {
-
-	static calculate( graph, source, target ) {
-
-		const sourceNode = graph.getNode( source );
-		const targetNode = graph.getNode( target );
-
-		return sourceNode.position.distanceTo( targetNode.position );
-
-	}
-
-}
-
-class HeuristicPolicyEuclidSquared {
-
-	static calculate( graph, source, target ) {
-
-		const sourceNode = graph.getNode( source );
-		const targetNode = graph.getNode( target );
-
-		return sourceNode.position.squaredDistanceTo( targetNode.position );
-
-	}
-
-}
-
-class HeuristicPolicyManhatten {
-
-	static calculate( graph, source, target ) {
-
-		const sourceNode = graph.getNode( source );
-		const targetNode = graph.getNode( target );
-
-		return sourceNode.position.manhattanDistanceTo( targetNode.position );
-
-	}
-
-}
-
-class HeuristicPolicyDijkstra {
-
-	static calculate( /* graph, source, target */ ) {
-
-		return 0;
-
-	}
 
 }
 
@@ -4626,4 +4704,4 @@ class Think extends Goal {
 
 }
 
-export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Telegram, Time, Node, Edge, Graph, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Telegram, Time, Node, Edge, Graph, GraphUtils, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra };
