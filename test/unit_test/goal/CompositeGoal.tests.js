@@ -119,21 +119,6 @@ describe( 'CompositeGoal', function () {
 
 	describe( '#executeSubgoals()', function () {
 
-		it( 'should call execute() of the current subgoal', function () {
-
-			const compositeGoal = new CompositeGoal();
-
-			compositeGoal.addSubgoal( new Goal() );
-			compositeGoal.addSubgoal( new Goal() );
-			const subgoal = new CustomGoalCompleted();
-			compositeGoal.addSubgoal( subgoal );
-
-			compositeGoal.executeSubgoals();
-
-			expect( subgoal.executeCalled ).to.be.true;
-
-		} );
-
 		it( 'should set the status of the current subgoal to "active" and call activate() if its status is "inactive"', function () {
 
 			const compositeGoal = new CompositeGoal();
@@ -149,27 +134,39 @@ describe( 'CompositeGoal', function () {
 
 		} );
 
-		it( 'should remove the current subgoal from the internal array and call terminate() if its status is "completed" or "failed"', function () {
+		it( 'should call execute() of the current subgoal', function () {
 
 			const compositeGoal = new CompositeGoal();
 
 			compositeGoal.addSubgoal( new Goal() );
-			const subgoalFailed = new CustomGoalFailed();
-			compositeGoal.addSubgoal( subgoalFailed );
-			const subgoalCompleted = new CustomGoalCompleted();
-			compositeGoal.addSubgoal( subgoalCompleted );
+			compositeGoal.addSubgoal( new Goal() );
+			const subgoal = new CustomGoalCompleted();
+			compositeGoal.addSubgoal( subgoal );
 
 			compositeGoal.executeSubgoals();
 
-			expect( subgoalCompleted.status ).to.equal( STATUS.COMPLETED );
-			expect( subgoalCompleted.terminateCalled ).to.be.true;
-			expect( compositeGoal.subgoals ).to.have.lengthOf( 2 );
+			expect( subgoal.executeCalled ).to.be.true;
+
+		} );
+
+		it( 'should remove goals from the internal array with status "completed" or "failed" and call terminate()', function () {
+
+			const compositeGoal = new CompositeGoal();
+
+			compositeGoal.addSubgoal( new Goal() );
+			const goalFailed = new CustomGoalFailed();
+			goalFailed.status = STATUS.FAILED;
+			compositeGoal.addSubgoal( goalFailed );
+
+			const goalCompleted = new CustomGoalCompleted();
+			goalCompleted.status = STATUS.COMPLETED;
+			compositeGoal.addSubgoal( goalCompleted );
 
 			compositeGoal.executeSubgoals();
 
-			expect( subgoalFailed.status ).to.equal( STATUS.FAILED );
-			expect( subgoalFailed.terminateCalled ).to.be.true;
 			expect( compositeGoal.subgoals ).to.have.lengthOf( 1 );
+			expect( goalFailed.terminateCalled ).to.be.true;
+			expect( goalCompleted.terminateCalled ).to.be.true;
 
 		} );
 

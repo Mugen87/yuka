@@ -38,6 +38,8 @@ class QuenchThirstEvaluator extends GoalEvaluator {
 
 	setGoal( miner ) {
 
+		miner.brain.clearSubgoals();
+
 		miner.brain.addSubgoal( new QuenchThirst( miner ) );
 
 	}
@@ -53,6 +55,8 @@ class VisitBankAndDepositGoldEvaluator extends GoalEvaluator {
 	}
 
 	setGoal( miner ) {
+
+		miner.brain.clearSubgoals();
 
 		miner.brain.addSubgoal( new VisitBankAndDepositGold( miner ) );
 

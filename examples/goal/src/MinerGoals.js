@@ -18,7 +18,7 @@ class EnterMineAndDigForGold extends Goal {
 
 		if ( miner.location !== 'goldmine' ) {
 
-			console.log( 'Miner: Walking to the goldmine.' );
+			console.log( 'Miner: Going to the goldmine.' );
 
 			miner.location = 'goldmine';
 
@@ -46,7 +46,7 @@ class QuenchThirst extends Goal {
 
 		if ( miner.location !== 'saloon' ) {
 
-			console.log( 'Miner: Walking to the saloon. Boy, i am thirsty! Thirst level: %i', miner.thirstLevel );
+			console.log( 'Miner: Going to the saloon. Boy, i am thirsty! Thirst level: %i', miner.thirstLevel );
 
 			miner.location = 'saloon';
 

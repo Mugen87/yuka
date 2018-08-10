@@ -58,6 +58,27 @@ class CompositeGoal extends Goal {
 
 	executeSubgoals() {
 
+		const subgoals = this.subgoals;
+
+		// remove all completed and failed goals from the back of the subgoal list
+
+		for ( let i = subgoals.length - 1; i >= 0; i -- ) {
+
+			const subgoal = subgoals[ i ];
+
+			if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
+
+				subgoal.terminate();
+				subgoals.pop();
+
+			} else {
+
+				break;
+
+			}
+
+		}
+
 		// if any subgoals remain, process the one at the back of the list
 
 		const subgoal = this.currentSubgoal();
@@ -68,17 +89,10 @@ class CompositeGoal extends Goal {
 
 			subgoal.execute();
 
-			if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
-
-				subgoal.terminate();
-				this.subgoals.pop();
-
-			}
-
 			// if subgoal is completed but more subgoals are in the list, return 'active'
 			// status in order to keep processing the list of subgoals
 
-			if ( ( subgoal.completed() === true ) && ( this.hasSubgoals() === true ) ) {
+			if ( ( subgoal.completed() === true ) && ( subgoals.length > 1 ) ) {
 
 				return Goal.STATUS.ACTIVE;
 
