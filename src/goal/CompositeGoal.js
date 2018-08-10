@@ -64,6 +64,8 @@ class CompositeGoal extends Goal {
 
 		if ( subgoal !== null ) {
 
+			subgoal.activateIfInactive();
+
 			subgoal.execute();
 
 			if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {

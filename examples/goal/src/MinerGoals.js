@@ -12,7 +12,7 @@ class EnterMineAndDigForGold extends Goal {
 
 	}
 
-	activate() {
+	execute() {
 
 		const miner = this.owner;
 
@@ -23,14 +23,6 @@ class EnterMineAndDigForGold extends Goal {
 			miner.location = 'goldmine';
 
 		}
-
-	}
-
-	execute() {
-
-		this.activateIfInactive();
-
-		const miner = this.owner;
 
 		miner.gold ++;
 
@@ -54,7 +46,7 @@ class QuenchThirst extends Goal {
 
 		if ( miner.location !== 'saloon' ) {
 
-			console.log( 'Miner: Boy, i am thirsty! Walking to the saloon. Thirst level: %i', miner.thirstLevel );
+			console.log( 'Miner: Walking to the saloon. Boy, i am thirsty! Thirst level: %i', miner.thirstLevel );
 
 			miner.location = 'saloon';
 
@@ -63,8 +55,6 @@ class QuenchThirst extends Goal {
 	}
 
 	execute() {
-
-		this.activateIfInactive();
 
 		this.owner.buyAndDrinkAWhiskey();
 
@@ -99,8 +89,6 @@ class VisitBankAndDepositGold extends Goal {
 	}
 
 	execute() {
-
-		this.activateIfInactive();
 
 		const miner = this.owner;
 

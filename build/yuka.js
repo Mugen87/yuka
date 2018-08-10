@@ -4562,6 +4562,8 @@
 
 			if ( subgoal !== null ) {
 
+				subgoal.activateIfInactive();
+
 				subgoal.execute();
 
 				if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
@@ -4680,6 +4682,12 @@
 				this.status = Goal.STATUS.INACTIVE;
 
 			}
+
+		}
+
+		terminate() {
+
+			this.clearSubgoals();
 
 		}
 

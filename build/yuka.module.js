@@ -4556,6 +4556,8 @@ class CompositeGoal extends Goal {
 
 		if ( subgoal !== null ) {
 
+			subgoal.activateIfInactive();
+
 			subgoal.execute();
 
 			if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
@@ -4674,6 +4676,12 @@ class Think extends CompositeGoal {
 			this.status = Goal.STATUS.INACTIVE;
 
 		}
+
+	}
+
+	terminate() {
+
+		this.clearSubgoals();
 
 	}
 

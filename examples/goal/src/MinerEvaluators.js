@@ -4,7 +4,7 @@
 
 import { GoalEvaluator } from '../../../../../build/yuka.module.js';
 
-import { EnterMineAndDigForGold, QuenchThirst, VisitBankAndDepositGold } from '../goals/MinerGoals.js';
+import { EnterMineAndDigForGold, QuenchThirst, VisitBankAndDepositGold } from './MinerGoals.js';
 
 class EnterMineAndDigForGoldEvaluator extends GoalEvaluator {
 

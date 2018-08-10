@@ -4,7 +4,7 @@
 
 import { GameEntity, Think } from '../../../../../build/yuka.module.js';
 
-import { EnterMineAndDigForGoldEvaluator, QuenchThirstEvaluator, VisitBankAndDepositGoldEvaluator } from '../evaluators/MinerEvaluators.js';
+import { EnterMineAndDigForGoldEvaluator, QuenchThirstEvaluator, VisitBankAndDepositGoldEvaluator } from './MinerEvaluators.js';
 
 class Miner extends GameEntity {
 
