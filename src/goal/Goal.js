@@ -61,7 +61,7 @@ class Goal {
 
 	}
 
-	// logic often used within execute()
+	//
 
 	replanIfFailed() {
 
@@ -80,6 +80,8 @@ class Goal {
 		if ( this.inactive() === true ) {
 
 			this.activate();
+
+			this.status = Goal.STATUS.ACTIVE;
 
 		}
 

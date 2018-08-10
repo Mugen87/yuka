@@ -40,40 +40,43 @@ class CompositeGoal extends Goal {
 
 	}
 
-	executeSubgoals() {
+	currentSubgoal() {
 
-		const subgoals = this.subgoals;
+		const length = this.subgoals.length;
 
-		// remove all completed and failed goals from the back of the subgoal list
+		if ( length > 0 ) {
 
-		for ( let i = subgoals.length - 1; i >= 0; i -- ) {
+			return this.subgoals[ length - 1 ];
 
-			const subgoal = subgoals[ i ];
+		} else {
 
-			if ( subgoal.completed() === true || subgoal.failed() === true ) {
-
-				subgoal.terminate();
-				subgoals.pop();
-
-			} else {
-
-				break;
-
-			}
+			return null;
 
 		}
 
+	}
+
+	executeSubgoals() {
+
 		// if any subgoals remain, process the one at the back of the list
 
-		if ( subgoals.length > 0 ) {
+		const subgoal = this.currentSubgoal();
 
-			const subgoal = subgoals[ subgoals.length - 1 ];
+		if ( subgoal !== null ) {
+
 			subgoal.execute();
+
+			if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
+
+				subgoal.terminate();
+				this.subgoals.pop();
+
+			}
 
 			// if subgoal is completed but more subgoals are in the list, return 'active'
 			// status in order to keep processing the list of subgoals
 
-			if ( ( subgoal.status === Goal.STATUS.COMPLETED ) && ( subgoals.length > 1 ) ) {
+			if ( ( subgoal.completed() === true ) && ( this.hasSubgoals() === true ) ) {
 
 				return Goal.STATUS.ACTIVE;
 
@@ -83,12 +86,17 @@ class CompositeGoal extends Goal {
 
 			}
 
-
 		} else {
 
 			return Goal.STATUS.COMPLETED;
 
 		}
+
+	}
+
+	hasSubgoals() {
+
+		return this.subgoals.length > 0;
 
 	}
 
@@ -102,12 +110,10 @@ class CompositeGoal extends Goal {
 
 	forwardMessage( telegram ) {
 
-		const subgoals = this.subgoals;
-		const length = subgoals.length;
+		const subgoal = this.currentSubgoal();
 
-		if ( length > 0 ) {
+		if ( subgoal !== null ) {
 
-			const subgoal = subgoals[ length - 1 ]; // pick last goal
 			subgoal.handleMessage( telegram );
 
 		}

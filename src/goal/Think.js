@@ -3,15 +3,42 @@
  */
 
 import { Goal } from './Goal.js';
+import { CompositeGoal } from './CompositeGoal.js';
 import { Logger } from '../core/Logger.js';
 
-class Think extends Goal {
+class Think extends CompositeGoal {
 
 	constructor( owner ) {
 
 		super( owner );
 
 		this.evaluators = new Set();
+
+	}
+
+	activate() {
+
+		this.arbitrate();
+
+	}
+
+	execute() {
+
+		this.activateIfInactive();
+
+		const subgoalStatus = this.executeSubgoals();
+
+		if ( subgoalStatus === Goal.STATUS.COMPLETED || subgoalStatus === Goal.STATUS.FAILED ) {
+
+			this.status = Goal.STATUS.INACTIVE;
+
+		}
+
+	}
+
+	terminate() {
+
+		this.clearSubgoals();
 
 	}
 
@@ -40,7 +67,7 @@ class Think extends Goal {
 
 		for ( let evaluator of this.evaluators ) {
 
-			const desirabilty = evaluator.calculateDesirability( this.owner );
+			let desirabilty = evaluator.calculateDesirability( this.owner );
 			desirabilty *= evaluator.characterBias;
 
 			if ( desirabilty >= bestDesirabilty ) {
