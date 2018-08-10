@@ -4400,7 +4400,7 @@ class StateMachine {
 
 class Goal {
 
-	constructor( owner ) {
+	constructor( owner = null ) {
 
 		this.owner = owner; // a reference to the agent that owns this instance
 		this.status = Goal.STATUS.INACTIVE;
@@ -4498,7 +4498,7 @@ Goal.STATUS = Object.freeze( {
 
 class CompositeGoal extends Goal {
 
-	constructor( owner ) {
+	constructor( owner = null ) {
 
 		super( owner );
 
@@ -4598,17 +4598,11 @@ class CompositeGoal extends Goal {
 
 	handleMessage( telegram ) {
 
-		return this.forwardMessage( telegram );
-
-	}
-
-	forwardMessage( telegram ) {
-
 		const subgoal = this.currentSubgoal();
 
 		if ( subgoal !== null ) {
 
-			subgoal.handleMessage( telegram );
+			return subgoal.handleMessage( telegram );
 
 		}
 
@@ -4651,7 +4645,7 @@ class GoalEvaluator {
 
 class Think extends CompositeGoal {
 
-	constructor( owner ) {
+	constructor( owner = null ) {
 
 		super( owner );
 

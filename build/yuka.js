@@ -4406,7 +4406,7 @@
 
 	class Goal {
 
-		constructor( owner ) {
+		constructor( owner = null ) {
 
 			this.owner = owner; // a reference to the agent that owns this instance
 			this.status = Goal.STATUS.INACTIVE;
@@ -4504,7 +4504,7 @@
 
 	class CompositeGoal extends Goal {
 
-		constructor( owner ) {
+		constructor( owner = null ) {
 
 			super( owner );
 
@@ -4604,17 +4604,11 @@
 
 		handleMessage( telegram ) {
 
-			return this.forwardMessage( telegram );
-
-		}
-
-		forwardMessage( telegram ) {
-
 			const subgoal = this.currentSubgoal();
 
 			if ( subgoal !== null ) {
 
-				subgoal.handleMessage( telegram );
+				return subgoal.handleMessage( telegram );
 
 			}
 
@@ -4657,7 +4651,7 @@
 
 	class Think extends CompositeGoal {
 
-		constructor( owner ) {
+		constructor( owner = null ) {
 
 			super( owner );
 

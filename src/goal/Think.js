@@ -8,7 +8,7 @@ import { Logger } from '../core/Logger.js';
 
 class Think extends CompositeGoal {
 
-	constructor( owner ) {
+	constructor( owner = null ) {
 
 		super( owner );
 

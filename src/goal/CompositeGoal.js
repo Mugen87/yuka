@@ -6,7 +6,7 @@ import { Goal } from './Goal.js';
 
 class CompositeGoal extends Goal {
 
-	constructor( owner ) {
+	constructor( owner = null ) {
 
 		super( owner );
 
@@ -106,17 +106,11 @@ class CompositeGoal extends Goal {
 
 	handleMessage( telegram ) {
 
-		return this.forwardMessage( telegram );
-
-	}
-
-	forwardMessage( telegram ) {
-
 		const subgoal = this.currentSubgoal();
 
 		if ( subgoal !== null ) {
 
-			subgoal.handleMessage( telegram );
+			return subgoal.handleMessage( telegram );
 
 		}
 

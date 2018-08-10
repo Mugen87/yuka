@@ -6,7 +6,7 @@ import { Logger } from '../core/Logger.js';
 
 class Goal {
 
-	constructor( owner ) {
+	constructor( owner = null ) {
 
 		this.owner = owner; // a reference to the agent that owns this instance
 		this.status = Goal.STATUS.INACTIVE;
