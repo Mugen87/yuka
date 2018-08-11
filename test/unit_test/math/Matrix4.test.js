@@ -233,8 +233,10 @@ describe( 'Matrix4', function () {
 
 			const m1 = new Matrix4();
 			const m2 = new Matrix4();
+			const m3 = new Matrix4().set( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 );
 
 			expect( m1.equals( m2 ) ).to.be.true;
+			expect( m1.equals( m3 ) ).to.be.false;
 
 		} );
 

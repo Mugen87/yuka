@@ -27,6 +27,7 @@ describe( 'SteeringBehavior', function () {
 
 			const steeringBehavior = new SteeringBehavior();
 			expect( steeringBehavior ).respondTo( 'calculate' );
+			steeringBehavior.calculate();
 
 		} );
 
