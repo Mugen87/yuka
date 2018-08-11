@@ -33,6 +33,7 @@
     "url": "https://github.com/Mugen87/yuka/issues"
   },
   "devDependencies": {
+    "benchmark": "2.1.4",
     "chai": "4.1.2",
     "concurrently": "3.6.1",
     "eslint": "5.1.0",
