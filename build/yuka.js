@@ -4170,6 +4170,8 @@
 
 			this._aabb.fromCenterAndSize( position, size );
 
+			return this;
+
 		}
 
 		touching( entity ) {

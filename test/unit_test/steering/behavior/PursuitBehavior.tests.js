@@ -43,6 +43,7 @@ describe( 'PursuitBehavior', function () {
 			const force = new Vector3();
 
 			evader.position.set( 0, 0, 10 );
+			evader.rotation.set( 0, 1, 0, 0 );
 
 			const pursuitBehavior = new PursuitBehavior( evader );
 

@@ -154,11 +154,19 @@ describe( 'StateMachine', function () {
 
 		} );
 
-		it( 'should return "true" if a state handles the message', function () {
+		it( 'should return "true" if the current state handles the message', function () {
 
 			const stateMachine = new StateMachine();
-			stateMachine.globalState = new CustomState();
 			stateMachine.currentState = new MessageCustomState();
+
+			expect( stateMachine.handleMessage() ).to.equal( true );
+
+		} );
+
+		it( 'should return "true" if the global state handles the message', function () {
+
+			const stateMachine = new StateMachine();
+			stateMachine.globalState = new MessageCustomState();
 
 			expect( stateMachine.handleMessage() ).to.equal( true );
 

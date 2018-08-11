@@ -60,6 +60,9 @@ describe( 'Goal', function () {
 			const goal = new Goal();
 			expect( goal ).respondTo( 'addSubgoal' );
 
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+			goal.addSubgoal();
+
 		} );
 
 	} );

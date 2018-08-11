@@ -52,6 +52,7 @@ describe( 'GoalEvaluator', function () {
 
 			const goalEvaluator = new GoalEvaluator();
 			expect( goalEvaluator ).respondTo( 'setGoal' );
+			goalEvaluator.setGoal();
 
 		} );
 

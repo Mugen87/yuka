@@ -91,6 +91,24 @@ describe( 'RectangularTriggerRegion', function () {
 
 	} );
 
+	describe( '#fromPositionAndSize()', function () {
+
+		it( 'should set the trigger region from a given position and size vector', function () {
+
+			const position = new Vector3( 0, 0, 0.5 );
+			const size = new Vector3( 1, 1, 1 );
+
+			const region = new RectangularTriggerRegion().fromPositionAndSize( position, size );
+
+			console.log( region );
+
+			expect( region.min ).to.deep.equal( { x: - 0.5, y: - 0.5, z: 0 } );
+			expect( region.max ).to.deep.equal( { x: 0.5, y: 0.5, z: 1 } );
+
+		} );
+
+	} );
+
 	describe( '#touching()', function () {
 
 		it( 'should interpret a game entity inside the region as touching', function () {
