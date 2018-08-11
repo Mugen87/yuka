@@ -348,11 +348,14 @@ describe( 'Quaternion', function () {
 
 	describe( '#toArray()', function () {
 
-		it( 'should return an array of quaternion values', function () {
+		it( 'should store all values of the quaternion in the given array', function () {
 
 			const q1 = new Quaternion();
+			const array = [];
 
-			expect( q1.toArray() ).to.deep.equal( [ 0, 0, 0, 1 ] );
+			q1.toArray( array );
+
+			expect( array ).to.deep.equal( [ 0, 0, 0, 1 ] );
 
 		} );
 
@@ -360,7 +363,7 @@ describe( 'Quaternion', function () {
 
 	describe( '#equals()', function () {
 
-		it( 'should return true if the given quaternion is to the current instance', function () {
+		it( 'should return true if the given quaternion is equal to the current instance', function () {
 
 			const q1 = new Quaternion( 0, 0, 0, - 1 );
 			const q2 = new Quaternion( 0, 0, 0, - 1 );

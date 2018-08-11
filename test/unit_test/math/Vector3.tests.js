@@ -512,21 +512,24 @@ describe( 'Vector3', function () {
 
 		it( 'should return vector from array', function () {
 
-			const arr = [ x, y, z ];
-			const v1 = new Vector3();
+			const v1 = new Vector3().fromArray( [ x, y, z ] );
 
-			expect( v1.fromArray( arr ) ).to.deep.equal( { x: x, y: y, z: z } );
+			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
 
 		} );
 
 	} );
+
 	describe( '#toArray()', function () {
 
-		it( 'should return array with vector values', function () {
+		it( 'should store all values of the vector in the given array', function () {
 
-			const v0 = new Vector3();
+			const v1 = new Vector3( x, y, z );
+			const array = [];
 
-			expect( v0.toArray() ).to.eql( [ 0, 0, 0 ] );
+			v1.toArray( array );
+
+			expect( array ).to.eql( [ x, y, z ] );
 
 		} );
 
@@ -534,13 +537,13 @@ describe( 'Vector3', function () {
 
 	describe( '#equals()', function () {
 
-		it( 'should return true if equal else false', function () {
+		it( 'should return true if the given vector is equal to the current instance', function () {
 
-			const v0 = new Vector3();
-			const v1 = new Vector3( 1, 1, 1 );
+			const v1 = new Vector3();
+			const v2 = new Vector3( 1, 1, 1 );
 
-			expect( v0.equals( v0 ) ).to.be.true;
-			expect( v0.equals( v1 ) ).to.be.false;
+			expect( v1.equals( v1 ) ).to.be.true;
+			expect( v2.equals( v1 ) ).to.be.false;
 
 		} );
 

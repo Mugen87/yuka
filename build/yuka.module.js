@@ -627,7 +627,7 @@ class Vector3 {
 
 	}
 
-	toArray( array = [], offset = 0 ) {
+	toArray( array, offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;
@@ -877,7 +877,7 @@ class Matrix3 {
 
 	}
 
-	toArray( array = [], offset = 0 ) {
+	toArray( array, offset = 0 ) {
 
 		const e = this.elements;
 
@@ -1221,7 +1221,7 @@ class Quaternion {
 
 	}
 
-	toArray( array = [], offset = 0 ) {
+	toArray( array, offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;
@@ -1552,7 +1552,7 @@ class Matrix4 {
 
 	}
 
-	toArray( array = [], offset = 0 ) {
+	toArray( array, offset = 0 ) {
 
 		const e = this.elements;
 

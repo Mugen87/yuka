@@ -232,7 +232,7 @@ class Matrix3 {
 
 	}
 
-	toArray( array = [], offset = 0 ) {
+	toArray( array, offset = 0 ) {
 
 		const e = this.elements;
 

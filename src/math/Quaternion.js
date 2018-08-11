@@ -305,7 +305,7 @@ class Quaternion {
 
 	}
 
-	toArray( array = [], offset = 0 ) {
+	toArray( array, offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
 		array[ offset + 1 ] = this.y;

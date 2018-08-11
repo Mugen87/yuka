@@ -312,7 +312,7 @@ class Matrix4 {
 
 	}
 
-	toArray( array = [], offset = 0 ) {
+	toArray( array, offset = 0 ) {
 
 		const e = this.elements;
 

@@ -214,11 +214,14 @@ describe( 'Matrix4', function () {
 
 	describe( '#toArray()', function () {
 
-		it( 'should return an array of matrix values', function () {
+		it( 'should store all values of the matrix in the given array', function () {
 
 			const m1 = new Matrix4();
+			const array = [];
 
-			expect( m1.toArray() ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ] );
+			m1.toArray( array );
+
+			expect( array ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ] );
 
 		} );
 
@@ -226,7 +229,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#equals()', function () {
 
-		it( 'should return true if equal else false', function () {
+		it( 'should return true if the given matrix is equal to the current instance', function () {
 
 			const m1 = new Matrix4();
 			const m2 = new Matrix4();
