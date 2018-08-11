@@ -1,6 +1,7 @@
 /**
  * @author robp94 / https://github.com/robp94
  */
+
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
