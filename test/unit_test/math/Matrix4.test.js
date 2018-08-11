@@ -24,19 +24,6 @@ describe( 'Matrix4', function () {
 
 	} );
 
-	describe( '#equals()', function () {
-
-		it( 'should return true if equal else false', function () {
-
-			const m1 = new Matrix4();
-			const m2 = new Matrix4();
-
-			expect( m1.equals( m2 ) ).to.be.true;
-
-		} );
-
-	} );
-
 	describe( '#set()', function () {
 
 		it( 'should set values of matrix', function () {
@@ -52,7 +39,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#copy()', function () {
 
-		it( 'should return copy of matrix', function () {
+		it( 'should copy a given matrix to the current instance', function () {
 
 			const m1 = new Matrix4().set( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 );
 			const m2 = new Matrix4().copy( m1 );
@@ -78,7 +65,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#multiply()', function () {
 
-		it( 'should return matrix multiplied with other matrix', function () {
+		it( 'should perform a matrix multiplication', function () {
 
 			const m1 = new Matrix4().set( 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53 );
 			const m2 = new Matrix4().set( 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131 );
@@ -93,7 +80,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#premultiply()', function () {
 
-		it( 'should return other matrix multiplied with matrix', function () {
+		it( 'should perform a matrix multiplication but in different order', function () {
 
 			const m1 = new Matrix4().set( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 );
 			const m2 = new Matrix4().set( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 );
@@ -109,7 +96,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#multiplyMatrices()', function () {
 
-		it( 'should return multiplied matrix of two matrices', function () {
+		it( 'should perform a matrix multiplication with two given matrices', function () {
 
 			const m1 = new Matrix4().set( 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53 );
 			const m2 = new Matrix4().set( 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131 );
@@ -124,7 +111,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#multiplyScalar()', function () {
 
-		it( 'should return matrix multiplied by scalar', function () {
+		it( 'should mulitply the matrix with a scalar value', function () {
 
 			const m1 = new Matrix4().multiplyScalar( 1 );
 
@@ -136,7 +123,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#extractBasis()', function () {
 
-		it( 'should put values of matrix in the three given vectors', function () {
+		it( 'should extract the basis vectors into the given target vectors', function () {
 
 			const v0 = new Vector3();
 			const v1 = new Vector3();
@@ -155,7 +142,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#makeBasis()', function () {
 
-		it( 'should build matrix of three given vectors', function () {
+		it( 'should build matrix of the given vectors', function () {
 
 			const v0 = new Vector3( 1, 0, 0 );
 			const v1 = new Vector3( 0, 0, 0 );
@@ -168,10 +155,9 @@ describe( 'Matrix4', function () {
 
 	} );
 
-
 	describe( '#transpose()', function () {
 
-		it( 'should transpose matrix', function () {
+		it( 'should transpose the matrix', function () {
 
 			const m1 = new Matrix4().set( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 );
 			m1.transpose();
@@ -185,7 +171,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#getInverse()', function () {
 
-		it( 'should return inverse of matrix or identity if det is 0', function () {
+		it( 'should return the inverse of the matrix or the identity matrix if its determinant is zero', function () {
 
 			const m1 = new Matrix4().set( 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, 1 );
 			const m2 = new Matrix4().getInverse( m1 );
@@ -216,7 +202,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#fromArray()', function () {
 
-		it( 'should fill matrix with values of array', function () {
+		it( 'should fill the matrix with values from an array', function () {
 
 			const m1 = new Matrix4().fromArray( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
 
@@ -228,11 +214,24 @@ describe( 'Matrix4', function () {
 
 	describe( '#toArray()', function () {
 
-		it( 'should return array of matrix values', function () {
+		it( 'should return an array of matrix values', function () {
 
 			const m1 = new Matrix4();
 
 			expect( m1.toArray() ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ] );
+
+		} );
+
+	} );
+
+	describe( '#equals()', function () {
+
+		it( 'should return true if equal else false', function () {
+
+			const m1 = new Matrix4();
+			const m2 = new Matrix4();
+
+			expect( m1.equals( m2 ) ).to.be.true;
 
 		} );
 

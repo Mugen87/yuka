@@ -29,7 +29,7 @@ describe( 'Vector3', function () {
 
 	describe( '#copy()', function () {
 
-		it( 'should return a copy of the vector', function () {
+		it( 'should copy a given vector to the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
 			const v2 = new Vector3().copy( v1 );
@@ -61,20 +61,11 @@ describe( 'Vector3', function () {
 
 	describe( '#add()', function () {
 
-		it( 'should return an unaltered vector when a zero vector is added', function () {
+		it( 'should add a vector to the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
-			const v0 = new Vector3();
-			v1.add( v0 );
-
-			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
-
-		} );
-
-		it( 'should return a vector twice the size if the same vector is added', function () {
-
-			const v1 = new Vector3( x, y, z );
-			v1.add( v1 );
+			const v2 = new Vector3( x, y, z );
+			v1.add( v2 );
 
 			expect( v1 ).to.deep.equal( { x: x * 2, y: y * 2, z: z * 2 } );
 
@@ -84,7 +75,7 @@ describe( 'Vector3', function () {
 
 	describe( '#addScalar()', function () {
 
-		it( 'should return an unaltered vector when adding 0', function () {
+		it( 'should add a scalar value to the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
 			v1.addScalar( 0 );
@@ -97,22 +88,15 @@ describe( 'Vector3', function () {
 
 	describe( '#addVectors()', function () {
 
-		it( 'should return the same vector when a zero vector is added', function ( ) {
+		it( 'should add the two given vectors and store the result in the current instance', function ( ) {
 
 			const v1 = new Vector3( x, y, z );
-			const v0 = new Vector3();
-			const v2 = new Vector3().addVectors( v1, v0 );
+			const v0 = new Vector3( x, y, z );
+			const v2 = new Vector3();
 
-			expect( v2 ).to.deep.equal( { x: v1.x, y: v1.y, z: v1.z } );
+			v2.addVectors( v1, v0 );
 
-		} );
-
-		it( 'should return a vector twice the size if the same vector is added', function ( ) {
-
-			const v1 = new Vector3( x, y, z );
-			const v2 = new Vector3().addVectors( v1, v1 );
-
-			expect( v2 ).to.deep.equal( { x: v1.x * 2, y: v1.y * 2, z: v1.z * 2 } );
+			expect( v2 ).to.deep.equal( { x: x * 2, y: y * 2, z: z * 2 } );
 
 		} );
 
@@ -120,14 +104,14 @@ describe( 'Vector3', function () {
 
 	describe( '#sub', function () {
 
-		it( 'should return zero vector when same vector is subtracted', function () {
+		it( 'should subtract the given vector from the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
-			const v2 = new Vector3();
+			const v2 = new Vector3( x, y, z );
 
-			v1.sub( v1 );
+			v1.sub( v2 );
 
-			expect( v1 ).to.deep.equal( { x: v2.x, y: v2.y, z: v2.z } );
+			expect( v1 ).to.deep.equal( { x: 0, y: 0, z: 0 } );
 
 		} );
 
@@ -135,12 +119,12 @@ describe( 'Vector3', function () {
 
 	describe( '#subScalar()', function () {
 
-		it( 'should return an unaltered vector when subbing 0', function () {
+		it( 'should substract the given scalar from the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
-			v1.subScalar( 0 );
+			v1.subScalar( 1 );
 
-			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
+			expect( v1 ).to.deep.equal( { x: 0, y: 1, z: 2 } );
 
 		} );
 
@@ -148,13 +132,15 @@ describe( 'Vector3', function () {
 
 	describe( '#subVectors()', function () {
 
-		it( 'should return the same vector when a zero vector is subbed', function ( ) {
+		it( 'should subtract two given vectors and store the result in the current instance', function ( ) {
 
 			const v1 = new Vector3( x, y, z );
-			const v0 = new Vector3();
-			const v2 = new Vector3().subVectors( v1, v0 );
+			const v0 = new Vector3( x, y, z );
+			const v2 = new Vector3();
 
-			expect( v2 ).to.deep.equal( { x: v1.x, y: v1.y, z: v1.z } );
+			v2.subVectors( v1, v0 );
+
+			expect( v2 ).to.deep.equal( { x: 0, y: 0, z: 0 } );
 
 		} );
 
@@ -162,7 +148,7 @@ describe( 'Vector3', function () {
 
 	describe( '#multiply()', function () {
 
-		it( 'should return product of vector multiplication', function () {
+		it( 'should multiply the given vector with the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
 			const v2 = new Vector3( x, y, z );
@@ -177,12 +163,12 @@ describe( 'Vector3', function () {
 
 	describe( '#multiplyScalar()', function () {
 
-		it( 'should return unaltered vector when multiplying with 1', function () {
+		it( 'should multiply the given scalar value with the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
-			v1.multiplyScalar( 1 );
+			v1.multiplyScalar( 2 );
 
-			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
+			expect( v1 ).to.deep.equal( { x: x * 2, y: y * 2, z: z * 2 } );
 
 		} );
 
@@ -190,7 +176,7 @@ describe( 'Vector3', function () {
 
 	describe( '#multiplyVectors()', function () {
 
-		it( 'should return product of vector multiplication', function () {
+		it( 'should multiply two given vectors and store the result in the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
 			const v2 = new Vector3().multiplyVectors( v1, v1 );
@@ -203,14 +189,14 @@ describe( 'Vector3', function () {
 
 	describe( '#divide()', function () {
 
-		it( 'should return unaltered vector when dividing with vector1', function () {
+		it( 'should divide a vector through the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
-			const v2 = new Vector3( 1, 1, 1 );
+			const v2 = new Vector3( x, y, z );
 
 			v1.divide( v2 );
 
-			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
+			expect( v1 ).to.deep.equal( { x: 1, y: 1, z: 1 } );
 
 		} );
 
@@ -218,13 +204,13 @@ describe( 'Vector3', function () {
 
 	describe( '#divideScalar()', function () {
 
-		it( 'should return unaltered vector when dividing with 1', function () {
+		it( 'should divide a scalar value through the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
 
-			v1.divideScalar( 1 );
+			v1.divideScalar( 2 );
 
-			expect( v1 ).to.deep.equal( { x: x, y: y, z: z } );
+			expect( v1 ).to.deep.equal( { x: 0.5, y: 1, z: 1.5 } );
 
 		} );
 
@@ -232,14 +218,15 @@ describe( 'Vector3', function () {
 
 	describe( '#divideVectors()', function () {
 
-		it( 'should return unaltered vector when dividing with vector1', function () {
+		it( 'should divide two given vectors and store the result in the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
-			const v2 = new Vector3( 1, 1, 1 );
-			const v3 = new Vector3().divideVectors( v1, v2 );
+			const v2 = new Vector3( x, y, z );
+			const v3 = new Vector3();
 
+			v3.divideVectors( v1, v2 );
 
-			expect( v3 ).to.deep.equal( { x: x, y: y, z: z } );
+			expect( v3 ).to.deep.equal( { x: 1, y: 1, z: 1 } );
 
 		} );
 
@@ -247,7 +234,7 @@ describe( 'Vector3', function () {
 
 	describe( '#clamp()', function () {
 
-		it( 'vector should be between min and max', function () {
+		it( 'should produce a vector with values between the given min/max vectors', function () {
 
 			const v0 = new Vector3();
 			const v1 = new Vector3( 1, 1, 1 );
@@ -262,7 +249,7 @@ describe( 'Vector3', function () {
 
 	describe( '#dot()', function () {
 
-		it( 'should return dot product', function () {
+		it( 'should return the result of the dot product', function () {
 
 			const v1 = new Vector3( x, y, z );
 			const v2 = new Vector3( - x, - y, - z );
@@ -302,7 +289,7 @@ describe( 'Vector3', function () {
 
 	describe( '#cross()', function () {
 
-		it( 'should return cross product', function () {
+		it( 'should perform the cross product', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
 			const v2 = new Vector3( 2, - 1, 0.5 );
@@ -312,7 +299,7 @@ describe( 'Vector3', function () {
 
 		} );
 
-		it( 'should return a degenerated zero vector if both vectors are coplanar', function () {
+		it( 'should produce a degenerated zero vector if both vectors are coplanar', function () {
 
 			const v1 = new Vector3( 0, 1, 0 );
 			const v2 = new Vector3( 0, 2, 0 );
@@ -326,7 +313,7 @@ describe( 'Vector3', function () {
 
 	describe( '#crossVectors', function () {
 
-		it( 'should return cross product', function () {
+		it( 'should perform the cross product of two given vectors and store the result in the current instance', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
 			const v2 = new Vector3( 2, - 1, 0.5 );
@@ -336,7 +323,7 @@ describe( 'Vector3', function () {
 
 		} );
 
-		it( 'should return a degenerated zero vector if both vectors are coplanar', function () {
+		it( 'should produce a degenerated zero vector if both vectors are coplanar', function () {
 
 			const v1 = new Vector3( 0, 1, 0 );
 			const v2 = new Vector3( 0, 2, 0 );
@@ -350,7 +337,7 @@ describe( 'Vector3', function () {
 
 	describe( '#angleTo()', function () {
 
-		it( 'should return angle to the Vector', function () {
+		it( 'should return the angle between the given vector and the current instance', function () {
 
 			const v1 = new Vector3( 1, 0, 0 );
 			const v2 = new Vector3( 0, 1, 0 );
@@ -364,7 +351,7 @@ describe( 'Vector3', function () {
 
 	describe( '#length()', function () {
 
-		it( 'should return length of Vector', function () {
+		it( 'should return the euclidean length of the vector', function () {
 
 			const v1 = new Vector3( 2, 0, 0 );
 
@@ -376,7 +363,7 @@ describe( 'Vector3', function () {
 
 	describe( '#squaredLength()', function () {
 
-		it( 'should return squared length of vector', function () {
+		it( 'should return the squared euclidean length of the vector', function () {
 
 			const v1 = new Vector3( 2, 0, 0 );
 
@@ -388,7 +375,7 @@ describe( 'Vector3', function () {
 
 	describe( '#manhattanLength()', function () {
 
-		it( 'should return manhattan length of vector', function () {
+		it( 'should return the manhattan length of the vector', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
 
@@ -400,7 +387,7 @@ describe( 'Vector3', function () {
 
 	describe( '#distanceTo()', function () {
 
-		it( 'should return distance to the vector', function () {
+		it( 'should return euclidean distance to the given vector', function () {
 
 			const v0 = new Vector3();
 			const v1 = new Vector3( 1, 1, 1 );
@@ -413,7 +400,7 @@ describe( 'Vector3', function () {
 
 	describe( '#squaredDistanceTo()', function () {
 
-		it( 'should return squared distance to the vector', function () {
+		it( 'should return squared euclidean distance to the given vector', function () {
 
 			const v0 = new Vector3();
 			const v1 = new Vector3( 1, 1, 1 );
@@ -426,7 +413,7 @@ describe( 'Vector3', function () {
 
 	describe( '#manhattanDistanceTo()', function () {
 
-		it( 'should return manhattan distance to the vector', function () {
+		it( 'should return the manhattan distance to the given vector', function () {
 
 			const v0 = new Vector3();
 			const v1 = new Vector3( 1, 1, 1 );
@@ -439,7 +426,7 @@ describe( 'Vector3', function () {
 
 	describe( '#normalize()', function () {
 
-		it( 'should return normalized vector', function () {
+		it( 'should normalize the vector', function () {
 
 			const v2 = new Vector3( 4, 3, 0 );
 
@@ -451,7 +438,7 @@ describe( 'Vector3', function () {
 
 	describe( '#applyMatrix4()', function () {
 
-		it( 'should apply matrix4 to vector', function () {
+		it( 'should perform a vector-matrix multiplication with a 4x4 matrix', function () {
 
 			const v1 = new Vector3( 1, 1, 1 );
 			const m1 = new Matrix4();
@@ -467,7 +454,7 @@ describe( 'Vector3', function () {
 
 	describe( '#applyRotation()', function () {
 
-		it( 'should apply rotation to vector', function () {
+		it( 'should apply a rotation defined by a quaternion to the vector', function () {
 
 			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const v1 = new Vector3( 1, 1, 1 );
@@ -480,7 +467,7 @@ describe( 'Vector3', function () {
 
 	describe( '#fromMatrix3Column()', function () {
 
-		it( 'should return vector from matrix column', function () {
+		it( 'should set the values of a vector from the given 3x3 matrix column', function () {
 
 			const m1 = new Matrix3();
 
@@ -492,7 +479,7 @@ describe( 'Vector3', function () {
 
 	describe( '#fromMatrix4Column()', function () {
 
-		it( 'should return vector from matrix column', function () {
+		it( 'should set the values of a vector from the given 4x4 matrix column', function () {
 
 			const m1 = new Matrix4();
 
@@ -504,7 +491,7 @@ describe( 'Vector3', function () {
 
 	describe( '#fromSpherical()', function () {
 
-		it( 'should return vector from sphere', function () {
+		it( 'should produce a vector from the given spherical coordinates', function () {
 
 			const a = new Vector3();
 			const phi = Math.acos( - 0.5 );

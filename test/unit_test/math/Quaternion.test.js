@@ -22,9 +22,9 @@ describe( 'Quaternion', function () {
 
 		it( 'should return quaternion with given parameters', function () {
 
-			const q1 = new Quaternion( 0, 0, 0, - 1 );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
 
-			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 0, w: - 1 } );
+			expect( q1 ).to.deep.equal( { x: 0, y: 1, z: 0, w: 0 } );
 
 		} );
 
@@ -34,9 +34,9 @@ describe( 'Quaternion', function () {
 
 		it( 'should set given parameters to quaternion', function () {
 
-			const q1 = new Quaternion().set( 0, 0, 0, - 1 );
+			const q1 = new Quaternion().set( 0, 1, 0, 0 );
 
-			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 0, w: - 1 } );
+			expect( q1 ).to.deep.equal( { x: 0, y: 1, z: 0, w: 0 } );
 
 		} );
 
@@ -45,9 +45,9 @@ describe( 'Quaternion', function () {
 
 	describe( '#copy()', function () {
 
-		it( 'should return copy of quaternion', function () {
+		it( 'should copy a given quaternion to the current instance', function () {
 
-			const q1 = new Quaternion( 0, 0, 0, - 1 );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const q2 = new Quaternion().copy( q1 );
 
 			expect( q2 ).to.deep.equal( q1 );
@@ -60,7 +60,7 @@ describe( 'Quaternion', function () {
 
 		it( 'should return clone of quaternion', function () {
 
-			const q1 = new Quaternion( 0, 0, 0, - 1 );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const q2 = q1.clone();
 
 			expect( q2 ).to.deep.equal( q1 );
@@ -69,27 +69,15 @@ describe( 'Quaternion', function () {
 
 	} );
 
-	describe( '#equal()', function () {
-
-		it( 'should return true if equal else false', function () {
-
-			const q1 = new Quaternion( 0, 0, 0, - 1 );
-			const q2 = new Quaternion( 0, 0, 0, - 1 );
-			const q3 = new Quaternion();
-
-			expect( q1.equals( q2 ) ).to.be.true;
-			expect( q1.equals( q3 ) ).to.be.false;
-
-		} );
-
-	} );
-
 	describe( '#inverse()', function () {
 
-		it( 'should return inverse of quaternion', function () {
+		it( 'should produce the inverse of the quaternion', function () {
 
-			const q1 = new Quaternion( 0, 0, 0, - 1 ).inverse();
-			expect( q1 ).to.deep.equal( { x: - 0, y: - 0, z: - 0, w: - 1 } );
+			const q1 = new Quaternion( 0, 1, 0, 1 ).inverse();
+			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.y ).to.closeTo( - 0.7071067811865475, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.w ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 
 		} );
 
@@ -97,10 +85,10 @@ describe( 'Quaternion', function () {
 
 	describe( '#conjugate()', function () {
 
-		it( 'should return conjugate of quaternion', function () {
+		it( 'should conjungate the quaternion', function () {
 
-			const q1 = new Quaternion( 1, 0, 0, 0 ).conjugate();
-			expect( q1 ).to.deep.equal( { x: - 1, y: - 0, z: - 0, w: 0 } );
+			const q1 = new Quaternion( 1, 1, 1, 1 ).conjugate();
+			expect( q1 ).to.deep.equal( { x: - 1, y: - 1, z: - 1, w: 1 } );
 
 		} );
 
@@ -108,9 +96,9 @@ describe( 'Quaternion', function () {
 
 	describe( '#dot()', function () {
 
-		it( 'should return dot product', function () {
+		it( 'should perform the dot product', function () {
 
-			const q1 = new Quaternion();
+			const q1 = new Quaternion( 0, 1, 0, 0 );
 			expect( q1.dot( q1 ) ).to.deep.equal( 1 );
 
 		} );
@@ -119,9 +107,9 @@ describe( 'Quaternion', function () {
 
 	describe( '#length()', function () {
 
-		it( 'should return length of quaternion', function () {
+		it( 'should return the length of the quaternion', function () {
 
-			const q1 = new Quaternion( 1, 1, 0, 0 );
+			const q1 = new Quaternion( 0, 1, 0, 1 );
 			expect( q1.length() ).to.closeTo( 1.4142135623730951, Number.EPSILON );
 
 		} );
@@ -130,10 +118,10 @@ describe( 'Quaternion', function () {
 
 	describe( '#squaredLength()', function () {
 
-		it( 'should return squared length of quaternion', function () {
+		it( 'should return the squared length of the quaternion', function () {
 
-			const q1 = new Quaternion();
-			expect( q1.squaredLength() ).to.deep.equal( 1 );
+			const q1 = new Quaternion( 0, 1, 0, 1 );
+			expect( q1.squaredLength() ).to.deep.equal( 2 );
 
 		} );
 
@@ -141,14 +129,17 @@ describe( 'Quaternion', function () {
 
 	describe( '#normalize()', function () {
 
-		it( 'should return normalized quaternion', function () {
+		it( 'should normalize the quaternion', function () {
 
-			const q1 = new Quaternion( 0, 4, 0, 0 ).normalize();
-			expect( q1 ).to.deep.equal( { x: 0, y: 1, z: 0, w: 0 } );
+			const q1 = new Quaternion( 0, 1, 0, 1 ).normalize();
+			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.w ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 
 		} );
 
-		it( 'should return (0,0,0,1) if length is zero)', function () {
+		it( 'should produce the default quaternion if the length is zero', function () {
 
 			const q1 = new Quaternion( 0, 0, 0, 0 ).normalize();
 			expect( q1.normalize() ).to.deep.equal( { x: 0, y: 0, z: 0, w: 1 } );
@@ -159,12 +150,14 @@ describe( 'Quaternion', function () {
 
 	describe( '#multiply()', function () {
 
-		it( 'should return multiplied quaternion', function () {
+		it( 'should perform a multiplication between two quaternions', function () {
 
 			const q1 = new Quaternion( 0, 1, 0, 0 );
-			const q2 = new Quaternion( 1, 0, 0, 0 ).multiply( q1 );
+			const q2 = new Quaternion( 1, 0, 0, 0 );
 
-			expect( q2 ).to.deep.equal( { x: 0, y: 0, z: 1, w: 0 } );
+			q1.multiply( q2 );
+
+			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: - 1, w: 0 } );
 
 		} );
 
@@ -172,12 +165,14 @@ describe( 'Quaternion', function () {
 
 	describe( '#premultiply()', function () {
 
-		it( 'should return premultiplied quaternion', function () {
+		it( 'should perform a multiplication between two quaternions but in different order', function () {
 
 			const q1 = new Quaternion( 0, 1, 0, 0 );
-			const q2 = new Quaternion( 1, 0, 0, 0 ).premultiply( q1 );
+			const q2 = new Quaternion( 1, 0, 0, 0 );
 
-			expect( q2 ).to.deep.equal( { x: 0, y: 0, z: - 1, w: 0 } );
+			q1.premultiply( q2 );
+
+			expect( q2 ).to.deep.equal( { x: 1, y: 0, z: 0, w: 0 } );
 
 		} );
 
@@ -185,7 +180,7 @@ describe( 'Quaternion', function () {
 
 	describe( '#multiplyQuaternions()', function () {
 
-		it( 'should return multiplied quaternion', function () {
+		it( 'should perform a multiplication between two given quaternions and store the result in the current instance', function () {
 
 			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const q2 = new Quaternion( 1, 0, 0, 0 );
@@ -199,9 +194,9 @@ describe( 'Quaternion', function () {
 
 	describe( '#angleTo()', function () {
 
-		it( 'should return angle to quaternion', function () {
+		it( 'should return the shortest angle between two quaternions', function () {
 
-			const q1 = new Quaternion( 1, 0, 0, 0 );
+			const q1 = new Quaternion( 0, 0, 0, 1 );
 			const q2 = new Quaternion( 0, 1, 0, 0 );
 
 			expect( q1.angleTo( q2 ) ).to.closeTo( Math.PI, Number.EPSILON );
@@ -212,12 +207,40 @@ describe( 'Quaternion', function () {
 
 	describe( '#rotateTo()', function () {
 
-		it( 'should return quaternion rotated to other quaternion', function () {
+		it( 'should gradually rotate a quaternion to another a target quaternion by a given angular step', function () {
 
-			const q1 = new Quaternion( 1, 0, 0, 0 );
+			const q1 = new Quaternion( 0, 0, 0, 1 );
 			const q2 = new Quaternion( 0, 1, 0, 0 );
-			const step = Math.PI;
-			expect( q1.rotateTo( q2, step ) ).to.deep.equal( q2 );
+			const step = Math.PI * 0.5;
+
+			q1.rotateTo( q2, step );
+
+			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.w ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+
+			q1.rotateTo( q2, step );
+
+			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 1, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
+
+		} );
+
+		it( 'should not overshoot the target quaternion', function () {
+
+			const q1 = new Quaternion( 0, 0, 0, 1 );
+			const q2 = new Quaternion( 0, 1, 0, 0 );
+			const step = Math.PI * 1.5;
+
+			q1.rotateTo( q2, step );
+
+			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 1, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
 
 		} );
 
@@ -225,7 +248,7 @@ describe( 'Quaternion', function () {
 
 	describe( '#lookAt()', function () {
 
-		it( 'should return quaternion which looks at', function () {
+		it( 'should produce a quaternion which rotates an object towards a specific target direction', function () {
 
 			const v0 = new Vector3( 0, 0, 1 );
 			const v1 = new Vector3( 0, 0, - 1 );
@@ -242,67 +265,39 @@ describe( 'Quaternion', function () {
 
 	describe( '#slerp()', function () {
 
-		it( 'should return unchanged quaternion if t is zero', function () {
+		it( 'should perform a spherical linear interpolation from one quaternion to another one with the given interpolation parameter', function () {
 
-			const q1 = new Quaternion( 1, 0, 0, 0 );
-			const q2 = new Quaternion( 0, 1, 0, 0 );
-			const t = 0;
-			expect( q1.slerp( q2, t ) ).to.deep.equal( q1 );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
+			const q2 = new Quaternion( 0, 0, 0, 1 );
 
-		} );
+			q1.slerp( q2, 0.5 );
 
-		it( 'should return q if t is one', function () {
-
-			const q1 = new Quaternion( 1, 0, 0, 0 );
-			const q2 = new Quaternion( 0, 1, 0, 0 );
-			const t = 1;
-			expect( q1.slerp( q2, t ) ).to.deep.equal( q2 );
-
-		} );
-
-		it( 'cosHalfTheta < 0', function () {
-
-			const q1 = new Quaternion( 1, 0, 0, 0 );
-			const q2 = new Quaternion( - 1, 0, 0, 0 );
-			const t = 0.5;
-
-			expect( q1.slerp( q2, t ) ).to.deep.equal( { x: 1, y: 0, z: 0, w: 0 } );
-
-		} );
-
-		it( 'cosHalfTheta >= 0 && cosHalfTheta < 1', function () {
-
-			const q1 = new Quaternion( 1, 0, 0, 0 );
-			const q2 = new Quaternion( 0.5, 0, 0, 0 );
-			const t = 0.5;
-			q1.slerp( q2, t );
-			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
-			expect( q1.x ).to.closeTo( 0.8660254037844386, Number.EPSILON );
-			expect( q1.y ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.w ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 
 		} );
 
-		it( 'cosHalfTheta >= 1', function () {
+		it( 'should produce the initial quaternion when the interpolation parameter is zero', function () {
 
-			const q1 = new Quaternion( 1, 0, 0, 0 );
-			const q2 = new Quaternion( 1, 0, 0, 0 );
-			const t = 0.5;
+			const q1 = new Quaternion( 0, 1, 0, 0 );
+			const q2 = new Quaternion( 0, 0, 0, 1 );
 
-			expect( q1.slerp( q2, t ) ).to.deep.equal( { x: 1, y: 0, z: 0, w: 0 } );
+			q1.slerp( q2, 0 );
+
+			expect( q1 ).to.deep.equal( q1 );
 
 		} );
 
-		it( 'Math.abs( sinHalfTheta ) < 0.001', function () {
+		it( 'should produce the target quaternion when the interpolation parameter is one', function () {
 
-			const q1 = new Quaternion( 1, 0, 0, 0 );
-			const q2 = new Quaternion( 0.9999999, 0, 0, 0 );
-			const t = 0.5;
-			q1.slerp( q2, t );
-			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
-			expect( q1.x ).to.closeTo( 0.9999999500000001, Number.EPSILON );
-			expect( q1.y ).to.closeTo( 0, Number.EPSILON );
-			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+			const q1 = new Quaternion( 0, 1, 0, 0 );
+			const q2 = new Quaternion( 0, 0, 0, 1 );
+
+			q1.slerp( q2, 1 );
+
+			expect( q1 ).to.deep.equal( q2 );
 
 		} );
 
@@ -310,15 +305,17 @@ describe( 'Quaternion', function () {
 
 	describe( '#fromEuler()', function () {
 
-		it( 'should return quaternion from euler', function () {
+		it( 'should return a quaternion from euler angles', function () {
 
 			const q1 = new Quaternion().fromEuler( 0, 0, 0 );
 			const q2 = new Quaternion().fromEuler( Math.PI / 2, 0, 0 );
+
 			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 0, w: 1 } );
-			expect( q2.w ).to.closeTo( 0.7071067811865476, Number.EPSILON );
+
 			expect( q2.x ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 			expect( q2.y ).to.closeTo( 0, Number.EPSILON );
 			expect( q2.z ).to.closeTo( 0, Number.EPSILON );
+			expect( q2.w ).to.closeTo( 0.7071067811865476, Number.EPSILON );
 
 		} );
 
@@ -326,7 +323,7 @@ describe( 'Quaternion', function () {
 
 	describe( '#fromMatrix3()', function () {
 
-		it( 'should return quaternion from matrix', function () {
+		it( 'should return a quaternion from a rotation matrix', function () {
 
 			const m1 = new Matrix3();
 			const q1 = new Quaternion().fromMatrix3( m1 );
@@ -334,43 +331,12 @@ describe( 'Quaternion', function () {
 			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 0, w: 1 } );
 
 		} );
-		it( 'should return quaternion from matrix trace negative', function () {
-
-			const m1 = new Matrix3().set( - 1, 0, 0, 0, - 1, 0, 0, 0, 1 );
-			const q1 = new Quaternion().fromMatrix3( m1 );
-
-			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 1, w: 0 } );
-
-		} );
-		it( 'm11>m22,m11>m33', function () {
-
-			const m1 = new Matrix3().set( 1, 0, 0, 0, - 1, 0, 0, 0, 0, - 1 );
-			const q1 = new Quaternion().fromMatrix3( m1 );
-
-			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
-			expect( q1.x ).to.closeTo( 0.8660254037844386, Number.EPSILON );
-			expect( q1.y ).to.closeTo( 0, Number.EPSILON );
-			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
-
-		} );
-
-		it( 'm22>m33', function () {
-
-			const m1 = new Matrix3().set( - 1, 0, 0, 0, 0, 1, 0, 0, 0, - 1 );
-			const q1 = new Quaternion().fromMatrix3( m1 );
-
-			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
-			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
-			expect( q1.y ).to.closeTo( 0.35355339059327373, Number.EPSILON );
-			expect( q1.z ).to.closeTo( 0.7071067811865476, Number.EPSILON );
-
-		} );
 
 	} );
 
 	describe( '#fromArray()', function () {
 
-		it( 'should return quaternion from matrix', function () {
+		it( 'should setup the quaternion with values from an array', function () {
 
 			const q1 = new Quaternion().fromArray( [ 0, 0, 0, 1 ] );
 
@@ -382,11 +348,26 @@ describe( 'Quaternion', function () {
 
 	describe( '#toArray()', function () {
 
-		it( 'should return quaternion from matrix', function () {
+		it( 'should return an array of quaternion values', function () {
 
 			const q1 = new Quaternion();
 
 			expect( q1.toArray() ).to.deep.equal( [ 0, 0, 0, 1 ] );
+
+		} );
+
+	} );
+
+	describe( '#equals()', function () {
+
+		it( 'should return true if the given quaternion is to the current instance', function () {
+
+			const q1 = new Quaternion( 0, 0, 0, - 1 );
+			const q2 = new Quaternion( 0, 0, 0, - 1 );
+			const q3 = new Quaternion();
+
+			expect( q1.equals( q2 ) ).to.be.true;
+			expect( q1.equals( q3 ) ).to.be.false;
 
 		} );
 
