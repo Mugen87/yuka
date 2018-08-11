@@ -69,6 +69,7 @@ describe( 'Trigger', function () {
 
 			const trigger = new Trigger();
 			expect( trigger ).respondTo( 'execute' );
+			trigger.execute();
 
 		} );
 
@@ -80,6 +81,7 @@ describe( 'Trigger', function () {
 
 			const trigger = new Trigger();
 			expect( trigger ).respondTo( 'update' );
+			trigger.update();
 
 		} );
 

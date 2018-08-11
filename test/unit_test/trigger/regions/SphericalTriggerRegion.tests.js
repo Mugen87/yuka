@@ -14,7 +14,7 @@ describe( 'SphericalTriggerRegion', function () {
 
 	describe( '#constructor()', function () {
 
-		it( 'should create an internal bounding volume from the given parameter', function () {
+		it( 'should create an internal bounding sphere from the given parameter', function () {
 
 			const position = new Vector3( 1, 1, 1 );
 			const radius = 2;
@@ -29,6 +29,67 @@ describe( 'SphericalTriggerRegion', function () {
 
 	} );
 
+	describe( '#get position()', function () {
+
+		it( 'should return the center vector of the internal bounding sphere', function () {
+
+			const position = new Vector3( 1, 1, 1 );
+			const radius = 2;
+
+			const region = new SphericalTriggerRegion( position, radius );
+
+			expect( region.position ).to.equal( region._boundingSphere.center );
+
+		} );
+
+	} );
+
+	describe( '#set position()', function () {
+
+		it( 'should set the center vector of the internal bounding sphere', function () {
+
+			const position = new Vector3( 1, 1, 1 );
+
+			const region = new SphericalTriggerRegion();
+
+			region.position = position;
+
+			expect( position ).to.equal( region._boundingSphere.center );
+
+		} );
+
+	} );
+
+	describe( '#get radius()', function () {
+
+		it( 'should return the radius of the internal bounding sphere', function () {
+
+			const position = new Vector3( 1, 1, 1 );
+			const radius = 2;
+
+			const region = new SphericalTriggerRegion( position, radius );
+
+			expect( region.radius ).to.equal( region._boundingSphere.radius );
+
+		} );
+
+	} );
+
+	describe( '#set radius()', function () {
+
+		it( 'should set the radius of the internal bounding sphere', function () {
+
+			const radius = 2;
+
+			const region = new SphericalTriggerRegion();
+
+			region.radius = radius;
+
+			expect( radius ).to.equal( region._boundingSphere.radius );
+
+		} );
+
+	} );
 
 	describe( '#touching()', function () {
 

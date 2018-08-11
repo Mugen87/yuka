@@ -70,6 +70,7 @@ describe( 'Goal', function () {
 
 			const goal = new Goal();
 			expect( goal ).respondTo( 'activate' );
+			goal.activate();
 
 		} );
 
@@ -81,6 +82,7 @@ describe( 'Goal', function () {
 
 			const goal = new Goal();
 			expect( goal ).respondTo( 'execute' );
+			goal.execute();
 
 		} );
 
@@ -92,6 +94,7 @@ describe( 'Goal', function () {
 
 			const goal = new Goal();
 			expect( goal ).respondTo( 'terminate' );
+			goal.terminate();
 
 		} );
 

@@ -15,6 +15,7 @@ describe( 'State', function () {
 
 			const state = new State();
 			expect( state ).respondTo( 'enter' );
+			state.enter();
 
 		} );
 
@@ -26,6 +27,7 @@ describe( 'State', function () {
 
 			const state = new State();
 			expect( state ).respondTo( 'execute' );
+			state.execute();
 
 		} );
 
@@ -37,6 +39,7 @@ describe( 'State', function () {
 
 			const state = new State();
 			expect( state ).respondTo( 'exit' );
+			state.exit();
 
 		} );
 
