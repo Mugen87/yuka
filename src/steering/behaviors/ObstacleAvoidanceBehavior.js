@@ -19,6 +19,10 @@ const boundingSphere = new BoundingSphere();
 
 const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
+// exclude from code coverage analysis
+
+/* istanbul ignore next */
+
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	constructor( entityManager = null ) {

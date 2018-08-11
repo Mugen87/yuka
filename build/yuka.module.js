@@ -3735,6 +3735,10 @@ const boundingSphere = new BoundingSphere();
 
 const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
+// exclude from code coverage analysis
+
+/* istanbul ignore next */
+
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	constructor( entityManager = null ) {
@@ -3947,6 +3951,10 @@ class PursuitBehavior extends SteeringBehavior {
 
 const targetWorld = new Vector3();
 const randomDisplacement = new Vector3();
+
+// exclude from code coverage analysis
+
+/* istanbul ignore next */
 
 class WanderBehavior extends SteeringBehavior {
 

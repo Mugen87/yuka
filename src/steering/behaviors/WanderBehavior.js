@@ -9,6 +9,10 @@ import { _Math } from '../../math/Math.js';
 const targetWorld = new Vector3();
 const randomDisplacement = new Vector3();
 
+// exclude from code coverage analysis
+
+/* istanbul ignore next */
+
 class WanderBehavior extends SteeringBehavior {
 
 	constructor( radius = 1, distance = 5, jitter = 5 ) {
