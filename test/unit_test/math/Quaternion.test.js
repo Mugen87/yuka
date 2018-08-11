@@ -245,6 +245,18 @@ describe( 'Quaternion', function () {
 
 		} );
 
+		it( 'should make an early out if the angle between both quaternions is zero', function () {
+
+			const q1 = new Quaternion( 0, 0, 0, 1 );
+			const q2 = new Quaternion( 0, 0, 0, 1 );
+			const step = Math.PI;
+
+			q1.rotateTo( q2, step );
+
+			expect( q1 ).to.deep.equal( q1 );
+
+		} );
+
 	} );
 
 	describe( '#lookAt()', function () {
@@ -277,6 +289,29 @@ describe( 'Quaternion', function () {
 			expect( q1.y ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
 			expect( q1.w ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+
+		} );
+
+		it( 'should perform a spherical linear interpolation from one quaternion to another one with the given interpolation parameter (cosHalfTheta < 0)', function () {
+
+			const q1 = new Quaternion( 1, 0, 0, 0 );
+			const q2 = new Quaternion( - 1, 0, 0, 0 );
+			const t = 0.5;
+
+			expect( q1.slerp( q2, t ) ).to.deep.equal( { x: 1, y: 0, z: 0, w: 0 } );
+
+		} );
+
+		it( 'should perform a spherical linear interpolation from one quaternion to another one with the given interpolation parameter (Math.abs( sinHalfTheta ) < 0.001)', function () {
+
+			const q1 = new Quaternion( 1, 0, 0, 0 );
+			const q2 = new Quaternion( 0.9999999, 0, 0, 0 );
+			const t = 0.5;
+			q1.slerp( q2, t );
+			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.x ).to.closeTo( 0.9999999500000001, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
 
 		} );
 
@@ -324,12 +359,45 @@ describe( 'Quaternion', function () {
 
 	describe( '#fromMatrix3()', function () {
 
-		it( 'should return a quaternion from a rotation matrix', function () {
+		it( 'should return a quaternion from a 3x3 rotation matrix', function () {
 
 			const m1 = new Matrix3();
 			const q1 = new Quaternion().fromMatrix3( m1 );
 
 			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 0, w: 1 } );
+
+		} );
+
+		it( 'should return a quaternion from a 3x3 rotation matrix (negative trace)', function () {
+
+			const m1 = new Matrix3().set( - 1, 0, 0, 0, - 1, 0, 0, 0, 1 );
+			const q1 = new Quaternion().fromMatrix3( m1 );
+
+			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 1, w: 0 } );
+
+		} );
+
+		it( 'should return a quaternion from a 3x3 rotation matrix (m11>m22 && m11>m33)', function () {
+
+			const m1 = new Matrix3().set( 1, 0, 0, 0, - 1, 0, 0, 0, 0, - 1 );
+			const q1 = new Quaternion().fromMatrix3( m1 );
+
+			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.x ).to.closeTo( 0.8660254037844386, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0, Number.EPSILON );
+
+		} );
+
+		it( 'should return a quaternion from a 3x3 rotation matrix (m22>m33)', function () {
+
+			const m1 = new Matrix3().set( - 1, 0, 0, 0, 0, 1, 0, 0, 0, - 1 );
+			const q1 = new Quaternion().fromMatrix3( m1 );
+
+			expect( q1.w ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q1.y ).to.closeTo( 0.35355339059327373, Number.EPSILON );
+			expect( q1.z ).to.closeTo( 0.7071067811865476, Number.EPSILON );
 
 		} );
 
