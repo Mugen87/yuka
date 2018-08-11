@@ -1,7 +1,7 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
- * Run benchmark via: node test/benchmarks/AStar.benchmark.js
+ * Run benchmark via: node test/benchmarks/BFS.benchmark.js
  *
  */
 
