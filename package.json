@@ -11,7 +11,8 @@
     "dev": "concurrently \"rollup -c -w\" \"http-server\"",
     "lint": "eslint src examples --ext .js",
     "start": "npm run dev",
-    "test": "nyc mocha test/**/*.js"
+    "test": "nyc mocha test/**/*.js",
+		"travis": "npm run lint && npm test"
   },
   "keywords": [
     "javascript",
