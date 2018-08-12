@@ -1824,6 +1824,40 @@
 	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
+	class Regulator {
+
+		constructor( updateFrequency = 0 ) {
+
+			this.updateFrequency = updateFrequency; // updates per second
+
+			this._time = new Time();
+
+			this._nextUpdateTime = 0;
+
+		}
+
+		ready() {
+
+			this._time.update();
+
+			if ( this._time.currentTime >= this._nextUpdateTime ) {
+
+				this._nextUpdateTime = this._time.currentTime + ( 1000 / this.updateFrequency );
+
+				return true;
+
+			}
+
+			return false;
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
 	class Node {
 
 		constructor( index = - 1 ) {
@@ -4769,6 +4803,7 @@
 	exports.Logger = Logger;
 	exports.MessageDispatcher = MessageDispatcher;
 	exports.MovingEntity = MovingEntity;
+	exports.Regulator = Regulator;
 	exports.Telegram = Telegram;
 	exports.Time = Time;
 	exports.Node = Node;

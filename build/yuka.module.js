@@ -1818,6 +1818,40 @@ class Time {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+class Regulator {
+
+	constructor( updateFrequency = 0 ) {
+
+		this.updateFrequency = updateFrequency; // updates per second
+
+		this._time = new Time();
+
+		this._nextUpdateTime = 0;
+
+	}
+
+	ready() {
+
+		this._time.update();
+
+		if ( this._time.currentTime >= this._nextUpdateTime ) {
+
+			this._nextUpdateTime = this._time.currentTime + ( 1000 / this.updateFrequency );
+
+			return true;
+
+		}
+
+		return false;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 class Node {
 
 	constructor( index = - 1 ) {
@@ -4758,4 +4792,4 @@ class Think extends CompositeGoal {
 
 }
 
-export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Telegram, Time, Node, Edge, Graph, GraphUtils, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Telegram, Time, Node, Edge, Graph, GraphUtils, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra };
