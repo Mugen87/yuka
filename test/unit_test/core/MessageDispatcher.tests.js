@@ -33,8 +33,21 @@ describe( 'MessageDispatcher', function () {
 
 			messageDispatcher.deliver( telegram );
 
-			expect( entity.messageHandled ).to.be.true
+			expect( entity.messageHandled ).to.be.true;
 			expect( entity.validTelegram ).to.be.true;
+
+		} );
+
+		it( 'should print a warning if the message was not handled by the receiver', function () {
+
+			const messageDispatcher = new MessageDispatcher();
+			const entity = new GameEntity();
+			const telegram = new Telegram();
+			telegram.receiver = entity;
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			messageDispatcher.deliver( telegram );
 
 		} );
 
@@ -51,8 +64,21 @@ describe( 'MessageDispatcher', function () {
 
 			messageDispatcher.dispatch( sender, receiver, 'test', 0, {} );
 
-			expect( receiver.messageHandled ).to.be.true
+			expect( receiver.messageHandled ).to.be.true;
 			expect( receiver.validTelegram ).to.be.true;
+
+		} );
+
+		it( 'should push a delayed telegram to the internal array', function () {
+
+			const messageDispatcher = new MessageDispatcher();
+
+			const sender = new MessageEntity();
+			const receiver = new MessageEntity();
+
+			messageDispatcher.dispatch( sender, receiver, 'test', 100, {} );
+
+			expect( messageDispatcher.delayedTelegrams ).to.have.lengthOf( 1 );
 
 		} );
 

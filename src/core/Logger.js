@@ -2,6 +2,8 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+/* istanbul ignore next */
+
 class Logger {
 
 	static setLevel( level ) {

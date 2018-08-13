@@ -25,6 +25,13 @@ describe( 'StateMachine', function () {
 
 		} );
 
+		it( 'should do nothing if not states are set', function () {
+
+			const stateMachine = new StateMachine();
+			stateMachine.update();
+
+		} );
+
 	} );
 
 	describe( '#add()', function () {

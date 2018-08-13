@@ -20,6 +20,8 @@ class Telegram {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+/* istanbul ignore next */
+
 class Logger {
 
 	static setLevel( level ) {
@@ -2415,6 +2417,8 @@ class PriorityQueue {
 
 }
 
+/* istanbul ignore next */
+
 function defaultCompare( a, b ) {
 
 	return ( a < b ) ? - 1 : ( a > b ) ? 1 : 0;
@@ -4211,7 +4215,7 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 	}
 
-	fromPositionAndSize( position = new Vector3(), size = new Vector3() ) {
+	fromPositionAndSize( position, size ) {
 
 		this._aabb.fromCenterAndSize( position, size );
 

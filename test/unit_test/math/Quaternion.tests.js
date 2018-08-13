@@ -59,7 +59,7 @@ describe( 'Quaternion', function () {
 
 	describe( '#clone()', function () {
 
-		it( 'should return clone of quaternion', function () {
+		it( 'should return clone of the quaternion', function () {
 
 			const q1 = new Quaternion( 0, 1, 0, 0 );
 			const q2 = q1.clone();

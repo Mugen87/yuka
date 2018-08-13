@@ -92,6 +92,20 @@ describe( 'ArriveBehavior', function () {
 
 		} );
 
+		it( 'should produce no force if the distance between the vehicle and the target is zero', function () {
+
+			const target = new Vector3( 0, 0, 0 );
+			const vehicle = new Vehicle();
+			const force = new Vector3();
+
+			const arriveBehavior = new ArriveBehavior( target, 1 );
+
+			arriveBehavior.calculate( vehicle, force );
+
+			expect( force ).to.deep.equal( { x: 0, y: 0, z: 0 } );
+
+		} );
+
 	} );
 
 } );

@@ -43,7 +43,7 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 	}
 
-	fromPositionAndSize( position = new Vector3(), size = new Vector3() ) {
+	fromPositionAndSize( position, size ) {
 
 		this._aabb.fromCenterAndSize( position, size );
 

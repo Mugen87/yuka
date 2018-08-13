@@ -191,6 +191,18 @@ describe( 'Goal', function () {
 
 		} );
 
+		it( 'should do nothing if the status is not "failed"', function () {
+
+			const goal = new Goal();
+
+			goal.status = STATUS.COMPLETED;
+
+			goal.replanIfFailed();
+
+			expect( goal.completed() ).to.be.true;
+
+		} );
+
 	} );
 
 	describe( '#activateIfInactive', function () {
@@ -205,6 +217,18 @@ describe( 'Goal', function () {
 
 			expect( goal.activateCalled ).to.be.true;
 			expect( goal.active() ).to.be.true;
+
+		} );
+
+		it( 'should do nothing if the status is not "inactive"', function () {
+
+			const goal = new Goal();
+
+			goal.status = STATUS.COMPLETED;
+
+			goal.activateIfInactive();
+
+			expect( goal.completed() ).to.be.true;
 
 		} );
 

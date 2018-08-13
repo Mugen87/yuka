@@ -169,6 +169,17 @@ describe( 'GameEntity', function () {
 
 		} );
 
+		it( 'should print an error if no entity manager is set', function () {
+
+			const sender = new GameEntity();
+			const receiver = new MessageEntity();
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			sender.sendMessage( receiver, 'test' );
+
+		} );
+
 	} );
 
 } );

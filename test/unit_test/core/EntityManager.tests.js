@@ -171,9 +171,13 @@ describe( 'EntityManager', function () {
 
 		} );
 
-		it( 'should return undefined if there is no game entity stored for the given name', function () {
+		it( 'should return null if there is no game entity stored for the given name', function () {
 
 			const manager = new EntityManager();
+			const entity = new GameEntity();
+			entity.name = 'name';
+
+			manager.add( entity );
 
 			expect( manager.getEntityByName( '' ) ).to.be.null;
 

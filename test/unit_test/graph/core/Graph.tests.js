@@ -137,7 +137,7 @@ describe( 'Graph', function () {
 
 		} );
 
-		it( 'should return undefined if the node does not exist', function () {
+		it( 'should return null if the node does not exist', function () {
 
 			const graph = new Graph();
 
@@ -149,22 +149,26 @@ describe( 'Graph', function () {
 
 	describe( '#getEdge()', function () {
 
-		it( 'should return the node for the given index', function () {
+		it( 'should return the edge for the given node indices (from, to)', function () {
 
 			const graph = new Graph();
 			const n0 = new Node( 0 );
 			const n1 = new Node( 1 );
-			const edge = new Edge( 0, 1 );
+			const n2 = new Node( 2 );
+			const e0 = new Edge( 0, 1 );
+			const e1 = new Edge( 0, 2 );
 
 			graph.addNode( n0 );
 			graph.addNode( n1 );
-			graph.addEdge( edge );
+			graph.addNode( n2 );
+			graph.addEdge( e0 );
+			graph.addEdge( e1 );
 
-			expect( graph.getEdge( 0, 1 ) ).to.equal( edge );
+			expect( graph.getEdge( 0, 2 ) ).to.equal( e1 );
 
 		} );
 
-		it( 'should return undefined when the given node indices are not found', function () {
+		it( 'should return null when the given node indices are not found', function () {
 
 			const graph = new Graph();
 
@@ -172,7 +176,7 @@ describe( 'Graph', function () {
 
 		} );
 
-		it( 'should return undefined if the edge does not exists', function () {
+		it( 'should return null if the edge does not exists', function () {
 
 			const graph = new Graph();
 			const n0 = new Node( 0 );
@@ -336,6 +340,59 @@ describe( 'Graph', function () {
 
 	} );
 
+	describe( '#removeNode()', function () {
+
+		it( 'should remove the given node from a non-directed graph', function () {
+
+			const graph = new Graph();
+			const n0 = new Node( 0 );
+			const n1 = new Node( 1 );
+			const n2 = new Node( 2 );
+			const e0 = new Edge( 1, 2 );
+			const e1 = new Edge( 0, 1 );
+
+			graph.addNode( n0 );
+			graph.addNode( n1 );
+			graph.addNode( n2 );
+			graph.addEdge( e0 );
+			graph.addEdge( e1 );
+
+			graph.removeNode( n0 );
+
+			expect( graph.hasNode( n0.index ) ).to.be.false;
+			expect( graph.hasEdge( e1.from, e1.to ) ).to.be.false;
+			expect( graph.hasEdge( e1.to, e1.from ) ).to.be.false;
+
+		} );
+
+		it( 'should remove the given node from a directed graph', function () {
+
+			const graph = new Graph();
+			graph.digraph = true;
+			const n0 = new Node( 0 );
+			const n1 = new Node( 1 );
+			const n2 = new Node( 2 );
+			const e0 = new Edge( 0, 1 );
+			const e1 = new Edge( 2, 0 );
+			const e2 = new Edge( 2, 1 );
+
+			graph.addNode( n0 );
+			graph.addNode( n1 );
+			graph.addNode( n2 );
+			graph.addEdge( e0 );
+			graph.addEdge( e1 );
+			graph.addEdge( e2 );
+
+			graph.removeNode( n0 );
+
+			expect( graph.hasNode( n0.index ) ).to.be.false;
+			expect( graph.hasEdge( e0.from, e0.to ) ).to.be.false;
+			expect( graph.hasEdge( e1.from, e1.to ) ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#removeEdge()', function () {
 
 		it( 'should remove the given edge from the graph', function () {
@@ -343,16 +400,20 @@ describe( 'Graph', function () {
 			const graph = new Graph();
 			const n0 = new Node( 0 );
 			const n1 = new Node( 1 );
-			const e0 = new Edge( 0, 1 );
+			const n2 = new Node( 2 );
+			const e0 = new Edge( 1, 2 );
+			const e1 = new Edge( 0, 1 );
 
 			graph.addNode( n0 );
 			graph.addNode( n1 );
+			graph.addNode( n2 );
 			graph.addEdge( e0 );
+			graph.addEdge( e1 );
 
-			graph.removeEdge( e0 );
+			graph.removeEdge( e1 );
 
-			expect( graph.hasEdge( e0.from, e0.to ) ).to.be.false;
-			expect( graph.hasEdge( e0.to, e0.from ) ).to.be.false;
+			expect( graph.hasEdge( e1.from, e1.to ) ).to.be.false;
+			expect( graph.hasEdge( e1.to, e1.from ) ).to.be.false;
 
 		} );
 
@@ -367,54 +428,27 @@ describe( 'Graph', function () {
 
 		} );
 
-	} );
-
-	describe( '#removeNode()', function () {
-
-		it( 'should remove the given node from a non-directed graph', function () {
-
-			const graph = new Graph();
-			const n0 = new Node( 0 );
-			const n1 = new Node( 1 );
-			const e0 = new Edge( 0, 1 );
-
-			graph.addNode( n0 );
-			graph.addNode( n1 );
-			graph.addEdge( e0 );
-
-			graph.removeNode( n0 );
-
-			expect( graph.hasNode( n0.index ) ).to.be.false;
-			expect( graph.hasEdge( e0.from, e0.to ) ).to.be.false;
-			expect( graph.hasEdge( e0.to, e0.from ) ).to.be.false;
-
-		} );
-
-		it( 'should remove the given node from a directed graph', function () {
+		it( 'should remove only the given edge and not the opponent if it is a directed graph', function () {
 
 			const graph = new Graph();
 			graph.digraph = true;
 			const n0 = new Node( 0 );
 			const n1 = new Node( 1 );
-			const n2 = new Node( 2 );
 			const e0 = new Edge( 0, 1 );
-			const e1 = new Edge( 2, 0 );
+			const e1 = new Edge( 1, 0 );
 
 			graph.addNode( n0 );
 			graph.addNode( n1 );
-			graph.addNode( n2 );
 			graph.addEdge( e0 );
 			graph.addEdge( e1 );
 
-			graph.removeNode( n0 );
+			graph.removeEdge( e0 );
 
-			expect( graph.hasNode( n0.index ) ).to.be.false;
 			expect( graph.hasEdge( e0.from, e0.to ) ).to.be.false;
-			expect( graph.hasEdge( e1.from, e1.to ) ).to.be.false;
+			expect( graph.hasEdge( e1.from, e1.to ) ).to.be.true;
 
 		} );
 
 	} );
-
 
 } );
