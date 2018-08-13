@@ -119,7 +119,7 @@ describe( 'DFS', function () {
 
 	describe( '#clear()', function () {
 
-		it( 'should return an array representing the search tree', function () {
+		it( 'should clear the internal data structures', function () {
 
 			const graph = GraphUtils.createGridLayout( 50, 10 );
 			const dfs = new DFS( graph, 60, 104 );
