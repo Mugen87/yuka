@@ -2071,20 +2071,25 @@ class Graph {
 		// delete the edge from the node's edge list
 
 		const edges = this._edges.get( edge.from );
-		edges.delete( edge );
 
-		// if the graph is not directed, delete the edge connecting the node in the opposite direction
+		if ( edges !== undefined ) {
 
-		if ( this.digraph === false ) {
+			edges.delete( edge );
 
-			const edges = this._edges.get( edge.to );
+			// if the graph is not directed, delete the edge connecting the node in the opposite direction
 
-			for ( let e of edges ) {
+			if ( this.digraph === false ) {
 
-				if ( e.to === edge.from ) {
+				const edges = this._edges.get( edge.to );
 
-					edges.delete( e );
-					break;
+				for ( let e of edges ) {
+
+					if ( e.to === edge.from ) {
+
+						edges.delete( e );
+						break;
+
+					}
 
 				}
 
