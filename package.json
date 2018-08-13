@@ -12,7 +12,7 @@
     "lint": "eslint src examples --ext .js",
     "start": "npm run dev",
     "test": "nyc mocha 'test/unit_test/**/*.js'",
-    "travis": "npm run lint && npm test"
+    "travis": "npm run lint && nyc --reporter=lcovonly mocha 'test/unit_test/**/*.js'"
   },
   "keywords": [
     "javascript",
@@ -37,6 +37,7 @@
     "benchmark": "2.1.4",
     "chai": "4.1.2",
     "concurrently": "3.6.1",
+    "coveralls": "3.0.2",
     "eslint": "5.1.0",
     "eslint-config-mdcs": "4.2.3",
     "http-server": "0.11.1",
