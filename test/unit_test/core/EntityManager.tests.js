@@ -128,7 +128,7 @@ describe( 'EntityManager', function () {
 			expect( manager.entities.size ).to.equal( 0 );
 			expect( manager.triggers.size ).to.equal( 0 );
 			expect( manager._started.size ).to.equal( 0 );
-			expect( manager.messageDispatcher.delayedTelegrams.length ).to.equal( 0 );
+			expect( manager.messageDispatcher.delayedTelegrams ).to.have.lengthOf( 0 );
 
 		} );
 
