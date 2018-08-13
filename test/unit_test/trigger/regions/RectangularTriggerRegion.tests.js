@@ -100,8 +100,6 @@ describe( 'RectangularTriggerRegion', function () {
 
 			const region = new RectangularTriggerRegion().fromPositionAndSize( position, size );
 
-			console.log( region );
-
 			expect( region.min ).to.deep.equal( { x: - 0.5, y: - 0.5, z: 0 } );
 			expect( region.max ).to.deep.equal( { x: 0.5, y: 0.5, z: 1 } );
 

@@ -2521,7 +2521,7 @@ class DFS {
 
 		// just return an empty path if no path to target found or if no target has been specified
 
-		if ( this.found === false || this.target === undefined ) return path;
+		if ( this.found === false || this.target === - 1 ) return path;
 
 		// start with the target of the path
 
@@ -2671,7 +2671,7 @@ class BFS {
 
 		// just return an empty path if no path to target found or if no target has been specified
 
-		if ( this.found === false || this.target === undefined ) return path;
+		if ( this.found === false || this.target === - 1 ) return path;
 
 		// start with the target of the path
 
@@ -2820,7 +2820,7 @@ class Dijkstra {
 
 		// just return an empty path if no path to target found or if no target has been specified
 
-		if ( this.found === false || this.target === undefined ) return path;
+		if ( this.found === false || this.target === - 1 ) return path;
 
 		// start with the target of the path
 
@@ -2986,7 +2986,7 @@ class AStar {
 
 		// just return an empty path if no path to target found or if no target has been specified
 
-		if ( this.found === false || this.target === undefined ) return path;
+		if ( this.found === false || this.target === - 1 ) return path;
 
 		// start with the target of the path
 
