@@ -1,5 +1,6 @@
 /**
  * @author robp94 / https://github.com/robp94
+ * @author Mugen87 / https://github.com/Mugen87
  */
 
 const expect = require( 'chai' ).expect;
@@ -8,7 +9,6 @@ const YUKA = require( '../../../../build/yuka.js' );
 const Node = YUKA.Node;
 const Edge = YUKA.Edge;
 const Graph = YUKA.Graph;
-
 
 describe( 'Graph', function () {
 
@@ -141,7 +141,7 @@ describe( 'Graph', function () {
 
 			const graph = new Graph();
 
-			expect( graph.getNode( 0 ) ).to.be.undefined;
+			expect( graph.getNode( 0 ) ).to.be.null;
 
 		} );
 
@@ -168,7 +168,7 @@ describe( 'Graph', function () {
 
 			const graph = new Graph();
 
-			expect( graph.getEdge( 0, 1 ) ).to.be.undefined;
+			expect( graph.getEdge( 0, 1 ) ).to.be.null;
 
 		} );
 
@@ -181,7 +181,7 @@ describe( 'Graph', function () {
 			graph.addNode( n0 );
 			graph.addNode( n1 );
 
-			expect( graph.getEdge( 0, 1 ) ).to.be.undefined;
+			expect( graph.getEdge( 0, 1 ) ).to.be.null;
 
 		} );
 

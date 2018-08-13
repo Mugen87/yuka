@@ -1945,7 +1945,7 @@ class Graph {
 
 	getNode( index ) {
 
-		return this._nodes.get( index );
+		return this._nodes.get( index ) || null;
 
 	}
 
@@ -1967,7 +1967,7 @@ class Graph {
 
 		}
 
-		return undefined;
+		return null;
 
 	}
 
@@ -1975,6 +1975,8 @@ class Graph {
 
 		result.length = 0;
 		result.push( ...this._nodes.values() );
+
+		return this;
 
 	}
 
@@ -1988,6 +1990,8 @@ class Graph {
 			result.push( ...edges );
 
 		}
+
+		return this;
 
 	}
 

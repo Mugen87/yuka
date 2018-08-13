@@ -1951,7 +1951,7 @@
 
 		getNode( index ) {
 
-			return this._nodes.get( index );
+			return this._nodes.get( index ) || null;
 
 		}
 
@@ -1973,7 +1973,7 @@
 
 			}
 
-			return undefined;
+			return null;
 
 		}
 
@@ -1981,6 +1981,8 @@
 
 			result.length = 0;
 			result.push( ...this._nodes.values() );
+
+			return this;
 
 		}
 
@@ -1994,6 +1996,8 @@
 				result.push( ...edges );
 
 			}
+
+			return this;
 
 		}
 
