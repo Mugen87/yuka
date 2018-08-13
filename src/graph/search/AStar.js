@@ -7,7 +7,7 @@ import { HeuristicPolicyEuclid } from '../extra/HeuristicPolicy.js';
 
 class AStar {
 
-	constructor( graph, source, target ) {
+	constructor( graph = null, source = - 1, target = - 1 ) {
 
 		this.graph = graph;
 		this.source = source;

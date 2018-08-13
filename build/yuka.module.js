@@ -2427,7 +2427,7 @@ function defaultCompare( a, b ) {
 
 class DFS {
 
-	constructor( graph, source, target ) {
+	constructor( graph = null, source = - 1, target = - 1 ) {
 
 		this.graph = graph;
 		this.source = source;
@@ -2571,7 +2571,7 @@ class DFS {
 
 class BFS {
 
-	constructor( graph, source, target ) {
+	constructor( graph = null, source = - 1, target = - 1 ) {
 
 		this.graph = graph;
 		this.source = source;
@@ -2721,7 +2721,7 @@ class BFS {
 
 class Dijkstra {
 
-	constructor( graph, source, target ) {
+	constructor( graph = null, source = - 1, target = - 1 ) {
 
 		this.graph = graph;
 		this.source = source;
@@ -2877,7 +2877,7 @@ function compare( a, b ) {
 
 class AStar {
 
-	constructor( graph, source, target ) {
+	constructor( graph = null, source = - 1, target = - 1 ) {
 
 		this.graph = graph;
 		this.source = source;
