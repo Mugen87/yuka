@@ -647,6 +647,8 @@ class Vector3 {
 
 }
 
+const WorldUp = new Vector3( 0, 1, 0 );
+
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
@@ -657,7 +659,6 @@ class Vector3 {
 const localRight = new Vector3();
 const worldRight = new Vector3();
 const perpWorldUp = new Vector3();
-const worldUp = new Vector3( 0, 1, 0 );
 const temp = new Vector3();
 
 class Matrix3 {
@@ -801,7 +802,7 @@ class Matrix3 {
 
 		// orthonormal linear basis A { localRight, localUp, localForward } for the object local space
 
-		worldRight.crossVectors( worldUp, targetDirection ).normalize();
+		worldRight.crossVectors( WorldUp, targetDirection ).normalize();
 
 		if ( worldRight.squaredLength() === 0 ) {
 
@@ -809,7 +810,7 @@ class Matrix3 {
 			// slightly shift targetDirection in order to avoid collinearity
 
 			temp.copy( targetDirection ).addScalar( Number.EPSILON );
-			worldRight.crossVectors( worldUp, temp ).normalize();
+			worldRight.crossVectors( WorldUp, temp ).normalize();
 
 		}
 
@@ -4805,4 +4806,4 @@ class Think extends CompositeGoal {
 
 }
 
-export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Telegram, Time, Node, Edge, Graph, GraphUtils, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Telegram, Time, Node, Edge, Graph, GraphUtils, PriorityQueue, NavNode, NavEdge, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };

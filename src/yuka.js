@@ -49,3 +49,4 @@ export { Matrix4 } from './math/Matrix4.js';
 export { Quaternion } from './math/Quaternion.js';
 export { Ray } from './math/Ray.js';
 export { Vector3 } from './math/Vector3.js';
+export * from './constants.js';

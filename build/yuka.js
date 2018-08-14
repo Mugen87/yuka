@@ -653,6 +653,8 @@
 
 	}
 
+	const WorldUp = new Vector3( 0, 1, 0 );
+
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
 	 *
@@ -663,7 +665,6 @@
 	const localRight = new Vector3();
 	const worldRight = new Vector3();
 	const perpWorldUp = new Vector3();
-	const worldUp = new Vector3( 0, 1, 0 );
 	const temp = new Vector3();
 
 	class Matrix3 {
@@ -807,7 +808,7 @@
 
 			// orthonormal linear basis A { localRight, localUp, localForward } for the object local space
 
-			worldRight.crossVectors( worldUp, targetDirection ).normalize();
+			worldRight.crossVectors( WorldUp, targetDirection ).normalize();
 
 			if ( worldRight.squaredLength() === 0 ) {
 
@@ -815,7 +816,7 @@
 				// slightly shift targetDirection in order to avoid collinearity
 
 				temp.copy( targetDirection ).addScalar( Number.EPSILON );
-				worldRight.crossVectors( worldUp, temp ).normalize();
+				worldRight.crossVectors( WorldUp, temp ).normalize();
 
 			}
 
@@ -4865,6 +4866,7 @@
 	exports.HeuristicPolicyEuclidSquared = HeuristicPolicyEuclidSquared;
 	exports.HeuristicPolicyManhatten = HeuristicPolicyManhatten;
 	exports.HeuristicPolicyDijkstra = HeuristicPolicyDijkstra;
+	exports.WorldUp = WorldUp;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
