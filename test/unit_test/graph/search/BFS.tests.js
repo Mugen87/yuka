@@ -7,6 +7,7 @@ const YUKA = require( '../../../../build/yuka.js' );
 
 const BFS = YUKA.BFS;
 const Graph = YUKA.Graph;
+const NavNode = YUKA.NavNode;
 const GraphUtils = YUKA.GraphUtils;
 
 describe( 'BFS', function () {
@@ -56,7 +57,8 @@ describe( 'BFS', function () {
 		it( 'should set its found flag to false if the search was not successful (target node not found)', function () {
 
 			const graph = GraphUtils.createGridLayout( 50, 10 );
-			const bfs = new BFS( graph, 60, - 1 );
+			graph.addNode( new NavNode( 1000 ) ); // add a node with no edges
+			const bfs = new BFS( graph, 60, 1000 );
 
 			bfs.search();
 
@@ -87,7 +89,8 @@ describe( 'BFS', function () {
 		it( 'should return an empty array if the search was not successful', function () {
 
 			const graph = GraphUtils.createGridLayout( 50, 10 );
-			const bfs = new BFS( graph, 60, - 1 );
+			graph.addNode( new NavNode( 1000 ) );
+			const bfs = new BFS( graph, 60, 1000 );
 
 			const path = bfs.search().getPath();
 

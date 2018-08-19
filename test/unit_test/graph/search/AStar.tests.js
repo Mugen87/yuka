@@ -5,8 +5,9 @@
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
 
-const ASTAR = YUKA.AStar;
+const AStar = YUKA.AStar;
 const Graph = YUKA.Graph;
+const NavNode = YUKA.NavNode;
 const GraphUtils = YUKA.GraphUtils;
 
 describe( 'ASTAR', function () {
@@ -15,7 +16,7 @@ describe( 'ASTAR', function () {
 
 		it( 'should create an object with correct default values', function () {
 
-			const aStar = new ASTAR();
+			const aStar = new AStar();
 			expect( aStar ).to.have.a.property( 'graph' ).that.is.null;
 			expect( aStar ).to.have.a.property( 'source' ).to.equal( - 1 );
 			expect( aStar ).to.have.a.property( 'target' ).to.equal( - 1 );
@@ -30,7 +31,7 @@ describe( 'ASTAR', function () {
 		it( 'should apply the parameters to the new object', function () {
 
 			const graph = new Graph();
-			const aStar = new ASTAR( graph, 0, 1 );
+			const aStar = new AStar( graph, 0, 1 );
 
 			expect( aStar.graph ).to.equal( graph );
 			expect( aStar.source ).to.equal( 0 );
@@ -45,14 +46,25 @@ describe( 'ASTAR', function () {
 		it( 'should set its found flag to true if the search was successful (target node found)', function () {
 
 			const graph = GraphUtils.createGridLayout( 50, 10 );
-			const aStar = new ASTAR( graph, 60, 104 );
+			const aStar = new AStar( graph, 60, 104 );
 
 			aStar.search();
 
 			expect( aStar.found ).to.be.true;
 
 		} );
-		//for performance reasons ignore non successful like -1
+
+		it( 'should set its found flag to false if the search was not successful (target node not found)', function () {
+
+			const graph = GraphUtils.createGridLayout( 50, 10 );
+			graph.addNode( new NavNode( 1000 ) ); // add a node with no edges
+			const dijkstra = new AStar( graph, 60, 1000 );
+
+			dijkstra.search();
+
+			expect( dijkstra.found ).to.be.false;
+
+		} );
 
 	} );
 
@@ -61,7 +73,7 @@ describe( 'ASTAR', function () {
 		it( 'should return an array of node indices which represent the found path', function () {
 
 			const graph = GraphUtils.createGridLayout( 50, 10 );
-			const aStar = new ASTAR( graph, 60, 104 );
+			const aStar = new AStar( graph, 60, 104 );
 
 			const path = aStar.search().getPath();
 
@@ -73,7 +85,18 @@ describe( 'ASTAR', function () {
 			expect( secondNodeIndex ).to.equal( 104 );
 
 		} );
-		//for performance reasons ignore non successful like -1
+
+		it( 'should return an empty array if the search was not successful', function () {
+
+			const graph = GraphUtils.createGridLayout( 50, 10 );
+			graph.addNode( new NavNode( 1000 ) );
+			const aStar = new AStar( graph, 60, 1000 );
+
+			const path = aStar.search().getPath();
+
+			expect( path ).to.be.an( 'array' ).that.is.empty;
+
+		} );
 
 	} );
 
@@ -82,7 +105,7 @@ describe( 'ASTAR', function () {
 		it( 'should return an array of edges representing the search tree/spanning tree', function () {
 
 			const graph = GraphUtils.createGridLayout( 50, 10 );
-			const aStar = new ASTAR( graph, 60, 104 );
+			const aStar = new AStar( graph, 60, 104 );
 
 			const searchTree = aStar.search().getSearchTree();
 
@@ -97,11 +120,11 @@ describe( 'ASTAR', function () {
 
 	} );
 
-	describe( '#SetHeuristic()', function () {
+	describe( '#setHeuristic()', function () {
 
 		it( 'should set the given heuristic', function () {
 
-			const aStar = new ASTAR();
+			const aStar = new AStar();
 			aStar.setHeuristic( YUKA.HeuristicPolicyEuclidSquared );
 
 			expect( aStar.heuristic ).to.be.equal( YUKA.HeuristicPolicyEuclidSquared );
@@ -116,7 +139,7 @@ describe( 'ASTAR', function () {
 		it( 'should clear the internal data structures', function () {
 
 			const graph = GraphUtils.createGridLayout( 50, 10 );
-			const aStar = new ASTAR( graph, 60, 104 );
+			const aStar = new AStar( graph, 60, 104 );
 
 			aStar.search().clear();
 			expect( aStar.found ).to.be.false;
