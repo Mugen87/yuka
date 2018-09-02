@@ -40,7 +40,7 @@ describe( 'Path', function () {
 
 	describe( '#clear()', function () {
 
-		it( 'should remove all waypoints from the internal array', function () {
+		it( 'should remove all waypoints from the internal array and reset the current waypoint index', function () {
 
 			const path = new Path();
 
@@ -49,6 +49,7 @@ describe( 'Path', function () {
 			path.clear();
 
 			expect( path._waypoints ).to.be.empty;
+			expect( path._index ).to.equal( 0 );
 
 		} );
 

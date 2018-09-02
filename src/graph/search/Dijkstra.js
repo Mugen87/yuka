@@ -74,7 +74,7 @@ class Dijkstra {
 				// 1. If the node was never on the search frontier
 				// 2. If the cost to this node is better than before
 
-				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || newCost < ( this._cost.get( edge.to ) || Infinity ) ) {
+				if ( ( this._searchFrontier.has( edge.to ) === false ) || newCost < ( this._cost.get( edge.to ) ) ) {
 
 					this._cost.set( edge.to, newCost );
 

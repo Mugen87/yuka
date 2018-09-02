@@ -85,7 +85,7 @@ class AStar {
 				// 1. If the node was never on the search frontier
 				// 2. If the cost to this node is better than before
 
-				if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || G < ( this._cost.get( edge.to ) || Infinity ) ) {
+				if ( ( this._searchFrontier.has( edge.to ) === false ) || G < ( this._cost.get( edge.to ) ) ) {
 
 					this._cost.set( edge.to, G );
 
@@ -145,12 +145,6 @@ class AStar {
 	getSearchTree() {
 
 		return [ ...this._shortestPathTree.values() ];
-
-	}
-
-	setHeuristic( heuristic ) {
-
-		this.heuristic = heuristic;
 
 	}
 

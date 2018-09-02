@@ -23,6 +23,7 @@ class Path {
 	clear() {
 
 		this._waypoints.length = 0;
+		this._index = 0;
 
 		return this;
 

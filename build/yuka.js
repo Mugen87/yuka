@@ -2434,6 +2434,1369 @@
 
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * https://en.wikipedia.org/wiki/Doubly_connected_edge_list
+	 *
+	 */
+
+	class HalfEdge {
+
+		constructor( vertex = new Vector3() ) {
+
+			this.vertex = vertex;
+			this.next = null;
+			this.prev = null;
+			this.twin = null;
+			this.polygon = null;
+
+			this.nodeIndex = - 1;
+
+		}
+
+		from() {
+
+			return this.vertex;
+
+		}
+
+		to() {
+
+			return this.next ? this.next.vertex : null;
+
+		}
+
+		length() {
+
+			var from = this.from();
+			var to = this.to();
+
+			if ( to !== null ) {
+
+				return from.distanceTo( to );
+
+			}
+
+			return - 1;
+
+		}
+
+		squaredLength() {
+
+			var from = this.from();
+			var to = this.to();
+
+			if ( to !== null ) {
+
+				return from.squaredDistanceTo( to );
+
+			}
+
+			return - 1;
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class AStar {
+
+		constructor( graph = null, source = - 1, target = - 1 ) {
+
+			this.graph = graph;
+			this.source = source;
+			this.target = target;
+			this.heuristic = HeuristicPolicyEuclid;
+			this.found = false;
+
+			this._cost = new Map(); // contains the "real" accumulative cost to a node
+			this._shortestPathTree = new Map();
+			this._searchFrontier = new Map();
+
+		}
+
+		search() {
+
+			const outgoingEdges = [];
+			const pQueue = new PriorityQueue( compare );
+
+			pQueue.push( {
+				cost: 0,
+				index: this.source
+			} );
+
+			// while the queue is not empty
+
+			while ( pQueue.length > 0 ) {
+
+				const nextNode = pQueue.pop();
+				const nextNodeIndex = nextNode.index;
+
+				// if the shortest path tree has the given node, we already found the shortest
+				// path to this particular one
+
+				if ( this._shortestPathTree.has( nextNodeIndex ) ) continue;
+
+				// move this edge from the frontier to the shortest path tree
+
+				if ( this._searchFrontier.has( nextNodeIndex ) === true ) {
+
+					this._shortestPathTree.set( nextNodeIndex, this._searchFrontier.get( nextNodeIndex ) );
+
+				}
+
+				// if the target has been found exit
+
+				if ( nextNodeIndex === this.target ) {
+
+					this.found = true;
+
+					return this;
+
+				}
+
+				// now relax the edges
+
+				this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
+
+				for ( let edge of outgoingEdges ) {
+
+					// A* cost formula : F = G + H
+
+					// G is the cumulative cost to reach a node
+
+					const G = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
+
+					// H is the heuristic estimate of the distance to the target
+
+					const H = this.heuristic.calculate( this.graph, edge.to, this.target );
+
+					// F is the sum of G and H
+
+					const F = G + H;
+
+					// We enhance our search frontier in two cases:
+					// 1. If the node was never on the search frontier
+					// 2. If the cost to this node is better than before
+
+					if ( ( this._searchFrontier.has( edge.to ) === false ) || G < ( this._cost.get( edge.to ) ) ) {
+
+						this._cost.set( edge.to, G );
+
+						this._searchFrontier.set( edge.to, edge );
+
+						pQueue.push( {
+							cost: F,
+							index: edge.to
+						} );
+
+					}
+
+				}
+
+			}
+
+			this.found = false;
+
+			return this;
+
+		}
+
+		getPath() {
+
+			// array of node indices that comprise the shortest path from the source to the target
+
+			const path = [];
+
+			// just return an empty path if no path to target found or if no target has been specified
+
+			if ( this.found === false || this.target === - 1 ) return path;
+
+			// start with the target of the path
+
+			let currentNode = this.target;
+
+			path.push( currentNode );
+
+			// while the current node is not the source node keep processing
+
+			while ( currentNode !== this.source ) {
+
+				// determine the parent of the current node
+
+				currentNode = this._shortestPathTree.get( currentNode ).from;
+
+				// push the new current node at the beginning of the array
+
+				path.unshift( currentNode );
+
+			}
+
+			return path;
+
+		}
+
+		getSearchTree() {
+
+			return [ ...this._shortestPathTree.values() ];
+
+		}
+
+		clear() {
+
+			this.found = false;
+
+			this._cost.clear();
+			this._shortestPathTree.clear();
+			this._searchFrontier.clear();
+
+		}
+
+	}
+
+
+	function compare( a, b ) {
+
+		return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class NavMesh {
+
+		constructor() {
+
+			this.graph = new Graph();
+			this.graph.digraph = true;
+
+			this.regions = new Set();
+
+		}
+
+		fromPolygons( polygons ) {
+
+			this.clear();
+
+			//
+
+			const initialEdgeList = [];
+			const sortedEdgeList = [];
+
+			// setup list with all edges
+
+			for ( let polygon of polygons ) {
+
+				let edge = polygon.edge;
+
+				do {
+
+					initialEdgeList.push( edge );
+
+					edge = edge.next;
+
+				} while ( edge !== polygon.edge );
+
+				//
+
+				this.regions.add( polygon );
+
+			}
+
+			// setup twin references and sorted list of edges
+
+			for ( let edge0 of initialEdgeList ) {
+
+				if ( edge0.twin !== null ) continue;
+
+				for ( let edge1 of initialEdgeList ) {
+
+					if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
+
+						// twin found, set references
+
+						edge0.twin = edge1;
+						edge1.twin = edge0;
+
+						// add edge to list
+
+						const cost = edge0.squaredLength();
+
+						sortedEdgeList.push( {
+							cost: cost,
+							edge: edge0
+						} );
+
+						// there can only be a single twin
+
+						break;
+
+					}
+
+				}
+
+			}
+
+			sortedEdgeList.sort( descending );
+
+			// hald-edge data structure is now complete, begin build of convex regions
+
+			this._buildRegions( sortedEdgeList );
+
+			// ensure unique node indices for all twin edges
+
+			this._buildNodeIndices();
+
+			// now build the navigation graph
+
+			this._buildGraph();
+
+			return this;
+
+		}
+
+		clear() {
+
+			this.graph.clear();
+			this.regions.clear();
+
+			return this;
+
+		}
+
+		getClosestNodeIndex( point ) {
+
+			const graph = this.graph;
+			let closesNodeIndex = null;
+			let minDistance = Infinity;
+
+			const nodes = [];
+
+			graph.getNodes( nodes );
+
+			for ( const node of nodes ) {
+
+				const distance = point.squaredDistanceTo( node.position );
+
+				if ( distance < minDistance ) {
+
+					minDistance = distance;
+
+					closesNodeIndex = node.index;
+
+				}
+
+			}
+
+			return closesNodeIndex;
+
+		}
+
+		getClosestNodeIndexInRegion( point, region ) {
+
+			let closesNodeIndex = null;
+			let minDistance = Infinity;
+
+			let edge = region.edge;
+
+			do {
+
+				if ( edge.twin || edge.prev.twin ) {
+
+					const distance = point.squaredDistanceTo( edge.from() );
+
+					if ( distance < minDistance ) {
+
+						minDistance = distance;
+
+						closesNodeIndex = edge.twin ? edge.nodeIndex : edge.prev.twin.nodeIndex;
+
+					}
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== region.edge );
+
+			return closesNodeIndex;
+
+		}
+
+		getClosestRegion( point ) {
+
+			const regions = this.regions;
+			let closesRegion = null;
+			let minDistance = Infinity;
+
+			for ( const region of regions ) {
+
+				const distance = point.squaredDistanceTo( region.centroid );
+
+				if ( distance < minDistance ) {
+
+					minDistance = distance;
+
+					closesRegion = region;
+
+				}
+
+			}
+
+			return closesRegion;
+
+		}
+
+		getRegionForPoint( point, epsilon = 1e-3 ) {
+
+			const regions = this.regions;
+
+			for ( let region of regions ) {
+
+				if ( region.contains( point, epsilon ) === true ) {
+
+					return region;
+
+				}
+
+			}
+
+			return null;
+
+		}
+
+		findPath( from, to ) {
+
+			const graph = this.graph;
+
+			const fromRegion = this.getRegionForPoint( from );
+			const toRegion = this.getRegionForPoint( to );
+
+			const path = [];
+
+			// 1. ensure start and end point are inside the navmesh
+
+			if ( fromRegion === null || toRegion === null ) {
+
+				// return empty path
+
+				return path;
+
+			}
+
+			// 2. check if both points are in the same convex region
+
+			if ( fromRegion === toRegion ) {
+
+				// no search necessary, directly create the path
+
+				path.push( new Vector3().copy( from ) );
+				path.push( new Vector3().copy( to ) );
+				return path;
+
+			} else {
+
+				// points are not in same region, peform search
+
+				const source = this.getClosestNodeIndexInRegion( from, fromRegion );
+				const target = this.getClosestNodeIndexInRegion( to, toRegion );
+
+				const astar = new AStar( graph, source, target );
+				astar.search();
+
+				if ( astar.found === true ) {
+
+					const shortestPath = astar.getPath();
+
+					let count = shortestPath.length;
+
+					// smoothing
+
+					for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
+
+						const index = shortestPath[ i ];
+						const node = graph.getNode( index );
+
+						if ( fromRegion.contains( node.position ) === false ) {
+
+							count = i;
+							break;
+
+						}
+
+					}
+
+					shortestPath.splice( 0, count - 1 );
+
+					//
+
+					shortestPath.reverse();
+
+					count = shortestPath.length;
+
+					for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
+
+						const index = shortestPath[ i ];
+						const node = graph.getNode( index );
+
+						if ( toRegion.contains( node.position ) === false ) {
+
+							count = i;
+							break;
+
+						}
+
+					}
+
+					shortestPath.splice( 0, count - 1 );
+
+					shortestPath.reverse();
+
+					// create final path
+
+					path.push( new Vector3().copy( from ) );
+
+					for ( const index of shortestPath ) {
+
+						const node = graph.getNode( index );
+						path.push( new Vector3().copy( node.position ) );
+
+					}
+
+					path.push( new Vector3().copy( to ) );
+
+				}
+
+				return path;
+
+			}
+
+		}
+
+		_buildRegions( edgeList ) {
+
+			const regions = this.regions;
+
+			const cache = {
+				leftPrev: null,
+				leftNext: null,
+				rightPrev: null,
+				rightNext: null
+			};
+
+			// process edges from longest to shortest
+
+			for ( let entry of edgeList ) {
+
+				let candidate = entry.edge;
+
+				// cache current references for possible restore
+
+				cache.prev = candidate.prev;
+				cache.next = candidate.next;
+				cache.prevTwin = candidate.twin.prev;
+				cache.nextTwin = candidate.twin.next;
+
+				// temporarily change the first polygon in order to represent both polygons
+
+				candidate.prev.next = candidate.twin.next;
+				candidate.next.prev = candidate.twin.prev;
+				candidate.twin.prev.next = candidate.next;
+				candidate.twin.next.prev = candidate.prev;
+
+				const polygon = candidate.polygon;
+				polygon.edge = candidate.prev;
+
+				if ( polygon.convex() === true ) {
+
+					// correct polygon reference of all edges
+
+					let edge = polygon.edge;
+
+					do {
+
+						edge.polygon = polygon;
+
+						edge = edge.next;
+
+					} while ( edge !== polygon.edge );
+
+					// delete obsolete polygon
+
+					regions.delete( entry.edge.twin.polygon );
+
+				} else {
+
+					// restore
+
+					cache.prev.next = candidate;
+					cache.next.prev = candidate;
+					cache.prevTwin.next = candidate.twin;
+					cache.nextTwin.prev = candidate.twin;
+
+					polygon.edge = candidate;
+
+				}
+
+			}
+
+			//
+
+			for ( const region of regions ) {
+
+				region.computeCentroid();
+
+			}
+
+		}
+
+		_buildNodeIndices() {
+
+			const regions = this.regions;
+
+			const indicesMap = new Map();
+			let nextNodeIndex = 0;
+
+			for ( const region of regions ) {
+
+				let edge = region.edge;
+
+				do {
+
+					// only edges with a twin reference needs to be considered
+
+					if ( edge.twin !== null ) {
+
+						let nodeIndex = - 1;
+						const position = edge.from();
+
+						// check all existing entries
+
+						for ( const [ index, pos ] of indicesMap.entries() ) {
+
+							if ( position.equals( pos ) === true ) {
+
+								// found, use the existing index
+
+								nodeIndex = index;
+								break;
+
+							}
+
+						}
+
+						// if no suitable index was found, create a new one
+
+						if ( nodeIndex === - 1 ) {
+
+							nodeIndex = nextNodeIndex ++;
+							indicesMap.set( nodeIndex, position );
+
+						}
+
+						// assign unique node index to edge
+
+						edge.nodeIndex = nodeIndex;
+
+					}
+
+					edge = edge.next;
+
+				} while ( edge !== region.edge );
+
+			}
+
+		}
+
+		_buildGraph() {
+
+			const graph = this.graph;
+			const regions = this.regions;
+
+			// for each region, the code creates an array of directly accessible node indices
+
+			const nodeIndicesPerRegion = new Set();
+
+			for ( const region of regions ) {
+
+				const nodeIndices = new Array();
+				nodeIndicesPerRegion.add( nodeIndices );
+
+				let edge = region.edge;
+
+				do {
+
+					if ( edge.twin !== null ) {
+
+						nodeIndices.push( edge.nodeIndex, edge.twin.nodeIndex );
+
+						// add node to graph if necessary
+
+						if ( graph.hasNode( edge.nodeIndex ) === false ) {
+
+							graph.addNode( new NavNode( edge.nodeIndex, edge.from() ) );
+
+						}
+
+					}
+
+					edge = edge.next;
+
+				} while ( edge !== region.edge );
+
+			}
+
+			// add navigation edges
+
+			for ( const indices of nodeIndicesPerRegion ) {
+
+				for ( const from of indices ) {
+
+					for ( const to of indices ) {
+
+						if ( from !== to ) {
+
+							if ( graph.hasEdge( from, to ) === false ) {
+
+								const nodeFrom = graph.getNode( from );
+								const nodeTo = graph.getNode( to );
+
+								const cost = nodeFrom.position.distanceTo( nodeTo.position );
+
+								graph.addEdge( new NavEdge( from, to, cost ) );
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+
+			return this;
+
+		}
+
+	}
+
+	//
+
+	function descending( a, b ) {
+
+		return ( a.cost < b.cost ) ? 1 : ( a.cost > b.cost ) ? - 1 : 0;
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class Polygon {
+
+		constructor() {
+
+			this.centroid = new Vector3();
+			this.edge = null;
+
+		}
+
+		fromContour( points ) {
+
+			// create edges from points (assuming CCW order)
+
+			const edges = [];
+
+			if ( points.length < 3 ) {
+
+				Logger.error( 'YUKA.Polygon: Unable to create polygon from contour. It needs at least three points.' );
+				return this;
+
+			}
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				const edge = new HalfEdge( points[ i ] );
+				edges.push( edge );
+
+			}
+
+			// link edges
+
+			for ( let i = 0, l = edges.length; i < l; i ++ ) {
+
+				let current, prev, next;
+
+				if ( i === 0 ) {
+
+					current = edges[ i ];
+					prev = edges[ l - 1 ];
+				 	next = edges[ i + 1 ];
+
+				} else if ( i === ( l - 1 ) ) {
+
+					current = edges[ i ];
+				 	prev = edges[ i - 1 ];
+					next = edges[ 0 ];
+
+				} else {
+
+				 	current = edges[ i ];
+					prev = edges[ i - 1 ];
+					next = edges[ i + 1 ];
+
+				}
+
+				current.prev = prev;
+				current.next = next;
+				current.polygon = this;
+
+			}
+
+			//
+
+			this.edge = edges[ 0 ];
+
+			return this;
+
+		}
+
+		computeCentroid() {
+
+			const centroid = this.centroid;
+			let edge = this.edge;
+			let count = 0;
+
+			centroid.set( 0, 0, 0 );
+
+			do {
+
+				centroid.add( edge.from() );
+
+				count ++;
+
+				edge = edge.next;
+
+			} while ( edge !== this.edge );
+
+			centroid.divideScalar( count );
+
+			return this;
+
+		}
+
+		contains( point, epsilon = 1e-3 ) {
+
+			let edge = this.edge;
+
+			let max = - Infinity;
+			let min = Infinity;
+
+			do {
+
+				const v1 = edge.from();
+				const v2 = edge.to();
+
+				if ( leftOn( v1, v2, point ) === false ) {
+
+					return false;
+
+				}
+
+				if ( v1.y > max ) max = v1.y;
+				if ( v1.y < min ) min = v1.y;
+
+				edge = edge.next;
+
+			} while ( edge !== this.edge );
+
+			// only return true if point is within the min/max y-range
+
+			max += epsilon;
+			min -= epsilon;
+
+			return ( ( point.y <= max ) && ( point.y >= min ) );
+
+		}
+
+		convex() {
+
+			let edge = this.edge;
+
+			do {
+
+				const v1 = edge.from();
+				const v2 = edge.to();
+				const v3 = edge.next.to();
+
+				if ( leftOn( v1, v2, v3 ) === false ) {
+
+					return false;
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== this.edge );
+
+			return true;
+
+		}
+
+	}
+
+	// from the book "Computational Geometry in C, Joseph O'Rourke"
+
+	function leftOn( a, b, c ) {
+
+		return area( a, b, c ) >= 0;
+
+	}
+
+	function area( a, b, c ) {
+
+		return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class NavMeshLoader {
+
+		load( url ) {
+
+			return new Promise( ( resolve, reject ) => {
+
+				fetch( url )
+
+					.then( response => {
+
+						if ( response.status >= 200 && response.status < 300 ) {
+
+							return response.arrayBuffer();
+
+						} else {
+
+							const error = new Error( response.statusText || response.status );
+							error.response = response;
+							return Promise.reject( error );
+
+						}
+
+					} )
+
+					.then( ( arrayBuffer ) => {
+
+						const parser = new Parser();
+						const decoder = new TextDecoder();
+						let data;
+
+						const magic = decoder.decode( new Uint8Array( arrayBuffer, 0, 4 ) );
+
+						if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
+
+							parser.parseBinary( arrayBuffer );
+
+							data = parser.extensions.get( 'BINARY' ).content;
+
+						} else {
+
+							data = decoder.decode( new Uint8Array( arrayBuffer ) );
+
+						}
+
+						const json = JSON.parse( data );
+
+						if ( json.asset === undefined || json.asset.version[ 0 ] < 2 ) {
+
+							throw new Error( 'YUKA.NavMeshLoader: Unsupported asset version.' );
+
+						} else {
+
+							const path = extractUrlBase( url );
+
+							return parser.parse( json, path );
+
+						}
+
+					} )
+
+					.then( ( data ) => {
+
+						resolve( data );
+
+					} )
+
+					.catch( ( error ) => {
+
+						Logger.error( 'YUKA.NavMeshLoader: Unable to load navigation mesh.', error );
+
+						reject( error );
+
+					} );
+
+			} );
+
+		}
+
+	}
+
+	class Parser {
+
+		constructor() {
+
+			this.json = null;
+			this.path = null;
+			this.cache = new Map();
+			this.extensions = new Map();
+
+		}
+
+		parse( json, path ) {
+
+			this.json = json;
+			this.path = path;
+
+			// read the first mesh in the glTF file
+
+			return this.getDependency( 'mesh', 0 ).then( ( data ) => {
+
+				// parse the raw geometry data into a bunch of polygons
+
+				const polygons = this.parseGeometry( data );
+
+				// use them to create the nav mesh
+
+				return new NavMesh().fromPolygons( polygons );
+
+			} );
+
+		}
+
+		parseGeometry( data ) {
+
+			const index = data.index;
+			const position = data.position;
+
+			const vertices = [];
+			const polygons = [];
+
+			// vertices
+
+			for ( let i = 0, l = position.length; i < l; i += 3 ) {
+
+				const v = new Vector3();
+
+				v.x = position[ i + 0 ];
+				v.y = position[ i + 1 ];
+				v.z = position[ i + 2 ];
+
+				vertices.push( v );
+
+			}
+
+			// polygons
+
+			if ( index ) {
+
+				// indexed geometry
+
+				for ( let i = 0, l = index.length; i < l; i += 3 ) {
+
+					const a = index[ i + 0 ];
+					const b = index[ i + 1 ];
+					const c = index[ i + 2 ];
+
+					const contour = [ vertices[ a ], vertices[ b ], vertices[ c ] ];
+
+					const polygon = new Polygon().fromContour( contour );
+
+					polygons.push( polygon );
+
+				}
+
+			} else {
+
+				// non-indexed geometry
+
+				for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
+
+					const contour = [ vertices[ i + 0 ], vertices[ i + 1 ], vertices[ i + 2 ] ];
+
+					const polygon = new Polygon().fromContour( contour );
+
+					polygons.push( polygon );
+
+				}
+
+			}
+
+			return polygons;
+
+		}
+
+		getDependencies( type ) {
+
+			const cache = this.cache;
+
+			let dependencies = cache.get( type );
+
+			if ( ! dependencies ) {
+
+				const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || [];
+
+				dependencies = Promise.all( definitions.map( ( definition, index ) => {
+
+					return this.getDependency( type, index );
+
+				} ) );
+
+				cache.set( type, dependencies );
+
+			}
+
+			return dependencies;
+
+		}
+
+		getDependency( type, index ) {
+
+			const cache = this.cache;
+			const key = type + ':' + index;
+
+			let dependency = cache.get( key );
+
+			if ( dependency === undefined ) {
+
+				switch ( type ) {
+
+					case 'accessor':
+						dependency = this.loadAccessor( index );
+						break;
+
+					case 'buffer':
+						dependency = this.loadBuffer( index );
+						break;
+
+					case 'bufferView':
+						dependency = this.loadBufferView( index );
+						break;
+
+					case 'mesh':
+						dependency = this.loadMesh( index );
+						break;
+
+					default:
+						throw new Error( 'Unknown type: ' + type );
+
+				}
+
+				cache.set( key, dependency );
+
+			}
+
+			return dependency;
+
+		}
+
+		loadBuffer( index ) {
+
+			const json = this.json;
+			const definition = json.buffers[ index ];
+
+			if ( definition.uri === undefined && index === 0 ) {
+
+				return Promise.resolve( this.extensions.get( 'BINARY' ).body );
+
+			}
+
+			return new Promise( ( resolve, reject ) => {
+
+				const url = resolveURI( definition.uri, this.path );
+
+				fetch( url )
+
+					.then( response => {
+
+						return response.arrayBuffer();
+
+					} )
+
+					.then( ( arrayBuffer ) => {
+
+						resolve( arrayBuffer );
+
+					} ).catch( ( error ) => {
+
+						Logger.error( 'YUKA.NavMeshLoader: Unable to load buffer.', error );
+
+						reject( error );
+
+					} );
+
+			} );
+
+		}
+
+		loadBufferView( index ) {
+
+			const json = this.json;
+
+			const definition = json.bufferViews[ index ];
+
+			return this.getDependency( 'buffer', definition.buffer ).then( ( buffer ) => {
+
+				const byteLength = definition.byteLength || 0;
+				const byteOffset = definition.byteOffset || 0;
+				return buffer.slice( byteOffset, byteOffset + byteLength );
+
+			} );
+
+		}
+
+		loadAccessor( index ) {
+
+			const json = this.json;
+			const definition = json.accessors[ index ];
+
+			return this.getDependency( 'bufferView', definition.bufferView ).then( ( bufferView ) => {
+
+				const itemSize = WEBGL_TYPE_SIZES[ definition.type ];
+				const TypedArray = WEBGL_COMPONENT_TYPES[ definition.componentType ];
+				const byteOffset = definition.byteOffset || 0;
+
+				return new TypedArray( bufferView, byteOffset, definition.count * itemSize );
+
+			} );
+
+		}
+
+		loadMesh( index ) {
+
+			const json = this.json;
+			const definition = json.meshes[ index ];
+
+			return this.getDependencies( 'accessor' ).then( ( accessors ) => {
+
+				// assuming a single primitve
+
+				const primitive = definition.primitives[ 0 ];
+
+				if ( primitive.mode !== 4 ) {
+
+					throw new Error( 'YUKA.NavMeshLoader: Invalid geometry format. Please ensure to represent your geometry as triangles.' );
+
+				}
+
+				return {
+					index: accessors[ primitive.indices ],
+					position: accessors[ primitive.attributes.POSITION ],
+					normal: accessors[ primitive.attributes.NORMAL ]
+				};
+
+			} );
+
+		}
+
+		parseBinary( data ) {
+
+			const chunkView = new DataView( data, BINARY_EXTENSION_HEADER_LENGTH );
+			let chunkIndex = 0;
+
+			const decoder = new TextDecoder();
+			let content = null;
+			let body = null;
+
+			while ( chunkIndex < chunkView.byteLength ) {
+
+				const chunkLength = chunkView.getUint32( chunkIndex, true );
+				chunkIndex += 4;
+
+				const chunkType = chunkView.getUint32( chunkIndex, true );
+				chunkIndex += 4;
+
+				if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.JSON ) {
+
+					const contentArray = new Uint8Array( data, BINARY_EXTENSION_HEADER_LENGTH + chunkIndex, chunkLength );
+					content = decoder.decode( contentArray );
+
+				} else if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.BIN ) {
+
+					const byteOffset = BINARY_EXTENSION_HEADER_LENGTH + chunkIndex;
+					body = data.slice( byteOffset, byteOffset + chunkLength );
+
+				}
+
+				chunkIndex += chunkLength;
+
+			}
+
+			this.extensions.set( 'BINARY', { content: content, body: body } );
+
+		}
+
+	}
+
+	// helper functions
+
+	function extractUrlBase( url ) {
+
+		const index = url.lastIndexOf( '/' );
+
+		if ( index === - 1 ) return './';
+
+		return url.substr( 0, index + 1 );
+
+	}
+
+	function resolveURI( uri, path ) {
+
+		if ( typeof uri !== 'string' || uri === '' ) return '';
+
+		if ( /^(https?:)?\/\//i.test( uri ) ) return uri;
+
+		if ( /^data:.*,.*$/i.test( uri ) ) return uri;
+
+		if ( /^blob:.*$/i.test( uri ) ) return uri;
+
+		return path + uri;
+
+	}
+
+	//
+
+	const WEBGL_TYPE_SIZES = {
+		'SCALAR': 1,
+		'VEC2': 2,
+		'VEC3': 3,
+		'VEC4': 4,
+		'MAT2': 4,
+		'MAT3': 9,
+		'MAT4': 16
+	};
+
+	const WEBGL_COMPONENT_TYPES = {
+		5120: Int8Array,
+		5121: Uint8Array,
+		5122: Int16Array,
+		5123: Uint16Array,
+		5125: Uint32Array,
+		5126: Float32Array
+	};
+
+	const BINARY_EXTENSION_HEADER_MAGIC = 'glTF';
+	const BINARY_EXTENSION_HEADER_LENGTH = 12;
+	const BINARY_EXTENSION_CHUNK_TYPES = { JSON: 0x4E4F534A, BIN: 0x004E4942 };
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
 	class DFS {
@@ -2748,7 +4111,7 @@
 		search() {
 
 			const outgoingEdges = [];
-			const pQueue = new PriorityQueue( compare );
+			const pQueue = new PriorityQueue( compare$1 );
 
 			pQueue.push( {
 				cost: 0,
@@ -2800,7 +4163,7 @@
 					// 1. If the node was never on the search frontier
 					// 2. If the cost to this node is better than before
 
-					if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || newCost < ( this._cost.get( edge.to ) || Infinity ) ) {
+					if ( ( this._searchFrontier.has( edge.to ) === false ) || newCost < ( this._cost.get( edge.to ) ) ) {
 
 						this._cost.set( edge.to, newCost );
 
@@ -2876,178 +4239,6 @@
 	}
 
 
-	function compare( a, b ) {
-
-		return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class AStar {
-
-		constructor( graph = null, source = - 1, target = - 1 ) {
-
-			this.graph = graph;
-			this.source = source;
-			this.target = target;
-			this.heuristic = HeuristicPolicyEuclid;
-			this.found = false;
-
-			this._cost = new Map(); // contains the "real" accumulative cost to a node
-			this._shortestPathTree = new Map();
-			this._searchFrontier = new Map();
-
-		}
-
-		search() {
-
-			const outgoingEdges = [];
-			const pQueue = new PriorityQueue( compare$1 );
-
-			pQueue.push( {
-				cost: 0,
-				index: this.source
-			} );
-
-			// while the queue is not empty
-
-			while ( pQueue.length > 0 ) {
-
-				const nextNode = pQueue.pop();
-				const nextNodeIndex = nextNode.index;
-
-				// if the shortest path tree has the given node, we already found the shortest
-				// path to this particular one
-
-				if ( this._shortestPathTree.has( nextNodeIndex ) ) continue;
-
-				// move this edge from the frontier to the shortest path tree
-
-				if ( this._searchFrontier.has( nextNodeIndex ) === true ) {
-
-					this._shortestPathTree.set( nextNodeIndex, this._searchFrontier.get( nextNodeIndex ) );
-
-				}
-
-				// if the target has been found exit
-
-				if ( nextNodeIndex === this.target ) {
-
-					this.found = true;
-
-					return this;
-
-				}
-
-				// now relax the edges
-
-				this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
-
-				for ( let edge of outgoingEdges ) {
-
-					// A* cost formula : F = G + H
-
-					// G is the cumulative cost to reach a node
-
-					const G = ( this._cost.get( nextNodeIndex ) || 0 ) + edge.cost;
-
-					// H is the heuristic estimate of the distance to the target
-
-					const H = this.heuristic.calculate( this.graph, edge.to, this.target );
-
-					// F is the sum of G and H
-
-					const F = G + H;
-
-					// We enhance our search frontier in two cases:
-					// 1. If the node was never on the search frontier
-					// 2. If the cost to this node is better than before
-
-					if ( ( this._searchFrontier.has( nextNodeIndex ) === false ) || G < ( this._cost.get( edge.to ) || Infinity ) ) {
-
-						this._cost.set( edge.to, G );
-
-						this._searchFrontier.set( edge.to, edge );
-
-						pQueue.push( {
-							cost: F,
-							index: edge.to
-						} );
-
-					}
-
-				}
-
-			}
-
-			this.found = false;
-
-			return this;
-
-		}
-
-		getPath() {
-
-			// array of node indices that comprise the shortest path from the source to the target
-
-			const path = [];
-
-			// just return an empty path if no path to target found or if no target has been specified
-
-			if ( this.found === false || this.target === - 1 ) return path;
-
-			// start with the target of the path
-
-			let currentNode = this.target;
-
-			path.push( currentNode );
-
-			// while the current node is not the source node keep processing
-
-			while ( currentNode !== this.source ) {
-
-				// determine the parent of the current node
-
-				currentNode = this._shortestPathTree.get( currentNode ).from;
-
-				// push the new current node at the beginning of the array
-
-				path.unshift( currentNode );
-
-			}
-
-			return path;
-
-		}
-
-		getSearchTree() {
-
-			return [ ...this._shortestPathTree.values() ];
-
-		}
-
-		setHeuristic( heuristic ) {
-
-			this.heuristic = heuristic;
-
-		}
-
-		clear() {
-
-			this.found = false;
-
-			this._cost.clear();
-			this._shortestPathTree.clear();
-			this._searchFrontier.clear();
-
-		}
-
-	}
-
-
 	function compare$1( a, b ) {
 
 		return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
@@ -3079,6 +4270,7 @@
 		clear() {
 
 			this._waypoints.length = 0;
+			this._index = 0;
 
 			return this;
 
@@ -4827,6 +6019,10 @@
 	exports.PriorityQueue = PriorityQueue;
 	exports.NavNode = NavNode;
 	exports.NavEdge = NavEdge;
+	exports.HalfEdge = HalfEdge;
+	exports.NavMesh = NavMesh;
+	exports.NavMeshLoader = NavMeshLoader;
+	exports.Polygon = Polygon;
 	exports.DFS = DFS;
 	exports.BFS = BFS;
 	exports.Dijkstra = Dijkstra;

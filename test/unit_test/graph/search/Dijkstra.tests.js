@@ -8,7 +8,9 @@ const YUKA = require( '../../../../build/yuka.js' );
 const Dijkstra = YUKA.Dijkstra;
 const Graph = YUKA.Graph;
 const NavNode = YUKA.NavNode;
+const NavEdge = YUKA.NavEdge;
 const GraphUtils = YUKA.GraphUtils;
+
 
 describe( 'DIJKSTRA', function () {
 
@@ -63,6 +65,41 @@ describe( 'DIJKSTRA', function () {
 			dijkstra.search();
 
 			expect( dijkstra.found ).to.be.false;
+
+		} );
+
+		it( 'should skip the processing of a node if the shortest path tree already has the given node', function () {
+
+			const graph = new Graph();
+			const n0 = new NavNode( 0 );
+			const n1 = new NavNode( 1 );
+			const n2 = new NavNode( 2 );
+			const n3 = new NavNode( 3 );
+			const n4 = new NavNode( 4 );
+
+			const e0 = new NavEdge( 0, 1, 2 );
+			const e1 = new NavEdge( 0, 2, 3 );
+			const e2 = new NavEdge( 1, 2, 0.5 );
+			const e3 = new NavEdge( 2, 3, 2 );
+			const e4 = new NavEdge( 3, 4, 10 );
+
+			graph.addNode( n0 );
+			graph.addNode( n1 );
+			graph.addNode( n2 );
+			graph.addNode( n3 );
+			graph.addNode( n4 );
+
+			graph.addEdge( e0 );
+			graph.addEdge( e1 );
+			graph.addEdge( e2 );
+			graph.addEdge( e3 );
+			graph.addEdge( e4 );
+
+			const dijkstra = new Dijkstra( graph, 0, 4 );
+
+			dijkstra.search();
+
+			expect( dijkstra.found ).to.be.true;
 
 		} );
 

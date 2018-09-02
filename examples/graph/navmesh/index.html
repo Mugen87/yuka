@@ -1,0 +1,240 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Navmesh</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#777;
+				padding:0;
+				margin:0;
+				font-weight: bold;
+				overflow:hidden;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px;
+				width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+			}
+
+			a {
+				color: #ffffff;
+			}
+		</style>
+	</head>
+<body>
+
+	<script type="module">
+
+		import * as YUKA from '../../../build/yuka.module.js';
+		import { OrbitControls } from '../../lib/OrbitControls.module.js';
+		import * as THREE from '../../lib/three.module.js';
+
+		import { createGraphHelper, createPathHelper } from '../basic/src/GraphHelper.js';
+
+		let renderer, scene, camera, vehicleMesh, navMeshGroup;
+
+		let raycaster, mouseCoordinates;
+
+		let entityManager, time, vehicle, navMesh;
+
+		let pathMaterial, pathHelper;
+
+		init();
+
+		function init() {
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			camera.position.set( 25, 25, 0 );
+			camera.lookAt( scene.position );
+
+			//
+
+			raycaster = new THREE.Raycaster();
+			mouseCoordinates = new THREE.Vector2();
+
+			//
+
+			pathMaterial = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+			pathHelper = new THREE.Line( new THREE.BufferGeometry(), pathMaterial );
+			pathHelper.visible = false;
+			scene.add( pathHelper );
+
+			//
+
+			const vehicleGeometry = new THREE.ConeBufferGeometry( 0.25, 1, 16 );
+			vehicleGeometry.rotateX( Math.PI * 0.5 );
+			vehicleGeometry.translate( 0, 0.5, 0 );
+			const vehicleMaterial = new THREE.MeshNormalMaterial();
+
+			vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+			vehicleMesh.matrixAutoUpdate = false;
+			scene.add( vehicleMesh );
+
+			// game setup
+
+			// load navigation mesh
+
+			const loader = new YUKA.NavMeshLoader();
+
+			loader.load( './basic/navmesh.gltf' ).then( ( navigationMesh ) => {
+
+				// visualize convex regions
+
+				navMesh = navigationMesh;
+				navMeshGroup = new THREE.Group();
+
+				const regions = navMesh.regions;
+
+				for ( let region of regions ) {
+
+					const points = [];
+
+					let edge = region.edge;
+
+					do {
+
+						const p = new THREE.Vector2();
+						const vertex = edge.from();
+						p.x = vertex.x;
+						p.y = - vertex.z;
+
+						points.push( p );
+
+						edge = edge.next;
+
+					} while ( edge !== region.edge );
+
+					// shape generation
+
+					const shape = new THREE.Shape( points );
+
+					const geometry = new THREE.ShapeBufferGeometry( shape );
+					const color = new THREE.Color().setHSL( 0.3, Math.random(), 0.3 );
+					const material = new THREE.MeshBasicMaterial( { color: color } );
+
+					const mesh = new THREE.Mesh( geometry, material );
+					navMeshGroup.add( mesh );
+
+				}
+
+				navMeshGroup.rotation.x = Math.PI * - 0.5;
+				scene.add( navMeshGroup );
+
+				// visualize graph
+
+				const graph = navMesh.graph;
+
+				const graphHelper = createGraphHelper( graph, 0.2 );
+				scene.add( graphHelper );
+
+				animate();
+
+			} );
+
+			//
+
+			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
+			vehicle = new YUKA.Vehicle();
+			vehicle.maxSpeed = 1.5;
+
+			const followPathBehavior = new YUKA.FollowPathBehavior();
+			followPathBehavior.active = false;
+
+			vehicle.steering.add( followPathBehavior );
+
+			entityManager.add( vehicle );
+
+			// renderer
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			document.addEventListener( 'mousedown', onMouseDown, false );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function onMouseDown( event ) {
+
+			mouseCoordinates.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+			mouseCoordinates.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+
+			raycaster.setFromCamera( mouseCoordinates, camera );
+
+			const intersects = raycaster.intersectObject( navMeshGroup, true );
+
+			if ( intersects.length > 0 ) {
+
+				findPathTo( intersects[ 0 ].point );
+
+			}
+
+		}
+
+		function findPathTo( target ) {
+
+			const from = new YUKA.Vector3().copy( vehicle.position );
+			const to = new YUKA.Vector3().copy( target );
+
+			const path = navMesh.findPath( from, to );
+
+			pathHelper.visible = true;
+			pathHelper.geometry.dispose();
+			pathHelper.geometry = new THREE.BufferGeometry().setFromPoints( path );
+
+			const followPathBehavior = vehicle.steering.behaviors[ 0 ];
+			followPathBehavior.active = true;
+			followPathBehavior.path.clear();
+
+			for ( const point of path ) {
+
+				followPathBehavior.path.add( new YUKA.Vector3().copy( point ) );
+
+			}
+
+		}
+
+		function animate() {
+
+				requestAnimationFrame( animate );
+
+				const delta = time.update().getDelta();
+
+				entityManager.update( delta );
+
+				vehicleMesh.matrix.copy( vehicle.matrix );
+
+				renderer.render( scene, camera );
+
+		}
+
+	</script>
+
+</body>
+</html>
