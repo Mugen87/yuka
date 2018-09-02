@@ -6004,6 +6004,82 @@
 
 	}
 
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
+	 *
+	 */
+
+	var v1$1 = new Vector3();
+	var v2 = new Vector3();
+
+	class Plane {
+
+		constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
+
+			this.normal = normal;
+			this.constant = constant;
+
+		}
+
+		set( normal, constant ) {
+
+			this.normal = normal;
+			this.constant = constant;
+
+			return this;
+
+		}
+
+		copy( plane ) {
+
+			this.normal.copy( plane.normal );
+			this.constant = plane.constant;
+
+			return this;
+
+		}
+
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		distanceToPoint( point ) {
+
+			return this.normal.dot( point ) + this.constant;
+
+		}
+
+		fromNormalAndCoplanarPoint( normal, point ) {
+
+			this.normal.copy( normal );
+			this.constant = - point.dot( this.normal );
+
+			return this;
+
+		}
+
+		fromCoplanarPoints( a, b, c ) {
+
+			v1$1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+
+			this.fromNormalAndCoplanarPoint( v1$1, a );
+
+			return this;
+
+		}
+
+		equals( plane ) {
+
+			return plane.normal.equals( this.normal ) && plane.constant === this.constant;
+
+		}
+
+	}
+
 	exports.EntityManager = EntityManager;
 	exports.GameEntity = GameEntity;
 	exports.Logger = Logger;
@@ -6055,6 +6131,7 @@
 	exports.Math = _Math;
 	exports.Matrix3 = Matrix3;
 	exports.Matrix4 = Matrix4;
+	exports.Plane = Plane;
 	exports.Quaternion = Quaternion;
 	exports.Ray = Ray;
 	exports.Vector3 = Vector3;
