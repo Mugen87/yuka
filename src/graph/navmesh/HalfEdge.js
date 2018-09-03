@@ -35,8 +35,8 @@ class HalfEdge {
 
 	length() {
 
-		var from = this.from();
-		var to = this.to();
+		const from = this.from();
+		const to = this.to();
 
 		if ( to !== null ) {
 
@@ -50,8 +50,8 @@ class HalfEdge {
 
 	squaredLength() {
 
-		var from = this.from();
-		var to = this.to();
+		const from = this.from();
+		const to = this.to();
 
 		if ( to !== null ) {
 

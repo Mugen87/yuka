@@ -7,8 +7,8 @@
 
 import { Vector3 } from './Vector3.js';
 
-var v1 = new Vector3();
-var v2 = new Vector3();
+const v1 = new Vector3();
+const v2 = new Vector3();
 
 class Plane {
 

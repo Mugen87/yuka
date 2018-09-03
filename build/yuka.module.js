@@ -2461,8 +2461,8 @@ class HalfEdge {
 
 	length() {
 
-		var from = this.from();
-		var to = this.to();
+		const from = this.from();
+		const to = this.to();
 
 		if ( to !== null ) {
 
@@ -2476,8 +2476,8 @@ class HalfEdge {
 
 	squaredLength() {
 
-		var from = this.from();
-		var to = this.to();
+		const from = this.from();
+		const to = this.to();
 
 		if ( to !== null ) {
 
@@ -6001,12 +6001,12 @@ class Think extends CompositeGoal {
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Plane.js
  *
  */
 
-var v1$1 = new Vector3();
-var v2 = new Vector3();
+const v1$1 = new Vector3();
+const v2 = new Vector3();
 
 class Plane {
 
