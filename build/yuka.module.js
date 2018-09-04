@@ -2867,8 +2867,8 @@ class NavMesh {
 
 		const graph = this.graph;
 
-		const fromRegion = this.getRegionForPoint( from );
-		const toRegion = this.getRegionForPoint( to );
+		const fromRegion = this.getClosestRegion( from );
+		const toRegion = this.getClosestRegion( to );
 
 		const path = [];
 
@@ -3095,6 +3095,7 @@ class NavMesh {
 					// assign unique node index to edge
 
 					edge.nodeIndex = nodeIndex;
+					edge.twin.next.nodeIndex = nodeIndex;
 
 				}
 
@@ -5187,6 +5188,214 @@ class PursuitBehavior extends SteeringBehavior {
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Line3.js
+ *
+ */
+
+const p1 = new Vector3();
+const p2 = new Vector3();
+const closesPoint = new Vector3();
+
+class LineSegment {
+
+	constructor( from = new Vector3(), to = new Vector3() ) {
+
+		this.from = from;
+		this.to = to;
+
+	}
+
+	set( from, to ) {
+
+		this.from = from;
+		this.to = to;
+
+		return this;
+
+	}
+
+	copy( lineSegment ) {
+
+		this.from.copy( lineSegment.from );
+		this.to.copy( lineSegment.to );
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	closestPointToPoint( point, result ) {
+
+		p1.subVectors( point, this.from );
+		p2.subVectors( this.to, this.from );
+
+		const dotP2P2 = p2.dot( p2 );
+		const dotP2P1 = p2.dot( p1 );
+
+		const t = _Math.clamp( dotP2P1 / dotP2P2, 0, 1 );
+
+		//
+
+		result.subVectors( this.to, this.from ).multiplyScalar( t ).add( this.from );
+
+	}
+
+	distanceToPoint( point ) {
+
+		this.closestPointToPoint( point, closesPoint );
+
+		return closesPoint.distanceTo( point );
+
+	}
+
+	squaredDistanceToPoint( point ) {
+
+		this.closestPointToPoint( point, closesPoint );
+
+		return closesPoint.squaredDistanceTo( point );
+
+	}
+
+	equals( lineSegment ) {
+
+		return lineSegment.from.equals( this.from ) && lineSegment.to.equals( this.to );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+const desiredVelocity$3 = new Vector3();
+const edgeDirection = new Vector3();
+const vehicleDirection$1 = new Vector3();
+const translation$1 = new Vector3();
+const newPosition = new Vector3();
+const lineSegment = new LineSegment();
+
+class StayInNavMeshBehavior extends SteeringBehavior {
+
+	constructor( navMesh = null ) {
+
+		super();
+
+		this.navMesh = navMesh;
+
+		this._currentRegion = null;
+
+	}
+
+	calculate( vehicle, force, delta ) {
+
+		const navMesh = this.navMesh;
+
+		if ( this._currentRegion === null ) {
+
+			this._currentRegion = navMesh.getRegionForPoint( vehicle.position );
+
+		}
+
+		//
+
+		translation$1.copy( vehicle.velocity ).multiplyScalar( delta );
+		newPosition.copy( vehicle.position ).add( translation$1 );
+
+		const nextRegion = navMesh.getRegionForPoint( newPosition );
+
+		if ( nextRegion === null ) {
+
+			// produce a force that keeps the vehicle inside the navMesh
+
+			// calculate the closest vertex to the vehicle's position in the current region
+			// and save the corresponding edge
+
+			let closestEdge = null;
+			let minDistance = Infinity;
+
+			let edge = this._currentRegion.edge;
+
+			do {
+
+				const distance = vehicle.position.squaredDistanceTo( edge.from() );
+
+				if ( distance < minDistance ) {
+
+					minDistance = distance;
+
+					closestEdge = edge;
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== this._currentRegion.edge );
+
+			// calculate the distance to the outgoing and incoming edge of the closest vertex
+
+			const p0 = closestEdge.vertex;
+			const p1 = closestEdge.next.vertex;
+			const p2 = closestEdge.prev.vertex;
+
+			//
+
+			lineSegment.from = p0;
+			lineSegment.to = p1;
+
+			const d1 = lineSegment.squaredDistanceToPoint( vehicle.position );
+
+			lineSegment.from = p2;
+			lineSegment.to = p0;
+
+			const d2 = lineSegment.squaredDistanceToPoint( vehicle.position );
+
+			// choose the closest edge and calculate a normalized vector that
+			// represents the direction of the edge
+
+			if ( d1 <= d2 ) {
+
+				edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
+
+			} else {
+
+				edgeDirection.subVectors( closestEdge.vertex, closestEdge.prev.vertex ).normalize();
+
+			}
+
+			// the dot product between the vehicle's direction and the edge direction
+			// will influence the direction and amount of the final force
+
+			vehicle.getDirection( vehicleDirection$1 );
+			let f = edgeDirection.dot( vehicleDirection$1 );
+
+			f = ( f >= 0 ) ? 1 : - 1;
+
+			desiredVelocity$3.copy( edgeDirection ).multiplyScalar( vehicle.maxSpeed * f );
+			force.subVectors( desiredVelocity$3, vehicle.velocity );
+
+			return;
+
+		} else {
+
+			this._currentRegion = nextRegion;
+
+			// produce no force
+
+		}
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
  */
 
 const targetWorld = new Vector3();
@@ -6074,4 +6283,4 @@ class Plane {
 
 }
 
-export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Telegram, Time, Node, Edge, Graph, GraphUtils, PriorityQueue, NavNode, NavEdge, HalfEdge, NavMesh, NavMeshLoader, Polygon, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, _Math as Math, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Telegram, Time, Node, Edge, Graph, GraphUtils, PriorityQueue, NavNode, NavEdge, HalfEdge, NavMesh, NavMeshLoader, Polygon, DFS, BFS, Dijkstra, AStar, Path, SteeringBehavior, SteeringManager, Vehicle, ArriveBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, StayInNavMeshBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, State, StateMachine, Goal, CompositeGoal, GoalEvaluator, Think, AABB, BoundingSphere, LineSegment, _Math as Math, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };

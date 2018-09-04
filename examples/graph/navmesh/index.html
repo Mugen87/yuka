@@ -136,6 +136,12 @@
 				const graphHelper = createGraphHelper( graph, 0.2 );
 				scene.add( graphHelper );
 
+				//
+
+				const stayInNavMeshBehavior = vehicle.steering.behaviors[ 0 ];
+				stayInNavMeshBehavior.navMesh = navMesh;
+				stayInNavMeshBehavior.active = true;
+
 				animate();
 
 			} );
@@ -146,10 +152,15 @@
 			time = new YUKA.Time();
 			vehicle = new YUKA.Vehicle();
 			vehicle.maxSpeed = 1.5;
+			vehicle.maxForce = 10;
+
+			const stayInNavMeshBehavior = new YUKA.StayInNavMeshBehavior();
+			stayInNavMeshBehavior.weigth = 5;
+			stayInNavMeshBehavior.active = false;
+			vehicle.steering.add( stayInNavMeshBehavior );
 
 			const followPathBehavior = new YUKA.FollowPathBehavior();
 			followPathBehavior.active = false;
-
 			vehicle.steering.add( followPathBehavior );
 
 			entityManager.add( vehicle );
@@ -191,7 +202,7 @@
 
 			if ( intersects.length > 0 ) {
 
-				findPathTo( intersects[ 0 ].point );
+				findPathTo( new YUKA.Vector3().copy( intersects[ 0 ].point ) );
 
 			}
 
@@ -199,24 +210,24 @@
 
 		function findPathTo( target ) {
 
-			const from = new YUKA.Vector3().copy( vehicle.position );
-			const to = new YUKA.Vector3().copy( target );
+			const from = vehicle.position;
+			const to = target;
 
-			const path = navMesh.findPath( from, to );
+				const path = navMesh.findPath( from, to );
 
-			pathHelper.visible = true;
-			pathHelper.geometry.dispose();
-			pathHelper.geometry = new THREE.BufferGeometry().setFromPoints( path );
+				pathHelper.visible = true;
+				pathHelper.geometry.dispose();
+				pathHelper.geometry = new THREE.BufferGeometry().setFromPoints( path );
 
-			const followPathBehavior = vehicle.steering.behaviors[ 0 ];
-			followPathBehavior.active = true;
-			followPathBehavior.path.clear();
+				const followPathBehavior = vehicle.steering.behaviors[ 1 ];
+				followPathBehavior.active = true;
+				followPathBehavior.path.clear();
 
-			for ( const point of path ) {
+				for ( const point of path ) {
 
-				followPathBehavior.path.add( new YUKA.Vector3().copy( point ) );
+					followPathBehavior.path.add( point );
 
-			}
+				}
 
 		}
 

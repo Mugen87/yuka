@@ -214,8 +214,8 @@ class NavMesh {
 
 		const graph = this.graph;
 
-		const fromRegion = this.getRegionForPoint( from );
-		const toRegion = this.getRegionForPoint( to );
+		const fromRegion = this.getClosestRegion( from );
+		const toRegion = this.getClosestRegion( to );
 
 		const path = [];
 
@@ -442,6 +442,7 @@ class NavMesh {
 					// assign unique node index to edge
 
 					edge.nodeIndex = nodeIndex;
+					edge.twin.next.nodeIndex = nodeIndex;
 
 				}
 
