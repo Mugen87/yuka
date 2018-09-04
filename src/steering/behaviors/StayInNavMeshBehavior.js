@@ -56,13 +56,19 @@ class StayInNavMeshBehavior extends SteeringBehavior {
 
 			do {
 
-				const distance = vehicle.position.squaredDistanceTo( edge.from() );
+				// only investigate border edges
 
-				if ( distance < minDistance ) {
+				if ( edge.twin === null ) {
 
-					minDistance = distance;
+					const distance = vehicle.position.squaredDistanceTo( edge.from() );
 
-					closestEdge = edge;
+					if ( distance < minDistance ) {
+
+						minDistance = distance;
+
+						closestEdge = edge;
+
+					}
 
 				}
 

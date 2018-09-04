@@ -118,7 +118,7 @@
 					const shape = new THREE.Shape( points );
 
 					const geometry = new THREE.ShapeBufferGeometry( shape );
-					const color = new THREE.Color().setHSL( 0.3, Math.random(), 0.3 );
+					const color = new THREE.Color().setHSL( 0.3 + 0.7 * Math.random(), Math.random(), 0.4 );
 					const material = new THREE.MeshBasicMaterial( { color: color } );
 
 					const mesh = new THREE.Mesh( geometry, material );
@@ -136,12 +136,6 @@
 				const graphHelper = createGraphHelper( graph, 0.2 );
 				scene.add( graphHelper );
 
-				//
-
-				const stayInNavMeshBehavior = vehicle.steering.behaviors[ 0 ];
-				stayInNavMeshBehavior.navMesh = navMesh;
-				stayInNavMeshBehavior.active = true;
-
 				animate();
 
 			} );
@@ -153,11 +147,6 @@
 			vehicle = new YUKA.Vehicle();
 			vehicle.maxSpeed = 1.5;
 			vehicle.maxForce = 10;
-
-			const stayInNavMeshBehavior = new YUKA.StayInNavMeshBehavior();
-			stayInNavMeshBehavior.weigth = 5;
-			stayInNavMeshBehavior.active = false;
-			vehicle.steering.add( stayInNavMeshBehavior );
 
 			const followPathBehavior = new YUKA.FollowPathBehavior();
 			followPathBehavior.active = false;
@@ -219,7 +208,7 @@
 				pathHelper.geometry.dispose();
 				pathHelper.geometry = new THREE.BufferGeometry().setFromPoints( path );
 
-				const followPathBehavior = vehicle.steering.behaviors[ 1 ];
+				const followPathBehavior = vehicle.steering.behaviors[ 0 ];
 				followPathBehavior.active = true;
 				followPathBehavior.path.clear();
 

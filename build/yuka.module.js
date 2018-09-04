@@ -2790,7 +2790,7 @@ class NavMesh {
 
 	}
 
-	getClosestNodeIndexInRegion( point, region ) {
+	getClosestNodeIndexInRegion( point, region, target ) {
 
 		let closesNodeIndex = null;
 		let minDistance = Infinity;
@@ -2801,7 +2801,15 @@ class NavMesh {
 
 			if ( edge.twin || edge.prev.twin ) {
 
-				const distance = point.squaredDistanceTo( edge.from() );
+				let distance = point.squaredDistanceTo( edge.from() );
+
+				if ( target ) {
+
+					// use heuristic if possible (prefer nodes which are closer to the given target point)
+
+					distance += target.squaredDistanceTo( edge.from() );
+
+				}
 
 				if ( distance < minDistance ) {
 
@@ -2896,8 +2904,8 @@ class NavMesh {
 
 			// points are not in same region, peform search
 
-			const source = this.getClosestNodeIndexInRegion( from, fromRegion );
-			const target = this.getClosestNodeIndexInRegion( to, toRegion );
+			const source = this.getClosestNodeIndexInRegion( from, fromRegion, to );
+			const target = this.getClosestNodeIndexInRegion( to, toRegion, from );
 
 			const astar = new AStar( graph, source, target );
 			astar.search();
@@ -2905,50 +2913,6 @@ class NavMesh {
 			if ( astar.found === true ) {
 
 				const shortestPath = astar.getPath();
-
-				let count = shortestPath.length;
-
-				// smoothing
-
-				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
-
-					const index = shortestPath[ i ];
-					const node = graph.getNode( index );
-
-					if ( fromRegion.contains( node.position ) === false ) {
-
-						count = i;
-						break;
-
-					}
-
-				}
-
-				shortestPath.splice( 0, count - 1 );
-
-				//
-
-				shortestPath.reverse();
-
-				count = shortestPath.length;
-
-				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
-
-					const index = shortestPath[ i ];
-					const node = graph.getNode( index );
-
-					if ( toRegion.contains( node.position ) === false ) {
-
-						count = i;
-						break;
-
-					}
-
-				}
-
-				shortestPath.splice( 0, count - 1 );
-
-				shortestPath.reverse();
 
 				// create final path
 
@@ -5324,13 +5288,19 @@ class StayInNavMeshBehavior extends SteeringBehavior {
 
 			do {
 
-				const distance = vehicle.position.squaredDistanceTo( edge.from() );
+				// only investigate border edges
 
-				if ( distance < minDistance ) {
+				if ( edge.twin === null ) {
 
-					minDistance = distance;
+					const distance = vehicle.position.squaredDistanceTo( edge.from() );
 
-					closestEdge = edge;
+					if ( distance < minDistance ) {
+
+						minDistance = distance;
+
+						closestEdge = edge;
+
+					}
 
 				}
 

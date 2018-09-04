@@ -31,13 +31,13 @@ const v2 = [
 
 const v3 = [
 	new Vector3( 0, 0, 0 ),
-	new Vector3( - 2, 1, 1 ),
+	new Vector3( - 2, 0, 1 ),
 	new Vector3( 0.5, 0, 1 )
 ];
 
 const v4 = [
 	new Vector3( 0.5, 0, 1 ),
-	new Vector3( - 2, 1, 1 ),
+	new Vector3( - 2, 0, 1 ),
 	new Vector3( 0, 0, 2 )
 ];
 
@@ -136,6 +136,21 @@ describe( 'NavMesh', function () {
 
 			expect( nodeIndex1 ).to.equal( 0 );
 			expect( nodeIndex2 ).to.equal( 1 );
+
+		} );
+
+		it( 'should use the third parameter to calculate a heuristic used to pick the best possible node', function () {
+
+			// nodes are ( 0.5, 0, 1 ) and ( 1, 0, 0 )
+
+			const point = new Vector3( 0.8, 0, 0.5 );
+			const target = new Vector3( 0, 0, 1.5 );
+
+			const nodeIndex1 = navMesh.getClosestNodeIndexInRegion( point, p1 );
+			const nodeIndex2 = navMesh.getClosestNodeIndexInRegion( point, p1, target );
+
+			expect( nodeIndex1 ).to.equal( 1 );
+			expect( nodeIndex2 ).to.equal( 0 ); // nodeIndex 0 is actually the better choice since
 
 		} );
 
