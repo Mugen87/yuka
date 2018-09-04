@@ -56,19 +56,13 @@ class StayInNavMeshBehavior extends SteeringBehavior {
 
 			do {
 
-				// only investigate border edges
+				const distance = vehicle.position.squaredDistanceTo( edge.from() );
 
-				if ( edge.twin === null ) {
+				if ( distance < minDistance ) {
 
-					const distance = vehicle.position.squaredDistanceTo( edge.from() );
+					minDistance = distance;
 
-					if ( distance < minDistance ) {
-
-						minDistance = distance;
-
-						closestEdge = edge;
-
-					}
+					closestEdge = edge;
 
 				}
 
@@ -76,34 +70,51 @@ class StayInNavMeshBehavior extends SteeringBehavior {
 
 			} while ( edge !== this._currentRegion.edge );
 
-			// calculate the distance to the outgoing and incoming edge of the closest vertex
+			// it's important that the behavior does not move the entity along a portal edge (edge with twin reference)
 
-			const p0 = closestEdge.vertex;
-			const p1 = closestEdge.next.vertex;
-			const p2 = closestEdge.prev.vertex;
+			if ( closestEdge.twin !== null && closestEdge.prev.twin === null ) {
 
-			//
+				// if closestEdge has a twin but not the previous edge, use the latter one
 
-			lineSegment.from = p0;
-			lineSegment.to = p1;
+				edgeDirection.subVectors( closestEdge.vertex, closestEdge.prev.vertex ).normalize();
 
-			const d1 = lineSegment.squaredDistanceToPoint( vehicle.position );
+			} else if ( closestEdge.twin === null && closestEdge.prev.twin !== null ) {
 
-			lineSegment.from = p2;
-			lineSegment.to = p0;
-
-			const d2 = lineSegment.squaredDistanceToPoint( vehicle.position );
-
-			// choose the closest edge and calculate a normalized vector that
-			// represents the direction of the edge
-
-			if ( d1 <= d2 ) {
+				// if closestEdge has no twin but it's predecessor, use the first one
 
 				edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
 
 			} else {
 
-				edgeDirection.subVectors( closestEdge.vertex, closestEdge.prev.vertex ).normalize();
+				// if both edges have no twins, calculate the distance to the outgoing and
+				// incoming edge of the closest vertex and choose the one closest one
+				// BTW: It's invalid that an edge and it's predecessor are both portal edges
+
+				const p0 = closestEdge.vertex;
+				const p1 = closestEdge.next.vertex;
+				const p2 = closestEdge.prev.vertex;
+
+				//
+
+				lineSegment.from = p0;
+				lineSegment.to = p1;
+
+				const d1 = lineSegment.squaredDistanceToPoint( vehicle.position );
+
+				lineSegment.from = p2;
+				lineSegment.to = p0;
+
+				const d2 = lineSegment.squaredDistanceToPoint( vehicle.position );
+
+				if ( d1 <= d2 ) {
+
+					edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
+
+				} else {
+
+					edgeDirection.subVectors( closestEdge.vertex, closestEdge.prev.vertex ).normalize();
+
+				}
 
 			}
 
