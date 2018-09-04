@@ -136,6 +136,38 @@ describe( 'StayInNavMeshBehavior', function () {
 
 		} );
 
+		it( 'should not choose edges with a twin reference when calculating the force (Part 1)', function () {
+
+			const vehicle = new Vehicle();
+			vehicle.position.set( 0.9, 0, 0.1 );
+			vehicle.velocity.set( 0.9, 0, - 0.6 ); // new position will be ( 0.9, 0, - 0.5 )
+			const force = new Vector3();
+			const delta = 1;
+
+			const stayInNavMeshBehavior = new StayInNavMeshBehavior( navMesh );
+
+			stayInNavMeshBehavior.calculate( vehicle, force, delta );
+			expect( force ).to.deep.equal( { x: - 1.9, y: 0, z: 0.6 } );
+
+		} );
+
+		it( 'should not choose edges with a twin reference when calculating the force (Part 2)', function () {
+
+			const vehicle = new Vehicle();
+			vehicle.position.set( 0.98, 0, 0.1 );
+			vehicle.velocity.set( 0.98, 0, - 0.6 ); // new position will be ( 0.98, 0, - 0.5 )
+			const force = new Vector3();
+			const delta = 1;
+
+			const stayInNavMeshBehavior = new StayInNavMeshBehavior( navMesh );
+
+			stayInNavMeshBehavior.calculate( vehicle, force, delta );
+			expect( force ).to.deep.equal( { x: - 0.98, y: - 0, z: 1.6 } );
+
+			expect( stayInNavMeshBehavior._currentRegion ).to.equal( p2 );
+
+		} );
+
 	} );
 
 } );
