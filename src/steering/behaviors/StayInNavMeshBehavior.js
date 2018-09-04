@@ -84,11 +84,10 @@ class StayInNavMeshBehavior extends SteeringBehavior {
 
 				edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
 
-			} else {
+			} else if ( closestEdge.twin === null && closestEdge.prev.twin === null ) {
 
 				// if both edges have no twins, calculate the distance to the outgoing and
 				// incoming edge of the closest vertex and choose the one closest one
-				// BTW: It's invalid that an edge and it's predecessor are both portal edges
 
 				const p0 = closestEdge.vertex;
 				const p1 = closestEdge.next.vertex;
@@ -115,6 +114,12 @@ class StayInNavMeshBehavior extends SteeringBehavior {
 					edgeDirection.subVectors( closestEdge.vertex, closestEdge.prev.vertex ).normalize();
 
 				}
+
+			} else {
+
+				// special case: if both edges have twin references, do nothing
+
+				return;
 
 			}
 
