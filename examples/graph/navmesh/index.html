@@ -35,6 +35,7 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import { OrbitControls } from '../../lib/OrbitControls.module.js';
 		import * as THREE from '../../lib/three.module.js';
+		import * as DAT from 'https://cdn.rawgit.com/dataarts/dat.gui/979f2fc39dbe89af561094a158c906ee9c047886/build/dat.gui.module.js';
 
 		import { createGraphHelper, createPathHelper } from '../basic/src/GraphHelper.js';
 
@@ -44,7 +45,11 @@
 
 		let entityManager, time, vehicle, navMesh;
 
-		let pathMaterial, pathHelper;
+		let pathMaterial, pathHelper, graphHelper;
+
+		const params = {
+			showNavigatonGraph: true
+		};
 
 		init();
 
@@ -72,14 +77,57 @@
 
 			const vehicleGeometry = new THREE.ConeBufferGeometry( 0.25, 1, 16 );
 			vehicleGeometry.rotateX( Math.PI * 0.5 );
-			vehicleGeometry.translate( 0, 0.5, 0 );
+			vehicleGeometry.translate( 0, 0.25, 0 );
 			const vehicleMaterial = new THREE.MeshNormalMaterial();
 
 			vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
 			vehicleMesh.matrixAutoUpdate = false;
 			scene.add( vehicleMesh );
 
+			// renderer
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+			document.addEventListener( 'mousedown', onMouseDown, false );
+
+			// dat.gui
+
+			var gui = new DAT.GUI( { width: 300 } );
+
+			gui.add( params, 'showNavigatonGraph', 1, 30 ).onChange( ( value ) => {
+
+				if ( graphHelper ) graphHelper.visible = value;
+
+			} );
+
+			gui.open();
+
 			// game setup
+
+			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
+			vehicle = new YUKA.Vehicle();
+			vehicle.maxSpeed = 1.5;
+			vehicle.maxForce = 10;
+
+			const stayInNavMeshBehavior = new YUKA.StayInNavMeshBehavior();
+			stayInNavMeshBehavior.weigth = 5;
+			stayInNavMeshBehavior.active = false;
+			vehicle.steering.add( stayInNavMeshBehavior );
+
+			const followPathBehavior = new YUKA.FollowPathBehavior();
+			followPathBehavior.active = false;
+			vehicle.steering.add( followPathBehavior );
+
+			entityManager.add( vehicle );
 
 			// load navigation mesh
 
@@ -133,7 +181,7 @@
 
 				const graph = navMesh.graph;
 
-				const graphHelper = createGraphHelper( graph, 0.2 );
+				graphHelper = createGraphHelper( graph, 0.2 );
 				scene.add( graphHelper );
 
 				//
@@ -145,40 +193,6 @@
 				animate();
 
 			} );
-
-			//
-
-			entityManager = new YUKA.EntityManager();
-			time = new YUKA.Time();
-			vehicle = new YUKA.Vehicle();
-			vehicle.maxSpeed = 1.5;
-			vehicle.maxForce = 10;
-
-			const stayInNavMeshBehavior = new YUKA.StayInNavMeshBehavior();
-			stayInNavMeshBehavior.weigth = 5;
-			stayInNavMeshBehavior.active = false;
-			vehicle.steering.add( stayInNavMeshBehavior );
-
-			const followPathBehavior = new YUKA.FollowPathBehavior();
-			followPathBehavior.active = false;
-			vehicle.steering.add( followPathBehavior );
-
-			entityManager.add( vehicle );
-
-			// renderer
-
-			renderer = new THREE.WebGLRenderer( { antialias: true } );
-			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			document.body.appendChild( renderer.domElement );
-
-			const controls = new OrbitControls( camera, renderer.domElement );
-
-			//
-
-			window.addEventListener( 'resize', onWindowResize, false );
-
-			document.addEventListener( 'mousedown', onMouseDown, false );
 
 		}
 

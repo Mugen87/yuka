@@ -222,22 +222,21 @@ class NavMesh {
 
 		const graph = this.graph;
 
-		const fromRegion = this.getClosestRegion( from );
-		const toRegion = this.getClosestRegion( to );
+		let fromRegion = this.getRegionForPoint( from );
+		let toRegion = this.getRegionForPoint( to );
 
 		const path = [];
 
-		// 1. ensure start and end point are inside the navmesh
-
 		if ( fromRegion === null || toRegion === null ) {
 
-			// return empty path
+			// if source or target are outside the navmesh, choose the nearest convex region
 
-			return path;
+			if ( fromRegion === null ) fromRegion = this.getClosestRegion( from );
+			if ( toRegion === null ) toRegion = this.getClosestRegion( to );
 
 		}
 
-		// 2. check if both points are in the same convex region
+		// check if both convex region are identical
 
 		if ( fromRegion === toRegion ) {
 
@@ -249,7 +248,7 @@ class NavMesh {
 
 		} else {
 
-			// points are not in same region, peform search
+			// source and target are not in same region, peform search
 
 			const source = this.getClosestNodeIndexInRegion( from, fromRegion, to );
 			const target = this.getClosestNodeIndexInRegion( to, toRegion, from );
@@ -260,6 +259,51 @@ class NavMesh {
 			if ( astar.found === true ) {
 
 				const shortestPath = astar.getPath();
+
+				// smoothing
+
+				let count = shortestPath.length;
+
+				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
+
+					const index = shortestPath[ i ];
+					const node = graph.getNode( index );
+
+					if ( fromRegion.contains( node.position ) === false ) {
+
+						count = i;
+						break;
+
+					}
+
+				}
+
+				shortestPath.splice( 0, count - 1 );
+
+				//
+
+				shortestPath.reverse();
+
+				count = shortestPath.length;
+
+				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
+
+					const index = shortestPath[ i ];
+					const node = graph.getNode( index );
+
+					if ( toRegion.contains( node.position ) === false ) {
+
+						count = i;
+						break;
+
+					}
+
+				}
+
+				shortestPath.splice( 0, count - 1 );
+
+				shortestPath.reverse();
+
 
 				// create final path
 
