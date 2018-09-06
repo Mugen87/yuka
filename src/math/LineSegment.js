@@ -10,7 +10,7 @@ import { _Math } from './Math.js';
 
 const p1 = new Vector3();
 const p2 = new Vector3();
-const closesPoint = new Vector3();
+const closestPoint = new Vector3();
 
 class LineSegment {
 
@@ -45,7 +45,27 @@ class LineSegment {
 
 	}
 
-	closestPointToPoint( point, result ) {
+	delta( result ) {
+
+		return result.subVectors( this.to, this.from );
+
+	}
+
+	at( t, result ) {
+
+		return this.delta( result ).multiplyScalar( t ).add( this.from );
+
+	}
+
+	closestPointToPoint( point, clampToLine, result ) {
+
+		const t = this.closestPointToPointParameter( point, clampToLine );
+
+		return this.at( t, result );
+
+	}
+
+	closestPointToPointParameter( point, clampToLine ) {
 
 		p1.subVectors( point, this.from );
 		p2.subVectors( this.to, this.from );
@@ -53,27 +73,11 @@ class LineSegment {
 		const dotP2P2 = p2.dot( p2 );
 		const dotP2P1 = p2.dot( p1 );
 
-		const t = _Math.clamp( dotP2P1 / dotP2P2, 0, 1 );
+		let t = dotP2P1 / dotP2P2;
 
-		//
+		if ( clampToLine ) t = _Math.clamp( t, 0, 1 );
 
-		result.subVectors( this.to, this.from ).multiplyScalar( t ).add( this.from );
-
-	}
-
-	distanceToPoint( point ) {
-
-		this.closestPointToPoint( point, closesPoint );
-
-		return closesPoint.distanceTo( point );
-
-	}
-
-	squaredDistanceToPoint( point ) {
-
-		this.closestPointToPoint( point, closesPoint );
-
-		return closesPoint.squaredDistanceTo( point );
+		return t;
 
 	}
 

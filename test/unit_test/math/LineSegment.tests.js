@@ -115,50 +115,14 @@ describe( 'LineSegment', function () {
 
 			const closesPoint = new Vector3();
 
-			lineSegment.closestPointToPoint( point1, closesPoint );
+			lineSegment.closestPointToPoint( point1, true, closesPoint );
 			expect( closesPoint ).to.deep.equal( new Vector3( 0, 0, 2 ) );
 
-			lineSegment.closestPointToPoint( point2, closesPoint );
+			lineSegment.closestPointToPoint( point2, true, closesPoint );
 			expect( closesPoint ).to.deep.equal( new Vector3( 0, 0, 1.5 ) );
 
-			lineSegment.closestPointToPoint( point3, closesPoint );
+			lineSegment.closestPointToPoint( point3, true, closesPoint );
 			expect( closesPoint ).to.deep.equal( new Vector3( 0, 0, 1 ) );
-
-		} );
-
-	} );
-
-	describe( '#distanceToPoint()', function () {
-
-		it( 'should return the euclidean distance from a given point to the line segment', function () {
-
-			const from = new Vector3( 0, 0, 1 );
-			const to = new Vector3( 0, 0, 2 );
-
-			const lineSegment = new LineSegment( from, to );
-			const point = new Vector3( 0, 0, 4 );
-
-			const distance = lineSegment.distanceToPoint( point );
-			expect( distance ).to.equal( 2 );
-
-
-		} );
-
-	} );
-
-	describe( '#squaredDistanceToPoint()', function () {
-
-		it( 'should return the euclidean distance in squared space from a given point to the line segment', function () {
-
-			const from = new Vector3( 0, 0, 1 );
-			const to = new Vector3( 0, 0, 2 );
-
-			const lineSegment = new LineSegment( from, to );
-			const point = new Vector3( 0, 0, 4 );
-
-			const distance = lineSegment.squaredDistanceToPoint( point );
-			expect( distance ).to.equal( 4 );
-
 
 		} );
 

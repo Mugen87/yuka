@@ -7,6 +7,13 @@ import { NavNode } from '../navigation/NavNode.js';
 import { NavEdge } from '../navigation/NavEdge.js';
 import { AStar } from '../search/AStar.js';
 import { Vector3 } from '../../math/Vector3.js';
+import { LineSegment } from '../../math/LineSegment.js';
+
+const closestPoint = new Vector3();
+const edgeDirection = new Vector3();
+const movementDirection = new Vector3();
+const newPosition = new Vector3();
+const lineSegment = new LineSegment();
 
 class NavMesh {
 
@@ -323,6 +330,133 @@ class NavMesh {
 			return path;
 
 		}
+
+	}
+
+	clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
+
+		const nextRegion = this.getRegionForPoint( endPosition );
+
+		if ( nextRegion === null ) {
+
+			if ( currentRegion === null ) throw new Error( 'YUKA.NavMesh.clampMovement(): No current region available.' );
+
+			// determine closest vertex in current convex region
+
+			let closestEdge = null;
+			let minDistance = Infinity;
+
+			let edge = currentRegion.edge;
+
+			do {
+
+				const distance = startPosition.squaredDistanceTo( edge.from() );
+
+				if ( distance < minDistance ) {
+
+					minDistance = distance;
+
+					closestEdge = edge;
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== currentRegion.edge );
+
+			//
+
+			let t, e;
+
+			if ( closestEdge.twin !== null && closestEdge.prev.twin === null ) {
+
+				lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
+
+				e = closestEdge.prev;
+				t = lineSegment.closestPointToPointParameter( startPosition );
+
+			} else if ( closestEdge.twin === null && closestEdge.prev.twin !== null ) {
+
+				lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
+
+				e = closestEdge;
+				t = lineSegment.closestPointToPointParameter( startPosition );
+
+			} else if ( closestEdge.twin === null && closestEdge.prev.twin === null ) {
+
+				// t1
+
+				lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
+
+				const edge1 = closestEdge.prev;
+				const t1 = lineSegment.closestPointToPointParameter( startPosition );
+				lineSegment.at( t1, closestPoint );
+				const d1 = closestPoint.squaredDistanceTo( startPosition );
+
+				// t2
+
+				lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
+
+				const edge2 = closestEdge;
+				const t2 = lineSegment.closestPointToPointParameter( startPosition );
+				lineSegment.at( t2, closestPoint );
+				const d2 = closestPoint.squaredDistanceTo( startPosition );
+
+				if ( d1 <= d2 ) {
+
+					e = edge1;
+					t = t1;
+
+				} else {
+
+					e = edge2;
+					t = t2;
+
+				}
+
+			}
+
+			//
+
+			edgeDirection.subVectors( e.next.vertex, e.vertex ).normalize();
+			const length = movementDirection.subVectors( endPosition, startPosition ).length();
+			movementDirection.divideScalar( length );
+
+			const f = edgeDirection.dot( movementDirection );
+
+			lineSegment.set( e.vertex, e.next.vertex );
+
+			lineSegment.at( t, closestPoint );
+			newPosition.copy( closestPoint ).add( edgeDirection.multiplyScalar( f * length ) );
+
+			t = lineSegment.closestPointToPointParameter( newPosition );
+
+			if ( t >= 0 && t <= 1 ) {
+
+				clampPosition.copy( newPosition );
+
+			} else {
+
+				if ( this.getRegionForPoint( newPosition ) !== null ) {
+
+					clampPosition.copy( newPosition );
+
+				} else {
+
+					clampPosition.copy( startPosition );
+
+				}
+
+			}
+
+			return currentRegion;
+
+		} else {
+
+			return nextRegion;
+
+		}
+
 
 	}
 

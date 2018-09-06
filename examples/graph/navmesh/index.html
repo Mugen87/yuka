@@ -38,6 +38,7 @@
 		import * as DAT from 'https://cdn.rawgit.com/dataarts/dat.gui/979f2fc39dbe89af561094a158c906ee9c047886/build/dat.gui.module.js';
 
 		import { createGraphHelper, createPathHelper } from '../basic/src/GraphHelper.js';
+		import { CustomVehicle } from './src/CustomVehicle.js';
 
 		let renderer, scene, camera, vehicleMesh, navMeshGroup;
 
@@ -110,20 +111,6 @@
 
 			gui.open();
 
-			// game setup
-
-			entityManager = new YUKA.EntityManager();
-			time = new YUKA.Time();
-			vehicle = new YUKA.Vehicle();
-			vehicle.maxSpeed = 1.5;
-			vehicle.maxForce = 10;
-
-			const followPathBehavior = new YUKA.FollowPathBehavior();
-			followPathBehavior.active = false;
-			vehicle.steering.add( followPathBehavior );
-
-			entityManager.add( vehicle );
-
 			// load navigation mesh
 
 			const loader = new YUKA.NavMeshLoader();
@@ -178,6 +165,21 @@
 
 				graphHelper = createGraphHelper( graph, 0.2 );
 				scene.add( graphHelper );
+
+				// game setup
+
+				entityManager = new YUKA.EntityManager();
+				time = new YUKA.Time();
+				vehicle = new CustomVehicle();
+				vehicle.navMesh = navMesh;
+				vehicle.maxSpeed = 1.5;
+				vehicle.maxForce = 10;
+
+				const followPathBehavior = new YUKA.FollowPathBehavior();
+				followPathBehavior.active = false;
+				vehicle.steering.add( followPathBehavior );
+
+				entityManager.add( vehicle );
 
 				animate();
 
