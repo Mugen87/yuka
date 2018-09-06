@@ -100,9 +100,109 @@ describe( 'LineSegment', function () {
 
 	} );
 
+	describe( '#delta()', function () {
+
+		it( 'should calculate the difference vector between from and to and write the result to the given vector', function () {
+
+			const from = new Vector3( 0, 0, 1 );
+			const to = new Vector3( 0, 0, 2 );
+			const result = new Vector3();
+
+			const lineSegment = new LineSegment( from, to );
+			lineSegment.delta( result );
+
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 1 } );
+
+		} );
+
+	} );
+
+	describe( '#at()', function () {
+
+		it( 'should use the given scalar value to calculate a point on the line segment and write the result to the given vector', function () {
+
+			const from = new Vector3( 0, 0, 1 );
+			const to = new Vector3( 0, 0, 2 );
+			const result = new Vector3();
+
+			const lineSegment = new LineSegment( from, to );
+
+			// range [0,1] lies on the line segment
+
+			lineSegment.at( 0, result );
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 1 } );
+
+			lineSegment.at( 0.5, result );
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 1.5 } );
+
+			lineSegment.at( 1, result );
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 2 } );
+
+			// t values outside the range are valid and produce values
+
+			lineSegment.at( 2, result );
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 3 } );
+
+			lineSegment.at( - 1, result );
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 0 } );
+
+		} );
+
+	} );
+
+	describe( '#closestPointToPointParameter()', function () {
+
+		it( 'should return a scalar value which indicates the position of the point on the line segment', function () {
+
+			const from = new Vector3( 0, 0, 1 );
+			const to = new Vector3( 0, 0, 2 );
+			let t;
+
+			const lineSegment = new LineSegment( from, to );
+
+			const point1 = new Vector3( 0, 0, 3 );
+			const point2 = new Vector3( 0, 1, 1.5 );
+			const point3 = new Vector3( 0, 2, - 1 );
+
+			t = lineSegment.closestPointToPointParameter( point1 );
+			expect( t ).to.equal( 1 );
+
+			t = lineSegment.closestPointToPointParameter( point2 );
+			expect( t ).to.equal( 0.5 );
+
+			t = lineSegment.closestPointToPointParameter( point3 );
+			expect( t ).to.equal( 0 );
+
+		} );
+
+		it( 'should use the second parameter to return t values greater than zero and one', function () {
+
+			const from = new Vector3( 0, 0, 1 );
+			const to = new Vector3( 0, 0, 2 );
+			let t;
+
+			const lineSegment = new LineSegment( from, to );
+
+			const point1 = new Vector3( 0, 0, 3 );
+			const point2 = new Vector3( 0, 1, 1.5 );
+			const point3 = new Vector3( 0, 2, 0 );
+
+			t = lineSegment.closestPointToPointParameter( point1, false );
+			expect( t ).to.equal( 2 );
+
+			t = lineSegment.closestPointToPointParameter( point2, false );
+			expect( t ).to.equal( 0.5 );
+
+			t = lineSegment.closestPointToPointParameter( point3, false );
+			expect( t ).to.equal( - 1 );
+
+		} );
+
+	} );
+
 	describe( '#closestPointToPoint()', function () {
 
-		it( 'should compute the closest point on the line segment for a given point and store it in the given result vector', function () {
+		it( 'should call closestPointToPointParameter() and create a point from the computed t value', function () {
 
 			const from = new Vector3( 0, 0, 1 );
 			const to = new Vector3( 0, 0, 2 );
@@ -115,8 +215,8 @@ describe( 'LineSegment', function () {
 
 			const closesPoint = new Vector3();
 
-			lineSegment.closestPointToPoint( point1, true, closesPoint );
-			expect( closesPoint ).to.deep.equal( new Vector3( 0, 0, 2 ) );
+			lineSegment.closestPointToPoint( point1, false, closesPoint );
+			expect( closesPoint ).to.deep.equal( new Vector3( 0, 0, 3 ) );
 
 			lineSegment.closestPointToPoint( point2, true, closesPoint );
 			expect( closesPoint ).to.deep.equal( new Vector3( 0, 0, 1.5 ) );

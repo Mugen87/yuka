@@ -2720,7 +2720,7 @@ class LineSegment {
 
 	}
 
-	closestPointToPointParameter( point, clampToLine ) {
+	closestPointToPointParameter( point, clampToLine = true ) {
 
 		p1.subVectors( point, this.from );
 		p2.subVectors( this.to, this.from );
@@ -2749,7 +2749,7 @@ class LineSegment {
  */
 
 const pointOnLineSegment = new Vector3();
-const closestPoint$1 = new Vector3();
+const closestPoint = new Vector3();
 const edgeDirection = new Vector3();
 const movementDirection = new Vector3();
 const newPosition = new Vector3();
@@ -3107,7 +3107,7 @@ class NavMesh {
 						minDistance = distance;
 
 						closestEdge = edge;
-						closestPoint$1.copy( pointOnLineSegment );
+						closestPoint.copy( pointOnLineSegment );
 
 					}
 
@@ -3129,7 +3129,7 @@ class NavMesh {
 
 			// calculate new position on the edge
 
-			newPosition.copy( closestPoint$1 ).add( edgeDirection.multiplyScalar( f * length ) );
+			newPosition.copy( closestPoint ).add( edgeDirection.multiplyScalar( f * length ) );
 
 			// the following value "t" tells us if the point exceeds the line segment
 

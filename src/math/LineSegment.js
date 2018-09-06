@@ -10,7 +10,6 @@ import { _Math } from './Math.js';
 
 const p1 = new Vector3();
 const p2 = new Vector3();
-const closestPoint = new Vector3();
 
 class LineSegment {
 
@@ -65,7 +64,7 @@ class LineSegment {
 
 	}
 
-	closestPointToPointParameter( point, clampToLine ) {
+	closestPointToPointParameter( point, clampToLine = true ) {
 
 		p1.subVectors( point, this.from );
 		p2.subVectors( this.to, this.from );
