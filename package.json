@@ -7,7 +7,7 @@
   "module": "build/yuka.modules.js",
   "scripts": {
     "build": "rollup -c",
-    "build-uglify": "rollup -c && uglifyjs build/yuka.js > build/yuka.min.js",
+    "build-prod": "rollup -c && google-closure-compiler-js build/yuka.js > build/yuka.min.js",
     "dev": "concurrently \"rollup -c -w\" \"http-server -c-1\"",
     "lint": "eslint src examples --ext .js",
     "start": "npm run dev",
@@ -40,11 +40,11 @@
     "coveralls": "3.0.2",
     "eslint": "5.1.0",
     "eslint-config-mdcs": "4.2.3",
+    "google-closure-compiler-js": "20180610.0.0",
     "http-server": "0.11.1",
     "mocha": "5.2.0",
     "nyc": "12.0.2",
     "rollup": "0.63.3",
-    "rollup-watch": "4.3.1",
-    "uglify-es": "3.3.9"
+    "rollup-watch": "4.3.1"
   }
 }
