@@ -2748,6 +2748,7 @@ class LineSegment {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+const pointOnLineSegment = new Vector3();
 const closestPoint$1 = new Vector3();
 const edgeDirection = new Vector3();
 const movementDirection = new Vector3();
@@ -3074,13 +3075,15 @@ class NavMesh {
 
 	clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
 
-		const nextRegion = this.getRegionForPoint( endPosition );
+		let newRegion = this.getRegionForPoint( endPosition );
 
-		if ( nextRegion === null ) {
+		// endPosition lies outside navMesh
+
+		if ( newRegion === null ) {
 
 			if ( currentRegion === null ) throw new Error( 'YUKA.NavMesh.clampMovement(): No current region available.' );
 
-			// determine closest vertex in current convex region
+			// determine closest edge in current convex region
 
 			let closestEdge = null;
 			let minDistance = Infinity;
@@ -3089,13 +3092,24 @@ class NavMesh {
 
 			do {
 
-				const distance = startPosition.squaredDistanceTo( edge.from() );
+				// only consider border edges
 
-				if ( distance < minDistance ) {
+				if ( edge.twin === null ) {
 
-					minDistance = distance;
+					lineSegment.set( edge.vertex, edge.next.vertex );
+					const t = lineSegment.closestPointToPointParameter( startPosition );
+					lineSegment.at( t, pointOnLineSegment );
 
-					closestEdge = edge;
+					const distance = pointOnLineSegment.squaredDistanceTo( startPosition );
+
+					if ( distance < minDistance ) {
+
+						minDistance = distance;
+
+						closestEdge = edge;
+						closestPoint$1.copy( pointOnLineSegment );
+
+					}
 
 				}
 
@@ -3103,88 +3117,51 @@ class NavMesh {
 
 			} while ( edge !== currentRegion.edge );
 
-			//
+			// calculate movement and edge direction
 
-			let t, e;
-
-			if ( closestEdge.twin !== null && closestEdge.prev.twin === null ) {
-
-				lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
-
-				e = closestEdge.prev;
-				t = lineSegment.closestPointToPointParameter( startPosition );
-
-			} else if ( closestEdge.twin === null && closestEdge.prev.twin !== null ) {
-
-				lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
-
-				e = closestEdge;
-				t = lineSegment.closestPointToPointParameter( startPosition );
-
-			} else if ( closestEdge.twin === null && closestEdge.prev.twin === null ) {
-
-				// t1
-
-				lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
-
-				const edge1 = closestEdge.prev;
-				const t1 = lineSegment.closestPointToPointParameter( startPosition );
-				lineSegment.at( t1, closestPoint$1 );
-				const d1 = closestPoint$1.squaredDistanceTo( startPosition );
-
-				// t2
-
-				lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
-
-				const edge2 = closestEdge;
-				const t2 = lineSegment.closestPointToPointParameter( startPosition );
-				lineSegment.at( t2, closestPoint$1 );
-				const d2 = closestPoint$1.squaredDistanceTo( startPosition );
-
-				if ( d1 <= d2 ) {
-
-					e = edge1;
-					t = t1;
-
-				} else {
-
-					e = edge2;
-					t = t2;
-
-				}
-
-			}
-
-			//
-
-			edgeDirection.subVectors( e.next.vertex, e.vertex ).normalize();
+			edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
 			const length = movementDirection.subVectors( endPosition, startPosition ).length();
 			movementDirection.divideScalar( length );
 
+			// this value influences the speed at which the entity moves along the edge
+
 			const f = edgeDirection.dot( movementDirection );
 
-			lineSegment.set( e.vertex, e.next.vertex );
+			// calculate new position on the edge
 
-			lineSegment.at( t, closestPoint$1 );
 			newPosition.copy( closestPoint$1 ).add( edgeDirection.multiplyScalar( f * length ) );
 
-			t = lineSegment.closestPointToPointParameter( newPosition );
+			// the following value "t" tells us if the point exceeds the line segment
+
+			lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
+			const t = lineSegment.closestPointToPointParameter( newPosition );
+
+			//
 
 			if ( t >= 0 && t <= 1 ) {
+
+				// point is within line segment, we can safely use the new position
 
 				clampPosition.copy( newPosition );
 
 			} else {
 
-				if ( this.getRegionForPoint( newPosition ) !== null ) {
+				// check, if the new point lies outside the navMesh
+
+				newRegion = this.getRegionForPoint( newPosition );
+
+				if ( newRegion !== null ) {
+
+					// if not, everything is fine
 
 					clampPosition.copy( newPosition );
-
-				} else {
-
-					clampPosition.copy( startPosition );
+					return newRegion;
 
 				}
+
+				// otherwise prevent movement
+
+				clampPosition.copy( startPosition );
 
 			}
 
@@ -3192,10 +3169,11 @@ class NavMesh {
 
 		} else {
 
-			return nextRegion;
+			// return the new region
+
+			return newRegion;
 
 		}
-
 
 	}
 
