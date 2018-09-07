@@ -1618,6 +1618,12 @@ class GameEntity {
 
 		this.active = true;
 
+		this.cache = {
+			position: new Vector3(),
+			rotation: new Quaternion(),
+			scale: new Vector3()
+		};
+
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
 		this.scale = new Vector3( 1, 1, 1 );
@@ -1674,11 +1680,25 @@ class GameEntity {
 
 	}
 
-	// updates the internal transformation matrix
+	// updates the internal transformation matrix if necessary
 
 	updateMatrix() {
 
+		const cache = this.cache;
+
+		if ( cache.position.equals( this.position ) &&
+				cache.rotation.equals( this.rotation ) &&
+				cache.scale.equals( this.scale ) ) {
+
+			return;
+
+		}
+
 		this.matrix.compose( this.position, this.rotation, this.scale );
+
+		cache.position.copy( this.position );
+		cache.rotation.copy( this.rotation );
+		cache.scale.copy( this.scale );
 
 	}
 
