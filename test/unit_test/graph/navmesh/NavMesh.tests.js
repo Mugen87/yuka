@@ -203,6 +203,104 @@ describe( 'NavMesh', function () {
 
 	} );
 
+	describe( '#findPath()', function () {
+
+		it( 'should return a path as an array of Vector3 from the start to end position', function () {
+
+			const from = new Vector3( - 1, 0, 1 );
+			const to = new Vector3( 0.9, 0, 0.9 );
+
+			const path = navMesh.findPath( from, to );
+
+			expect( path ).to.be.an( 'array' );
+			expect( path ).to.have.lengthOf( 3 );
+			expect( path[ 0 ] ).to.be.instanceof( Vector3 );
+			expect( path[ 1 ] ).to.be.instanceof( Vector3 );
+			expect( path[ 2 ] ).to.be.instanceof( Vector3 );
+
+			expect( path[ 0 ] ).to.deep.equal( from );
+			expect( path[ 1 ] ).to.deep.equal( { x: 0.5, y: 0, z: 1 } );
+			expect( path[ 2 ] ).to.deep.equal( to );
+
+		} );
+
+		it( 'should search for the closest convex region if one or both points lies outside the navmesh', function () {
+
+			const from = new Vector3( - 1, 0, 2 );
+			const to = new Vector3( 1.1, 0, 1.1 );
+
+			const path = navMesh.findPath( from, to );
+
+			expect( path ).to.be.an( 'array' );
+			expect( path ).to.have.lengthOf( 3 );
+			expect( path[ 0 ] ).to.deep.equal( from );
+			expect( path[ 1 ] ).to.deep.equal( { x: 0.5, y: 0, z: 1 } );
+			expect( path[ 2 ] ).to.deep.equal( to );
+
+		} );
+
+		it( 'should perform no graph search if start and end position are in the same convex region', function () {
+
+			const from = new Vector3( - 1, 0, 1 );
+			const to = new Vector3( - 0.5, 0, 1 );
+
+			const path = navMesh.findPath( from, to );
+
+			expect( path ).to.be.an( 'array' );
+			expect( path ).to.have.lengthOf( 2 );
+			expect( path[ 0 ] ).to.deep.equal( from );
+			expect( path[ 1 ] ).to.deep.equal( to );
+
+		} );
+
+	} );
+
+	describe( '#clampMovement()', function () {
+
+		it( 'should clamp the movement of an entity if the end position lies outside the navMesh and return the respective convex region', function () {
+
+			const from = new Vector3( 0.5, 0, 0.5 );
+			const to = new Vector3( 0.5, 0, - 0.5 );
+			const clampedPosition = new Vector3();
+			const currentRegion = navMesh.getRegionForPoint( from );
+
+			const newRegion = navMesh.clampMovement( currentRegion, from, to, clampedPosition );
+
+			expect( clampedPosition ).to.deep.equal( { x: 0.5, y: 0, z: 0 } );
+			expect( newRegion ).to.equal( p1 );
+
+		} );
+
+		it( 'should just return the new region if the end position lies inside the navMesh', function () {
+
+			const from = new Vector3( 0.5, 0, 0.5 );
+			const to = new Vector3( 0.5, 0, 0.4 );
+			const clampedPosition = new Vector3();
+			const currentRegion = navMesh.getRegionForPoint( from );
+
+			const newRegion = navMesh.clampMovement( currentRegion, from, to, clampedPosition );
+
+			expect( clampedPosition ).to.deep.equal( { x: 0, y: 0, z: 0 } ); // no change
+			expect( newRegion ).to.equal( p1 );
+
+		} );
+
+		it( 'should prevent any movement if the new position would lie outside of the navMesh', function () {
+
+			const from = new Vector3( 0.5, 0, 0.5 );
+			const to = new Vector3( 2, 0, - 1 );
+			const clampedPosition = new Vector3();
+			const currentRegion = navMesh.getRegionForPoint( from );
+
+			const newRegion = navMesh.clampMovement( currentRegion, from, to, clampedPosition );
+
+			expect( clampedPosition ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
+			expect( newRegion ).to.equal( p1 );
+
+		} );
+
+	} );
+
 	describe( '#clear()', function () {
 
 		it( 'should merge polygons to convex regions if possible', function () {

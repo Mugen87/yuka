@@ -3140,7 +3140,7 @@
 				// the following value "t" tells us if the point exceeds the line segment
 
 				lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
-				const t = lineSegment.closestPointToPointParameter( newPosition );
+				const t = lineSegment.closestPointToPointParameter( newPosition, false );
 
 				//
 
