@@ -1,0 +1,145 @@
+{
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 30,
+            "max": [
+                9.545417785644531,
+                -2.9802322387695312e-08,
+                17.01628875732422
+            ],
+            "min": [
+                -9.954584121704102,
+                -2.9802322387695312e-08,
+                -10.283712387084961
+            ],
+            "name": "accessor_buffer_Navmesh.001_POSITION_0",
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 30,
+            "max": [
+                0.0,
+                1.0,
+                1.5949328641311016e-15
+            ],
+            "min": [
+                0.0,
+                0.9999999403953552,
+                -8.310443533419282e-15
+            ],
+            "name": "accessor_buffer_Navmesh.001_NORMAL_0",
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5123,
+            "count": 51,
+            "max": [
+                29
+            ],
+            "min": [
+                0
+            ],
+            "name": "accessor_buffer_Navmesh.001_0",
+            "type": "SCALAR"
+        }
+    ],
+    "asset": {
+        "copyright": "",
+        "generator": "blendergltf v1.2.0",
+        "version": "2.0"
+    },
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteLength": 360,
+            "byteOffset": 0,
+            "byteStride": 12,
+            "name": "bufferView_buffer_Navmesh.001_POSITION_0",
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 360,
+            "byteOffset": 360,
+            "byteStride": 12,
+            "name": "bufferView_buffer_Navmesh.001_NORMAL_0",
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 104,
+            "byteOffset": 720,
+            "name": "bufferView_buffer_Navmesh.001_0",
+            "target": 34963
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 824,
+            "name": "buffer_navmesh",
+            "uri": "buffer_navmesh.bin"
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Navmesh.001",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": 1,
+                        "POSITION": 0
+                    },
+                    "indices": 2,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "mesh": 0,
+            "name": "Navmesh",
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "scene": 0,
+    "scenes": [
+        {
+            "extras": {
+                "background_color": [
+                    0.05087608844041824,
+                    0.05087608844041824,
+                    0.05087608844041824
+                ],
+                "frames_per_second": 24
+            },
+            "name": "Scene",
+            "nodes": [
+                0
+            ]
+        }
+    ]
+}
