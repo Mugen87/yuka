@@ -8,14 +8,17 @@ const PI05 = Math.PI / 2;
 const direction = new Vector3();
 const velocity = new Vector3();
 
+const startPosition = new Vector3();
+const endPosition = new Vector3();
+
 class Player extends MovingEntity {
 
 	constructor() {
 
 		super();
 
-		this.movementX = 0; // left/right
-		this.movementY = 0; // up/down
+		this.movementX = 0; // mouse left/right
+		this.movementY = 0; // mouse up/down
 
 		this.yaw = new Quaternion();
 		this.pitch = new Quaternion();
@@ -43,6 +46,7 @@ class Player extends MovingEntity {
 		this._keyUpHandler = onKeyUp.bind( this );
 
 		this.updateOrientation = false;
+		this.navMesh = null;
 
 	}
 
@@ -88,7 +92,20 @@ class Player extends MovingEntity {
 
 		//
 
+		startPosition.copy( this.position );
+
 		super.update( delta );
+
+		endPosition.copy( this.position );
+
+		// ensure the entity stays inside its navmesh
+
+		this.currentRegion = this.navMesh.clampMovement(
+			this.currentRegion,
+			startPosition,
+			endPosition,
+			this.position
+		);
 
 		//
 
