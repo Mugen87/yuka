@@ -61,11 +61,13 @@ class NavMesh {
 		for ( let i = 0; i < initialEdgeList.length; i ++ ) {
 
 			let edge0 = initialEdgeList[ i ];
+
 			if ( edge0.twin !== null ) continue;
 
 			for ( let j = i + 1; j < initialEdgeList.length; j ++ ) {
 
 				let edge1 = initialEdgeList[ j ];
+
 				if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
 
 					// twin found, set references
