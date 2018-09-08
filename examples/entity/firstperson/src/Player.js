@@ -47,6 +47,7 @@ class Player extends MovingEntity {
 
 		this.updateOrientation = false;
 		this.navMesh = null;
+		this.currentRegion = null;
 
 	}
 
