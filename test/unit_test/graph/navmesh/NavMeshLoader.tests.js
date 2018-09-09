@@ -39,6 +39,9 @@ describe( 'NavMeshLoader', function () {
 
 		} );
 
+		// it's not possible with node-fetch to load a glTF file with embedded buffers since this fetch
+		// does not accept data URLs as input parameter.
+
 		it( 'should be able to load a glb file', function ( done ) {
 
 			const loader = new NavMeshLoader();
@@ -55,6 +58,9 @@ describe( 'NavMeshLoader', function () {
 			} );
 
 		} );
+
+		// it's possible to test glb files with embedded buffers since NavMeshLoader
+		// does not use fetch to return the buffer data in this case
 
 		it( 'should be able to load a glb file with embedded buffer data', function ( done ) {
 
