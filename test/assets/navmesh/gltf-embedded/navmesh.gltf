@@ -1,54 +1,54 @@
 {
     "accessors": [
         {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5123,
+            "count": 42,
+            "max": [
+                22
+            ],
+            "min": [
+                0
+            ],
+            "name": "accessor_buffer_Navmesh_0",
+            "type": "SCALAR"
+        },
+        {
             "bufferView": 0,
             "byteOffset": 0,
             "componentType": 5126,
-            "count": 30,
+            "count": 23,
             "max": [
-                9.545417785644531,
+                25.755260467529297,
                 -2.9802322387695312e-08,
-                17.01628875732422
+                6.111691474914551
             ],
             "min": [
-                -9.954584121704102,
+                -7.544740676879883,
                 -2.9802322387695312e-08,
-                -10.283712387084961
+                -9.188309669494629
             ],
-            "name": "accessor_buffer_Navmesh.001_POSITION_0",
+            "name": "accessor_buffer_Navmesh_POSITION_0",
             "type": "VEC3"
         },
         {
             "bufferView": 1,
             "byteOffset": 0,
             "componentType": 5126,
-            "count": 30,
+            "count": 23,
             "max": [
                 0.0,
                 1.0,
-                1.5949328641311016e-15
+                0.0
             ],
             "min": [
                 0.0,
                 0.9999999403953552,
-                -8.310443533419282e-15
+                0.0
             ],
-            "name": "accessor_buffer_Navmesh.001_NORMAL_0",
+            "name": "accessor_buffer_Navmesh_NORMAL_0",
             "type": "VEC3"
-        },
-        {
-            "bufferView": 2,
-            "byteOffset": 0,
-            "componentType": 5123,
-            "count": 51,
-            "max": [
-                29
-            ],
-            "min": [
-                0
-            ],
-            "name": "accessor_buffer_Navmesh.001_0",
-            "type": "SCALAR"
         }
     ],
     "asset": {
@@ -59,45 +59,45 @@
     "bufferViews": [
         {
             "buffer": 0,
-            "byteLength": 360,
+            "byteLength": 276,
             "byteOffset": 0,
             "byteStride": 12,
-            "name": "bufferView_buffer_Navmesh.001_POSITION_0",
+            "name": "bufferView_buffer_Navmesh_POSITION_0",
             "target": 34962
         },
         {
             "buffer": 0,
-            "byteLength": 360,
-            "byteOffset": 360,
+            "byteLength": 276,
+            "byteOffset": 276,
             "byteStride": 12,
-            "name": "bufferView_buffer_Navmesh.001_NORMAL_0",
+            "name": "bufferView_buffer_Navmesh_NORMAL_0",
             "target": 34962
         },
         {
             "buffer": 0,
-            "byteLength": 104,
-            "byteOffset": 720,
-            "name": "bufferView_buffer_Navmesh.001_0",
+            "byteLength": 88,
+            "byteOffset": 552,
+            "name": "bufferView_buffer_Navmesh_0",
             "target": 34963
         }
     ],
     "buffers": [
         {
-            "byteLength": 824,
-            "name": "buffer_navmesh",
-            "uri": "buffer_navmesh.bin"
+            "byteLength": 640,
+            "name": "buffer_navmesh_embed",
+            "uri": "data:application/octet-stream;base64,5PeEQAAAALMO2jjAhG7xwAAAALOAGti/KFZQQAAAALNRAxPBhG7xwAAAALOAGti/CN1CwAAAALOoc3LAJa9lQQAAALOAvuQ95PeEQAAAALP0JUdA7NSHwAAAALP0JUdAhG7xwAAAALP6kpNA7NSHwAAAALP0JUdAoHZ8wAAAALMO2jjAxgrOQQAAALP6ksNAvkhXQQAAALP6ksNAJa9lQQAAALOAvuQ9vkhXQQAAALP6ksNACN1CwAAAALOoc3LAxgrOQQAAALOAvuQ9oHZ8wAAAALMO2jjAKFZQQAAAALOoc3LAxgqeQQAAALP6ksNACN1CwAAAALNRAxPBsMShQAAAALMO2jjA5PeEQAAAALP0JUdAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAP//fz8AAAAAAAAAAP//fz8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAP//fz8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAP//fz8AAAAAAAAAAAAAgD8AAAAAAAAAAP//fz8AAAAAAAAAAP//fz8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAP//fz8AAAAAAwAHAAoACQABAAgAFQAAAAYAAgAUABIAEgAUAA8ACgAWAAQADwAGABIAEgAGAAAABgARAAkAEwAQAAUAEAATAAsABQAOABMADAANABYABgAFABUAAAAAAA=="
         }
     ],
     "meshes": [
         {
-            "name": "Navmesh.001",
+            "name": "Navmesh",
             "primitives": [
                 {
                     "attributes": {
-                        "NORMAL": 1,
-                        "POSITION": 0
+                        "NORMAL": 2,
+                        "POSITION": 1
                     },
-                    "indices": 2,
+                    "indices": 0,
                     "mode": 4
                 }
             ]
