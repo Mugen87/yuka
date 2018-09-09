@@ -49,6 +49,8 @@ class Player extends MovingEntity {
 		this.navMesh = null;
 		this.currentRegion = null;
 
+		this.elapsedTime = 0;
+
 	}
 
 	connect() {
@@ -110,10 +112,31 @@ class Player extends MovingEntity {
 
 		//
 
-		this.head.position.copy( this.position );
-		this.head.position.y += this.height;
+		this._updateHead( delta );
 
-		this.head.updateMatrix();
+	}
+
+	_updateHead( delta ) {
+
+		const head = this.head;
+
+		head.position.copy( this.position );
+		head.position.y += this.height;
+
+		// some simple head bobbing
+
+		const speed = this.getSpeed();
+
+		this.elapsedTime += delta * speed; // scale delta with movement speed
+
+		const motion = Math.sin( this.elapsedTime * 1.4 );
+
+		head.position.y += Math.abs( motion ) * 0.06;
+		head.position.x += motion * 0.08;
+
+		//
+
+		head.updateMatrix();
 
 	}
 
