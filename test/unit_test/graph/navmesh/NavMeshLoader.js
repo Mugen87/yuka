@@ -39,23 +39,6 @@ describe( 'NavMeshLoader', function () {
 
 		} );
 
-		it( 'should be able to load a glTF file with embedded buffer data', function ( done ) {
-
-			const loader = new NavMeshLoader();
-
-			loader.load( 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/gltf-embedded/navmesh.gltf' ).then( ( navMesh ) => {
-
-				expect( navMesh ).is.an.instanceof( NavMesh );
-				expect( navMesh.regions.size ).is.equal( 5 );
-				expect( navMesh.graph.getNodeCount() ).is.equal( 8 );
-				expect( navMesh.graph.getEdgeCount() ).is.equal( 40 );
-
-				done();
-
-			} );
-
-		} );
-
 		it( 'should be able to load a glb file', function ( done ) {
 
 			const loader = new NavMeshLoader();
