@@ -65,9 +65,7 @@ class Player extends MovingEntity {
 
 	}
 
-	disconnect( force = true ) {
-
-		if ( force === true ) document.exitPointerLock();
+	disconnect() {
 
 		document.removeEventListener( 'mousemove', this._mouseMoveHandler, false );
 		document.removeEventListener( 'pointerlockchange', this._pointerlockChangeHandler, false );
@@ -167,7 +165,7 @@ function onPointerlockChange() {
 
 	} else {
 
-		this.disconnect( false );
+		this.disconnect();
 
 		if ( this.onInactive ) this.onInactive();
 
