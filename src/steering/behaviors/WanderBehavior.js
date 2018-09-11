@@ -23,7 +23,7 @@ class WanderBehavior extends SteeringBehavior {
 
 		this._targetLocal = new Vector3();
 
-		generateRandomPointOnCirle( this._targetLocal );
+		generateRandomPointOnCirle( this.radius, this._targetLocal );
 
 	}
 

@@ -5548,9 +5548,7 @@
 	const targetWorld = new Vector3();
 	const randomDisplacement = new Vector3();
 
-	// exclude from code coverage analysis
-
-	/* istanbul ignore next */
+	// this behavior only produces a 2D force (XZ)
 
 	class WanderBehavior extends SteeringBehavior {
 
@@ -5564,7 +5562,7 @@
 
 			this._targetLocal = new Vector3();
 
-			this._setup();
+			generateRandomPointOnCirle( this.radius, this._targetLocal );
 
 		}
 
@@ -5607,17 +5605,16 @@
 
 		}
 
-		_setup() {
+	}
 
-			const theta = Math.random() * Math.PI * 2;
+	//
 
-			// setup a vector to a target position on the wander sphere
-			// target lies always in the XZ plane
+	function generateRandomPointOnCirle( radius, target ) {
 
-			this._targetLocal.x = this.radius * Math.cos( theta );
-			this._targetLocal.z = this.radius * Math.sin( theta );
+		const theta = Math.random() * Math.PI * 2;
 
-		}
+		target.x = radius * Math.cos( theta );
+		target.z = radius * Math.sin( theta );
 
 	}
 
