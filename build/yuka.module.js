@@ -5556,7 +5556,7 @@ class WanderBehavior extends SteeringBehavior {
 
 		this._targetLocal = new Vector3();
 
-		generateRandomPointOnCirle( this.radius, this._targetLocal );
+		generateRandomPointOnCircle( this.radius, this._targetLocal );
 
 	}
 
@@ -5603,7 +5603,7 @@ class WanderBehavior extends SteeringBehavior {
 
 //
 
-function generateRandomPointOnCirle( radius, target ) {
+function generateRandomPointOnCircle( radius, target ) {
 
 	const theta = Math.random() * Math.PI * 2;
 
