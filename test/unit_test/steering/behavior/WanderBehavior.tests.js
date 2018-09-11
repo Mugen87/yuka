@@ -50,9 +50,9 @@ describe( 'WanderBehavior', function () {
 			// not easy to test this method since a force is random
 			// just ensure that the y component is zero
 
-			expect( force.x ).not.to.equal( 0 );
+			expect( force.length() ).not.equal( 0 );
 			expect( force.y ).to.equal( 0 );
-			expect( force.z ).not.to.equal( 0 );
+
 
 		} );
 
