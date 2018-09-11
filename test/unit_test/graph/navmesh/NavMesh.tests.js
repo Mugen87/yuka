@@ -59,6 +59,8 @@ describe( 'NavMesh', function () {
 			const navMesh = new NavMesh();
 			expect( navMesh ).to.have.a.property( 'regions' ).that.is.a( 'set' );
 			expect( navMesh ).to.have.a.property( 'graph' ).that.is.an.instanceof( Graph );
+			expect( navMesh ).to.have.a.property( 'epsilonCoplanarTest' ).that.is.equal( 1e-3 );
+			expect( navMesh ).to.have.a.property( 'epsilonContainsTest' ).that.is.equal( 1 );
 			expect( navMesh.graph.digraph ).to.be.true;
 
 		} );

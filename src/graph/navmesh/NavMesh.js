@@ -25,6 +25,9 @@ class NavMesh {
 
 		this.regions = new Set();
 
+		this.epsilonCoplanarTest = 1e-3;
+		this.epsilonContainsTest = 1;
+
 	}
 
 	fromPolygons( polygons ) {
@@ -234,8 +237,8 @@ class NavMesh {
 
 		const graph = this.graph;
 
-		let fromRegion = this.getRegionForPoint( from );
-		let toRegion = this.getRegionForPoint( to );
+		let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
+		let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
 
 		const path = [];
 
@@ -340,7 +343,7 @@ class NavMesh {
 
 	clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
 
-		let newRegion = this.getRegionForPoint( endPosition );
+		let newRegion = this.getRegionForPoint( endPosition, this.epsilonContainsTest );
 
 		// endPosition lies outside navMesh
 
@@ -413,7 +416,7 @@ class NavMesh {
 
 				// check, if the new point lies outside the navMesh
 
-				newRegion = this.getRegionForPoint( newPosition );
+				newRegion = this.getRegionForPoint( newPosition, this.epsilonContainsTest );
 
 				if ( newRegion !== null ) {
 
@@ -476,7 +479,7 @@ class NavMesh {
 			const polygon = candidate.polygon;
 			polygon.edge = candidate.prev;
 
-			if ( polygon.convex() === true ) {
+			if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
 
 				// correct polygon reference of all edges
 

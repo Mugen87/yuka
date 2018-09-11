@@ -3,6 +3,7 @@
  */
 
 import { HalfEdge } from './HalfEdge.js';
+import { Plane } from '../../math/Plane.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { Logger } from '../../core/Logger.js';
 
@@ -12,6 +13,7 @@ class Polygon {
 
 		this.centroid = new Vector3();
 		this.edge = null;
+		this.plane = new Plane();
 
 	}
 
@@ -71,6 +73,10 @@ class Polygon {
 
 		this.edge = edges[ 0 ];
 
+		//
+
+		this.plane.fromCoplanarPoints( points[ 0 ], points[ 1 ], points[ 2 ] );
+
 		return this;
 
 	}
@@ -101,10 +107,10 @@ class Polygon {
 
 	contains( point, epsilon = 1e-3 ) {
 
+		const plane = this.plane;
 		let edge = this.edge;
 
-		let max = - Infinity;
-		let min = Infinity;
+		// convex test
 
 		do {
 
@@ -117,19 +123,21 @@ class Polygon {
 
 			}
 
-			if ( v1.y > max ) max = v1.y;
-			if ( v1.y < min ) min = v1.y;
-
 			edge = edge.next;
 
 		} while ( edge !== this.edge );
 
-		// only return true if point is within the min/max y-range
+		// ensure the given point lies within a defined tolerance range
 
-		max += epsilon;
-		min -= epsilon;
+		const distance = plane.distanceToPoint( point );
 
-		return ( ( point.y <= max ) && ( point.y >= min ) );
+		if ( Math.abs( distance ) > epsilon ) {
+
+			return false;
+
+		}
+
+		return true;
 
 	}
 
@@ -144,6 +152,29 @@ class Polygon {
 			const v3 = edge.next.to();
 
 			if ( leftOn( v1, v2, v3 ) === false ) {
+
+				return false;
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return true;
+
+	}
+
+	coplanar( epsilon = 1e-3 ) {
+
+		const plane = this.plane;
+		let edge = this.edge;
+
+		do {
+
+			const distance = plane.distanceToPoint( edge.from() );
+
+			if ( Math.abs( distance ) > epsilon ) {
 
 				return false;
 

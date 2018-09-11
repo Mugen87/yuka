@@ -6,44 +6,63 @@ import * as THREE from '../../../lib/three.module.js';
 
 function createConvexRegionHelper( navMesh ) {
 
-	const group = new THREE.Group();
 	const regions = navMesh.regions;
+
+	const geometry = new THREE.BufferGeometry();
+	const material = new THREE.MeshBasicMaterial( { vertexColors: THREE.VertexColors } );
+
+	const mesh = new THREE.Mesh( geometry, material );
+
+	const positions = [];
+	const colors = [];
+
+	const color = new THREE.Color();
 
 	for ( let region of regions ) {
 
-		const points = [];
+		// one color for each convex region
+
+		color.setHex( Math.random() * 0xffffff );
+
+		// count edges
 
 		let edge = region.edge;
+		const edges = [];
 
 		do {
 
-			const p = new THREE.Vector2();
-			const vertex = edge.from();
-			p.x = vertex.x;
-			p.y = - vertex.z;
-
-			points.push( p );
+			edges.push( edge );
 
 			edge = edge.next;
 
 		} while ( edge !== region.edge );
 
-		// shape generation
+		// triangulate
 
-		const shape = new THREE.Shape( points );
+		const triangleCount = ( edges.length - 2 );
 
-		const geometry = new THREE.ShapeBufferGeometry( shape );
-		const color = new THREE.Color().setHSL( 0.3 + 0.7 * Math.random(), Math.random(), 0.4 );
-		const material = new THREE.MeshBasicMaterial( { color: color } );
+		for ( let i = 1, l = triangleCount; i <= l; i ++ ) {
 
-		const mesh = new THREE.Mesh( geometry, material );
-		group.add( mesh );
+			const v1 = edges[ 0 ].from();
+			const v2 = edges[ i + 0 ].from();
+			const v3 = edges[ i + 1 ].from();
+
+			positions.push( v1.x, v1.y, v1.z );
+			positions.push( v2.x, v2.y, v2.z );
+			positions.push( v3.x, v3.y, v3.z );
+
+			colors.push( color.r, color.g, color.b );
+			colors.push( color.r, color.g, color.b );
+			colors.push( color.r, color.g, color.b );
+
+		}
 
 	}
 
-	group.rotation.x = Math.PI * - 0.5;
+	geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ) );
+	geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
-	return group;
+	return mesh;
 
 }
 

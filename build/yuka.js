@@ -2790,6 +2790,9 @@
 
 			this.regions = new Set();
 
+			this.epsilonCoplanarTest = 1e-3;
+			this.epsilonContainsTest = 1;
+
 		}
 
 		fromPolygons( polygons ) {
@@ -2999,8 +3002,8 @@
 
 			const graph = this.graph;
 
-			let fromRegion = this.getRegionForPoint( from );
-			let toRegion = this.getRegionForPoint( to );
+			let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
+			let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
 
 			const path = [];
 
@@ -3105,7 +3108,7 @@
 
 		clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
 
-			let newRegion = this.getRegionForPoint( endPosition );
+			let newRegion = this.getRegionForPoint( endPosition, this.epsilonContainsTest );
 
 			// endPosition lies outside navMesh
 
@@ -3178,7 +3181,7 @@
 
 					// check, if the new point lies outside the navMesh
 
-					newRegion = this.getRegionForPoint( newPosition );
+					newRegion = this.getRegionForPoint( newPosition, this.epsilonContainsTest );
 
 					if ( newRegion !== null ) {
 
@@ -3241,7 +3244,7 @@
 				const polygon = candidate.polygon;
 				polygon.edge = candidate.prev;
 
-				if ( polygon.convex() === true ) {
+				if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
 
 					// correct polygon reference of all edges
 
@@ -3426,6 +3429,82 @@
 
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Plane.js
+	 *
+	 */
+
+	const v1 = new Vector3();
+	const v2 = new Vector3();
+
+	class Plane {
+
+		constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
+
+			this.normal = normal;
+			this.constant = constant;
+
+		}
+
+		set( normal, constant ) {
+
+			this.normal = normal;
+			this.constant = constant;
+
+			return this;
+
+		}
+
+		copy( plane ) {
+
+			this.normal.copy( plane.normal );
+			this.constant = plane.constant;
+
+			return this;
+
+		}
+
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		distanceToPoint( point ) {
+
+			return this.normal.dot( point ) + this.constant;
+
+		}
+
+		fromNormalAndCoplanarPoint( normal, point ) {
+
+			this.normal.copy( normal );
+			this.constant = - point.dot( this.normal );
+
+			return this;
+
+		}
+
+		fromCoplanarPoints( a, b, c ) {
+
+			v1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+
+			this.fromNormalAndCoplanarPoint( v1, a );
+
+			return this;
+
+		}
+
+		equals( plane ) {
+
+			return plane.normal.equals( this.normal ) && plane.constant === this.constant;
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
 	class Polygon {
@@ -3434,6 +3513,7 @@
 
 			this.centroid = new Vector3();
 			this.edge = null;
+			this.plane = new Plane();
 
 		}
 
@@ -3493,6 +3573,10 @@
 
 			this.edge = edges[ 0 ];
 
+			//
+
+			this.plane.fromCoplanarPoints( points[ 0 ], points[ 1 ], points[ 2 ] );
+
 			return this;
 
 		}
@@ -3523,10 +3607,10 @@
 
 		contains( point, epsilon = 1e-3 ) {
 
+			const plane = this.plane;
 			let edge = this.edge;
 
-			let max = - Infinity;
-			let min = Infinity;
+			// convex test
 
 			do {
 
@@ -3539,19 +3623,21 @@
 
 				}
 
-				if ( v1.y > max ) max = v1.y;
-				if ( v1.y < min ) min = v1.y;
-
 				edge = edge.next;
 
 			} while ( edge !== this.edge );
 
-			// only return true if point is within the min/max y-range
+			// ensure the given point lies within a defined tolerance range
 
-			max += epsilon;
-			min -= epsilon;
+			const distance = plane.distanceToPoint( point );
 
-			return ( ( point.y <= max ) && ( point.y >= min ) );
+			if ( Math.abs( distance ) > epsilon ) {
+
+				return false;
+
+			}
+
+			return true;
 
 		}
 
@@ -3566,6 +3652,29 @@
 				const v3 = edge.next.to();
 
 				if ( leftOn( v1, v2, v3 ) === false ) {
+
+					return false;
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== this.edge );
+
+			return true;
+
+		}
+
+		coplanar( epsilon = 1e-3 ) {
+
+			const plane = this.plane;
+			let edge = this.edge;
+
+			do {
+
+				const distance = plane.distanceToPoint( edge.from() );
+
+				if ( Math.abs( distance ) > epsilon ) {
 
 					return false;
 
@@ -3601,7 +3710,7 @@
 
 	class NavMeshLoader {
 
-		load( url ) {
+		load( url, options ) {
 
 			return new Promise( ( resolve, reject ) => {
 
@@ -3653,7 +3762,7 @@
 
 							const path = extractUrlBase( url );
 
-							return parser.parse( json, path );
+							return parser.parse( json, path, options );
 
 						}
 
@@ -3690,7 +3799,7 @@
 
 		}
 
-		parse( json, path ) {
+		parse( json, path, options ) {
 
 			this.json = json;
 			this.path = path;
@@ -3703,9 +3812,19 @@
 
 				const polygons = this.parseGeometry( data );
 
-				// use them to create the nav mesh
+				// create and config navMesh
 
-				return new NavMesh().fromPolygons( polygons );
+				const navMesh = new NavMesh();
+
+				if ( options ) {
+
+					if ( options.epsilonCoplanarTest ) navMesh.epsilonCoplanarTest = options.epsilonCoplanarTest;
+
+				}
+
+				// use polygons to setup the nav mesh
+
+				return navMesh.fromPolygons( polygons );
 
 			} );
 
@@ -5113,7 +5232,7 @@
 	 *
 	 */
 
-	const v1 = new Vector3();
+	const v1$1 = new Vector3();
 
 	class Ray {
 
@@ -5157,9 +5276,9 @@
 
 		intersectSphere( sphere, result ) {
 
-			v1.subVectors( sphere.center, this.origin );
-			const tca = v1.dot( this.direction );
-			const d2 = v1.dot( v1 ) - tca * tca;
+			v1$1.subVectors( sphere.center, this.origin );
+			const tca = v1$1.dot( this.direction );
+			const d2 = v1$1.dot( v1$1 ) - tca * tca;
 			const radius2 = sphere.radius * sphere.radius;
 
 			if ( d2 > radius2 ) return null;
@@ -6230,82 +6349,6 @@
 			}
 
 			return this;
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Plane.js
-	 *
-	 */
-
-	const v1$1 = new Vector3();
-	const v2 = new Vector3();
-
-	class Plane {
-
-		constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
-
-			this.normal = normal;
-			this.constant = constant;
-
-		}
-
-		set( normal, constant ) {
-
-			this.normal = normal;
-			this.constant = constant;
-
-			return this;
-
-		}
-
-		copy( plane ) {
-
-			this.normal.copy( plane.normal );
-			this.constant = plane.constant;
-
-			return this;
-
-		}
-
-		clone() {
-
-			return new this.constructor().copy( this );
-
-		}
-
-		distanceToPoint( point ) {
-
-			return this.normal.dot( point ) + this.constant;
-
-		}
-
-		fromNormalAndCoplanarPoint( normal, point ) {
-
-			this.normal.copy( normal );
-			this.constant = - point.dot( this.normal );
-
-			return this;
-
-		}
-
-		fromCoplanarPoints( a, b, c ) {
-
-			v1$1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
-
-			this.fromNormalAndCoplanarPoint( v1$1, a );
-
-			return this;
-
-		}
-
-		equals( plane ) {
-
-			return plane.normal.equals( this.normal ) && plane.constant === this.constant;
 
 		}
 

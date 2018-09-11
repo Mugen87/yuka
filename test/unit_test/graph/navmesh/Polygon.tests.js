@@ -134,16 +134,16 @@ describe( 'Polygon', function () {
 
 		} );
 
-		it( 'should return true if the point lies inside the polygon and within the allowed min/max range', function () {
+		it( 'should return true if the point lies inside the polygon and within the allowed tolerance range', function () {
 
 			const polygon = new Polygon();
-			const point = new Vector3( 0.5, 0.5, 0.5 );
+			const point = new Vector3( 0.5, 0.0001, 0.5 );
 
 			const vertices = [
 				new Vector3( 0, 0, 0 ),
 				new Vector3( 0, 0, 1 ),
-				new Vector3( 1, 1, 1 ),
-				new Vector3( 1, 1, 0 )
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 0, 0 )
 			];
 
 			polygon.fromContour( vertices );
@@ -152,25 +152,7 @@ describe( 'Polygon', function () {
 
 		} );
 
-		it( 'should return false if the point lies inside the polygon but not within the allowed min/max range', function () {
-
-			const polygon = new Polygon();
-			const point = new Vector3( 0.5, - 0.5, 0.5 );
-
-			const vertices = [
-				new Vector3( 0, 0, 0 ),
-				new Vector3( 0, 0, 1 ),
-				new Vector3( 1, 1, 1 ),
-				new Vector3( 1, 1, 0 )
-			];
-
-			polygon.fromContour( vertices );
-
-			expect( polygon.contains( point ) ).to.be.false;
-
-		} );
-
-		it( 'should use the epsilon parameter to adjust the allowed min/max y-range', function () {
+		it( 'should use the epsilon parameter to adjust the allowed tolerance range', function () {
 
 			const polygon = new Polygon();
 			const point = new Vector3( 0.5, - 0.01, 0.5 );
@@ -179,8 +161,8 @@ describe( 'Polygon', function () {
 			const vertices = [
 				new Vector3( 0, 0, 0 ),
 				new Vector3( 0, 0, 1 ),
-				new Vector3( 1, 1, 1 ),
-				new Vector3( 1, 1, 0 )
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 0, 0 )
 			];
 
 			polygon.fromContour( vertices );
@@ -242,6 +224,62 @@ describe( 'Polygon', function () {
 			polygon.fromContour( vertices );
 
 			expect( polygon.convex() ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#coplanar()', function () {
+
+		it( 'should return true if all points of the polygon are coplanar', function () {
+
+			const polygon = new Polygon();
+
+			const vertices = [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 0, 0 )
+			];
+
+			polygon.fromContour( vertices );
+
+			expect( polygon.coplanar() ).to.be.true;
+
+		} );
+
+		it( 'should return false if not all points of the polygon are coplanar', function () {
+
+			const polygon = new Polygon();
+
+			const vertices = [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 1, 0 )
+			];
+
+			polygon.fromContour( vertices );
+
+			expect( polygon.coplanar() ).to.be.false;
+
+		} );
+
+		it( 'should use the epsilon parameter to increase the tolerance', function () {
+
+			const polygon = new Polygon();
+
+			const vertices = [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 0.01, 0 )
+			];
+
+			polygon.fromContour( vertices );
+
+			expect( polygon.coplanar() ).to.be.false;
+			expect( polygon.coplanar( 0.02 ) ).to.be.true;
 
 		} );
 

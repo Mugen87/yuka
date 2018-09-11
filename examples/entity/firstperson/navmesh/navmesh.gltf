@@ -1,54 +1,54 @@
 {
     "accessors": [
         {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5123,
+            "count": 30,
+            "max": [
+                27
+            ],
+            "min": [
+                0
+            ],
+            "name": "accessor_buffer_Navmesh_0",
+            "type": "SCALAR"
+        },
+        {
             "bufferView": 0,
             "byteOffset": 0,
             "componentType": 5126,
-            "count": 30,
+            "count": 28,
             "max": [
-                9.545417785644531,
-                -2.9802322387695312e-08,
-                17.01628875732422
+                10.975929260253906,
+                3.0,
+                8.511238098144531
             ],
             "min": [
-                -9.954584121704102,
-                -2.9802322387695312e-08,
-                -10.283712387084961
+                -17.824071884155273,
+                0.20000000298023224,
+                -3.788762092590332
             ],
-            "name": "accessor_buffer_Navmesh.001_POSITION_0",
+            "name": "accessor_buffer_Navmesh_POSITION_0",
             "type": "VEC3"
         },
         {
             "bufferView": 1,
             "byteOffset": 0,
             "componentType": 5126,
-            "count": 30,
+            "count": 28,
             "max": [
-                0.0,
+                0.4017637372016907,
                 1.0,
-                1.5949328641311016e-15
+                0.010763030499219894
             ],
             "min": [
-                0.0,
-                0.9999999403953552,
-                -8.310443533419282e-15
+                -0.030687302350997925,
+                0.9157081246376038,
+                -0.009173683822154999
             ],
-            "name": "accessor_buffer_Navmesh.001_NORMAL_0",
+            "name": "accessor_buffer_Navmesh_NORMAL_0",
             "type": "VEC3"
-        },
-        {
-            "bufferView": 2,
-            "byteOffset": 0,
-            "componentType": 5123,
-            "count": 51,
-            "max": [
-                29
-            ],
-            "min": [
-                0
-            ],
-            "name": "accessor_buffer_Navmesh.001_0",
-            "type": "SCALAR"
         }
     ],
     "asset": {
@@ -59,45 +59,45 @@
     "bufferViews": [
         {
             "buffer": 0,
-            "byteLength": 360,
+            "byteLength": 336,
             "byteOffset": 0,
             "byteStride": 12,
-            "name": "bufferView_buffer_Navmesh.001_POSITION_0",
+            "name": "bufferView_buffer_Navmesh_POSITION_0",
             "target": 34962
         },
         {
             "buffer": 0,
-            "byteLength": 360,
-            "byteOffset": 360,
+            "byteLength": 336,
+            "byteOffset": 336,
             "byteStride": 12,
-            "name": "bufferView_buffer_Navmesh.001_NORMAL_0",
+            "name": "bufferView_buffer_Navmesh_NORMAL_0",
             "target": 34962
         },
         {
             "buffer": 0,
-            "byteLength": 104,
-            "byteOffset": 720,
-            "name": "bufferView_buffer_Navmesh.001_0",
+            "byteLength": 64,
+            "byteOffset": 672,
+            "name": "bufferView_buffer_Navmesh_0",
             "target": 34963
         }
     ],
     "buffers": [
         {
-            "byteLength": 824,
+            "byteLength": 736,
             "name": "buffer_navmesh",
             "uri": "buffer_navmesh.bin"
         }
     ],
     "meshes": [
         {
-            "name": "Navmesh.001",
+            "name": "Navmesh",
             "primitives": [
                 {
                     "attributes": {
-                        "NORMAL": 1,
-                        "POSITION": 0
+                        "NORMAL": 2,
+                        "POSITION": 1
                     },
-                    "indices": 2,
+                    "indices": 0,
                     "mode": 4
                 }
             ]

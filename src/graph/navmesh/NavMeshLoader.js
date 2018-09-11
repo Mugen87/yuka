@@ -9,7 +9,7 @@ import { NavMesh } from './NavMesh.js';
 
 class NavMeshLoader {
 
-	load( url ) {
+	load( url, options ) {
 
 		return new Promise( ( resolve, reject ) => {
 
@@ -61,7 +61,7 @@ class NavMeshLoader {
 
 						const path = extractUrlBase( url );
 
-						return parser.parse( json, path );
+						return parser.parse( json, path, options );
 
 					}
 
@@ -98,7 +98,7 @@ class Parser {
 
 	}
 
-	parse( json, path ) {
+	parse( json, path, options ) {
 
 		this.json = json;
 		this.path = path;
@@ -111,9 +111,19 @@ class Parser {
 
 			const polygons = this.parseGeometry( data );
 
-			// use them to create the nav mesh
+			// create and config navMesh
 
-			return new NavMesh().fromPolygons( polygons );
+			const navMesh = new NavMesh();
+
+			if ( options ) {
+
+				if ( options.epsilonCoplanarTest ) navMesh.epsilonCoplanarTest = options.epsilonCoplanarTest;
+
+			}
+
+			// use polygons to setup the nav mesh
+
+			return navMesh.fromPolygons( polygons );
 
 		} );
 

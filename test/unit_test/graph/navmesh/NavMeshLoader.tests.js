@@ -25,8 +25,9 @@ describe( 'NavMeshLoader', function () {
 		it( 'should return a promise that resolves if the navigation mesh with the given URL is successfully loaded', function ( done ) {
 
 			const loader = new NavMeshLoader();
+			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/gltf/navmesh.gltf';
 
-			loader.load( 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/gltf/navmesh.gltf' ).then( ( navMesh ) => {
+			loader.load( url ).then( ( navMesh ) => {
 
 				expect( navMesh ).is.an.instanceof( NavMesh );
 				expect( navMesh.regions.size ).is.equal( 5 );
@@ -45,8 +46,9 @@ describe( 'NavMeshLoader', function () {
 		it( 'should be able to load a glb file', function ( done ) {
 
 			const loader = new NavMeshLoader();
+			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb/navmesh.glb';
 
-			loader.load( 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb/navmesh.glb' ).then( ( navMesh ) => {
+			loader.load( url ).then( ( navMesh ) => {
 
 				expect( navMesh ).is.an.instanceof( NavMesh );
 				expect( navMesh.regions.size ).is.equal( 5 );
@@ -65,13 +67,29 @@ describe( 'NavMeshLoader', function () {
 		it( 'should be able to load a glb file with embedded buffer data', function ( done ) {
 
 			const loader = new NavMeshLoader();
+			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb-embedded/navmesh.glb';
 
-			loader.load( 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb-embedded/navmesh.glb' ).then( ( navMesh ) => {
+			loader.load( url ).then( ( navMesh ) => {
 
 				expect( navMesh ).is.an.instanceof( NavMesh );
 				expect( navMesh.regions.size ).is.equal( 5 );
 				expect( navMesh.graph.getNodeCount() ).is.equal( 8 );
 				expect( navMesh.graph.getEdgeCount() ).is.equal( 40 );
+
+				done();
+
+			} );
+
+		} );
+
+		it( 'should use the options parameter to config the navmesh', function ( done ) {
+
+			const loader = new NavMeshLoader();
+			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb-embedded/navmesh.glb';
+
+			loader.load( url, { epsilonCoplanarTest: 0.5 } ).then( ( navMesh ) => {
+
+				expect( navMesh.epsilonCoplanarTest ).is.equal( 0.5 );
 
 				done();
 
