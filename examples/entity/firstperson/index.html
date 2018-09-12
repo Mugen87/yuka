@@ -81,6 +81,16 @@
 
 			//
 
+			const audioLoader = new THREE.AudioLoader();
+			const listener = new THREE.AudioListener();
+			const step1 = new THREE.Audio( listener );
+			const step2 = new THREE.Audio( listener );
+
+			audioLoader.load( 'audio/step1.ogg', ( buffer ) => { step1.setBuffer( buffer ) } );
+			audioLoader.load( 'audio/step2.ogg', ( buffer ) => { step2.setBuffer( buffer ) } );
+
+			//
+
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -108,6 +118,12 @@
 
 			player.onActive = () => { intro.classList.add( 'hidden' ) };
 			player.onInactive = () => { intro.classList.remove( 'hidden' ) };
+			player.onAudio = ( id ) => {
+
+				if ( id === 'rightStep' ) step1.play();
+				if ( id === 'leftStep' ) step2.play();
+
+			};
 
 			entityManager.add( player );
 
@@ -147,8 +163,7 @@
 
 			entityManager.update( delta );
 
-			camera.matrix.copy( player.head.worldMatrix );
-			camera.matrixWorldNeedsUpdate = true;
+			camera.matrixWorld.copy( player.head.worldMatrix );
 
 			renderer.render( scene, camera );
 

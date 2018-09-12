@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { MovingEntity, GameEntity, Quaternion, Vector3, Logger } from '../../../../build/yuka.module.js';
+import { MovingEntity, GameEntity, Vector3, Logger } from '../../../../build/yuka.module.js';
 
 const PI05 = Math.PI / 2;
 const direction = new Vector3();
@@ -10,6 +10,9 @@ const velocity = new Vector3();
 
 const startPosition = new Vector3();
 const endPosition = new Vector3();
+
+let currentSign = 1;
+let elapsedTime = 0;
 
 class Player extends MovingEntity {
 
@@ -29,6 +32,7 @@ class Player extends MovingEntity {
 
 		this.lookSpeed = 1;
 		this.brakingPower = 10;
+		this.headMovement = 1.5;
 		this.height = 1;
 
 		this.head = new GameEntity();
@@ -36,6 +40,7 @@ class Player extends MovingEntity {
 
 		this.onActive = null;
 		this.onInactive = null;
+		this.onAudio = null;
 
 		this._mouseMoveHandler = onMouseMove.bind( this );
 		this._pointerlockChangeHandler = onPointerlockChange.bind( this );
@@ -46,8 +51,6 @@ class Player extends MovingEntity {
 		this.updateOrientation = false;
 		this.navMesh = null;
 		this.currentRegion = null;
-
-		this.elapsedTime = 0;
 
 	}
 
@@ -126,9 +129,9 @@ class Player extends MovingEntity {
 
 		const speed = this.getSpeed();
 
-		this.elapsedTime += delta * speed; // scale delta with movement speed
+		elapsedTime += delta * speed; // scale delta with movement speed
 
-		const motion = Math.sin( this.elapsedTime * 1.4 );
+		const motion = Math.cos( elapsedTime * this.headMovement );
 
 		head.position.y = Math.abs( motion ) * 0.06;
 		head.position.x = motion * 0.08;
@@ -136,6 +139,26 @@ class Player extends MovingEntity {
 		//
 
 		head.position.y += this.height;
+
+		//
+
+		const sign = Math.sign( Math.cos( elapsedTime * this.headMovement ) );
+
+		if ( sign < currentSign ) {
+
+			currentSign = sign;
+
+			if ( this.onAudio ) this.onAudio( 'rightStep' );
+
+		}
+
+		if ( sign > currentSign ) {
+
+			currentSign = sign;
+
+			if ( this.onAudio ) this.onAudio( 'leftStep' );
+
+		}
 
 	}
 
