@@ -190,6 +190,7 @@ describe( 'EntityManager', function () {
 		it( 'should call the update method of active game entites and triggers', function () {
 
 			const manager = new EntityManager();
+			const delta = 1;
 
 			const entity1 = new CustomEntity();
 			const entity2 = new CustomEntity();
@@ -205,7 +206,7 @@ describe( 'EntityManager', function () {
 			manager.addTrigger( trigger1 );
 			manager.addTrigger( trigger2 );
 
-			manager.update();
+			manager.update( delta );
 
 			expect( entity1.updated ).to.be.true;
 			expect( entity2.updated ).to.be.false;
@@ -228,7 +229,7 @@ describe( 'EntityManager', function () {
 
 		} );
 
-		it( 'should update the matrix property of game entites', function () {
+		it( 'should update the matrix and worldMatrix property of game entites', function () {
 
 			const manager = new EntityManager();
 
@@ -240,6 +241,55 @@ describe( 'EntityManager', function () {
 			manager.update();
 
 			expect( entity.matrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
+			expect( entity.worldMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
+
+		} );
+
+	} );
+
+	describe( '#updateEntity()', function () {
+
+		it( 'should update a single game entity', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const entity = new CustomEntity();
+
+			manager.updateEntity( entity, delta );
+			expect( entity.updated ).to.be.true;
+
+		} );
+
+		it( 'should update a single game entity and its children', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const entity1 = new CustomEntity();
+			const entity2 = new CustomEntity();
+
+			entity1.add( entity2 );
+
+			manager.updateEntity( entity1, delta );
+			expect( entity1.updated ).to.be.true;
+			expect( entity2.updated ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#updateTrigger()', function () {
+
+		it( 'should update a single trigger', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const trigger = new CustomTrigger();
+
+			manager.updateTrigger( trigger, delta );
+			expect( trigger.updated ).to.be.true;
 
 		} );
 

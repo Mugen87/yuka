@@ -27,6 +27,9 @@ class GameEntity {
 			scale: new Vector3()
 		};
 
+		this.children = new Set();
+		this.parent = null;
+
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
 		this.scale = new Vector3( 1, 1, 1 );
@@ -38,6 +41,7 @@ class GameEntity {
 		this.maxTurnRate = Math.PI;
 
 		this.matrix = new Matrix4();
+		this.worldMatrix = new Matrix4();
 
 		this.manager = null;
 
@@ -50,6 +54,30 @@ class GameEntity {
 	update( /* delta */ ) {}
 
 	//
+
+	add( entity ) {
+
+		if ( entity.parent !== null ) {
+
+			entity.parent.remove( entity );
+
+		}
+
+		this.children.add( entity );
+		entity.parent = this;
+
+		return this;
+
+	}
+
+	remove( entity ) {
+
+		this.children.delete( entity );
+		entity.parent = null;
+
+		return this;
+
+	}
 
 	getDirection( result ) {
 
@@ -102,6 +130,47 @@ class GameEntity {
 		cache.position.copy( this.position );
 		cache.rotation.copy( this.rotation );
 		cache.scale.copy( this.scale );
+
+	}
+
+	updateWorldMatrix( up = false, down = false ) {
+
+		const parent = this.parent;
+		const children = this.children;
+
+		// update higher levels first
+
+		if ( up === true && parent !== null ) {
+
+			parent.updateWorldMatrix( true );
+
+		}
+
+		// update this entity
+
+		this.updateMatrix();
+
+		if ( parent === null ) {
+
+			this.worldMatrix.copy( this.matrix );
+
+		} else {
+
+			this.worldMatrix.multiplyMatrices( this.parent.worldMatrix, this.matrix );
+
+		}
+
+		// update lower levels
+
+		if ( down === true ) {
+
+			for ( const child of children ) {
+
+				child.updateWorldMatrix( false, true );
+
+			}
+
+		}
 
 	}
 

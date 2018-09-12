@@ -227,21 +227,7 @@
 
 			for ( let entity of this.entities.values() ) {
 
-				if ( entity.active === true ) {
-
-					if ( this._started.has( entity ) === false ) {
-
-						entity.start();
-
-						this._started.add( entity );
-
-					}
-
-					entity.update( delta );
-
-					entity.updateMatrix();
-
-				}
+				this.updateEntity( entity, delta );
 
 			}
 
@@ -249,27 +235,59 @@
 
 			for ( let trigger of this.triggers.values() ) {
 
-				if ( trigger.active === true ) {
-
-					trigger.update( delta );
-
-					for ( let entity of this.entities.values() ) {
-
-						if ( entity.active === true ) {
-
-							trigger.check( entity );
-
-						}
-
-					}
-
-				}
+				this.updateTrigger( trigger, delta );
 
 			}
 
 			// handle messaging
 
 			this.messageDispatcher.dispatchDelayedMessages( delta );
+
+		}
+
+		updateEntity( entity, delta ) {
+
+			if ( entity.active === true ) {
+
+				if ( this._started.has( entity ) === false ) {
+
+					entity.start();
+
+					this._started.add( entity );
+
+				}
+
+				entity.update( delta );
+
+				entity.updateWorldMatrix();
+
+				for ( const child of entity.children ) {
+
+					this.updateEntity( child );
+
+				}
+
+			}
+
+		}
+
+		updateTrigger( trigger, delta ) {
+
+			if ( trigger.active === true ) {
+
+				trigger.update( delta );
+
+				for ( let entity of this.entities.values() ) {
+
+					if ( entity.active === true ) {
+
+						trigger.check( entity );
+
+					}
+
+				}
+
+			}
 
 		}
 
@@ -1630,6 +1648,9 @@
 				scale: new Vector3()
 			};
 
+			this.children = new Set();
+			this.parent = null;
+
 			this.position = new Vector3();
 			this.rotation = new Quaternion();
 			this.scale = new Vector3( 1, 1, 1 );
@@ -1641,6 +1662,7 @@
 			this.maxTurnRate = Math.PI;
 
 			this.matrix = new Matrix4();
+			this.worldMatrix = new Matrix4();
 
 			this.manager = null;
 
@@ -1653,6 +1675,30 @@
 		update( /* delta */ ) {}
 
 		//
+
+		add( entity ) {
+
+			if ( entity.parent !== null ) {
+
+				entity.parent.remove( entity );
+
+			}
+
+			this.children.add( entity );
+			entity.parent = this;
+
+			return this;
+
+		}
+
+		remove( entity ) {
+
+			this.children.delete( entity );
+			entity.parent = null;
+
+			return this;
+
+		}
 
 		getDirection( result ) {
 
@@ -1705,6 +1751,47 @@
 			cache.position.copy( this.position );
 			cache.rotation.copy( this.rotation );
 			cache.scale.copy( this.scale );
+
+		}
+
+		updateWorldMatrix( up = false, down = false ) {
+
+			const parent = this.parent;
+			const children = this.children;
+
+			// update higher levels first
+
+			if ( up === true && parent !== null ) {
+
+				parent.updateWorldMatrix( true );
+
+			}
+
+			// update this entity
+
+			this.updateMatrix();
+
+			if ( parent === null ) {
+
+				this.worldMatrix.copy( this.matrix );
+
+			} else {
+
+				this.worldMatrix.multiplyMatrices( this.parent.worldMatrix, this.matrix );
+
+			}
+
+			// update lower levels
+
+			if ( down === true ) {
+
+				for ( const child of children ) {
+
+					child.updateWorldMatrix( false, true );
+
+				}
+
+			}
 
 		}
 
@@ -5371,7 +5458,7 @@
 
 			const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-			inverse.getInverse( vehicle.matrix );
+			inverse.getInverse( vehicle.worldMatrix );
 
 			for ( let obstacle of obstacles ) {
 
@@ -5435,7 +5522,7 @@
 
 				this._waypoint.x -= ( closestObstacle.boundingRadius + vehicle.boundingRadius ) * sign;
 
-				this._waypoint.applyMatrix4( vehicle.matrix );
+				this._waypoint.applyMatrix4( vehicle.worldMatrix );
 
 			}
 
@@ -5597,7 +5684,7 @@
 
 			// project the target into world space
 
-			targetWorld.applyMatrix4( vehicle.matrix );
+			targetWorld.applyMatrix4( vehicle.worldMatrix );
 
 			// and steer towards it
 

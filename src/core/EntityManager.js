@@ -88,21 +88,7 @@ class EntityManager {
 
 		for ( let entity of this.entities.values() ) {
 
-			if ( entity.active === true ) {
-
-				if ( this._started.has( entity ) === false ) {
-
-					entity.start();
-
-					this._started.add( entity );
-
-				}
-
-				entity.update( delta );
-
-				entity.updateMatrix();
-
-			}
+			this.updateEntity( entity, delta );
 
 		}
 
@@ -110,27 +96,59 @@ class EntityManager {
 
 		for ( let trigger of this.triggers.values() ) {
 
-			if ( trigger.active === true ) {
-
-				trigger.update( delta );
-
-				for ( let entity of this.entities.values() ) {
-
-					if ( entity.active === true ) {
-
-						trigger.check( entity );
-
-					}
-
-				}
-
-			}
+			this.updateTrigger( trigger, delta );
 
 		}
 
 		// handle messaging
 
 		this.messageDispatcher.dispatchDelayedMessages( delta );
+
+	}
+
+	updateEntity( entity, delta ) {
+
+		if ( entity.active === true ) {
+
+			if ( this._started.has( entity ) === false ) {
+
+				entity.start();
+
+				this._started.add( entity );
+
+			}
+
+			entity.update( delta );
+
+			entity.updateWorldMatrix();
+
+			for ( const child of entity.children ) {
+
+				this.updateEntity( child );
+
+			}
+
+		}
+
+	}
+
+	updateTrigger( trigger, delta ) {
+
+		if ( trigger.active === true ) {
+
+			trigger.update( delta );
+
+			for ( let entity of this.entities.values() ) {
+
+				if ( entity.active === true ) {
+
+					trigger.check( entity );
+
+				}
+
+			}
+
+		}
 
 	}
 

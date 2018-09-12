@@ -59,7 +59,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-		inverse.getInverse( vehicle.matrix );
+		inverse.getInverse( vehicle.worldMatrix );
 
 		for ( let obstacle of obstacles ) {
 
@@ -123,7 +123,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 			this._waypoint.x -= ( closestObstacle.boundingRadius + vehicle.boundingRadius ) * sign;
 
-			this._waypoint.applyMatrix4( vehicle.matrix );
+			this._waypoint.applyMatrix4( vehicle.worldMatrix );
 
 		}
 

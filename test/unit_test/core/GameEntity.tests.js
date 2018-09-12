@@ -22,6 +22,9 @@ describe( 'GameEntity', function () {
 			expect( entity ).to.have.a.property( 'name' ).that.is.equal( '' );
 			expect( entity ).to.have.a.property( 'active' ).that.is.true;
 
+			expect( entity ).to.have.a.property( 'children' ).that.is.a( 'set' );
+			expect( entity ).to.have.a.property( 'parent' ).that.is.null;
+
 			expect( entity ).to.have.a.property( 'position' ).that.is.an.instanceof( Vector3 );
 			expect( entity ).to.have.a.property( 'rotation' ).that.is.an.instanceof( Quaternion );
 			expect( entity ).to.have.a.property( 'scale' ).that.is.an.instanceof( Vector3 ).and.that.is.deep.equal( { x: 1, y: 1, z: 1 } );
@@ -33,6 +36,7 @@ describe( 'GameEntity', function () {
 			expect( entity ).to.have.a.property( 'maxTurnRate' ).that.is.equal( Math.PI );
 
 			expect( entity ).to.have.a.property( 'matrix' ).that.is.an.instanceof( Matrix4 );
+			expect( entity ).to.have.a.property( 'worldMatrix' ).that.is.an.instanceof( Matrix4 );
 
 			expect( entity ).to.have.a.property( 'manager' ).that.is.null;
 
@@ -57,6 +61,54 @@ describe( 'GameEntity', function () {
 
 			const entity = new GameEntity();
 			expect( entity ).respondTo( 'update' );
+
+		} );
+
+	} );
+
+	describe( '#add()', function () {
+
+		it( 'should add a game entity as a child to this entity', function () {
+
+			const entity1 = new GameEntity();
+			const entity2 = new GameEntity();
+
+			entity1.add( entity2 );
+
+			expect( entity1.children.has( entity2 ) ).to.be.true;
+			expect( entity2.parent ).to.equal( entity1 );
+
+		} );
+
+		it( 'should remove an existing parent', function () {
+
+			const entity1 = new GameEntity();
+			const entity2 = new GameEntity();
+			const entity3 = new GameEntity();
+
+			entity1.add( entity2 );
+			expect( entity2.parent ).to.equal( entity1 );
+
+			entity3.add( entity2 );
+			expect( entity2.parent ).to.equal( entity3 );
+			expect( entity1.children.has( entity2 ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#remove()', function () {
+
+		it( 'should remove a game entity from its parent', function () {
+
+			const entity1 = new GameEntity();
+			const entity2 = new GameEntity();
+
+			entity1.add( entity2 );
+			entity1.remove( entity2 );
+
+			expect( entity1.children.has( entity2 ) ).to.be.false;
+			expect( entity2.parent ).to.be.null;
 
 		} );
 
@@ -128,6 +180,50 @@ describe( 'GameEntity', function () {
 			entity.updateMatrix();
 
 			expect( entity.matrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
+
+		} );
+
+	} );
+
+	describe( '#updateWorldMatrix()', function () {
+
+		it( 'should calculate a matrix that transforms the entity into world space', function () {
+
+			const entity1 = new GameEntity();
+			entity1.position.set( 1, 1, 1 );
+
+			const entity2 = new GameEntity();
+			entity2.position.set( 0, 0, 1 );
+
+			entity1.add( entity2 );
+
+			entity1.updateWorldMatrix();
+			entity2.updateWorldMatrix();
+
+			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
+
+		} );
+
+		it( 'should use its parameters to traverse the hierarchy up and down', function () {
+
+			const entity1 = new GameEntity();
+			entity1.position.set( 1, 1, 1 );
+
+			const entity2 = new GameEntity();
+			entity2.position.set( 0, 0, 1 );
+
+			const entity3 = new GameEntity();
+			entity3.position.set( 0, 1, 0 );
+
+			entity1.add( entity2 );
+			entity2.add( entity3 );
+
+			entity2.updateWorldMatrix( true, true );
+
+			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
+			expect( entity3.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 2, 1 ] );
 
 		} );
 

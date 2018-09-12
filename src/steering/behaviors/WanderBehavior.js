@@ -58,7 +58,7 @@ class WanderBehavior extends SteeringBehavior {
 
 		// project the target into world space
 
-		targetWorld.applyMatrix4( vehicle.matrix );
+		targetWorld.applyMatrix4( vehicle.worldMatrix );
 
 		// and steer towards it
 

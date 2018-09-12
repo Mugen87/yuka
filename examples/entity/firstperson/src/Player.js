@@ -20,9 +20,6 @@ class Player extends MovingEntity {
 		this.movementX = 0; // mouse left/right
 		this.movementY = 0; // mouse up/down
 
-		this.yaw = new Quaternion();
-		this.pitch = new Quaternion();
-
 		this.input = {
 			forward: false,
 			backward: false,
@@ -35,6 +32,7 @@ class Player extends MovingEntity {
 		this.height = 1;
 
 		this.head = new GameEntity();
+		this.add( this.head );
 
 		this.onActive = null;
 		this.onInactive = null;
@@ -124,9 +122,6 @@ class Player extends MovingEntity {
 
 		const head = this.head;
 
-		head.position.copy( this.position );
-		head.position.y += this.height;
-
 		// some simple head bobbing
 
 		const speed = this.getSpeed();
@@ -135,12 +130,12 @@ class Player extends MovingEntity {
 
 		const motion = Math.sin( this.elapsedTime * 1.4 );
 
-		head.position.y += Math.abs( motion ) * 0.06;
-		head.position.x += motion * 0.08;
+		head.position.y = Math.abs( motion ) * 0.06;
+		head.position.x = motion * 0.08;
 
 		//
 
-		head.updateMatrix();
+		head.position.y += this.height;
 
 	}
 
@@ -155,11 +150,8 @@ function onMouseMove( event ) {
 
 	this.movementY = Math.max( - PI05, Math.min( PI05, this.movementY ) );
 
-	this.yaw.fromEuler( 0, this.movementX, 0 );
-	this.pitch.fromEuler( this.movementY, 0, 0 );
-
-	this.rotation.copy( this.yaw ); // body
-	this.head.rotation.multiplyQuaternions( this.yaw, this.pitch ); // head
+	this.rotation.fromEuler( 0, this.movementX, 0 ); // yaw
+	this.head.rotation.fromEuler( this.movementY, 0, 0 ); // pitch
 
 }
 

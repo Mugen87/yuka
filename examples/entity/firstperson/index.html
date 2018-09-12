@@ -147,7 +147,7 @@
 
 			entityManager.update( delta );
 
-			camera.matrix.copy( player.head.matrix );
+			camera.matrix.copy( player.head.worldMatrix );
 			camera.matrixWorldNeedsUpdate = true;
 
 			renderer.render( scene, camera );
