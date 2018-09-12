@@ -131,7 +131,7 @@ class Player extends MovingEntity {
 
 		elapsedTime += delta * speed; // scale delta with movement speed
 
-		const motion = Math.cos( elapsedTime * this.headMovement );
+		const motion = Math.sin( elapsedTime * this.headMovement );
 
 		head.position.y = Math.abs( motion ) * 0.06;
 		head.position.x = motion * 0.08;
