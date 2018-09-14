@@ -4995,6 +4995,53 @@
 	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
+	const averageDirection = new Vector3();
+	const direction = new Vector3();
+
+	class AlignmentBehavior extends SteeringBehavior {
+
+		constructor() {
+
+			super();
+
+		}
+
+		calculate( vehicle, force /*, delta */ ) {
+
+			averageDirection.set( 0, 0, 0 );
+
+			const neighbors = vehicle.neighbors;
+
+			// iterate over all neighbors to calculate the average direction vector
+			// then
+
+			for ( let neighbor of neighbors ) {
+
+				neighbor.getDirection( direction );
+
+				averageDirection.add( direction );
+
+			}
+
+			if ( neighbors.size > 0 ) {
+
+				averageDirection.divideScalar( neighbors.size );
+
+				// produce a force to align the vehicle's heading
+
+				vehicle.getDirection( direction );
+				force.subVectors( averageDirection, direction );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
 	const desiredVelocity = new Vector3();
 	const displacement$2 = new Vector3();
 
@@ -5048,6 +5095,91 @@
 
 	const desiredVelocity$1 = new Vector3();
 
+	class SeekBehavior extends SteeringBehavior {
+
+		constructor( target = new Vector3() ) {
+
+			super();
+
+			this.target = target;
+
+		}
+
+		calculate( vehicle, force /*, delta */ ) {
+
+			const target = this.target;
+
+			// First the desired velocity is calculated.
+			// This is the velocity the agent would need to reach the target position in an ideal world.
+			// It represents the vector from the agent to the target,
+			// scaled to be the length of the maximum possible speed of the agent.
+
+			desiredVelocity$1.subVectors( target, vehicle.position ).normalize();
+			desiredVelocity$1.multiplyScalar( vehicle.maxSpeed );
+
+			// The steering force returned by this method is the force required,
+			// which when added to the agent’s current velocity vector gives the desired velocity.
+			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
+
+			force.subVectors( desiredVelocity$1, vehicle.velocity );
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	const centerOfMass = new Vector3();
+
+	class CohesionBehavior extends SteeringBehavior {
+
+		constructor() {
+
+			super();
+
+			// internal behaviors
+
+			this._seek = new SeekBehavior();
+
+		}
+
+		calculate( vehicle, force /*, delta */ ) {
+
+			centerOfMass.set( 0, 0, 0 );
+
+			const neighbors = vehicle.neighbors;
+
+			// iterate over all neighbors to calculate the center of mass
+
+			for ( let neighbor of neighbors ) {
+
+				centerOfMass.add( neighbor.position );
+
+			}
+
+			if ( neighbors.size > 0 ) {
+
+				centerOfMass.divideScalar( neighbors.size );
+
+				// seek to it
+
+				this._seek.target = centerOfMass;
+				this._seek.calculate( vehicle, force );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	const desiredVelocity$2 = new Vector3();
+
 	class FleeBehavior extends SteeringBehavior {
 
 		constructor( target = new Vector3(), panicDistance = 10 ) {
@@ -5072,19 +5204,19 @@
 				// from here, the only difference compared to seek is that the desired
 				// velocity is calculated using a vector pointing in the opposite direction
 
-				desiredVelocity$1.subVectors( vehicle.position, target ).normalize();
+				desiredVelocity$2.subVectors( vehicle.position, target ).normalize();
 
 				// if target and vehicle position are identical, choose default velocity
 
-				if ( desiredVelocity$1.squaredLength() === 0 ) {
+				if ( desiredVelocity$2.squaredLength() === 0 ) {
 
-					desiredVelocity$1.set( 0, 0, 1 );
+					desiredVelocity$2.set( 0, 0, 1 );
 
 				}
 
-				desiredVelocity$1.multiplyScalar( vehicle.maxSpeed );
+				desiredVelocity$2.multiplyScalar( vehicle.maxSpeed );
 
-				force.subVectors( desiredVelocity$1, vehicle.velocity );
+				force.subVectors( desiredVelocity$2, vehicle.velocity );
 
 			}
 
@@ -5135,44 +5267,6 @@
 			this._flee.target = predcitedPosition;
 			this._flee.panicDistance = this.panicDistance;
 			this._flee.calculate( vehicle, force );
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	const desiredVelocity$2 = new Vector3();
-
-	class SeekBehavior extends SteeringBehavior {
-
-		constructor( target = new Vector3() ) {
-
-			super();
-
-			this.target = target;
-
-		}
-
-		calculate( vehicle, force /*, delta */ ) {
-
-			const target = this.target;
-
-			// First the desired velocity is calculated.
-			// This is the velocity the agent would need to reach the target position in an ideal world.
-			// It represents the vector from the agent to the target,
-			// scaled to be the length of the maximum possible speed of the agent.
-
-			desiredVelocity$2.subVectors( target, vehicle.position ).normalize();
-			desiredVelocity$2.multiplyScalar( vehicle.maxSpeed );
-
-			// The steering force returned by this method is the force required,
-			// which when added to the agent’s current velocity vector gives the desired velocity.
-			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
-
-			force.subVectors( desiredVelocity$2, vehicle.velocity );
 
 		}
 
@@ -5665,6 +5759,46 @@
 
 			this._seek.target = predcitedPosition$1;
 			this._seek.calculate( vehicle, force );
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	const toAgent = new Vector3();
+
+	class SeparationBehavior extends SteeringBehavior {
+
+		constructor() {
+
+			super();
+
+		}
+
+		calculate( vehicle, force /*, delta */ ) {
+
+			const neighbors = vehicle.neighbors;
+
+			for ( let neighbor of neighbors ) {
+
+				toAgent.subVectors( vehicle.position, neighbor.position );
+
+				let length = toAgent.length();
+
+				// handle zero length if both vehicles have the same position
+
+				if ( length === 0 ) length = 0.0001;
+
+				// scale the force inversely proportional to the agents distance from its neighbor
+
+				toAgent.normalize().divideScalar( length );
+
+				force.add( toAgent );
+
+			}
 
 		}
 
@@ -6507,7 +6641,9 @@
 	exports.SteeringBehavior = SteeringBehavior;
 	exports.SteeringManager = SteeringManager;
 	exports.Vehicle = Vehicle;
+	exports.AlignmentBehavior = AlignmentBehavior;
 	exports.ArriveBehavior = ArriveBehavior;
+	exports.CohesionBehavior = CohesionBehavior;
 	exports.EvadeBehavior = EvadeBehavior;
 	exports.FleeBehavior = FleeBehavior;
 	exports.FollowPathBehavior = FollowPathBehavior;
@@ -6515,6 +6651,7 @@
 	exports.ObstacleAvoidanceBehavior = ObstacleAvoidanceBehavior;
 	exports.PursuitBehavior = PursuitBehavior;
 	exports.SeekBehavior = SeekBehavior;
+	exports.SeparationBehavior = SeparationBehavior;
 	exports.WanderBehavior = WanderBehavior;
 	exports.RectangularTriggerRegion = RectangularTriggerRegion;
 	exports.SphericalTriggerRegion = SphericalTriggerRegion;

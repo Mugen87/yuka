@@ -1,0 +1,154 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Steering Behaviors | Flocking</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				margin:0;
+				overflow:hidden;
+			}
+		</style>
+	</head>
+<body>
+
+	<script type="module">
+
+		import * as YUKA from '../../../build/yuka.module.js';
+		import * as THREE from '../../lib/three.module.js';
+		import { OrbitControls } from '../../lib/OrbitControls.module.js';
+		import * as DAT from 'https://cdn.rawgit.com/dataarts/dat.gui/979f2fc39dbe89af561094a158c906ee9c047886/build/dat.gui.module.js';
+
+		let renderer, scene, camera;
+
+		let entityManager, time;
+
+		const params = {
+			alignment: 0.9,
+			cohesion: 0.8,
+			separation: 0.3,
+			wander: 0.5
+		};
+
+		init();
+		animate();
+
+		function init() {
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 500 );
+			camera.position.set( 0, 50, 0 );
+			camera.lookAt( scene.position );
+
+			// game setup
+
+			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
+
+			//
+
+			const vehicleGeometry = new THREE.ConeBufferGeometry( 0.1, 0.5, 8 );
+			vehicleGeometry.rotateX( Math.PI * 0.5 );
+			const vehicleMaterial = new THREE.MeshNormalMaterial();
+
+			const grid = new THREE.GridHelper( 100, 50 );
+			scene.add( grid );
+
+			// game setup
+
+			const alignmentBehavior = new YUKA.AlignmentBehavior();
+			const cohesionBehavior = new YUKA.CohesionBehavior();
+			const separationBehavior = new YUKA.SeparationBehavior();
+			const wanderBehavior = new YUKA.WanderBehavior();
+
+			alignmentBehavior.weight = params.alignment;
+			cohesionBehavior.weight = params.cohesion;
+			separationBehavior.weigth = params.separation;
+			wanderBehavior.weigth = params.wander;
+
+			for ( let i = 0; i < 50; i ++ ) {
+
+				const vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+				vehicleMesh.matrixAutoUpdate = false;
+				scene.add( vehicleMesh );
+
+				const vehicle = new YUKA.Vehicle();
+				vehicle.maxSpeed = 1.5;
+				vehicle.updateNeighborhood = true;
+				vehicle.neighborhoodRadius = 10;
+				vehicle.mesh = vehicleMesh;
+				vehicle.rotation.fromEuler( 0, 2 * Math.PI * Math.random(), 0 );
+				vehicle.position.x = 5 - Math.random() * 10;
+				vehicle.position.z = 5 - Math.random() * 10;
+				vehicle.updateWorldMatrix();
+
+				vehicle.steering.add( alignmentBehavior );
+				vehicle.steering.add( separationBehavior );
+				vehicle.steering.add( cohesionBehavior );
+				vehicle.steering.add( wanderBehavior );
+
+				entityManager.add( vehicle );
+
+			}
+
+			// dat.gui
+
+			var gui = new DAT.GUI( { width: 300 } );
+
+			gui.add( params, 'alignment', 0.1, 2 ).name( 'alignment' ).onChange( ( value ) => { alignmentBehavior.weigth = value; } );
+			gui.add( params, 'cohesion', 0.1, 2 ).name( 'cohesion' ).onChange( ( value ) => { cohesionBehavior.weigth = value; } );
+			gui.add( params, 'separation', 0.1, 2 ).name( 'separation' ).onChange( ( value ) => { separationBehavior.weigth = value; } );
+			gui.add( params, 'wander', 0.1, 2 ).name( 'wander' ).onChange( ( value ) => { wanderBehavior.weigth = value; } );
+
+			gui.open();
+
+			//
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			const delta = time.update().getDelta();
+
+			entityManager.update( delta );
+
+			for ( let entity of entityManager.entities.values() ) {
+
+				entity.mesh.matrix.copy( entity.matrix );
+
+			}
+
+			renderer.render( scene, camera );
+
+		}
+
+
+	</script>
+
+</body>
+</html>
