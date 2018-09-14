@@ -30,6 +30,10 @@ class GameEntity {
 		this.children = new Set();
 		this.parent = null;
 
+		this.neighbors = new Set();
+		this.neighborhoodRadius = 1;
+		this.updateNeighborhood = false;
+
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
 		this.scale = new Vector3( 1, 1, 1 );

@@ -187,31 +187,21 @@ describe( 'EntityManager', function () {
 
 	describe( '#update()', function () {
 
-		it( 'should call the update method of active game entites and triggers', function () {
+		it( 'should call the update method of game entites and triggers', function () {
 
 			const manager = new EntityManager();
 			const delta = 1;
 
-			const entity1 = new CustomEntity();
-			const entity2 = new CustomEntity();
-			entity2.active = false;
+			const entity = new CustomEntity();
+			manager.add( entity );
 
-			manager.add( entity1 );
-			manager.add( entity2 );
-
-			const trigger1 = new CustomTrigger();
-			const trigger2 = new CustomTrigger();
-			trigger2.active = false;
-
-			manager.addTrigger( trigger1 );
-			manager.addTrigger( trigger2 );
+			const trigger = new CustomTrigger();
+			manager.addTrigger( trigger );
 
 			manager.update( delta );
 
-			expect( entity1.updated ).to.be.true;
-			expect( entity2.updated ).to.be.false;
-			expect( trigger1.updated ).to.be.true;
-			expect( trigger2.updated ).to.be.false;
+			expect( entity.updated ).to.be.true;
+			expect( trigger.updated ).to.be.true;
 
 		} );
 
@@ -233,15 +223,66 @@ describe( 'EntityManager', function () {
 
 			const manager = new EntityManager();
 
-			const entity = new GameEntity();
-			entity.position.set( 1, 1, 1 );
-			entity.scale.set( 2, 2, 2 );
-			manager.add( entity );
+			const entity1 = new GameEntity();
+			entity1.position.set( 1, 1, 1 );
+
+			const entity2 = new GameEntity();
+			entity2.position.set( 0, 0, 1 );
+
+			entity1.add( entity2 );
+			manager.add( entity1 );
 
 			manager.update();
 
-			expect( entity.matrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
-			expect( entity.worldMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
+			expect( entity1.matrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( entity2.matrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 ] );
+			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
+
+		} );
+
+	} );
+
+	describe( '#updateNeighborhood()', function () {
+
+		it( 'should update the neighborhood of a single game entity if necessary', function () {
+
+			const manager = new EntityManager();
+
+			const entity1 = new GameEntity();
+			entity1.updateNeighborhood = true;
+			const entity2 = new GameEntity();
+
+			manager.add( entity1 );
+			manager.add( entity2 );
+
+			manager.updateNeighborhood( entity1 );
+
+			expect( entity1.neighbors.has( entity2 ) ).to.be.true;
+			expect( entity2.neighbors.size ).to.equal( 0 );
+
+		} );
+
+		it( 'should use the neighborhoodRadius of the game entity to determine the neighborhood', function () {
+
+			const manager = new EntityManager();
+
+			const entity1 = new GameEntity();
+			entity1.updateNeighborhood = true;
+			entity1.neighborhoodRadius = 2;
+			const entity2 = new GameEntity();
+			entity2.position.set( 0, 0, 1 );
+			const entity3 = new GameEntity();
+			entity3.position.set( 0, 0, 4 );
+
+			manager.add( entity1 );
+			manager.add( entity2 );
+			manager.add( entity3 );
+
+			manager.updateNeighborhood( entity1 );
+
+			expect( entity1.neighbors.has( entity2 ) ).to.be.true;
+			expect( entity1.neighbors.has( entity3 ) ).to.be.false;
 
 		} );
 
@@ -258,6 +299,38 @@ describe( 'EntityManager', function () {
 
 			manager.updateEntity( entity, delta );
 			expect( entity.updated ).to.be.true;
+
+		} );
+
+		it( 'should only update the game entity if it is active', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const entity = new CustomEntity();
+			entity.active = false;
+
+			manager.updateEntity( entity, delta );
+			expect( entity.updated ).to.be.false;
+
+		} );
+
+		it( 'should update the neighborhood of a game entity if necessary', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const entity1 = new GameEntity();
+			entity1.updateNeighborhood = true;
+			const entity2 = new GameEntity();
+
+			manager.add( entity1 );
+			manager.add( entity2 );
+
+			manager.updateEntity( entity1, delta );
+
+			expect( entity1.neighbors.has( entity2 ) ).to.be.true;
+			expect( entity2.neighbors.size ).to.equal( 0 );
 
 		} );
 
@@ -290,6 +363,19 @@ describe( 'EntityManager', function () {
 
 			manager.updateTrigger( trigger, delta );
 			expect( trigger.updated ).to.be.true;
+
+		} );
+
+		it( 'should only update the trigger if it is active', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const trigger = new CustomTrigger();
+			trigger.active = false;
+
+			manager.updateTrigger( trigger, delta );
+			expect( trigger.updated ).to.be.false;
 
 		} );
 

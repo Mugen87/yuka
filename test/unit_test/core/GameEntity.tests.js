@@ -25,6 +25,10 @@ describe( 'GameEntity', function () {
 			expect( entity ).to.have.a.property( 'children' ).that.is.a( 'set' );
 			expect( entity ).to.have.a.property( 'parent' ).that.is.null;
 
+			expect( entity ).to.have.a.property( 'neighbors' ).that.is.a( 'set' );
+			expect( entity ).to.have.a.property( 'neighborhoodRadius' ).that.is.equal( 1 );
+			expect( entity ).to.have.a.property( 'updateNeighborhood' ).that.is.equal( false );
+
 			expect( entity ).to.have.a.property( 'position' ).that.is.an.instanceof( Vector3 );
 			expect( entity ).to.have.a.property( 'rotation' ).that.is.an.instanceof( Quaternion );
 			expect( entity ).to.have.a.property( 'scale' ).that.is.an.instanceof( Vector3 ).and.that.is.deep.equal( { x: 1, y: 1, z: 1 } );

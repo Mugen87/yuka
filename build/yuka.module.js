@@ -243,6 +243,10 @@ class EntityManager {
 
 		if ( entity.active === true ) {
 
+			this.updateNeighborhood( entity );
+
+			//
+
 			if ( this._started.has( entity ) === false ) {
 
 				entity.start();
@@ -251,13 +255,47 @@ class EntityManager {
 
 			}
 
-			entity.update( delta );
+			//
 
+			entity.update( delta );
 			entity.updateWorldMatrix();
+
+			//
 
 			for ( const child of entity.children ) {
 
 				this.updateEntity( child );
+
+			}
+
+		}
+
+	}
+
+	updateNeighborhood( entity ) {
+
+		if ( entity.updateNeighborhood === true ) {
+
+			entity.neighbors.clear();
+
+			const neighborhoodRadiusSq = ( entity.neighborhoodRadius * entity.neighborhoodRadius );
+
+			// this approach is computationally expensive since we iterate over all entities -> O(n²)
+			// use an optional spatial index to improve runtime complexity
+
+			for ( let candidate of this.entities.values() ) {
+
+				if ( entity !== candidate ) {
+
+					const distanceSq = entity.position.squaredDistanceTo( candidate.position );
+
+					if ( distanceSq <= neighborhoodRadiusSq ) {
+
+						entity.neighbors.add( candidate );
+
+					}
+
+				}
 
 			}
 
@@ -1644,6 +1682,10 @@ class GameEntity {
 
 		this.children = new Set();
 		this.parent = null;
+
+		this.neighbors = new Set();
+		this.neighborhoodRadius = 1;
+		this.updateNeighborhood = false;
 
 		this.position = new Vector3();
 		this.rotation = new Quaternion();
