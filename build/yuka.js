@@ -5013,7 +5013,6 @@
 			const neighbors = vehicle.neighbors;
 
 			// iterate over all neighbors to calculate the average direction vector
-			// then
 
 			for ( let neighbor of neighbors ) {
 
@@ -5167,6 +5166,11 @@
 
 				this._seek.target = centerOfMass;
 				this._seek.calculate( vehicle, force );
+
+				// the magnitude of cohesion is usually much larger than separation
+				// or alignment so it usually helps to normalize it
+
+				force.normalize();
 
 			}
 

@@ -26,7 +26,7 @@
 		const params = {
 			alignment: 0.9,
 			cohesion: 0.8,
-			separation: 0.3,
+			separation: 0.4,
 			wander: 0.5
 		};
 
@@ -79,13 +79,13 @@
 				vehicle.neighborhoodRadius = 10;
 				vehicle.mesh = vehicleMesh;
 				vehicle.rotation.fromEuler( 0, 2 * Math.PI * Math.random(), 0 );
-				vehicle.position.x = 5 - Math.random() * 10;
-				vehicle.position.z = 5 - Math.random() * 10;
+				vehicle.position.x = 10 - Math.random() * 20;
+				vehicle.position.z = 10 - Math.random() * 20;
 				vehicle.updateWorldMatrix();
 
 				vehicle.steering.add( alignmentBehavior );
-				vehicle.steering.add( separationBehavior );
 				vehicle.steering.add( cohesionBehavior );
+				vehicle.steering.add( separationBehavior );
 				vehicle.steering.add( wanderBehavior );
 
 				entityManager.add( vehicle );

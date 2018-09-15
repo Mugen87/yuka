@@ -43,6 +43,11 @@ class CohesionBehavior extends SteeringBehavior {
 			this._seek.target = centerOfMass;
 			this._seek.calculate( vehicle, force );
 
+			// the magnitude of cohesion is usually much larger than separation
+			// or alignment so it usually helps to normalize it
+
+			force.normalize();
+
 		}
 
 	}
