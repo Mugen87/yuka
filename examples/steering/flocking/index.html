@@ -24,10 +24,9 @@
 		let entityManager, time;
 
 		const params = {
-			alignment: 0.9,
-			cohesion: 0.8,
-			separation: 0.4,
-			wander: 0.5
+			alignment: 1,
+			cohesion: 0.9,
+			separation: 0.3
 		};
 
 		init();
@@ -60,12 +59,10 @@
 			const alignmentBehavior = new YUKA.AlignmentBehavior();
 			const cohesionBehavior = new YUKA.CohesionBehavior();
 			const separationBehavior = new YUKA.SeparationBehavior();
-			const wanderBehavior = new YUKA.WanderBehavior();
 
 			alignmentBehavior.weight = params.alignment;
 			cohesionBehavior.weight = params.cohesion;
 			separationBehavior.weigth = params.separation;
-			wanderBehavior.weigth = params.wander;
 
 			for ( let i = 0; i < 50; i ++ ) {
 
@@ -86,6 +83,9 @@
 				vehicle.steering.add( alignmentBehavior );
 				vehicle.steering.add( cohesionBehavior );
 				vehicle.steering.add( separationBehavior );
+
+				const wanderBehavior = new YUKA.WanderBehavior();
+				wanderBehavior.weigth = 0.5;
 				vehicle.steering.add( wanderBehavior );
 
 				entityManager.add( vehicle );
@@ -99,7 +99,6 @@
 			gui.add( params, 'alignment', 0.1, 2 ).name( 'alignment' ).onChange( ( value ) => { alignmentBehavior.weigth = value; } );
 			gui.add( params, 'cohesion', 0.1, 2 ).name( 'cohesion' ).onChange( ( value ) => { cohesionBehavior.weigth = value; } );
 			gui.add( params, 'separation', 0.1, 2 ).name( 'separation' ).onChange( ( value ) => { separationBehavior.weigth = value; } );
-			gui.add( params, 'wander', 0.1, 2 ).name( 'wander' ).onChange( ( value ) => { wanderBehavior.weigth = value; } );
 
 			gui.open();
 
