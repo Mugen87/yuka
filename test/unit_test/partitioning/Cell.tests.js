@@ -19,7 +19,7 @@ describe( 'Cell', function () {
 			const cell = new Cell();
 
 			expect( cell ).to.have.a.property( 'aabb' ).that.is.an.instanceof( AABB );
-			expect( cell ).to.have.a.property( 'entities' ).that.is.a( 'set' );
+			expect( cell ).to.have.a.property( 'entities' ).that.is.an( 'array' );
 
 		} );
 
@@ -43,7 +43,7 @@ describe( 'Cell', function () {
 
 			cell.add( entity );
 
-			expect( cell.entities.has( entity ) ).to.be.true;
+			expect( cell.entities ).to.include( entity );
 
 		} );
 
@@ -59,7 +59,7 @@ describe( 'Cell', function () {
 			cell.add( entity );
 			cell.remove( entity );
 
-			expect( cell.entities.has( entity ) ).to.be.false;
+			expect( cell.entities ).to.not.include( entity );
 
 		} );
 

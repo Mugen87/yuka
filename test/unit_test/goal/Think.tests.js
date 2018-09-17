@@ -22,7 +22,7 @@ describe( 'Think', function () {
 			expect( brain ).to.have.a.property( 'owner' ).that.is.null;
 			expect( brain ).to.have.a.property( 'status' ).that.is.equal( STATUS.INACTIVE );
 			expect( brain ).to.have.a.property( 'subgoals' ).that.is.an( 'array' ).and.empty;
-			expect( brain ).to.have.a.property( 'evaluators' ).that.is.a( 'set' ).and.empty;
+			expect( brain ).to.have.a.property( 'evaluators' ).that.is.an( 'array' ).and.empty;
 
 		} );
 
@@ -93,13 +93,14 @@ describe( 'Think', function () {
 
 	describe( '#addEvaluator()', function () {
 
-		it( 'should add an evaluator to the internal set', function () {
+		it( 'should add an evaluator to the internal array', function () {
 
 			const brain = new Think();
+			const evaluator = new GoalEvaluator();
 
-			brain.addEvaluator( new GoalEvaluator() );
+			brain.addEvaluator( evaluator );
 
-			expect( brain.evaluators.size ).to.equal( 1 );
+			expect( brain.evaluators ).to.include( evaluator );
 
 		} );
 
@@ -107,7 +108,7 @@ describe( 'Think', function () {
 
 	describe( '#removeEvaluator()', function () {
 
-		it( 'should remove the given evaluator from the internal set', function () {
+		it( 'should remove the given evaluator from the internal array', function () {
 
 			const brain = new Think();
 
@@ -116,7 +117,7 @@ describe( 'Think', function () {
 			brain.addEvaluator( evaluator );
 			brain.removeEvaluator( evaluator );
 
-			expect( brain.evaluators ).to.be.empty;
+			expect( brain.evaluators ).to.not.include( evaluator );
 
 		} );
 

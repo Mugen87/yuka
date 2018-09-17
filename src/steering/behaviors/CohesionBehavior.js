@@ -28,15 +28,17 @@ class CohesionBehavior extends SteeringBehavior {
 
 		// iterate over all neighbors to calculate the center of mass
 
-		for ( const neighbor of neighbors ) {
+		for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+			const neighbor = neighbors[ i ];
 
 			centerOfMass.add( neighbor.position );
 
 		}
 
-		if ( neighbors.size > 0 ) {
+		if ( neighbors.length > 0 ) {
 
-			centerOfMass.divideScalar( neighbors.size );
+			centerOfMass.divideScalar( neighbors.length );
 
 			// seek to it
 

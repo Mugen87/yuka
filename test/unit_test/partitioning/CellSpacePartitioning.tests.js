@@ -41,7 +41,7 @@ describe( 'CellSpacePartitioning', function () {
 			const index = 1;
 			spatialIndex.addEntityToPartition( entity, index );
 
-			expect( spatialIndex.cells[ index ].entities.has( entity ) ).to.be.true;
+			expect( spatialIndex.cells[ index ].entities ).to.include( entity );
 
 		} );
 
@@ -58,7 +58,7 @@ describe( 'CellSpacePartitioning', function () {
 			spatialIndex.addEntityToPartition( entity, index );
 			spatialIndex.removeEntityFromPartition( entity, index );
 
-			expect( spatialIndex.cells[ index ].entities.has( entity ) ).to.be.false;
+			expect( spatialIndex.cells[ index ].entities ).to.not.include( entity );
 
 		} );
 

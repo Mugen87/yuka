@@ -12,7 +12,7 @@ class Think extends CompositeGoal {
 
 		super( owner );
 
-		this.evaluators = new Set();
+		this.evaluators = new Array();
 
 	}
 
@@ -44,7 +44,7 @@ class Think extends CompositeGoal {
 
 	addEvaluator( evaluator ) {
 
-		this.evaluators.add( evaluator );
+		this.evaluators.push( evaluator );
 
 		return this;
 
@@ -52,7 +52,8 @@ class Think extends CompositeGoal {
 
 	removeEvaluator( evaluator ) {
 
-		this.evaluators.delete( evaluator );
+		const index = this.evaluators.indexOf( evaluator );
+		this.evaluators.splice( index, 1 );
 
 		return this;
 
@@ -60,12 +61,16 @@ class Think extends CompositeGoal {
 
 	arbitrate() {
 
+		const evaluators = this.evaluators;
+
 		let bestDesirabilty = - 1;
 		let bestEvaluator = null;
 
 		// try to find the best top-level goal/strategy for the entity
 
-		for ( const evaluator of this.evaluators ) {
+		for ( let i = 0, l = evaluators.length; i < l; i ++ ) {
+
+			const evaluator = evaluators[ i ];
 
 			let desirabilty = evaluator.calculateDesirability( this.owner );
 			desirabilty *= evaluator.characterBias;

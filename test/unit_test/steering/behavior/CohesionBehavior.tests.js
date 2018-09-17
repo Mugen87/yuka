@@ -23,8 +23,8 @@ describe( 'CohesionBehavior', function () {
 			const neighbor2 = new Vehicle();
 			neighbor2.position.x = 1;
 
-			vehicle.neighbors.add( neighbor1 );
-			vehicle.neighbors.add( neighbor2 );
+			vehicle.neighbors.push( neighbor1 );
+			vehicle.neighbors.push( neighbor2 );
 
 			cohesionBehavior.calculate( vehicle, force );
 

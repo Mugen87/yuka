@@ -28,7 +28,9 @@ class CompositeGoal extends Goal {
 
 		const subgoals = this.subgoals;
 
-		for ( const subgoal of subgoals ) {
+		for ( let i = 0, l = subgoals.length; i < l; i ++ ) {
+
+			const subgoal = subgoals[ i ];
 
 			subgoal.terminate();
 

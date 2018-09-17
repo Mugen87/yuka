@@ -23,7 +23,7 @@ class NavMesh {
 		this.graph = new Graph();
 		this.graph.digraph = true;
 
-		this.regions = new Set();
+		this.regions = new Array();
 
 		this.epsilonCoplanarTest = 1e-3;
 		this.epsilonContainsTest = 1;
@@ -41,7 +41,9 @@ class NavMesh {
 
 		// setup list with all edges
 
-		for ( const polygon of polygons ) {
+		for ( let i = 0, l = polygons.length; i < l; i ++ ) {
+
+			const polygon = polygons[ i ];
 
 			let edge = polygon.edge;
 
@@ -55,19 +57,19 @@ class NavMesh {
 
 			//
 
-			this.regions.add( polygon );
+			this.regions.push( polygon );
 
 		}
 
 		// setup twin references and sorted list of edges
 
-		for ( let i = 0; i < initialEdgeList.length; i ++ ) {
+		for ( let i = 0, il = initialEdgeList.length; i < il; i ++ ) {
 
 			let edge0 = initialEdgeList[ i ];
 
 			if ( edge0.twin !== null ) continue;
 
-			for ( let j = i + 1; j < initialEdgeList.length; j ++ ) {
+			for ( let j = i + 1, jl = initialEdgeList.length; j < jl; j ++ ) {
 
 				let edge1 = initialEdgeList[ j ];
 
@@ -118,7 +120,7 @@ class NavMesh {
 	clear() {
 
 		this.graph.clear();
-		this.regions.clear();
+		this.regions.length = 0;
 
 		return this;
 
@@ -134,7 +136,9 @@ class NavMesh {
 
 		graph.getNodes( nodes );
 
-		for ( const node of nodes ) {
+		for ( let i = 0, l = nodes.length; i < l; i ++ ) {
+
+			const node = nodes[ i ];
 
 			const distance = point.squaredDistanceTo( node.position );
 
@@ -197,7 +201,9 @@ class NavMesh {
 		let closesRegion = null;
 		let minDistance = Infinity;
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			const distance = point.squaredDistanceTo( region.centroid );
 
@@ -219,7 +225,9 @@ class NavMesh {
 
 		const regions = this.regions;
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			if ( region.contains( point, epsilon ) === true ) {
 
@@ -324,8 +332,9 @@ class NavMesh {
 
 				path.push( new Vector3().copy( from ) );
 
-				for ( const index of shortestPath ) {
+				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
 
+					const index = shortestPath[ i ];
 					const node = graph.getNode( index );
 					path.push( new Vector3().copy( node.position ) );
 
@@ -458,7 +467,9 @@ class NavMesh {
 
 		// process edges from longest to shortest
 
-		for ( const entry of edgeList ) {
+		for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
+
+			const entry = edgeList[ i ];
 
 			let candidate = entry.edge;
 
@@ -495,7 +506,8 @@ class NavMesh {
 
 				// delete obsolete polygon
 
-				regions.delete( entry.edge.twin.polygon );
+				const index = regions.indexOf( entry.edge.twin.polygon );
+				regions.splice( index, 1 );
 
 			} else {
 
@@ -514,7 +526,9 @@ class NavMesh {
 
 		//
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			region.computeCentroid();
 
@@ -529,7 +543,9 @@ class NavMesh {
 		const indicesMap = new Map();
 		let nextNodeIndex = 0;
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			let edge = region.edge;
 
@@ -590,7 +606,9 @@ class NavMesh {
 
 		const nodeIndicesPerRegion = new Set();
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			const nodeIndices = new Array();
 			nodeIndicesPerRegion.add( nodeIndices );

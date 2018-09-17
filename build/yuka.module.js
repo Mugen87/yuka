@@ -141,9 +141,10 @@ class EntityManager {
 
 	constructor() {
 
-		this.entities = new Map();
-		this.triggers = new Set();
+		this.entities = new Array();
+		this.triggers = new Array();
 
+		this._entityMap = new Map(); // for fast ID access
 		this._started = new Set();
 		this._messageDispatcher = new MessageDispatcher();
 
@@ -151,7 +152,8 @@ class EntityManager {
 
 	add( entity ) {
 
-		this.entities.set( entity.id, entity );
+		this.entities.push( entity );
+		this._entityMap.set( entity.id, entity );
 
 		entity.manager = this;
 
@@ -161,8 +163,10 @@ class EntityManager {
 
 	remove( entity ) {
 
-		this.entities.delete( entity.id );
+		const index = this.entities.indexOf( entity );
+		this.entities.splice( index, 1 );
 
+		this._entityMap.delete( entity.id );
 		this._started.delete( entity );
 
 		entity.manager = null;
@@ -173,7 +177,7 @@ class EntityManager {
 
 	addTrigger( trigger ) {
 
-		this.triggers.add( trigger );
+		this.triggers.push( trigger );
 
 		return this;
 
@@ -181,7 +185,8 @@ class EntityManager {
 
 	removeTrigger( trigger ) {
 
-		this.triggers.delete( trigger );
+		const index = this.triggers.indexOf( trigger );
+		this.triggers.splice( index, 1 );
 
 		return this;
 
@@ -189,8 +194,10 @@ class EntityManager {
 
 	clear() {
 
-		this.entities.clear();
-		this.triggers.clear();
+		this.entities.length = 0;
+		this.triggers.length = 0;
+
+		this._entityMap.clear();
 		this._started.clear();
 
 		this._messageDispatcher.clear();
@@ -199,13 +206,17 @@ class EntityManager {
 
 	getEntityById( id ) {
 
-		return this.entities.get( id ) || null;
+		return this._entityMap.get( id ) || null;
 
 	}
 
 	getEntityByName( name ) {
 
-		for ( const entity of this.entities.values() ) {
+		const entities = this.entities;
+
+		for ( let i = 0, l = entities.length; i < l; i ++ ) {
+
+			const entity = entities[ i ];
 
 			if ( entity.name === name ) return entity;
 
@@ -217,9 +228,14 @@ class EntityManager {
 
 	update( delta ) {
 
+		const entities = this.entities;
+		const triggers = this.triggers;
+
 		// update entities
 
-		for ( const entity of this.entities.values() ) {
+		for ( let i = 0, l = entities.length; i < l; i ++ ) {
+
+			const entity = entities[ i ];
 
 			this.updateEntity( entity, delta );
 
@@ -227,7 +243,9 @@ class EntityManager {
 
 		// update triggers
 
-		for ( const trigger of this.triggers ) {
+		for ( let i = 0, l = triggers.length; i < l; i ++ ) {
+
+			const trigger = triggers[ i ];
 
 			this.updateTrigger( trigger, delta );
 
@@ -262,7 +280,11 @@ class EntityManager {
 
 			//
 
-			for ( const child of entity.children ) {
+			const children = entity.children;
+
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				const child = children[ i ];
 
 				this.updateEntity( child );
 
@@ -276,14 +298,18 @@ class EntityManager {
 
 		if ( entity.updateNeighborhood === true ) {
 
-			entity.neighbors.clear();
+			const candidates = this.entities;
+
+			entity.neighbors.length = 0;
 
 			const neighborhoodRadiusSq = ( entity.neighborhoodRadius * entity.neighborhoodRadius );
 
 			// this approach is computationally expensive since we iterate over all entities -> O(n²)
 			// use an optional spatial index to improve runtime complexity
 
-			for ( const candidate of this.entities.values() ) {
+			for ( let i = 0, l = candidates.length; i < l; i ++ ) {
+
+				const candidate = candidates[ i ];
 
 				if ( entity !== candidate ) {
 
@@ -291,7 +317,7 @@ class EntityManager {
 
 					if ( distanceSq <= neighborhoodRadiusSq ) {
 
-						entity.neighbors.add( candidate );
+						entity.neighbors.push( candidate );
 
 					}
 
@@ -309,7 +335,11 @@ class EntityManager {
 
 			trigger.update( delta );
 
-			for ( const entity of this.entities.values() ) {
+			const entities = this.entities;
+
+			for ( let i = 0, l = entities.length; i < l; i ++ ) {
+
+				const entity = entities[ i ];
 
 				if ( entity.active === true ) {
 
@@ -1680,10 +1710,10 @@ class GameEntity {
 			scale: new Vector3()
 		};
 
-		this.children = new Set();
+		this.children = new Array();
 		this.parent = null;
 
-		this.neighbors = new Set();
+		this.neighbors = new Array();
 		this.neighborhoodRadius = 1;
 		this.updateNeighborhood = false;
 
@@ -1720,7 +1750,7 @@ class GameEntity {
 
 		}
 
-		this.children.add( entity );
+		this.children.push( entity );
 		entity.parent = this;
 
 		return this;
@@ -1729,7 +1759,9 @@ class GameEntity {
 
 	remove( entity ) {
 
-		this.children.delete( entity );
+		const index = this.children.indexOf( entity );
+		this.children.splice( index, 1 );
+
 		entity.parent = null;
 
 		return this;
@@ -1821,7 +1853,9 @@ class GameEntity {
 
 		if ( down === true ) {
 
-			for ( const child of children ) {
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				const child = children[ i ];
 
 				child.updateWorldMatrix( false, true );
 
@@ -2263,7 +2297,9 @@ class CompositeGoal extends Goal {
 
 		const subgoals = this.subgoals;
 
-		for ( const subgoal of subgoals ) {
+		for ( let i = 0, l = subgoals.length; i < l; i ++ ) {
+
+			const subgoal = subgoals[ i ];
 
 			subgoal.terminate();
 
@@ -2406,7 +2442,7 @@ class Think extends CompositeGoal {
 
 		super( owner );
 
-		this.evaluators = new Set();
+		this.evaluators = new Array();
 
 	}
 
@@ -2438,7 +2474,7 @@ class Think extends CompositeGoal {
 
 	addEvaluator( evaluator ) {
 
-		this.evaluators.add( evaluator );
+		this.evaluators.push( evaluator );
 
 		return this;
 
@@ -2446,7 +2482,8 @@ class Think extends CompositeGoal {
 
 	removeEvaluator( evaluator ) {
 
-		this.evaluators.delete( evaluator );
+		const index = this.evaluators.indexOf( evaluator );
+		this.evaluators.splice( index, 1 );
 
 		return this;
 
@@ -2454,12 +2491,16 @@ class Think extends CompositeGoal {
 
 	arbitrate() {
 
+		const evaluators = this.evaluators;
+
 		let bestDesirabilty = - 1;
 		let bestEvaluator = null;
 
 		// try to find the best top-level goal/strategy for the entity
 
-		for ( const evaluator of this.evaluators ) {
+		for ( let i = 0, l = evaluators.length; i < l; i ++ ) {
+
+			const evaluator = evaluators[ i ];
 
 			let desirabilty = evaluator.calculateDesirability( this.owner );
 			desirabilty *= evaluator.characterBias;
@@ -3402,7 +3443,7 @@ class NavMesh {
 		this.graph = new Graph();
 		this.graph.digraph = true;
 
-		this.regions = new Set();
+		this.regions = new Array();
 
 		this.epsilonCoplanarTest = 1e-3;
 		this.epsilonContainsTest = 1;
@@ -3420,7 +3461,9 @@ class NavMesh {
 
 		// setup list with all edges
 
-		for ( const polygon of polygons ) {
+		for ( let i = 0, l = polygons.length; i < l; i ++ ) {
+
+			const polygon = polygons[ i ];
 
 			let edge = polygon.edge;
 
@@ -3434,19 +3477,19 @@ class NavMesh {
 
 			//
 
-			this.regions.add( polygon );
+			this.regions.push( polygon );
 
 		}
 
 		// setup twin references and sorted list of edges
 
-		for ( let i = 0; i < initialEdgeList.length; i ++ ) {
+		for ( let i = 0, il = initialEdgeList.length; i < il; i ++ ) {
 
 			let edge0 = initialEdgeList[ i ];
 
 			if ( edge0.twin !== null ) continue;
 
-			for ( let j = i + 1; j < initialEdgeList.length; j ++ ) {
+			for ( let j = i + 1, jl = initialEdgeList.length; j < jl; j ++ ) {
 
 				let edge1 = initialEdgeList[ j ];
 
@@ -3497,7 +3540,7 @@ class NavMesh {
 	clear() {
 
 		this.graph.clear();
-		this.regions.clear();
+		this.regions.length = 0;
 
 		return this;
 
@@ -3513,7 +3556,9 @@ class NavMesh {
 
 		graph.getNodes( nodes );
 
-		for ( const node of nodes ) {
+		for ( let i = 0, l = nodes.length; i < l; i ++ ) {
+
+			const node = nodes[ i ];
 
 			const distance = point.squaredDistanceTo( node.position );
 
@@ -3576,7 +3621,9 @@ class NavMesh {
 		let closesRegion = null;
 		let minDistance = Infinity;
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			const distance = point.squaredDistanceTo( region.centroid );
 
@@ -3598,7 +3645,9 @@ class NavMesh {
 
 		const regions = this.regions;
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			if ( region.contains( point, epsilon ) === true ) {
 
@@ -3703,8 +3752,9 @@ class NavMesh {
 
 				path.push( new Vector3().copy( from ) );
 
-				for ( const index of shortestPath ) {
+				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
 
+					const index = shortestPath[ i ];
 					const node = graph.getNode( index );
 					path.push( new Vector3().copy( node.position ) );
 
@@ -3837,7 +3887,9 @@ class NavMesh {
 
 		// process edges from longest to shortest
 
-		for ( const entry of edgeList ) {
+		for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
+
+			const entry = edgeList[ i ];
 
 			let candidate = entry.edge;
 
@@ -3874,7 +3926,8 @@ class NavMesh {
 
 				// delete obsolete polygon
 
-				regions.delete( entry.edge.twin.polygon );
+				const index = regions.indexOf( entry.edge.twin.polygon );
+				regions.splice( index, 1 );
 
 			} else {
 
@@ -3893,7 +3946,9 @@ class NavMesh {
 
 		//
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			region.computeCentroid();
 
@@ -3908,7 +3963,9 @@ class NavMesh {
 		const indicesMap = new Map();
 		let nextNodeIndex = 0;
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			let edge = region.edge;
 
@@ -3969,7 +4026,9 @@ class NavMesh {
 
 		const nodeIndicesPerRegion = new Set();
 
-		for ( const region of regions ) {
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
 
 			const nodeIndices = new Array();
 			nodeIndicesPerRegion.add( nodeIndices );
@@ -5469,25 +5528,26 @@ class Cell {
 	constructor( aabb = new AABB() ) {
 
 		this.aabb = aabb;
-		this.entities = new Set();
+		this.entities = new Array();
 
 	}
 
 	add( entity ) {
 
-		this.entities.add( entity );
+		this.entities.push( entity );
 
 	}
 
 	remove( entity ) {
 
-		this.entities.delete( entity );
+		const index = this.entities.indexOf( entity );
+		this.entities.splice( index, 1 );
 
 	}
 
 	empty() {
 
-		return this.entities.size === 0;
+		return this.entities.length === 0;
 
 	}
 
@@ -5634,7 +5694,9 @@ class CellSpacePartitioning {
 
 		// test all non-empty cells for an intersection
 
-		for ( const cell of cells ) {
+		for ( let i = 0, l = cells.length; i < l; i ++ ) {
+
+			const cell = cells[ i ];
 
 			if ( cell.empty() === false && cell.intersects( aabb ) === true ) {
 
@@ -5766,7 +5828,6 @@ class SteeringManager {
 	remove( behavior ) {
 
 		const index = this.behaviors.indexOf( behavior );
-
 		this.behaviors.splice( index, 1 );
 
 		return this;
@@ -5820,13 +5881,17 @@ class SteeringManager {
 
 	_calculateByOrder( delta ) {
 
+		const behaviors = this.behaviors;
+
 		// reset steering force
 
 		this._steeringForce.set( 0, 0, 0 );
 
 		// calculate for each behavior the respective force
 
-		for ( const behavior of this.behaviors ) {
+		for ( let i = 0, l = behaviors.length; i < l; i ++ ) {
+
+			const behavior = behaviors[ i ];
 
 			if ( behavior.active === true ) {
 
@@ -5938,7 +6003,9 @@ class AlignmentBehavior extends SteeringBehavior {
 
 		// iterate over all neighbors to calculate the average direction vector
 
-		for ( const neighbor of neighbors ) {
+		for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+			const neighbor = neighbors[ i ];
 
 			neighbor.getDirection( direction );
 
@@ -5946,9 +6013,9 @@ class AlignmentBehavior extends SteeringBehavior {
 
 		}
 
-		if ( neighbors.size > 0 ) {
+		if ( neighbors.length > 0 ) {
 
-			averageDirection.divideScalar( neighbors.size );
+			averageDirection.divideScalar( neighbors.length );
 
 			// produce a force to align the vehicle's heading
 
@@ -6076,15 +6143,17 @@ class CohesionBehavior extends SteeringBehavior {
 
 		// iterate over all neighbors to calculate the center of mass
 
-		for ( const neighbor of neighbors ) {
+		for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+			const neighbor = neighbors[ i ];
 
 			centerOfMass.add( neighbor.position );
 
 		}
 
-		if ( neighbors.size > 0 ) {
+		if ( neighbors.length > 0 ) {
 
-			centerOfMass.divideScalar( neighbors.size );
+			centerOfMass.divideScalar( neighbors.length );
 
 			// seek to it
 
@@ -6362,7 +6431,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		// the obstacles in the game world
 
-		const obstacles = this.entityManager.entities.values();
+		const obstacles = this.entityManager.entities;
 
 		// the detection box length is proportional to the agent's velocity
 
@@ -6370,7 +6439,9 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		inverse.getInverse( vehicle.worldMatrix );
 
-		for ( const obstacle of obstacles ) {
+		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
+
+			const obstacle = obstacles[ i ];
 
 			if ( obstacle === vehicle ) continue;
 
@@ -6556,7 +6627,9 @@ class SeparationBehavior extends SteeringBehavior {
 
 		const neighbors = vehicle.neighbors;
 
-		for ( const neighbor of neighbors ) {
+		for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+			const neighbor = neighbors[ i ];
 
 			toAgent.subVectors( vehicle.position, neighbor.position );
 

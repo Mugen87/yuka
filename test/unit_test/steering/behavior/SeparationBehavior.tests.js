@@ -23,8 +23,8 @@ describe( 'SeparationBehavior', function () {
 			neighbor1.position.x = 1;
 			const neighbor2 = new Vehicle();
 
-			vehicle.neighbors.add( neighbor1 );
-			vehicle.neighbors.add( neighbor2 );
+			vehicle.neighbors.push( neighbor1 );
+			vehicle.neighbors.push( neighbor2 );
 
 			separationBehavior.calculate( vehicle, force );
 

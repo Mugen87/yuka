@@ -8,9 +8,10 @@ class EntityManager {
 
 	constructor() {
 
-		this.entities = new Map();
-		this.triggers = new Set();
+		this.entities = new Array();
+		this.triggers = new Array();
 
+		this._entityMap = new Map(); // for fast ID access
 		this._started = new Set();
 		this._messageDispatcher = new MessageDispatcher();
 
@@ -18,7 +19,8 @@ class EntityManager {
 
 	add( entity ) {
 
-		this.entities.set( entity.id, entity );
+		this.entities.push( entity );
+		this._entityMap.set( entity.id, entity );
 
 		entity.manager = this;
 
@@ -28,8 +30,10 @@ class EntityManager {
 
 	remove( entity ) {
 
-		this.entities.delete( entity.id );
+		const index = this.entities.indexOf( entity );
+		this.entities.splice( index, 1 );
 
+		this._entityMap.delete( entity.id );
 		this._started.delete( entity );
 
 		entity.manager = null;
@@ -40,7 +44,7 @@ class EntityManager {
 
 	addTrigger( trigger ) {
 
-		this.triggers.add( trigger );
+		this.triggers.push( trigger );
 
 		return this;
 
@@ -48,7 +52,8 @@ class EntityManager {
 
 	removeTrigger( trigger ) {
 
-		this.triggers.delete( trigger );
+		const index = this.triggers.indexOf( trigger );
+		this.triggers.splice( index, 1 );
 
 		return this;
 
@@ -56,8 +61,10 @@ class EntityManager {
 
 	clear() {
 
-		this.entities.clear();
-		this.triggers.clear();
+		this.entities.length = 0;
+		this.triggers.length = 0;
+
+		this._entityMap.clear();
 		this._started.clear();
 
 		this._messageDispatcher.clear();
@@ -66,13 +73,17 @@ class EntityManager {
 
 	getEntityById( id ) {
 
-		return this.entities.get( id ) || null;
+		return this._entityMap.get( id ) || null;
 
 	}
 
 	getEntityByName( name ) {
 
-		for ( const entity of this.entities.values() ) {
+		const entities = this.entities;
+
+		for ( let i = 0, l = entities.length; i < l; i ++ ) {
+
+			const entity = entities[ i ];
 
 			if ( entity.name === name ) return entity;
 
@@ -84,9 +95,14 @@ class EntityManager {
 
 	update( delta ) {
 
+		const entities = this.entities;
+		const triggers = this.triggers;
+
 		// update entities
 
-		for ( const entity of this.entities.values() ) {
+		for ( let i = 0, l = entities.length; i < l; i ++ ) {
+
+			const entity = entities[ i ];
 
 			this.updateEntity( entity, delta );
 
@@ -94,7 +110,9 @@ class EntityManager {
 
 		// update triggers
 
-		for ( const trigger of this.triggers ) {
+		for ( let i = 0, l = triggers.length; i < l; i ++ ) {
+
+			const trigger = triggers[ i ];
 
 			this.updateTrigger( trigger, delta );
 
@@ -129,7 +147,11 @@ class EntityManager {
 
 			//
 
-			for ( const child of entity.children ) {
+			const children = entity.children;
+
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				const child = children[ i ];
 
 				this.updateEntity( child );
 
@@ -143,14 +165,18 @@ class EntityManager {
 
 		if ( entity.updateNeighborhood === true ) {
 
-			entity.neighbors.clear();
+			const candidates = this.entities;
+
+			entity.neighbors.length = 0;
 
 			const neighborhoodRadiusSq = ( entity.neighborhoodRadius * entity.neighborhoodRadius );
 
 			// this approach is computationally expensive since we iterate over all entities -> O(n²)
 			// use an optional spatial index to improve runtime complexity
 
-			for ( const candidate of this.entities.values() ) {
+			for ( let i = 0, l = candidates.length; i < l; i ++ ) {
+
+				const candidate = candidates[ i ];
 
 				if ( entity !== candidate ) {
 
@@ -158,7 +184,7 @@ class EntityManager {
 
 					if ( distanceSq <= neighborhoodRadiusSq ) {
 
-						entity.neighbors.add( candidate );
+						entity.neighbors.push( candidate );
 
 					}
 
@@ -176,7 +202,11 @@ class EntityManager {
 
 			trigger.update( delta );
 
-			for ( const entity of this.entities.values() ) {
+			const entities = this.entities;
+
+			for ( let i = 0, l = entities.length; i < l; i ++ ) {
+
+				const entity = entities[ i ];
 
 				if ( entity.active === true ) {
 

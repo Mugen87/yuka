@@ -28,7 +28,6 @@ class SteeringManager {
 	remove( behavior ) {
 
 		const index = this.behaviors.indexOf( behavior );
-
 		this.behaviors.splice( index, 1 );
 
 		return this;
@@ -82,13 +81,17 @@ class SteeringManager {
 
 	_calculateByOrder( delta ) {
 
+		const behaviors = this.behaviors;
+
 		// reset steering force
 
 		this._steeringForce.set( 0, 0, 0 );
 
 		// calculate for each behavior the respective force
 
-		for ( const behavior of this.behaviors ) {
+		for ( let i = 0, l = behaviors.length; i < l; i ++ ) {
+
+			const behavior = behaviors[ i ];
 
 			if ( behavior.active === true ) {
 

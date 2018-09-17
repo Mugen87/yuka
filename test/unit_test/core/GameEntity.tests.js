@@ -22,10 +22,10 @@ describe( 'GameEntity', function () {
 			expect( entity ).to.have.a.property( 'name' ).that.is.equal( '' );
 			expect( entity ).to.have.a.property( 'active' ).that.is.true;
 
-			expect( entity ).to.have.a.property( 'children' ).that.is.a( 'set' );
+			expect( entity ).to.have.a.property( 'children' ).that.is.an( 'array' );
 			expect( entity ).to.have.a.property( 'parent' ).that.is.null;
 
-			expect( entity ).to.have.a.property( 'neighbors' ).that.is.a( 'set' );
+			expect( entity ).to.have.a.property( 'neighbors' ).that.is.an( 'array' );
 			expect( entity ).to.have.a.property( 'neighborhoodRadius' ).that.is.equal( 1 );
 			expect( entity ).to.have.a.property( 'updateNeighborhood' ).that.is.equal( false );
 
@@ -79,7 +79,7 @@ describe( 'GameEntity', function () {
 
 			entity1.add( entity2 );
 
-			expect( entity1.children.has( entity2 ) ).to.be.true;
+			expect( entity1.children ).to.include( entity2 );
 			expect( entity2.parent ).to.equal( entity1 );
 
 		} );
@@ -95,7 +95,7 @@ describe( 'GameEntity', function () {
 
 			entity3.add( entity2 );
 			expect( entity2.parent ).to.equal( entity3 );
-			expect( entity1.children.has( entity2 ) ).to.be.false;
+			expect( entity1.children ).to.not.include( entity2 );
 
 		} );
 
@@ -111,7 +111,7 @@ describe( 'GameEntity', function () {
 			entity1.add( entity2 );
 			entity1.remove( entity2 );
 
-			expect( entity1.children.has( entity2 ) ).to.be.false;
+			expect( entity1.children ).to.not.include( entity2 );
 			expect( entity2.parent ).to.be.null;
 
 		} );

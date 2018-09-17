@@ -53,7 +53,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		// the obstacles in the game world
 
-		const obstacles = this.entityManager.entities.values();
+		const obstacles = this.entityManager.entities;
 
 		// the detection box length is proportional to the agent's velocity
 
@@ -61,7 +61,9 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		inverse.getInverse( vehicle.worldMatrix );
 
-		for ( const obstacle of obstacles ) {
+		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
+
+			const obstacle = obstacles[ i ];
 
 			if ( obstacle === vehicle ) continue;
 

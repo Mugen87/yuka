@@ -25,8 +25,8 @@ describe( 'AlignmentBehavior', function () {
 			neighbor1.rotation.fromEuler( 0, 0.5 * Math.PI, 0 );
 			neighbor2.rotation.fromEuler( 0, 0.5 * Math.PI, 0 );
 
-			vehicle.neighbors.add( neighbor1 );
-			vehicle.neighbors.add( neighbor2 );
+			vehicle.neighbors.push( neighbor1 );
+			vehicle.neighbors.push( neighbor2 );
 
 			alignmentBehavior.calculate( vehicle, force );
 

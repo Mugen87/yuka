@@ -27,10 +27,10 @@ class GameEntity {
 			scale: new Vector3()
 		};
 
-		this.children = new Set();
+		this.children = new Array();
 		this.parent = null;
 
-		this.neighbors = new Set();
+		this.neighbors = new Array();
 		this.neighborhoodRadius = 1;
 		this.updateNeighborhood = false;
 
@@ -67,7 +67,7 @@ class GameEntity {
 
 		}
 
-		this.children.add( entity );
+		this.children.push( entity );
 		entity.parent = this;
 
 		return this;
@@ -76,7 +76,9 @@ class GameEntity {
 
 	remove( entity ) {
 
-		this.children.delete( entity );
+		const index = this.children.indexOf( entity );
+		this.children.splice( index, 1 );
+
 		entity.parent = null;
 
 		return this;
@@ -168,7 +170,9 @@ class GameEntity {
 
 		if ( down === true ) {
 
-			for ( const child of children ) {
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				const child = children[ i ];
 
 				child.updateWorldMatrix( false, true );
 

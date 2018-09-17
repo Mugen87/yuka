@@ -19,8 +19,9 @@ describe( 'EntityManager', function () {
 
 			const manager = new EntityManager();
 
-			expect( manager ).to.have.a.property( 'entities' ).that.is.a( 'map' );
-			expect( manager ).to.have.a.property( 'triggers' ).that.is.a( 'set' );
+			expect( manager ).to.have.a.property( 'entities' ).that.is.an( 'array' );
+			expect( manager ).to.have.a.property( 'triggers' ).that.is.an( 'array' );
+			expect( manager ).to.have.a.property( '_entityMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_started' ).that.is.a( 'set' );
 			expect( manager ).to.have.a.property( '_messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
 
@@ -30,13 +31,15 @@ describe( 'EntityManager', function () {
 
 	describe( '#add()', function () {
 
-		it( 'should add a game entity to the internal map', function () {
+		it( 'should add a game entity to the entity manager', function () {
 
 			const manager = new EntityManager();
 			const entity = new GameEntity();
 
 			manager.add( entity );
-			expect( manager.entities.has( entity.id ) ).to.be.true;
+
+			expect( manager.entities ).to.include( entity );
+			expect( manager._entityMap.has( entity.id ) ).to.be.true;
 
 		} );
 
@@ -54,14 +57,16 @@ describe( 'EntityManager', function () {
 
 	describe( '#remove()', function () {
 
-		it( 'should remove a game entity from the internal map', function () {
+		it( 'should remove a game entity from the entity manager', function () {
 
 			const manager = new EntityManager();
 			const entity = new GameEntity();
 
 			manager.add( entity );
 			manager.remove( entity );
-			expect( manager.entities.has( entity.id ) ).to.be.false;
+
+			expect( manager.entities ).to.not.include( entity );
+			expect( manager._entityMap.has( entity.id ) ).to.be.false;
 
 		} );
 
@@ -80,14 +85,14 @@ describe( 'EntityManager', function () {
 
 	describe( '#addTrigger()', function () {
 
-		it( 'should add a trigger to the internal set', function () {
+		it( 'should add a trigger to the entity manager', function () {
 
 			const manager = new EntityManager();
 			const trigger = new Trigger();
 
 			manager.addTrigger( trigger );
 
-			expect( manager.triggers.has( trigger ) ).to.be.true;
+			expect( manager.triggers ).to.include( trigger );
 
 		} );
 
@@ -95,7 +100,7 @@ describe( 'EntityManager', function () {
 
 	describe( '#removeTrigger()', function () {
 
-		it( 'should remove a trigger from the internal set', function () {
+		it( 'should remove a trigger from the entity manager', function () {
 
 			const manager = new EntityManager();
 			const trigger = new Trigger();
@@ -103,7 +108,7 @@ describe( 'EntityManager', function () {
 			manager.addTrigger( trigger );
 			manager.removeTrigger( trigger );
 
-			expect( manager.triggers.has( trigger ) ).to.be.false;
+			expect( manager.triggers ).to.not.include( trigger );
 
 		} );
 
@@ -118,15 +123,16 @@ describe( 'EntityManager', function () {
 			const telegram = new Telegram();
 			const trigger = new Trigger();
 
-			manager.entities.set( entity.id, entity );
-			manager.triggers.add( trigger );
+			manager.entities.push( entity );
+			manager.triggers.push( trigger );
+			manager._entityMap.set( entity.id, entity );
 			manager._started.add( entity );
 			manager._messageDispatcher.delayedTelegrams.push( telegram );
 
 			manager.clear();
 
-			expect( manager.entities.size ).to.equal( 0 );
-			expect( manager.triggers.size ).to.equal( 0 );
+			expect( manager.entities ).to.have.lengthOf( 0 );
+			expect( manager.triggers ).to.have.lengthOf( 0 );
 			expect( manager._started.size ).to.equal( 0 );
 			expect( manager._messageDispatcher.delayedTelegrams ).to.have.lengthOf( 0 );
 
@@ -258,8 +264,9 @@ describe( 'EntityManager', function () {
 
 			manager.updateNeighborhood( entity1 );
 
-			expect( entity1.neighbors.has( entity2 ) ).to.be.true;
-			expect( entity2.neighbors.size ).to.equal( 0 );
+			expect( entity1.neighbors ).to.include( entity2 );
+			expect( entity1.neighbors ).to.have.lengthOf( 1 );
+			expect( entity2.neighbors ).to.have.lengthOf( 0 );
 
 		} );
 
@@ -281,8 +288,8 @@ describe( 'EntityManager', function () {
 
 			manager.updateNeighborhood( entity1 );
 
-			expect( entity1.neighbors.has( entity2 ) ).to.be.true;
-			expect( entity1.neighbors.has( entity3 ) ).to.be.false;
+			expect( entity1.neighbors ).to.include( entity2 );
+			expect( entity1.neighbors ).to.not.include( entity3 );
 
 		} );
 
@@ -329,8 +336,8 @@ describe( 'EntityManager', function () {
 
 			manager.updateEntity( entity1, delta );
 
-			expect( entity1.neighbors.has( entity2 ) ).to.be.true;
-			expect( entity2.neighbors.size ).to.equal( 0 );
+			expect( entity1.neighbors ).to.include( entity2 );
+			expect( entity2.neighbors ).to.be.empty;
 
 		} );
 

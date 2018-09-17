@@ -137,7 +137,9 @@ class CellSpacePartitioning {
 
 		// test all non-empty cells for an intersection
 
-		for ( const cell of cells ) {
+		for ( let i = 0, l = cells.length; i < l; i ++ ) {
+
+			const cell = cells[ i ];
 
 			if ( cell.empty() === false && cell.intersects( aabb ) === true ) {
 

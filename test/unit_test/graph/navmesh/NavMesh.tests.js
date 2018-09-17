@@ -57,7 +57,7 @@ describe( 'NavMesh', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const navMesh = new NavMesh();
-			expect( navMesh ).to.have.a.property( 'regions' ).that.is.a( 'set' );
+			expect( navMesh ).to.have.a.property( 'regions' ).that.is.an( 'array' );
 			expect( navMesh ).to.have.a.property( 'graph' ).that.is.an.instanceof( Graph );
 			expect( navMesh ).to.have.a.property( 'epsilonCoplanarTest' ).that.is.equal( 1e-3 );
 			expect( navMesh ).to.have.a.property( 'epsilonContainsTest' ).that.is.equal( 1 );
@@ -73,9 +73,8 @@ describe( 'NavMesh', function () {
 
 			// p3 and p4 are merged into p1
 
-			expect( navMesh.regions.size ).to.equal( 2 );
-			expect( navMesh.regions.has( p1 ) ).to.be.true;
-			expect( navMesh.regions.has( p2 ) ).to.be.true;
+			expect( navMesh.regions ).to.have.lengthOf( 2 );
+			expect( navMesh.regions ).to.include( p1, p2 );
 
 		} );
 
@@ -308,7 +307,7 @@ describe( 'NavMesh', function () {
 		it( 'should merge polygons to convex regions if possible', function () {
 
 			navMesh.clear();
-			expect( navMesh.regions.size ).to.equal( 0 );
+			expect( navMesh.regions ).to.be.empty;
 			expect( navMesh.graph.getNodeCount() ).to.equal( 0 );
 			expect( navMesh.graph.getEdgeCount() ).to.equal( 0 );
 

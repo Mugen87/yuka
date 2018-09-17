@@ -19,7 +19,9 @@ class SeparationBehavior extends SteeringBehavior {
 
 		const neighbors = vehicle.neighbors;
 
-		for ( const neighbor of neighbors ) {
+		for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+			const neighbor = neighbors[ i ];
 
 			toAgent.subVectors( vehicle.position, neighbor.position );
 
