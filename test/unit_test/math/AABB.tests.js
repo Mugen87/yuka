@@ -134,6 +134,37 @@ describe( 'AABB', function () {
 
 	} );
 
+	describe( '#intersectsAABB()', function () {
+
+		it( 'should return true if the given AABB intersects this AABB', function () {
+
+			const aabb1 = new AABB( zero3, one3 );
+			const aabb2 = new AABB( new Vector3( 0.5, 0.5, 0.5 ), two3 );
+
+			expect( aabb1.intersectsAABB( aabb2 ) ).to.equal( true );
+
+		} );
+
+		it( 'should return true if the given AABB touches this AABB', function () {
+
+			const aabb1 = new AABB( zero3, one3 );
+			const aabb2 = new AABB( one3, two3 );
+
+			expect( aabb1.intersectsAABB( aabb2 ) ).to.equal( true );
+
+		} );
+
+		it( 'should return false if the given AABB does not intersect this AABB', function () {
+
+			const aabb1 = new AABB( zero3, one3 );
+			const aabb2 = new AABB( two3, new Vector3( 3, 3, 3 ) );
+
+			expect( aabb1.intersectsAABB( aabb2 ) ).to.equal( false );
+
+		} );
+
+	} );
+
 	describe( '#intersectsBoundingSphere()', function () {
 
 		it( 'should return true if a bounding sphere intersects the AABB', function () {

@@ -58,6 +58,14 @@ class AABB {
 
 	}
 
+	intersectsAABB( aabb ) {
+
+		return aabb.max.x < this.min.x || aabb.min.x > this.max.x ||
+			aabb.max.y < this.min.y || aabb.min.y > this.max.y ||
+			aabb.max.z < this.min.z || aabb.min.z > this.max.z ? false : true;
+
+	}
+
 	intersectsBoundingSphere( sphere ) {
 
 		// find the point on the AABB closest to the sphere center
