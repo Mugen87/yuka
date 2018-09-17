@@ -147,7 +147,7 @@ describe( 'EntityManager', function () {
 
 		} );
 
-		it( 'should return undefined if there is no game entity stored for the given ID', function () {
+		it( 'should return null if there is no game entity stored for the given ID', function () {
 
 			const manager = new EntityManager();
 
