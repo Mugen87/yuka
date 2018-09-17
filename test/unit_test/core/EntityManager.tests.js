@@ -6,6 +6,7 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const EntityManager = YUKA.EntityManager;
+const CellSpacePartitioning = YUKA.CellSpacePartitioning;
 const GameEntity = YUKA.GameEntity;
 const MessageDispatcher = YUKA.MessageDispatcher;
 const Telegram = YUKA.Telegram;
@@ -21,7 +22,9 @@ describe( 'EntityManager', function () {
 
 			expect( manager ).to.have.a.property( 'entities' ).that.is.an( 'array' );
 			expect( manager ).to.have.a.property( 'triggers' ).that.is.an( 'array' );
+			expect( manager ).to.have.a.property( 'spatialIndex' ).that.is.null;
 			expect( manager ).to.have.a.property( '_entityMap' ).that.is.a( 'map' );
+			expect( manager ).to.have.a.property( '_indexMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_started' ).that.is.a( 'set' );
 			expect( manager ).to.have.a.property( '_messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
 
@@ -293,6 +296,38 @@ describe( 'EntityManager', function () {
 
 		} );
 
+		it( 'should use a spatial index if possible', function () {
+
+			const height = 10, width = 10, depth = 10;
+			const cellsX = 5, cellsY = 5, cellsZ = 5;
+
+			const manager = new EntityManager();
+			const delta = 1;
+			manager.spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+
+			const entity1 = new GameEntity();
+			entity1.updateNeighborhood = true;
+			const entity2 = new GameEntity();
+			entity2.position.set( 0, 0, 1 );
+			const entity3 = new GameEntity();
+			entity3.position.set( 0, 0, 3 );
+
+			manager.add( entity1 );
+			manager.add( entity2 );
+			manager.add( entity3 );
+
+			// the entites needs to be updated once in order to have a valid assignment to a partition
+
+			manager.updateEntity( entity1, delta );
+			manager.updateEntity( entity2, delta );
+			manager.updateEntity( entity3, delta );
+			manager.updateNeighborhood( entity1 );
+
+			expect( entity1.neighbors ).to.include( entity2 );
+			expect( entity1.neighbors ).to.not.include( entity3 );
+
+		} );
+
 	} );
 
 	describe( '#updateEntity()', function () {
@@ -354,6 +389,24 @@ describe( 'EntityManager', function () {
 			manager.updateEntity( entity1, delta );
 			expect( entity1.updated ).to.be.true;
 			expect( entity2.updated ).to.be.true;
+
+		} );
+
+		it( 'should update the assignment to a partition of a spatial index if necessary', function () {
+
+			const height = 10, width = 10, depth = 10;
+			const cellsX = 5, cellsY = 5, cellsZ = 5;
+
+			const manager = new EntityManager();
+			manager.spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const delta = 1;
+
+			const entity = new CustomEntity();
+			entity.position.set( - 5, - 5, - 5 );
+
+			manager.updateEntity( entity, delta );
+
+			expect( manager._indexMap.get( entity ) ).to.equal( 0 );
 
 		} );
 

@@ -143,15 +143,19 @@
 	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
+	const candidates = [];
+
 	class EntityManager {
 
 		constructor() {
 
 			this.entities = new Array();
 			this.triggers = new Array();
+			this.spatialIndex = null;
 
 			this._entityMap = new Map(); // for fast ID access
-			this._started = new Set();
+			this._indexMap = new Map(); // used by spatial indices
+			this._started = new Set(); // used to control the call of GameEntity.start()
 			this._messageDispatcher = new MessageDispatcher();
 
 		}
@@ -296,6 +300,16 @@
 
 				}
 
+				//
+
+				if ( this.spatialIndex !== null ) {
+
+					let currentIndex = this._indexMap.get( entity ) || - 1;
+					currentIndex = this.spatialIndex.updateEntity( entity, currentIndex );
+					this._indexMap.set( entity, currentIndex );
+
+				}
+
 			}
 
 		}
@@ -304,14 +318,26 @@
 
 			if ( entity.updateNeighborhood === true ) {
 
-				const candidates = this.entities;
-
 				entity.neighbors.length = 0;
 
-				const neighborhoodRadiusSq = ( entity.neighborhoodRadius * entity.neighborhoodRadius );
+				// determine candidates
 
-				// this approach is computationally expensive since we iterate over all entities -> O(n²)
-				// use an optional spatial index to improve runtime complexity
+				if ( this.spatialIndex !== null ) {
+
+					this.spatialIndex.query( entity.position, entity.neighborhoodRadius, candidates );
+
+				} else {
+
+					// worst case runtime complexity with O(n²)
+
+					candidates.length = 0;
+					candidates.push( ...this.entities );
+
+				}
+
+				// verify if candidates are within the predefined range
+
+				const neighborhoodRadiusSq = ( entity.neighborhoodRadius * entity.neighborhoodRadius );
 
 				for ( let i = 0, l = candidates.length; i < l; i ++ ) {
 
