@@ -65,7 +65,9 @@ class AStar {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( const edge of outgoingEdges ) {
+			for ( let i = 0, l = outgoingEdges.length; i < l; i ++ ) {
+
+				const edge = outgoingEdges[ i ];
 
 				// A* cost formula : F = G + H
 

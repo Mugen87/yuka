@@ -2598,7 +2598,7 @@ class Graph {
 		const index = node.index;
 
 		this._nodes.set( index, node );
-		this._edges.set( index, new Set() );
+		this._edges.set( index, new Array() );
 
 		return this;
 
@@ -2609,7 +2609,7 @@ class Graph {
 		let edges;
 
 		edges = this._edges.get( edge.from );
-		edges.add( edge );
+		edges.push( edge );
 
 		if ( this.digraph === false ) {
 
@@ -2619,7 +2619,7 @@ class Graph {
 			oppositeEdge.to = edge.from;
 
 			edges = this._edges.get( edge.to );
-			edges.add( oppositeEdge );
+			edges.push( oppositeEdge );
 
 		}
 
@@ -2639,7 +2639,9 @@ class Graph {
 
 			const edges = this._edges.get( from );
 
-			for ( const edge of edges ) {
+			for ( let i = 0, l = edges.length; i < l; i ++ ) {
+
+				const edge = edges[ i ];
 
 				if ( edge.to === to ) {
 
@@ -2691,7 +2693,7 @@ class Graph {
 
 		for ( const edges of this._edges.values() ) {
 
-			count += edges.size;
+			count += edges.length;
 
 		}
 
@@ -2713,11 +2715,15 @@ class Graph {
 
 				const edgesOfNeighbor = this._edges.get( edge.to );
 
-				for ( const edgeNeighbor of edgesOfNeighbor ) {
+				for ( let i = ( edgesOfNeighbor.length - 1 ); i >= 0; i -- ) {
+
+					const edgeNeighbor = edgesOfNeighbor[ i ];
 
 					if ( edgeNeighbor.to === node.index ) {
 
-						edgesOfNeighbor.delete( edgeNeighbor );
+						const index = edgesOfNeighbor.indexOf( edgeNeighbor );
+						edgesOfNeighbor.splice( index, 1 );
+
 						break;
 
 					}
@@ -2732,11 +2738,14 @@ class Graph {
 
 			for ( const edges of this._edges.values() ) {
 
-				for ( const edge of edges ) {
+				for ( let i = ( edges.length - 1 ); i >= 0; i -- ) {
+
+					const edge = edges[ i ];
 
 					if ( ! this.hasNode( edge.to ) || ! this.hasNode( edge.from ) ) {
 
-						edges.delete( edge );
+						const index = edges.indexOf( edge );
+						edges.splice( index, 1 );
 
 					}
 
@@ -2762,7 +2771,8 @@ class Graph {
 
 		if ( edges !== undefined ) {
 
-			edges.delete( edge );
+			const index = edges.indexOf( edge );
+			edges.splice( index, 1 );
 
 			// if the graph is not directed, delete the edge connecting the node in the opposite direction
 
@@ -2770,11 +2780,14 @@ class Graph {
 
 				const edges = this._edges.get( edge.to );
 
-				for ( const e of edges ) {
+				for ( let i = 0, l = edges.length; i < l; i ++ ) {
+
+					const e = edges[ i ];
 
 					if ( e.to === edge.from ) {
 
-						edges.delete( e );
+						const index = edges.indexOf( e );
+						edges.splice( index, 1 );
 						break;
 
 					}
@@ -2801,9 +2814,11 @@ class Graph {
 
 			const edges = this._edges.get( from );
 
-			for ( const e of edges ) {
+			for ( let i = 0, l = edges.length; i < l; i ++ ) {
 
-				if ( e.to === to ) {
+				const edge = edges[ i ];
+
+				if ( edge.to === to ) {
 
 					return true;
 
@@ -3236,7 +3251,9 @@ class AStar {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( const edge of outgoingEdges ) {
+			for ( let i = 0, l = outgoingEdges.length; i < l; i ++ ) {
+
+				const edge = outgoingEdges[ i ];
 
 				// A* cost formula : F = G + H
 
@@ -4892,7 +4909,9 @@ class BFS {
 			// push the edges leading from the node this edge points to onto the
 			// queue (provided the edge does not point to a previously visited node)
 
-			for ( const edge of outgoingEdges ) {
+			for ( let i = 0, l = outgoingEdges.length; i < l; i ++ ) {
+
+				const edge = outgoingEdges[ i ];
 
 				if ( this._visited.has( edge.to ) === false ) {
 
@@ -5042,7 +5061,9 @@ class DFS {
 			// push the edges leading from the node this edge points to onto the
 			// stack (provided the edge does not point to a previously visited node)
 
-			for ( const edge of outgoingEdges ) {
+			for ( let i = 0, l = outgoingEdges.length; i < l; i ++ ) {
+
+				const edge = outgoingEdges[ i ];
 
 				if ( this._visited.has( edge.to ) === false ) {
 
@@ -5175,7 +5196,9 @@ class Dijkstra {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( const edge of outgoingEdges ) {
+			for ( let i = 0, l = outgoingEdges.length; i < l; i ++ ) {
+
+				const edge = outgoingEdges[ i ];
 
 				// the total cost to the node this edge points to is the cost to the
 				// current node plus the cost of the edge connecting them.

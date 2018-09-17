@@ -63,7 +63,9 @@ class Dijkstra {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( const edge of outgoingEdges ) {
+			for ( let i = 0, l = outgoingEdges.length; i < l; i ++ ) {
+
+				const edge = outgoingEdges[ i ];
 
 				// the total cost to the node this edge points to is the cost to the
 				// current node plus the cost of the edge connecting them.

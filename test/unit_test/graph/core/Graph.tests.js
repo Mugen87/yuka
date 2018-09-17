@@ -35,7 +35,7 @@ describe( 'Graph', function () {
 			graph.addNode( node );
 			expect( graph._nodes.size ).to.equal( 1 );
 			expect( graph._nodes.get( node.index ) ).to.equal( node );
-			expect( graph._edges.get( node.index ) ).that.is.a( 'set' );
+			expect( graph._edges.get( node.index ) ).that.is.an( 'array' );
 
 		} );
 
@@ -57,8 +57,8 @@ describe( 'Graph', function () {
 			const edgesN0 = graph._edges.get( n0.index );
 			const edgesN1 = graph._edges.get( n1.index );
 
-			expect( edgesN0.size ).to.equal( 1 );
-			expect( edgesN1.size ).to.equal( 1 );
+			expect( edgesN0 ).to.have.lengthOf( 1 );
+			expect( edgesN1 ).to.have.lengthOf( 1 );
 
 		} );
 
@@ -77,8 +77,8 @@ describe( 'Graph', function () {
 			const edgesN0 = graph._edges.get( n0.index );
 			const edgesN1 = graph._edges.get( n1.index );
 
-			expect( edgesN0.size ).to.equal( 1 );
-			expect( edgesN1.size ).to.equal( 0 );
+			expect( edgesN0 ).to.have.lengthOf( 1 );
+			expect( edgesN1 ).to.have.lengthOf( 0 );
 
 		} );
 

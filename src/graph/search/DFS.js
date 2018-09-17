@@ -74,7 +74,9 @@ class DFS {
 			// push the edges leading from the node this edge points to onto the
 			// stack (provided the edge does not point to a previously visited node)
 
-			for ( const edge of outgoingEdges ) {
+			for ( let i = 0, l = outgoingEdges.length; i < l; i ++ ) {
+
+				const edge = outgoingEdges[ i ];
 
 				if ( this._visited.has( edge.to ) === false ) {
 
