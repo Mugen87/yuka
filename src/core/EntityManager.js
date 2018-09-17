@@ -10,9 +10,9 @@ class EntityManager {
 
 		this.entities = new Map();
 		this.triggers = new Set();
-		this._started = new Set();
 
-		this.messageDispatcher = new MessageDispatcher();
+		this._started = new Set();
+		this._messageDispatcher = new MessageDispatcher();
 
 	}
 
@@ -60,7 +60,7 @@ class EntityManager {
 		this.triggers.clear();
 		this._started.clear();
 
-		this.messageDispatcher.clear();
+		this._messageDispatcher.clear();
 
 	}
 
@@ -102,7 +102,7 @@ class EntityManager {
 
 		// handle messaging
 
-		this.messageDispatcher.dispatchDelayedMessages( delta );
+		this._messageDispatcher.dispatchDelayedMessages( delta );
 
 	}
 
@@ -192,7 +192,7 @@ class EntityManager {
 
 	sendMessage( sender, receiver, message, delay, data ) {
 
-		this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
+		this._messageDispatcher.dispatch( sender, receiver, message, delay, data );
 
 	}
 

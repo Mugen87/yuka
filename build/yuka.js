@@ -149,9 +149,9 @@
 
 			this.entities = new Map();
 			this.triggers = new Set();
-			this._started = new Set();
 
-			this.messageDispatcher = new MessageDispatcher();
+			this._started = new Set();
+			this._messageDispatcher = new MessageDispatcher();
 
 		}
 
@@ -199,7 +199,7 @@
 			this.triggers.clear();
 			this._started.clear();
 
-			this.messageDispatcher.clear();
+			this._messageDispatcher.clear();
 
 		}
 
@@ -241,7 +241,7 @@
 
 			// handle messaging
 
-			this.messageDispatcher.dispatchDelayedMessages( delta );
+			this._messageDispatcher.dispatchDelayedMessages( delta );
 
 		}
 
@@ -331,7 +331,7 @@
 
 		sendMessage( sender, receiver, message, delay, data ) {
 
-			this.messageDispatcher.dispatch( sender, receiver, message, delay, data );
+			this._messageDispatcher.dispatch( sender, receiver, message, delay, data );
 
 		}
 
@@ -2010,11 +2010,488 @@
 	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
-	class Node {
+	class State {
 
-		constructor( index = - 1 ) {
+		enter() {}
 
-			this.index = index;
+		execute() {}
+
+		exit() {}
+
+		onMessage() {
+
+			return false;
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class StateMachine {
+
+		constructor( owner ) {
+
+			this.owner = owner; // a reference to the agent that owns this instance
+			this.currentState = null; // the current state of the agent
+			this.previousState = null; // a reference to the last state the agent was in
+			this.globalState = null; // this state logic is called every time the FSM is updated
+
+			this.states = new Map();
+
+		}
+
+		update() {
+
+			if ( this.globalState !== null ) {
+
+				this.globalState.execute( this.owner );
+
+			}
+
+			if ( this.currentState !== null ) {
+
+				this.currentState.execute( this.owner );
+
+			}
+
+		}
+
+		add( id, state ) {
+
+			if ( state instanceof State ) {
+
+				this.states.set( id, state );
+
+			} else {
+
+				Logger.warn( 'YUKA.StateMachine: .add() needs a parameter of type "YUKA.State".' );
+
+			}
+
+		}
+
+		remove( id ) {
+
+			this.states.delete( id );
+
+		}
+
+		get( id ) {
+
+			return this.states.get( id );
+
+		}
+
+		changeTo( id ) {
+
+			const state = this.get( id );
+
+			this._change( state );
+
+		}
+
+		revert() {
+
+			this._change( this.previousState );
+
+		}
+
+		in( id ) {
+
+			const state = this.get( id );
+
+			return ( state === this.currentState );
+
+		}
+
+		handleMessage( telegram ) {
+
+			// first see, if the current state is valid and that it can handle the message
+
+			if ( this.currentState !== null && this.currentState.onMessage( this.owner, telegram ) === true ) {
+
+				return true;
+
+			}
+
+			// if not, and if a global state has been implemented, send the message to the global state
+
+			if ( this.globalState !== null && this.globalState.onMessage( this.owner, telegram ) === true ) {
+
+				return true;
+
+			}
+
+			return false;
+
+		}
+
+		_change( state ) {
+
+			this.previousState = this.currentState;
+
+			this.currentState.exit( this.owner );
+
+			this.currentState = state;
+
+			this.currentState.enter( this.owner );
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class Goal {
+
+		constructor( owner = null ) {
+
+			this.owner = owner; // a reference to the agent that owns this instance
+			this.status = Goal.STATUS.INACTIVE;
+
+		}
+
+		addSubgoal( /* goal */ ) {
+
+			Logger.warn( 'YUKA.Goal: Unable to add goal to atomic goals.' );
+
+		}
+
+		//
+
+		activate() {} // logic to run when the goal is activated
+
+		execute() {} // logic to run each update step
+
+		terminate() {} // logic to run when the goal is satisfied
+
+		// goals can handle messages. Many don't though, so this defines a default behavior
+
+		handleMessage( /* telegram */ ) {
+
+			return false;
+
+		}
+
+		//
+
+		active() {
+
+			return this.status === Goal.STATUS.ACTIVE;
+
+		}
+
+		inactive() {
+
+			return this.status === Goal.STATUS.INACTIVE;
+
+		}
+
+		completed() {
+
+			return this.status === Goal.STATUS.COMPLETED;
+
+		}
+
+		failed() {
+
+			return this.status === Goal.STATUS.FAILED;
+
+		}
+
+		//
+
+		replanIfFailed() {
+
+			if ( this.failed() === true ) {
+
+				this.status = Goal.STATUS.INACTIVE;
+
+			}
+
+			return this;
+
+		}
+
+		activateIfInactive() {
+
+			if ( this.inactive() === true ) {
+
+				this.activate();
+
+				this.status = Goal.STATUS.ACTIVE;
+
+			}
+
+			return this;
+
+		}
+
+	}
+
+	Goal.STATUS = Object.freeze( {
+		ACTIVE: 'active', // the goal has been activated and will be processed each update step
+		INACTIVE: 'inactive', // the goal is waiting to be activated
+		COMPLETED: 'completed', // the goal has completed and will be removed on the next update
+		FAILED: 'failed' // the goal has failed and will either replan or be removed on the next update
+	} );
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class CompositeGoal extends Goal {
+
+		constructor( owner = null ) {
+
+			super( owner );
+
+			this.subgoals = new Array(); // used as a stack (LIFO)
+
+		}
+
+		// subgoal related methods
+
+		addSubgoal( goal ) {
+
+			this.subgoals.push( goal );
+
+			return this;
+
+		}
+
+		clearSubgoals() {
+
+			const subgoals = this.subgoals;
+
+			for ( let subgoal of subgoals ) {
+
+				subgoal.terminate();
+
+			}
+
+			subgoals.length = 0;
+
+			return this;
+
+		}
+
+		currentSubgoal() {
+
+			const length = this.subgoals.length;
+
+			if ( length > 0 ) {
+
+				return this.subgoals[ length - 1 ];
+
+			} else {
+
+				return null;
+
+			}
+
+		}
+
+		executeSubgoals() {
+
+			const subgoals = this.subgoals;
+
+			// remove all completed and failed goals from the back of the subgoal list
+
+			for ( let i = subgoals.length - 1; i >= 0; i -- ) {
+
+				const subgoal = subgoals[ i ];
+
+				if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
+
+					subgoal.terminate();
+					subgoals.pop();
+
+				} else {
+
+					break;
+
+				}
+
+			}
+
+			// if any subgoals remain, process the one at the back of the list
+
+			const subgoal = this.currentSubgoal();
+
+			if ( subgoal !== null ) {
+
+				subgoal.activateIfInactive();
+
+				subgoal.execute();
+
+				// if subgoal is completed but more subgoals are in the list, return 'active'
+				// status in order to keep processing the list of subgoals
+
+				if ( ( subgoal.completed() === true ) && ( subgoals.length > 1 ) ) {
+
+					return Goal.STATUS.ACTIVE;
+
+				} else {
+
+					return subgoal.status;
+
+				}
+
+			} else {
+
+				return Goal.STATUS.COMPLETED;
+
+			}
+
+		}
+
+		hasSubgoals() {
+
+			return this.subgoals.length > 0;
+
+		}
+
+		// messaging
+
+		handleMessage( telegram ) {
+
+			const subgoal = this.currentSubgoal();
+
+			if ( subgoal !== null ) {
+
+				return subgoal.handleMessage( telegram );
+
+			}
+
+			return false;
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class GoalEvaluator {
+
+		constructor( characterBias = 1 ) {
+
+			// when the desirability score for a goal has been evaluated, it is multiplied
+			// by this value. It can be used to create bots with preferences based upon
+			// their personality
+			this.characterBias = characterBias;
+
+		}
+
+		calculateDesirability( /* entity */ ) {
+
+			// returns a score between 0 and 1 representing the desirability of a goal
+
+			return 0;
+
+		}
+
+		setGoal( /* entity */ ) {}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class Think extends CompositeGoal {
+
+		constructor( owner = null ) {
+
+			super( owner );
+
+			this.evaluators = new Set();
+
+		}
+
+		activate() {
+
+			this.arbitrate();
+
+		}
+
+		execute() {
+
+			this.activateIfInactive();
+
+			const subgoalStatus = this.executeSubgoals();
+
+			if ( subgoalStatus === Goal.STATUS.COMPLETED || subgoalStatus === Goal.STATUS.FAILED ) {
+
+				this.status = Goal.STATUS.INACTIVE;
+
+			}
+
+		}
+
+		terminate() {
+
+			this.clearSubgoals();
+
+		}
+
+		addEvaluator( evaluator ) {
+
+			this.evaluators.add( evaluator );
+
+			return this;
+
+		}
+
+		removeEvaluator( evaluator ) {
+
+			this.evaluators.delete( evaluator );
+
+			return this;
+
+		}
+
+		arbitrate() {
+
+			let bestDesirabilty = - 1;
+			let bestEvaluator = null;
+
+			// try to find the best top-level goal/strategy for the entity
+
+			for ( let evaluator of this.evaluators ) {
+
+				let desirabilty = evaluator.calculateDesirability( this.owner );
+				desirabilty *= evaluator.characterBias;
+
+				if ( desirabilty >= bestDesirabilty ) {
+
+					bestDesirabilty = desirabilty;
+					bestEvaluator = evaluator;
+
+				}
+
+			}
+
+			// use the evaluator to set the respective goal
+
+			if ( bestEvaluator !== null ) {
+
+				bestEvaluator.setGoal( this.owner );
+
+			} else {
+
+				Logger.error( 'YUKA.Think: Unable to determine goal evaluator for game entity:', this.owner );
+
+			}
+
+			return this;
 
 		}
 
@@ -2047,6 +2524,20 @@
 		clone() {
 
 			return new this.constructor().copy( this );
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class Node {
+
+		constructor( index = - 1 ) {
+
+			this.index = index;
 
 		}
 
@@ -4278,150 +4769,6 @@
 	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
-	class DFS {
-
-		constructor( graph = null, source = - 1, target = - 1 ) {
-
-			this.graph = graph;
-			this.source = source;
-			this.target = target;
-			this.found = false;
-
-			this._route = new Map(); // this holds the route taken to the target
-			this._visited = new Set(); // holds the visited nodes
-
-			this._spanningTree = new Set(); // for debugging purposes
-
-		}
-
-		search() {
-
-			// create a stack(LIFO) of edges, done via an array
-
-			const stack = [];
-			const outgoingEdges = [];
-
-			// create a dummy edge and put on the stack to begin the search
-
-			const startEdge = new Edge( this.source, this.source );
-
-			stack.push( startEdge );
-
-			// while there are edges in the stack keep searching
-
-			while ( stack.length > 0 ) {
-
-				// grab the next edge and remove it from the stack
-
-				const nextEdge = stack.pop();
-
-				// make a note of the parent of the node this edge points to
-
-				this._route.set( nextEdge.to, nextEdge.from );
-
-				// and mark it visited
-
-				this._visited.add( nextEdge.to );
-
-				// expand spanning tree
-
-				if ( nextEdge !== startEdge ) {
-
-					this._spanningTree.add( nextEdge );
-
-				}
-
-				// if the target has been found the method can return success
-
-				if ( nextEdge.to === this.target ) {
-
-					this.found = true;
-
-					return this;
-
-				}
-
-				// determine outgoing edges
-
-				this.graph.getEdgesOfNode( nextEdge.to, outgoingEdges );
-
-				// push the edges leading from the node this edge points to onto the
-				// stack (provided the edge does not point to a previously visited node)
-
-				for ( let edge of outgoingEdges ) {
-
-					if ( this._visited.has( edge.to ) === false ) {
-
-						stack.push( edge );
-
-					}
-
-				}
-
-			}
-
-			this.found = false;
-
-			return this;
-
-		}
-
-		getPath() {
-
-			// array of node indices that comprise the shortest path from the source to the target
-
-			const path = [];
-
-			// just return an empty path if no path to target found or if no target has been specified
-
-			if ( this.found === false || this.target === - 1 ) return path;
-
-			// start with the target of the path
-
-			let currentNode = this.target;
-
-			path.push( currentNode );
-
-			// while the current node is not the source node keep processing
-
-			while ( currentNode !== this.source ) {
-
-				// determine the parent of the current node
-
-				currentNode = this._route.get( currentNode );
-
-				// push the new current node at the beginning of the array
-
-				path.unshift( currentNode );
-
-			}
-
-			return path;
-
-		}
-
-		getSearchTree() {
-
-			return [ ...this._spanningTree ];
-
-		}
-
-		clear() {
-
-			this.found = false;
-
-			this._route.clear();
-			this._visited.clear();
-			this._spanningTree.clear();
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	class BFS {
 
 		constructor( graph = null, source = - 1, target = - 1 ) {
@@ -4503,6 +4850,150 @@
 						// (N = number of nodes, E = number of edges)
 
 						this._visited.add( edge.to );
+
+					}
+
+				}
+
+			}
+
+			this.found = false;
+
+			return this;
+
+		}
+
+		getPath() {
+
+			// array of node indices that comprise the shortest path from the source to the target
+
+			const path = [];
+
+			// just return an empty path if no path to target found or if no target has been specified
+
+			if ( this.found === false || this.target === - 1 ) return path;
+
+			// start with the target of the path
+
+			let currentNode = this.target;
+
+			path.push( currentNode );
+
+			// while the current node is not the source node keep processing
+
+			while ( currentNode !== this.source ) {
+
+				// determine the parent of the current node
+
+				currentNode = this._route.get( currentNode );
+
+				// push the new current node at the beginning of the array
+
+				path.unshift( currentNode );
+
+			}
+
+			return path;
+
+		}
+
+		getSearchTree() {
+
+			return [ ...this._spanningTree ];
+
+		}
+
+		clear() {
+
+			this.found = false;
+
+			this._route.clear();
+			this._visited.clear();
+			this._spanningTree.clear();
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 */
+
+	class DFS {
+
+		constructor( graph = null, source = - 1, target = - 1 ) {
+
+			this.graph = graph;
+			this.source = source;
+			this.target = target;
+			this.found = false;
+
+			this._route = new Map(); // this holds the route taken to the target
+			this._visited = new Set(); // holds the visited nodes
+
+			this._spanningTree = new Set(); // for debugging purposes
+
+		}
+
+		search() {
+
+			// create a stack(LIFO) of edges, done via an array
+
+			const stack = [];
+			const outgoingEdges = [];
+
+			// create a dummy edge and put on the stack to begin the search
+
+			const startEdge = new Edge( this.source, this.source );
+
+			stack.push( startEdge );
+
+			// while there are edges in the stack keep searching
+
+			while ( stack.length > 0 ) {
+
+				// grab the next edge and remove it from the stack
+
+				const nextEdge = stack.pop();
+
+				// make a note of the parent of the node this edge points to
+
+				this._route.set( nextEdge.to, nextEdge.from );
+
+				// and mark it visited
+
+				this._visited.add( nextEdge.to );
+
+				// expand spanning tree
+
+				if ( nextEdge !== startEdge ) {
+
+					this._spanningTree.add( nextEdge );
+
+				}
+
+				// if the target has been found the method can return success
+
+				if ( nextEdge.to === this.target ) {
+
+					this.found = true;
+
+					return this;
+
+				}
+
+				// determine outgoing edges
+
+				this.graph.getEdgesOfNode( nextEdge.to, outgoingEdges );
+
+				// push the edges leading from the node this edge points to onto the
+				// stack (provided the edge does not point to a previously visited node)
+
+				for ( let edge of outgoingEdges ) {
+
+					if ( this._visited.has( edge.to ) === false ) {
+
+						stack.push( edge );
 
 					}
 
@@ -4721,6 +5212,249 @@
 	function compare$1( a, b ) {
 
 		return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Box3.js
+	 *
+	 */
+
+	const vector = new Vector3();
+
+	class AABB {
+
+		constructor( min = new Vector3(), max = new Vector3() ) {
+
+			this.min = min;
+			this.max = max;
+
+		}
+
+		set( min, max ) {
+
+			this.min = min;
+			this.max = max;
+
+			return this;
+
+		}
+
+		copy( aabb ) {
+
+			this.min.copy( aabb.min );
+			this.max.copy( aabb.max );
+
+			return this;
+
+		}
+
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		clampPoint( point, result ) {
+
+			result.copy( point ).clamp( this.min, this.max );
+
+			return this;
+
+		}
+
+		containsPoint( point ) {
+
+			return point.x < this.min.x || point.x > this.max.x ||
+				point.y < this.min.y || point.y > this.max.y ||
+				point.z < this.min.z || point.z > this.max.z ? false : true;
+
+		}
+
+		intersectsBoundingSphere( sphere ) {
+
+			// find the point on the AABB closest to the sphere center
+
+			this.clampPoint( sphere.center, vector );
+
+			// if that point is inside the sphere, the AABB and sphere intersect.
+
+			return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+		}
+
+		fromCenterAndSize( center, size ) {
+
+			vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
+
+			this.min.copy( center ).sub( vector );
+			this.max.copy( center ).add( vector );
+
+			return this;
+
+		}
+
+		equals( aabb ) {
+
+			return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
+	 *
+	 */
+
+	class BoundingSphere {
+
+		constructor( center = new Vector3(), radius = 0 ) {
+
+			this.center = center;
+			this.radius = radius;
+
+		}
+
+		set( center, radius ) {
+
+			this.center = center;
+			this.radius = radius;
+
+			return this;
+
+		}
+
+		copy( sphere ) {
+
+			this.center.copy( sphere.center );
+			this.radius = sphere.radius;
+
+			return this;
+
+		}
+
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		containsPoint( point ) {
+
+			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
+
+		}
+
+		intersectsBoundingSphere( sphere ) {
+
+			const radius = this.radius + sphere.radius;
+
+			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+		}
+
+		equals( sphere ) {
+
+			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
+
+		}
+
+	}
+
+	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 *
+	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
+	 *
+	 */
+
+	const v1$1 = new Vector3();
+
+	class Ray {
+
+		constructor( origin = new Vector3(), direction = new Vector3() ) {
+
+			this.origin = origin;
+			this.direction = direction;
+
+		}
+
+		set( origin, direction ) {
+
+			this.origin = origin;
+			this.direction = direction;
+
+			return this;
+
+		}
+
+		copy( ray ) {
+
+			this.origin.copy( ray.origin );
+			this.direction.copy( ray.direction );
+
+			return this;
+
+		}
+
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		at( t, result ) {
+
+			//t has to be zero or positive
+			return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
+
+		}
+
+		intersectSphere( sphere, result ) {
+
+			v1$1.subVectors( sphere.center, this.origin );
+			const tca = v1$1.dot( this.direction );
+			const d2 = v1$1.dot( v1$1 ) - tca * tca;
+			const radius2 = sphere.radius * sphere.radius;
+
+			if ( d2 > radius2 ) return null;
+
+			const thc = Math.sqrt( radius2 - d2 );
+
+			// t0 = first intersect point - entrance on front of sphere
+
+			const t0 = tca - thc;
+
+			// t1 = second intersect point - exit point on back of sphere
+
+			const t1 = tca + thc;
+
+			// test to see if both t0 and t1 are behind the ray - if so, return null
+
+			if ( t0 < 0 && t1 < 0 ) return null;
+
+			// test to see if t0 is behind the ray:
+			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
+			// in order to always return an intersect point that is in front of the ray.
+
+			if ( t0 < 0 ) return this.at( t1, result );
+
+			// else t0 is in front of the ray, so return the first collision point scaled by t0
+
+			return this.at( t0, result );
+
+		}
+
+		equals( ray ) {
+
+			return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
+
+		}
 
 	}
 
@@ -5392,160 +6126,6 @@
 
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
-	 *
-	 */
-
-	class BoundingSphere {
-
-		constructor( center = new Vector3(), radius = 0 ) {
-
-			this.center = center;
-			this.radius = radius;
-
-		}
-
-		set( center, radius ) {
-
-			this.center = center;
-			this.radius = radius;
-
-			return this;
-
-		}
-
-		copy( sphere ) {
-
-			this.center.copy( sphere.center );
-			this.radius = sphere.radius;
-
-			return this;
-
-		}
-
-		clone() {
-
-			return new this.constructor().copy( this );
-
-		}
-
-		containsPoint( point ) {
-
-			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
-
-		}
-
-		intersectsBoundingSphere( sphere ) {
-
-			const radius = this.radius + sphere.radius;
-
-			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
-
-		}
-
-		equals( sphere ) {
-
-			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
-	 *
-	 */
-
-	const v1$1 = new Vector3();
-
-	class Ray {
-
-		constructor( origin = new Vector3(), direction = new Vector3() ) {
-
-			this.origin = origin;
-			this.direction = direction;
-
-		}
-
-		set( origin, direction ) {
-
-			this.origin = origin;
-			this.direction = direction;
-
-			return this;
-
-		}
-
-		copy( ray ) {
-
-			this.origin.copy( ray.origin );
-			this.direction.copy( ray.direction );
-
-			return this;
-
-		}
-
-		clone() {
-
-			return new this.constructor().copy( this );
-
-		}
-
-		at( t, result ) {
-
-			//t has to be zero or positive
-			return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
-
-		}
-
-		intersectSphere( sphere, result ) {
-
-			v1$1.subVectors( sphere.center, this.origin );
-			const tca = v1$1.dot( this.direction );
-			const d2 = v1$1.dot( v1$1 ) - tca * tca;
-			const radius2 = sphere.radius * sphere.radius;
-
-			if ( d2 > radius2 ) return null;
-
-			const thc = Math.sqrt( radius2 - d2 );
-
-			// t0 = first intersect point - entrance on front of sphere
-
-			const t0 = tca - thc;
-
-			// t1 = second intersect point - exit point on back of sphere
-
-			const t1 = tca + thc;
-
-			// test to see if both t0 and t1 are behind the ray - if so, return null
-
-			if ( t0 < 0 && t1 < 0 ) return null;
-
-			// test to see if t0 is behind the ray:
-			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
-			// in order to always return an intersect point that is in front of the ray.
-
-			if ( t0 < 0 ) return this.at( t1, result );
-
-			// else t0 is in front of the ray, so return the first collision point scaled by t0
-
-			return this.at( t0, result );
-
-		}
-
-		equals( ray ) {
-
-			return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
 	const inverse = new Matrix4();
@@ -5901,95 +6481,6 @@
 
 	/**
 	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Box3.js
-	 *
-	 */
-
-	const vector = new Vector3();
-
-	class AABB {
-
-		constructor( min = new Vector3(), max = new Vector3() ) {
-
-			this.min = min;
-			this.max = max;
-
-		}
-
-		set( min, max ) {
-
-			this.min = min;
-			this.max = max;
-
-			return this;
-
-		}
-
-		copy( aabb ) {
-
-			this.min.copy( aabb.min );
-			this.max.copy( aabb.max );
-
-			return this;
-
-		}
-
-		clone() {
-
-			return new this.constructor().copy( this );
-
-		}
-
-		clampPoint( point, result ) {
-
-			result.copy( point ).clamp( this.min, this.max );
-
-			return this;
-
-		}
-
-		containsPoint( point ) {
-
-			return point.x < this.min.x || point.x > this.max.x ||
-				point.y < this.min.y || point.y > this.max.y ||
-				point.z < this.min.z || point.z > this.max.z ? false : true;
-
-		}
-
-		intersectsBoundingSphere( sphere ) {
-
-			// find the point on the AABB closest to the sphere center
-
-			this.clampPoint( sphere.center, vector );
-
-			// if that point is inside the sphere, the AABB and sphere intersect.
-
-			return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
-
-		}
-
-		fromCenterAndSize( center, size ) {
-
-			vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
-
-			this.min.copy( center ).sub( vector );
-			this.max.copy( center ).add( vector );
-
-			return this;
-
-		}
-
-		equals( aabb ) {
-
-			return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
 	 */
 
 	const boundingSphereEntity = new BoundingSphere();
@@ -6127,520 +6618,45 @@
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class State {
-
-		enter() {}
-
-		execute() {}
-
-		exit() {}
-
-		onMessage() {
-
-			return false;
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class StateMachine {
-
-		constructor( owner ) {
-
-			this.owner = owner; // a reference to the agent that owns this instance
-			this.currentState = null; // the current state of the agent
-			this.previousState = null; // a reference to the last state the agent was in
-			this.globalState = null; // this state logic is called every time the FSM is updated
-
-			this.states = new Map();
-
-		}
-
-		update() {
-
-			if ( this.globalState !== null ) {
-
-				this.globalState.execute( this.owner );
-
-			}
-
-			if ( this.currentState !== null ) {
-
-				this.currentState.execute( this.owner );
-
-			}
-
-		}
-
-		add( id, state ) {
-
-			if ( state instanceof State ) {
-
-				this.states.set( id, state );
-
-			} else {
-
-				Logger.warn( 'YUKA.StateMachine: .add() needs a parameter of type "YUKA.State".' );
-
-			}
-
-		}
-
-		remove( id ) {
-
-			this.states.delete( id );
-
-		}
-
-		get( id ) {
-
-			return this.states.get( id );
-
-		}
-
-		changeTo( id ) {
-
-			const state = this.get( id );
-
-			this._change( state );
-
-		}
-
-		revert() {
-
-			this._change( this.previousState );
-
-		}
-
-		in( id ) {
-
-			const state = this.get( id );
-
-			return ( state === this.currentState );
-
-		}
-
-		handleMessage( telegram ) {
-
-			// first see, if the current state is valid and that it can handle the message
-
-			if ( this.currentState !== null && this.currentState.onMessage( this.owner, telegram ) === true ) {
-
-				return true;
-
-			}
-
-			// if not, and if a global state has been implemented, send the message to the global state
-
-			if ( this.globalState !== null && this.globalState.onMessage( this.owner, telegram ) === true ) {
-
-				return true;
-
-			}
-
-			return false;
-
-		}
-
-		_change( state ) {
-
-			this.previousState = this.currentState;
-
-			this.currentState.exit( this.owner );
-
-			this.currentState = state;
-
-			this.currentState.enter( this.owner );
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class Goal {
-
-		constructor( owner = null ) {
-
-			this.owner = owner; // a reference to the agent that owns this instance
-			this.status = Goal.STATUS.INACTIVE;
-
-		}
-
-		addSubgoal( /* goal */ ) {
-
-			Logger.warn( 'YUKA.Goal: Unable to add goal to atomic goals.' );
-
-		}
-
-		//
-
-		activate() {} // logic to run when the goal is activated
-
-		execute() {} // logic to run each update step
-
-		terminate() {} // logic to run when the goal is satisfied
-
-		// goals can handle messages. Many don't though, so this defines a default behavior
-
-		handleMessage( /* telegram */ ) {
-
-			return false;
-
-		}
-
-		//
-
-		active() {
-
-			return this.status === Goal.STATUS.ACTIVE;
-
-		}
-
-		inactive() {
-
-			return this.status === Goal.STATUS.INACTIVE;
-
-		}
-
-		completed() {
-
-			return this.status === Goal.STATUS.COMPLETED;
-
-		}
-
-		failed() {
-
-			return this.status === Goal.STATUS.FAILED;
-
-		}
-
-		//
-
-		replanIfFailed() {
-
-			if ( this.failed() === true ) {
-
-				this.status = Goal.STATUS.INACTIVE;
-
-			}
-
-			return this;
-
-		}
-
-		activateIfInactive() {
-
-			if ( this.inactive() === true ) {
-
-				this.activate();
-
-				this.status = Goal.STATUS.ACTIVE;
-
-			}
-
-			return this;
-
-		}
-
-	}
-
-	Goal.STATUS = Object.freeze( {
-		ACTIVE: 'active', // the goal has been activated and will be processed each update step
-		INACTIVE: 'inactive', // the goal is waiting to be activated
-		COMPLETED: 'completed', // the goal has completed and will be removed on the next update
-		FAILED: 'failed' // the goal has failed and will either replan or be removed on the next update
-	} );
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class CompositeGoal extends Goal {
-
-		constructor( owner = null ) {
-
-			super( owner );
-
-			this.subgoals = new Array(); // used as a stack (LIFO)
-
-		}
-
-		// subgoal related methods
-
-		addSubgoal( goal ) {
-
-			this.subgoals.push( goal );
-
-			return this;
-
-		}
-
-		clearSubgoals() {
-
-			const subgoals = this.subgoals;
-
-			for ( let subgoal of subgoals ) {
-
-				subgoal.terminate();
-
-			}
-
-			subgoals.length = 0;
-
-			return this;
-
-		}
-
-		currentSubgoal() {
-
-			const length = this.subgoals.length;
-
-			if ( length > 0 ) {
-
-				return this.subgoals[ length - 1 ];
-
-			} else {
-
-				return null;
-
-			}
-
-		}
-
-		executeSubgoals() {
-
-			const subgoals = this.subgoals;
-
-			// remove all completed and failed goals from the back of the subgoal list
-
-			for ( let i = subgoals.length - 1; i >= 0; i -- ) {
-
-				const subgoal = subgoals[ i ];
-
-				if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
-
-					subgoal.terminate();
-					subgoals.pop();
-
-				} else {
-
-					break;
-
-				}
-
-			}
-
-			// if any subgoals remain, process the one at the back of the list
-
-			const subgoal = this.currentSubgoal();
-
-			if ( subgoal !== null ) {
-
-				subgoal.activateIfInactive();
-
-				subgoal.execute();
-
-				// if subgoal is completed but more subgoals are in the list, return 'active'
-				// status in order to keep processing the list of subgoals
-
-				if ( ( subgoal.completed() === true ) && ( subgoals.length > 1 ) ) {
-
-					return Goal.STATUS.ACTIVE;
-
-				} else {
-
-					return subgoal.status;
-
-				}
-
-			} else {
-
-				return Goal.STATUS.COMPLETED;
-
-			}
-
-		}
-
-		hasSubgoals() {
-
-			return this.subgoals.length > 0;
-
-		}
-
-		// messaging
-
-		handleMessage( telegram ) {
-
-			const subgoal = this.currentSubgoal();
-
-			if ( subgoal !== null ) {
-
-				return subgoal.handleMessage( telegram );
-
-			}
-
-			return false;
-
-		}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class GoalEvaluator {
-
-		constructor( characterBias = 1 ) {
-
-			// when the desirability score for a goal has been evaluated, it is multiplied
-			// by this value. It can be used to create bots with preferences based upon
-			// their personality
-			this.characterBias = characterBias;
-
-		}
-
-		calculateDesirability( /* entity */ ) {
-
-			// returns a score between 0 and 1 representing the desirability of a goal
-
-			return 0;
-
-		}
-
-		setGoal( /* entity */ ) {}
-
-	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
-	class Think extends CompositeGoal {
-
-		constructor( owner = null ) {
-
-			super( owner );
-
-			this.evaluators = new Set();
-
-		}
-
-		activate() {
-
-			this.arbitrate();
-
-		}
-
-		execute() {
-
-			this.activateIfInactive();
-
-			const subgoalStatus = this.executeSubgoals();
-
-			if ( subgoalStatus === Goal.STATUS.COMPLETED || subgoalStatus === Goal.STATUS.FAILED ) {
-
-				this.status = Goal.STATUS.INACTIVE;
-
-			}
-
-		}
-
-		terminate() {
-
-			this.clearSubgoals();
-
-		}
-
-		addEvaluator( evaluator ) {
-
-			this.evaluators.add( evaluator );
-
-			return this;
-
-		}
-
-		removeEvaluator( evaluator ) {
-
-			this.evaluators.delete( evaluator );
-
-			return this;
-
-		}
-
-		arbitrate() {
-
-			let bestDesirabilty = - 1;
-			let bestEvaluator = null;
-
-			// try to find the best top-level goal/strategy for the entity
-
-			for ( let evaluator of this.evaluators ) {
-
-				let desirabilty = evaluator.calculateDesirability( this.owner );
-				desirabilty *= evaluator.characterBias;
-
-				if ( desirabilty >= bestDesirabilty ) {
-
-					bestDesirabilty = desirabilty;
-					bestEvaluator = evaluator;
-
-				}
-
-			}
-
-			// use the evaluator to set the respective goal
-
-			if ( bestEvaluator !== null ) {
-
-				bestEvaluator.setGoal( this.owner );
-
-			} else {
-
-				Logger.error( 'YUKA.Think: Unable to determine goal evaluator for game entity:', this.owner );
-
-			}
-
-			return this;
-
-		}
-
-	}
-
 	exports.EntityManager = EntityManager;
 	exports.GameEntity = GameEntity;
 	exports.Logger = Logger;
 	exports.MessageDispatcher = MessageDispatcher;
 	exports.MovingEntity = MovingEntity;
 	exports.Regulator = Regulator;
-	exports.Telegram = Telegram;
 	exports.Time = Time;
-	exports.Node = Node;
+	exports.Telegram = Telegram;
+	exports.State = State;
+	exports.StateMachine = StateMachine;
+	exports.CompositeGoal = CompositeGoal;
+	exports.Goal = Goal;
+	exports.GoalEvaluator = GoalEvaluator;
+	exports.Think = Think;
 	exports.Edge = Edge;
+	exports.Node = Node;
 	exports.Graph = Graph;
 	exports.GraphUtils = GraphUtils;
 	exports.PriorityQueue = PriorityQueue;
-	exports.NavNode = NavNode;
 	exports.NavEdge = NavEdge;
+	exports.NavNode = NavNode;
 	exports.HalfEdge = HalfEdge;
 	exports.NavMesh = NavMesh;
 	exports.NavMeshLoader = NavMeshLoader;
 	exports.Polygon = Polygon;
-	exports.DFS = DFS;
-	exports.BFS = BFS;
-	exports.Dijkstra = Dijkstra;
 	exports.AStar = AStar;
+	exports.BFS = BFS;
+	exports.DFS = DFS;
+	exports.Dijkstra = Dijkstra;
+	exports.AABB = AABB;
+	exports.BoundingSphere = BoundingSphere;
+	exports.LineSegment = LineSegment;
+	exports.Math = _Math;
+	exports.Matrix3 = Matrix3;
+	exports.Matrix4 = Matrix4;
+	exports.Plane = Plane;
+	exports.Quaternion = Quaternion;
+	exports.Ray = Ray;
+	exports.Vector3 = Vector3;
 	exports.Path = Path;
 	exports.SteeringBehavior = SteeringBehavior;
 	exports.SteeringManager = SteeringManager;
@@ -6661,22 +6677,6 @@
 	exports.SphericalTriggerRegion = SphericalTriggerRegion;
 	exports.TriggerRegion = TriggerRegion;
 	exports.Trigger = Trigger;
-	exports.State = State;
-	exports.StateMachine = StateMachine;
-	exports.Goal = Goal;
-	exports.CompositeGoal = CompositeGoal;
-	exports.GoalEvaluator = GoalEvaluator;
-	exports.Think = Think;
-	exports.AABB = AABB;
-	exports.BoundingSphere = BoundingSphere;
-	exports.LineSegment = LineSegment;
-	exports.Math = _Math;
-	exports.Matrix3 = Matrix3;
-	exports.Matrix4 = Matrix4;
-	exports.Plane = Plane;
-	exports.Quaternion = Quaternion;
-	exports.Ray = Ray;
-	exports.Vector3 = Vector3;
 	exports.HeuristicPolicyEuclid = HeuristicPolicyEuclid;
 	exports.HeuristicPolicyEuclidSquared = HeuristicPolicyEuclidSquared;
 	exports.HeuristicPolicyManhatten = HeuristicPolicyManhatten;

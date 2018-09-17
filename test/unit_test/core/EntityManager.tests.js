@@ -22,7 +22,7 @@ describe( 'EntityManager', function () {
 			expect( manager ).to.have.a.property( 'entities' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( 'triggers' ).that.is.a( 'set' );
 			expect( manager ).to.have.a.property( '_started' ).that.is.a( 'set' );
-			expect( manager ).to.have.a.property( 'messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
+			expect( manager ).to.have.a.property( '_messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
 
 		} );
 
@@ -121,14 +121,14 @@ describe( 'EntityManager', function () {
 			manager.entities.set( entity.id, entity );
 			manager.triggers.add( trigger );
 			manager._started.add( entity );
-			manager.messageDispatcher.delayedTelegrams.push( telegram );
+			manager._messageDispatcher.delayedTelegrams.push( telegram );
 
 			manager.clear();
 
 			expect( manager.entities.size ).to.equal( 0 );
 			expect( manager.triggers.size ).to.equal( 0 );
 			expect( manager._started.size ).to.equal( 0 );
-			expect( manager.messageDispatcher.delayedTelegrams ).to.have.lengthOf( 0 );
+			expect( manager._messageDispatcher.delayedTelegrams ).to.have.lengthOf( 0 );
 
 		} );
 
