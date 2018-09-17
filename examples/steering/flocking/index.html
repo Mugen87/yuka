@@ -40,11 +40,6 @@
 			camera.position.set( 0, 50, 0 );
 			camera.lookAt( scene.position );
 
-			// game setup
-
-			entityManager = new YUKA.EntityManager();
-			time = new YUKA.Time();
-
 			//
 
 			const vehicleGeometry = new THREE.ConeBufferGeometry( 0.1, 0.5, 8 );
@@ -55,6 +50,9 @@
 			scene.add( grid );
 
 			// game setup
+
+			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
 
 			const alignmentBehavior = new YUKA.AlignmentBehavior();
 			const cohesionBehavior = new YUKA.CohesionBehavior();
