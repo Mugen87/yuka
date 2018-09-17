@@ -205,7 +205,7 @@ class EntityManager {
 
 	getEntityByName( name ) {
 
-		for ( let entity of this.entities.values() ) {
+		for ( const entity of this.entities.values() ) {
 
 			if ( entity.name === name ) return entity;
 
@@ -219,7 +219,7 @@ class EntityManager {
 
 		// update entities
 
-		for ( let entity of this.entities.values() ) {
+		for ( const entity of this.entities.values() ) {
 
 			this.updateEntity( entity, delta );
 
@@ -227,7 +227,7 @@ class EntityManager {
 
 		// update triggers
 
-		for ( let trigger of this.triggers.values() ) {
+		for ( const trigger of this.triggers ) {
 
 			this.updateTrigger( trigger, delta );
 
@@ -283,7 +283,7 @@ class EntityManager {
 			// this approach is computationally expensive since we iterate over all entities -> O(n²)
 			// use an optional spatial index to improve runtime complexity
 
-			for ( let candidate of this.entities.values() ) {
+			for ( const candidate of this.entities.values() ) {
 
 				if ( entity !== candidate ) {
 
@@ -309,7 +309,7 @@ class EntityManager {
 
 			trigger.update( delta );
 
-			for ( let entity of this.entities.values() ) {
+			for ( const entity of this.entities.values() ) {
 
 				if ( entity.active === true ) {
 
@@ -2263,7 +2263,7 @@ class CompositeGoal extends Goal {
 
 		const subgoals = this.subgoals;
 
-		for ( let subgoal of subgoals ) {
+		for ( const subgoal of subgoals ) {
 
 			subgoal.terminate();
 
@@ -2459,7 +2459,7 @@ class Think extends CompositeGoal {
 
 		// try to find the best top-level goal/strategy for the entity
 
-		for ( let evaluator of this.evaluators ) {
+		for ( const evaluator of this.evaluators ) {
 
 			let desirabilty = evaluator.calculateDesirability( this.owner );
 			desirabilty *= evaluator.characterBias;
@@ -2598,7 +2598,7 @@ class Graph {
 
 			const edges = this._edges.get( from );
 
-			for ( let edge of edges ) {
+			for ( const edge of edges ) {
 
 				if ( edge.to === to ) {
 
@@ -2648,7 +2648,7 @@ class Graph {
 
 		let count = 0;
 
-		for ( let edges of this._edges.values() ) {
+		for ( const edges of this._edges.values() ) {
 
 			count += edges.size;
 
@@ -2668,11 +2668,11 @@ class Graph {
 
 			const edges = this._edges.get( node.index );
 
-			for ( let edge of edges ) {
+			for ( const edge of edges ) {
 
 				const edgesOfNeighbor = this._edges.get( edge.to );
 
-				for ( let edgeNeighbor of edgesOfNeighbor ) {
+				for ( const edgeNeighbor of edgesOfNeighbor ) {
 
 					if ( edgeNeighbor.to === node.index ) {
 
@@ -2689,9 +2689,9 @@ class Graph {
 
 			// if the graph is directed, remove the edges the slow way
 
-			for ( let edges of this._edges.values() ) {
+			for ( const edges of this._edges.values() ) {
 
-				for ( let edge of edges ) {
+				for ( const edge of edges ) {
 
 					if ( ! this.hasNode( edge.to ) || ! this.hasNode( edge.from ) ) {
 
@@ -2729,7 +2729,7 @@ class Graph {
 
 				const edges = this._edges.get( edge.to );
 
-				for ( let e of edges ) {
+				for ( const e of edges ) {
 
 					if ( e.to === edge.from ) {
 
@@ -2760,7 +2760,7 @@ class Graph {
 
 			const edges = this._edges.get( from );
 
-			for ( let e of edges ) {
+			for ( const e of edges ) {
 
 				if ( e.to === to ) {
 
@@ -3153,7 +3153,7 @@ class AStar {
 
 	search() {
 
-		const outgoingEdges = [];
+		const outgoingEdges = new Array();
 		const pQueue = new PriorityQueue( compare );
 
 		pQueue.push( {
@@ -3195,7 +3195,7 @@ class AStar {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( let edge of outgoingEdges ) {
+			for ( const edge of outgoingEdges ) {
 
 				// A* cost formula : F = G + H
 
@@ -3242,7 +3242,7 @@ class AStar {
 
 		// array of node indices that comprise the shortest path from the source to the target
 
-		const path = [];
+		const path = new Array();
 
 		// just return an empty path if no path to target found or if no target has been specified
 
@@ -3415,12 +3415,12 @@ class NavMesh {
 
 		//
 
-		const initialEdgeList = [];
-		const sortedEdgeList = [];
+		const initialEdgeList = new Array();
+		const sortedEdgeList = new Array();
 
 		// setup list with all edges
 
-		for ( let polygon of polygons ) {
+		for ( const polygon of polygons ) {
 
 			let edge = polygon.edge;
 
@@ -3509,7 +3509,7 @@ class NavMesh {
 		let closesNodeIndex = null;
 		let minDistance = Infinity;
 
-		const nodes = [];
+		const nodes = new Array();
 
 		graph.getNodes( nodes );
 
@@ -3598,7 +3598,7 @@ class NavMesh {
 
 		const regions = this.regions;
 
-		for ( let region of regions ) {
+		for ( const region of regions ) {
 
 			if ( region.contains( point, epsilon ) === true ) {
 
@@ -3619,7 +3619,7 @@ class NavMesh {
 		let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
 		let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
 
-		const path = [];
+		const path = new Array();
 
 		if ( fromRegion === null || toRegion === null ) {
 
@@ -3837,7 +3837,7 @@ class NavMesh {
 
 		// process edges from longest to shortest
 
-		for ( let entry of edgeList ) {
+		for ( const entry of edgeList ) {
 
 			let candidate = entry.edge;
 
@@ -4135,7 +4135,7 @@ class Polygon {
 
 		// create edges from points (assuming CCW order)
 
-		const edges = [];
+		const edges = new Array();
 
 		if ( points.length < 3 ) {
 
@@ -4449,8 +4449,8 @@ class Parser {
 		const index = data.index;
 		const position = data.position;
 
-		const vertices = [];
-		const polygons = [];
+		const vertices = new Array();
+		const polygons = new Array();
 
 		// vertices
 
@@ -4783,8 +4783,8 @@ class BFS {
 
 		// create a queue(FIFO) of edges, done via an array
 
-		const queue = [];
-		const outgoingEdges = [];
+		const queue = new Array();
+		const outgoingEdges = new Array();
 
 		// create a dummy edge and put on the queue to begin the search
 
@@ -4833,7 +4833,7 @@ class BFS {
 			// push the edges leading from the node this edge points to onto the
 			// queue (provided the edge does not point to a previously visited node)
 
-			for ( let edge of outgoingEdges ) {
+			for ( const edge of outgoingEdges ) {
 
 				if ( this._visited.has( edge.to ) === false ) {
 
@@ -4861,7 +4861,7 @@ class BFS {
 
 		// array of node indices that comprise the shortest path from the source to the target
 
-		const path = [];
+		const path = new Array();
 
 		// just return an empty path if no path to target found or if no target has been specified
 
@@ -4933,8 +4933,8 @@ class DFS {
 
 		// create a stack(LIFO) of edges, done via an array
 
-		const stack = [];
-		const outgoingEdges = [];
+		const stack = new Array();
+		const outgoingEdges = new Array();
 
 		// create a dummy edge and put on the stack to begin the search
 
@@ -4983,7 +4983,7 @@ class DFS {
 			// push the edges leading from the node this edge points to onto the
 			// stack (provided the edge does not point to a previously visited node)
 
-			for ( let edge of outgoingEdges ) {
+			for ( const edge of outgoingEdges ) {
 
 				if ( this._visited.has( edge.to ) === false ) {
 
@@ -5005,7 +5005,7 @@ class DFS {
 
 		// array of node indices that comprise the shortest path from the source to the target
 
-		const path = [];
+		const path = new Array();
 
 		// just return an empty path if no path to target found or if no target has been specified
 
@@ -5074,7 +5074,7 @@ class Dijkstra {
 
 	search() {
 
-		const outgoingEdges = [];
+		const outgoingEdges = new Array();
 		const pQueue = new PriorityQueue( compare$1 );
 
 		pQueue.push( {
@@ -5116,7 +5116,7 @@ class Dijkstra {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( let edge of outgoingEdges ) {
+			for ( const edge of outgoingEdges ) {
 
 				// the total cost to the node this edge points to is the cost to the
 				// current node plus the cost of the edge connecting them.
@@ -5154,7 +5154,7 @@ class Dijkstra {
 
 		// array of node indices that comprise the shortest path from the source to the target
 
-		const path = [];
+		const path = new Array();
 
 		// just return an empty path if no path to target found or if no target has been specified
 
@@ -5510,7 +5510,7 @@ class CellSpacePartitioning {
 
 	constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
-		this.cells = [];
+		this.cells = new Array();
 
 		this.width = width;
 		this.height = height;
@@ -5657,7 +5657,7 @@ class Path {
 	constructor() {
 
 		this.loop = false;
-		this._waypoints = [];
+		this._waypoints = new Array();
 		this._index = 0;
 
 	}
@@ -5826,7 +5826,7 @@ class SteeringManager {
 
 		// calculate for each behavior the respective force
 
-		for ( let behavior of this.behaviors ) {
+		for ( const behavior of this.behaviors ) {
 
 			if ( behavior.active === true ) {
 
@@ -5938,7 +5938,7 @@ class AlignmentBehavior extends SteeringBehavior {
 
 		// iterate over all neighbors to calculate the average direction vector
 
-		for ( let neighbor of neighbors ) {
+		for ( const neighbor of neighbors ) {
 
 			neighbor.getDirection( direction );
 
@@ -6076,7 +6076,7 @@ class CohesionBehavior extends SteeringBehavior {
 
 		// iterate over all neighbors to calculate the center of mass
 
-		for ( let neighbor of neighbors ) {
+		for ( const neighbor of neighbors ) {
 
 			centerOfMass.add( neighbor.position );
 
@@ -6370,7 +6370,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		inverse.getInverse( vehicle.worldMatrix );
 
-		for ( let obstacle of obstacles ) {
+		for ( const obstacle of obstacles ) {
 
 			if ( obstacle === vehicle ) continue;
 
@@ -6556,7 +6556,7 @@ class SeparationBehavior extends SteeringBehavior {
 
 		const neighbors = vehicle.neighbors;
 
-		for ( let neighbor of neighbors ) {
+		for ( const neighbor of neighbors ) {
 
 			toAgent.subVectors( vehicle.position, neighbor.position );
 

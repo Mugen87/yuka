@@ -88,7 +88,7 @@ class SteeringManager {
 
 		// calculate for each behavior the respective force
 
-		for ( let behavior of this.behaviors ) {
+		for ( const behavior of this.behaviors ) {
 
 			if ( behavior.active === true ) {
 

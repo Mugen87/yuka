@@ -24,7 +24,7 @@ class AlignmentBehavior extends SteeringBehavior {
 
 		// iterate over all neighbors to calculate the average direction vector
 
-		for ( let neighbor of neighbors ) {
+		for ( const neighbor of neighbors ) {
 
 			neighbor.getDirection( direction );
 

@@ -72,7 +72,7 @@ class EntityManager {
 
 	getEntityByName( name ) {
 
-		for ( let entity of this.entities.values() ) {
+		for ( const entity of this.entities.values() ) {
 
 			if ( entity.name === name ) return entity;
 
@@ -86,7 +86,7 @@ class EntityManager {
 
 		// update entities
 
-		for ( let entity of this.entities.values() ) {
+		for ( const entity of this.entities.values() ) {
 
 			this.updateEntity( entity, delta );
 
@@ -94,7 +94,7 @@ class EntityManager {
 
 		// update triggers
 
-		for ( let trigger of this.triggers.values() ) {
+		for ( const trigger of this.triggers ) {
 
 			this.updateTrigger( trigger, delta );
 
@@ -150,7 +150,7 @@ class EntityManager {
 			// this approach is computationally expensive since we iterate over all entities -> O(n²)
 			// use an optional spatial index to improve runtime complexity
 
-			for ( let candidate of this.entities.values() ) {
+			for ( const candidate of this.entities.values() ) {
 
 				if ( entity !== candidate ) {
 
@@ -176,7 +176,7 @@ class EntityManager {
 
 			trigger.update( delta );
 
-			for ( let entity of this.entities.values() ) {
+			for ( const entity of this.entities.values() ) {
 
 				if ( entity.active === true ) {
 

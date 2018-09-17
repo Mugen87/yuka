@@ -61,7 +61,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		inverse.getInverse( vehicle.worldMatrix );
 
-		for ( let obstacle of obstacles ) {
+		for ( const obstacle of obstacles ) {
 
 			if ( obstacle === vehicle ) continue;
 

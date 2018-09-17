@@ -59,7 +59,7 @@ class Graph {
 
 			const edges = this._edges.get( from );
 
-			for ( let edge of edges ) {
+			for ( const edge of edges ) {
 
 				if ( edge.to === to ) {
 
@@ -109,7 +109,7 @@ class Graph {
 
 		let count = 0;
 
-		for ( let edges of this._edges.values() ) {
+		for ( const edges of this._edges.values() ) {
 
 			count += edges.size;
 
@@ -129,11 +129,11 @@ class Graph {
 
 			const edges = this._edges.get( node.index );
 
-			for ( let edge of edges ) {
+			for ( const edge of edges ) {
 
 				const edgesOfNeighbor = this._edges.get( edge.to );
 
-				for ( let edgeNeighbor of edgesOfNeighbor ) {
+				for ( const edgeNeighbor of edgesOfNeighbor ) {
 
 					if ( edgeNeighbor.to === node.index ) {
 
@@ -150,9 +150,9 @@ class Graph {
 
 			// if the graph is directed, remove the edges the slow way
 
-			for ( let edges of this._edges.values() ) {
+			for ( const edges of this._edges.values() ) {
 
-				for ( let edge of edges ) {
+				for ( const edge of edges ) {
 
 					if ( ! this.hasNode( edge.to ) || ! this.hasNode( edge.from ) ) {
 
@@ -190,7 +190,7 @@ class Graph {
 
 				const edges = this._edges.get( edge.to );
 
-				for ( let e of edges ) {
+				for ( const e of edges ) {
 
 					if ( e.to === edge.from ) {
 
@@ -221,7 +221,7 @@ class Graph {
 
 			const edges = this._edges.get( from );
 
-			for ( let e of edges ) {
+			for ( const e of edges ) {
 
 				if ( e.to === to ) {
 

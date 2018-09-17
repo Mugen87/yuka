@@ -24,8 +24,8 @@ class DFS {
 
 		// create a stack(LIFO) of edges, done via an array
 
-		const stack = [];
-		const outgoingEdges = [];
+		const stack = new Array();
+		const outgoingEdges = new Array();
 
 		// create a dummy edge and put on the stack to begin the search
 
@@ -74,7 +74,7 @@ class DFS {
 			// push the edges leading from the node this edge points to onto the
 			// stack (provided the edge does not point to a previously visited node)
 
-			for ( let edge of outgoingEdges ) {
+			for ( const edge of outgoingEdges ) {
 
 				if ( this._visited.has( edge.to ) === false ) {
 
@@ -96,7 +96,7 @@ class DFS {
 
 		// array of node indices that comprise the shortest path from the source to the target
 
-		const path = [];
+		const path = new Array();
 
 		// just return an empty path if no path to target found or if no target has been specified
 

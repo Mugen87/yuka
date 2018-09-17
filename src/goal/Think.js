@@ -65,7 +65,7 @@ class Think extends CompositeGoal {
 
 		// try to find the best top-level goal/strategy for the entity
 
-		for ( let evaluator of this.evaluators ) {
+		for ( const evaluator of this.evaluators ) {
 
 			let desirabilty = evaluator.calculateDesirability( this.owner );
 			desirabilty *= evaluator.characterBias;

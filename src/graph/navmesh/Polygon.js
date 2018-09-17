@@ -21,7 +21,7 @@ class Polygon {
 
 		// create edges from points (assuming CCW order)
 
-		const edges = [];
+		const edges = new Array();
 
 		if ( points.length < 3 ) {
 

@@ -36,12 +36,12 @@ class NavMesh {
 
 		//
 
-		const initialEdgeList = [];
-		const sortedEdgeList = [];
+		const initialEdgeList = new Array();
+		const sortedEdgeList = new Array();
 
 		// setup list with all edges
 
-		for ( let polygon of polygons ) {
+		for ( const polygon of polygons ) {
 
 			let edge = polygon.edge;
 
@@ -130,7 +130,7 @@ class NavMesh {
 		let closesNodeIndex = null;
 		let minDistance = Infinity;
 
-		const nodes = [];
+		const nodes = new Array();
 
 		graph.getNodes( nodes );
 
@@ -219,7 +219,7 @@ class NavMesh {
 
 		const regions = this.regions;
 
-		for ( let region of regions ) {
+		for ( const region of regions ) {
 
 			if ( region.contains( point, epsilon ) === true ) {
 
@@ -240,7 +240,7 @@ class NavMesh {
 		let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
 		let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
 
-		const path = [];
+		const path = new Array();
 
 		if ( fromRegion === null || toRegion === null ) {
 
@@ -458,7 +458,7 @@ class NavMesh {
 
 		// process edges from longest to shortest
 
-		for ( let entry of edgeList ) {
+		for ( const entry of edgeList ) {
 
 			let candidate = entry.edge;
 

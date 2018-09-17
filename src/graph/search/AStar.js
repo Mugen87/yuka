@@ -23,7 +23,7 @@ class AStar {
 
 	search() {
 
-		const outgoingEdges = [];
+		const outgoingEdges = new Array();
 		const pQueue = new PriorityQueue( compare );
 
 		pQueue.push( {
@@ -65,7 +65,7 @@ class AStar {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( let edge of outgoingEdges ) {
+			for ( const edge of outgoingEdges ) {
 
 				// A* cost formula : F = G + H
 
@@ -112,7 +112,7 @@ class AStar {
 
 		// array of node indices that comprise the shortest path from the source to the target
 
-		const path = [];
+		const path = new Array();
 
 		// just return an empty path if no path to target found or if no target has been specified
 

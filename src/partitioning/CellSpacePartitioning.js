@@ -13,7 +13,7 @@ class CellSpacePartitioning {
 
 	constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
-		this.cells = [];
+		this.cells = new Array();
 
 		this.width = width;
 		this.height = height;

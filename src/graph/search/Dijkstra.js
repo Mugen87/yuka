@@ -21,7 +21,7 @@ class Dijkstra {
 
 	search() {
 
-		const outgoingEdges = [];
+		const outgoingEdges = new Array();
 		const pQueue = new PriorityQueue( compare );
 
 		pQueue.push( {
@@ -63,7 +63,7 @@ class Dijkstra {
 
 			this.graph.getEdgesOfNode( nextNodeIndex, outgoingEdges );
 
-			for ( let edge of outgoingEdges ) {
+			for ( const edge of outgoingEdges ) {
 
 				// the total cost to the node this edge points to is the cost to the
 				// current node plus the cost of the edge connecting them.
@@ -101,7 +101,7 @@ class Dijkstra {
 
 		// array of node indices that comprise the shortest path from the source to the target
 
-		const path = [];
+		const path = new Array();
 
 		// just return an empty path if no path to target found or if no target has been specified
 

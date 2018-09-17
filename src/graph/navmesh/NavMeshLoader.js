@@ -134,8 +134,8 @@ class Parser {
 		const index = data.index;
 		const position = data.position;
 
-		const vertices = [];
-		const polygons = [];
+		const vertices = new Array();
+		const polygons = new Array();
 
 		// vertices
 

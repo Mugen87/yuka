@@ -7,7 +7,7 @@ class Path {
 	constructor() {
 
 		this.loop = false;
-		this._waypoints = [];
+		this._waypoints = new Array();
 		this._index = 0;
 
 	}
