@@ -337,7 +337,7 @@ class EntityManager {
 
 				const candidate = candidates[ i ];
 
-				if ( entity !== candidate ) {
+				if ( entity !== candidate && candidate.active === true ) {
 
 					const distanceSq = entity.position.squaredDistanceTo( candidate.position );
 

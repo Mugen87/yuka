@@ -268,8 +268,25 @@ describe( 'EntityManager', function () {
 			manager.updateNeighborhood( entity1 );
 
 			expect( entity1.neighbors ).to.include( entity2 );
-			expect( entity1.neighbors ).to.have.lengthOf( 1 );
-			expect( entity2.neighbors ).to.have.lengthOf( 0 );
+			expect( entity2.neighbors ).to.be.empty;
+
+		} );
+
+		it( 'should not add inactive game entities to the neighbors', function () {
+
+			const manager = new EntityManager();
+
+			const entity1 = new GameEntity();
+			entity1.updateNeighborhood = true;
+			const entity2 = new GameEntity();
+			entity2.active = false;
+
+			manager.add( entity1 );
+			manager.add( entity2 );
+
+			manager.updateNeighborhood( entity1 );
+
+			expect( entity1.neighbors ).to.not.include( entity2 );
 
 		} );
 
