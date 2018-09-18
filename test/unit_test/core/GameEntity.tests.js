@@ -27,7 +27,7 @@ describe( 'GameEntity', function () {
 
 			expect( entity ).to.have.a.property( 'neighbors' ).that.is.an( 'array' );
 			expect( entity ).to.have.a.property( 'neighborhoodRadius' ).that.is.equal( 1 );
-			expect( entity ).to.have.a.property( 'updateNeighborhood' ).that.is.equal( false );
+			expect( entity ).to.have.a.property( 'updateNeighborhood' ).that.is.false;
 
 			expect( entity ).to.have.a.property( 'position' ).that.is.an.instanceof( Vector3 );
 			expect( entity ).to.have.a.property( 'rotation' ).that.is.an.instanceof( Quaternion );

@@ -88,7 +88,7 @@ describe( 'Path', function () {
 
 			path._index = 2;
 
-			expect( path.finished() ).to.equal( true );
+			expect( path.finished() ).to.be.true;
 
 		} );
 
@@ -103,7 +103,7 @@ describe( 'Path', function () {
 
 			path._index = 2;
 
-			expect( path.finished() ).to.equal( false );
+			expect( path.finished() ).to.be.false;
 
 		} );
 

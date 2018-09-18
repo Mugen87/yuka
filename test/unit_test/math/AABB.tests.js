@@ -110,7 +110,7 @@ describe( 'AABB', function () {
 			const aabb = new AABB( zero3, one3 );
 			const point = new Vector3( 0.5, 0.5, 0.5 );
 
-			expect( aabb.containsPoint( point ) ).to.equal( true );
+			expect( aabb.containsPoint( point ) ).to.be.true;
 
 		} );
 
@@ -119,7 +119,7 @@ describe( 'AABB', function () {
 			const aabb = new AABB( zero3, one3 );
 			const point = new Vector3( 0.5, 0.5, 1 );
 
-			expect( aabb.containsPoint( point ) ).to.equal( true );
+			expect( aabb.containsPoint( point ) ).to.be.true;
 
 		} );
 
@@ -128,7 +128,7 @@ describe( 'AABB', function () {
 			const aabb = new AABB( zero3, one3 );
 			const point = new Vector3( 0.5, 0.5, 2 );
 
-			expect( aabb.containsPoint( point ) ).to.equal( false );
+			expect( aabb.containsPoint( point ) ).to.be.false;
 
 		} );
 
@@ -141,7 +141,7 @@ describe( 'AABB', function () {
 			const aabb1 = new AABB( zero3, one3 );
 			const aabb2 = new AABB( new Vector3( 0.5, 0.5, 0.5 ), two3 );
 
-			expect( aabb1.intersectsAABB( aabb2 ) ).to.equal( true );
+			expect( aabb1.intersectsAABB( aabb2 ) ).to.be.true;
 
 		} );
 
@@ -150,7 +150,7 @@ describe( 'AABB', function () {
 			const aabb1 = new AABB( zero3, one3 );
 			const aabb2 = new AABB( one3, two3 );
 
-			expect( aabb1.intersectsAABB( aabb2 ) ).to.equal( true );
+			expect( aabb1.intersectsAABB( aabb2 ) ).to.be.true;
 
 		} );
 
@@ -159,7 +159,7 @@ describe( 'AABB', function () {
 			const aabb1 = new AABB( zero3, one3 );
 			const aabb2 = new AABB( two3, new Vector3( 3, 3, 3 ) );
 
-			expect( aabb1.intersectsAABB( aabb2 ) ).to.equal( false );
+			expect( aabb1.intersectsAABB( aabb2 ) ).to.be.false;
 
 		} );
 
@@ -172,7 +172,7 @@ describe( 'AABB', function () {
 			const aabb = new AABB( zero3, one3 );
 			const sphere = new BoundingSphere( one3, 1 );
 
-			expect( aabb.intersectsBoundingSphere( sphere ) ).to.equal( true );
+			expect( aabb.intersectsBoundingSphere( sphere ) ).to.be.true;
 
 		} );
 
@@ -181,7 +181,7 @@ describe( 'AABB', function () {
 			const aabb = new AABB( zero3, one3 );
 			const sphere = new BoundingSphere( new Vector3( 0.5, 0.5, 1.5 ), 0.5 );
 
-			expect( aabb.intersectsBoundingSphere( sphere ) ).to.equal( true );
+			expect( aabb.intersectsBoundingSphere( sphere ) ).to.be.true;
 
 		} );
 
@@ -190,7 +190,7 @@ describe( 'AABB', function () {
 			const aabb = new AABB( zero3, one3 );
 			const sphere = new BoundingSphere( new Vector3( 0.5, 0.5, 1.5 ), 0.4 );
 
-			expect( aabb.intersectsBoundingSphere( sphere ) ).to.equal( false );
+			expect( aabb.intersectsBoundingSphere( sphere ) ).to.be.false;
 
 		} );
 
@@ -219,8 +219,8 @@ describe( 'AABB', function () {
 			const aabb2 = new AABB( new Vector3( 1, 1, 1 ), two3 );
 			const aabb3 = new AABB( zero3, one3 );
 
-			expect( aabb1.equals( aabb2 ) ).to.equal( true );
-			expect( aabb1.equals( aabb3 ) ).to.equal( false );
+			expect( aabb1.equals( aabb2 ) ).to.be.true;
+			expect( aabb1.equals( aabb3 ) ).to.be.false;
 
 		} );
 

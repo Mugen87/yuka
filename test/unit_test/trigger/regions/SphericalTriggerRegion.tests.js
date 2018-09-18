@@ -100,7 +100,7 @@ describe( 'SphericalTriggerRegion', function () {
 
 			const region = new SphericalTriggerRegion( new Vector3( 1, 0, 0 ), 1 );
 
-			expect( region.touching( entity ) ).to.equal( true );
+			expect( region.touching( entity ) ).to.be.true;
 
 		} );
 
@@ -111,7 +111,7 @@ describe( 'SphericalTriggerRegion', function () {
 
 			const region = new SphericalTriggerRegion( new Vector3( 3, 0, 0 ), 1 );
 
-			expect( region.touching( entity ) ).to.equal( false );
+			expect( region.touching( entity ) ).to.be.false;
 
 		} );
 

@@ -115,7 +115,7 @@ describe( 'Goal', function () {
 		it( 'should return "false" to indicate no message handling', function () {
 
 			const goal = new Goal();
-			expect( goal.handleMessage() ).to.equal( false );
+			expect( goal.handleMessage() ).to.be.false;
 
 		} );
 

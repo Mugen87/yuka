@@ -21,7 +21,7 @@ describe( 'TriggerRegion', function () {
 		it( 'should return "false" to indicate no contact with a game entity', function () {
 
 			const region = new TriggerRegion();
-			expect( region.touching() ).to.equal( false );
+			expect( region.touching() ).to.be.false;
 
 		} );
 

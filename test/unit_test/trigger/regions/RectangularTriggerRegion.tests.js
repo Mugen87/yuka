@@ -116,7 +116,7 @@ describe( 'RectangularTriggerRegion', function () {
 
 			const region = new RectangularTriggerRegion( new Vector3( 0, 0, 0 ), new Vector3( 1, 1, 1 ) );
 
-			expect( region.touching( entity ) ).to.equal( true );
+			expect( region.touching( entity ) ).to.be.true;
 
 		} );
 
@@ -128,7 +128,7 @@ describe( 'RectangularTriggerRegion', function () {
 
 			const region = new RectangularTriggerRegion( new Vector3( 0, 0, 0 ), new Vector3( 1, 1, 1 ) );
 
-			expect( region.touching( entity ) ).to.equal( false );
+			expect( region.touching( entity ) ).to.be.false;
 
 		} );
 

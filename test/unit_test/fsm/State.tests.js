@@ -57,7 +57,7 @@ describe( 'State', function () {
 		it( 'should return "false" to indicate no message handling', function () {
 
 			const state = new State();
-			expect( state.onMessage() ).to.equal( false );
+			expect( state.onMessage() ).to.be.false;
 
 		} );
 
