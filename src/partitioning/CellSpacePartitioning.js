@@ -8,6 +8,7 @@ import { Vector3 } from '../math/Vector3.js';
 
 const clampedPosition = new Vector3();
 const aabb = new AABB();
+const contour = [];
 
 class CellSpacePartitioning {
 
@@ -95,12 +96,16 @@ class CellSpacePartitioning {
 		const cell = this.cells[ index ];
 		cell.add( entity );
 
+		return this;
+
 	}
 
 	removeEntityFromPartition( entity, index ) {
 
 		const cell = this.cells[ index ];
 		cell.remove( entity );
+
+		return this;
 
 	}
 
@@ -143,11 +148,51 @@ class CellSpacePartitioning {
 
 			if ( cell.empty() === false && cell.intersects( aabb ) === true ) {
 
-				result.push( ...cell.entities );
+				result.push( ...cell.entries );
 
 			}
 
 		}
+
+		return result;
+
+	}
+
+	makeEmpty() {
+
+		const cells = this.cells;
+
+		for ( let i = 0, l = cells.length; i < l; i ++ ) {
+
+			cells[ i ].makeEmpty();
+
+		}
+
+		return this;
+
+	}
+
+	addPolygon( polygon ) {
+
+		const cells = this.cells;
+
+		polygon.getContour( contour );
+
+		aabb.fromPoints( contour );
+
+		for ( let i = 0, l = cells.length; i < l; i ++ ) {
+
+			const cell = cells[ i ];
+
+			if ( cell.intersects( aabb ) === true ) {
+
+				cell.add( polygon );
+
+			}
+
+		}
+
+		return this;
 
 	}
 

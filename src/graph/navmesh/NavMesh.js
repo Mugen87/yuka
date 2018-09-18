@@ -24,6 +24,7 @@ class NavMesh {
 		this.graph.digraph = true;
 
 		this.regions = new Array();
+		this.spatialIndex = null;
 
 		this.epsilonCoplanarTest = 1e-3;
 		this.epsilonContainsTest = 1;
@@ -121,6 +122,7 @@ class NavMesh {
 
 		this.graph.clear();
 		this.regions.length = 0;
+		this.spatialIndex = null;
 
 		return this;
 
@@ -223,7 +225,20 @@ class NavMesh {
 
 	getRegionForPoint( point, epsilon = 1e-3 ) {
 
-		const regions = this.regions;
+		let regions;
+
+		if ( this.spatialIndex !== null ) {
+
+			const index = this.spatialIndex.getIndexForPosition( point );
+			regions = this.spatialIndex.cells[ index ].entries;
+
+		} else {
+
+			regions = this.regions;
+
+		}
+
+		//
 
 		for ( let i = 0, l = regions.length; i < l; i ++ ) {
 
@@ -244,11 +259,10 @@ class NavMesh {
 	findPath( from, to ) {
 
 		const graph = this.graph;
+		const path = new Array();
 
 		let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
 		let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
-
-		const path = new Array();
 
 		if ( fromRegion === null || toRegion === null ) {
 
@@ -451,6 +465,28 @@ class NavMesh {
 			return newRegion;
 
 		}
+
+	}
+
+	updateSpatialIndex() {
+
+		if ( this.spatialIndex !== null ) {
+
+			this.spatialIndex.makeEmpty();
+
+			const regions = this.regions;
+
+			for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+				const region = regions[ i ];
+
+				this.spatialIndex.addPolygon( region );
+
+			}
+
+		}
+
+		return this;
 
 	}
 

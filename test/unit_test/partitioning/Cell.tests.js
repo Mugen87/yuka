@@ -19,7 +19,7 @@ describe( 'Cell', function () {
 			const cell = new Cell();
 
 			expect( cell ).to.have.a.property( 'aabb' ).that.is.an.instanceof( AABB );
-			expect( cell ).to.have.a.property( 'entities' ).that.is.an( 'array' );
+			expect( cell ).to.have.a.property( 'entries' ).that.is.an( 'array' );
 
 		} );
 
@@ -36,14 +36,14 @@ describe( 'Cell', function () {
 
 	describe( '#add()', function () {
 
-		it( 'should add a game entity to the cell', function () {
+		it( 'should add an entry to the cell', function () {
 
 			const entity = new GameEntity();
 			const cell = new Cell();
 
 			cell.add( entity );
 
-			expect( cell.entities ).to.include( entity );
+			expect( cell.entries ).to.include( entity );
 
 		} );
 
@@ -51,7 +51,7 @@ describe( 'Cell', function () {
 
 	describe( '#remove()', function () {
 
-		it( 'should remove a game entity from the cell', function () {
+		it( 'should remove an entry from the cell', function () {
 
 			const entity = new GameEntity();
 			const cell = new Cell();
@@ -59,7 +59,23 @@ describe( 'Cell', function () {
 			cell.add( entity );
 			cell.remove( entity );
 
-			expect( cell.entities ).to.not.include( entity );
+			expect( cell.entries ).to.not.include( entity );
+
+		} );
+
+	} );
+
+	describe( '#makeEmpty()', function () {
+
+		it( 'should remove all entries from the cell', function () {
+
+			const entity = new GameEntity();
+			const cell = new Cell();
+
+			cell.add( entity );
+			cell.makeEmpty();
+
+			expect( cell.empty() ).to.be.true;
 
 		} );
 

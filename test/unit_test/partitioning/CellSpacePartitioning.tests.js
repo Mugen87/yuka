@@ -7,15 +7,11 @@ const YUKA = require( '../../../build/yuka.js' );
 
 const CellSpacePartitioning = YUKA.CellSpacePartitioning;
 const GameEntity = YUKA.GameEntity;
+const Polygon = YUKA.Polygon;
 const Vector3 = YUKA.Vector3;
 
-const height = 10;
-const width = 10;
-const depth = 10;
-
-const cellsX = 5;
-const cellsY = 5;
-const cellsZ = 5;
+const width = 10, height = 10, depth = 10;
+const cellsX = 5, cellsY = 5, cellsZ = 5;
 
 describe( 'CellSpacePartitioning', function () {
 
@@ -23,7 +19,7 @@ describe( 'CellSpacePartitioning', function () {
 
 		it( 'should partition the 3D space according to the given parameters', function () {
 
-			const spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 
 			expect( spatialIndex.cells ).to.have.lengthOf( ( cellsX * cellsY * cellsZ ) );
 
@@ -35,13 +31,13 @@ describe( 'CellSpacePartitioning', function () {
 
 		it( 'should add the given entity to the partition defined by the given index', function () {
 
-			const spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 
 			const entity = new GameEntity();
 			const index = 1;
 			spatialIndex.addEntityToPartition( entity, index );
 
-			expect( spatialIndex.cells[ index ].entities ).to.include( entity );
+			expect( spatialIndex.cells[ index ].entries ).to.include( entity );
 
 		} );
 
@@ -51,14 +47,14 @@ describe( 'CellSpacePartitioning', function () {
 
 		it( 'should remove the given entity from the partition defined by the given index', function () {
 
-			const spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 
 			const entity = new GameEntity();
 			const index = 1;
 			spatialIndex.addEntityToPartition( entity, index );
 			spatialIndex.removeEntityFromPartition( entity, index );
 
-			expect( spatialIndex.cells[ index ].entities ).to.not.include( entity );
+			expect( spatialIndex.cells[ index ].entries ).to.not.include( entity );
 
 		} );
 
@@ -68,7 +64,7 @@ describe( 'CellSpacePartitioning', function () {
 
 		it( 'should return the cell index for the given position', function () {
 
-			const spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 
 			// the value range of a cell is [ i, i + cellSize )
 			// in this example the cells have a value range of [ - 5, - 3 ) so - 3 belongs to the next cell
@@ -89,7 +85,7 @@ describe( 'CellSpacePartitioning', function () {
 
 		it( 'should clamp the index if the position is outside of the partition', function () {
 
-			const spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 
 			const position1 = new Vector3( - 6, - 6, - 6 );
 			const position2 = new Vector3( 6, 6, 6 );
@@ -105,7 +101,7 @@ describe( 'CellSpacePartitioning', function () {
 
 		it( 'should update the given entity by assigning the correct parition', function () {
 
-			const spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 
 			const entity = new GameEntity();
 			let currentIndex;
@@ -129,7 +125,7 @@ describe( 'CellSpacePartitioning', function () {
 
 		it( 'should perform a query based on the given parameters and store the result in the given array', function () {
 
-			const spatialIndex = new CellSpacePartitioning( height, width, depth, cellsX, cellsY, cellsZ );
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 
 			const entity1 = new GameEntity();
 			const entity2 = new GameEntity();
@@ -155,6 +151,44 @@ describe( 'CellSpacePartitioning', function () {
 			expect( result ).to.include( entity2 );
 			expect( result ).to.include( entity3 );
 			expect( result ).to.not.include( entity4 );
+
+		} );
+
+	} );
+
+	describe( '#makeEmpty()', function () {
+
+		it( 'should remove all entries from the cells', function () {
+
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
+
+			const entity1 = new GameEntity();
+			const entity2 = new GameEntity();
+
+			spatialIndex.addEntityToPartition( entity1, 0 );
+			spatialIndex.addEntityToPartition( entity2, 1 );
+
+			spatialIndex.makeEmpty();
+
+			expect( spatialIndex.cells[ 0 ].empty() ).to.be.true;
+			expect( spatialIndex.cells[ 1 ].empty() ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#addPolygon()', function () {
+
+		it( 'should add a polygon to overlapping cells', function () {
+
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
+
+			const contour = [ new Vector3( - 5, - 5, - 5 ), new Vector3( - 4, - 5, - 5 ), new Vector3( - 4.5, 0, - 5.5 ) ];
+			const polygon = new Polygon().fromContour( contour );
+
+			spatialIndex.addPolygon( polygon );
+
+			expect( spatialIndex.cells[ 0 ].entries ).to.include( polygon );
 
 		} );
 

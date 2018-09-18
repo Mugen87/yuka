@@ -20,8 +20,8 @@ describe( 'AABB', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const aabb = new AABB();
-			expect( aabb.min ).to.deep.equal( zero3 );
-			expect( aabb.max ).to.deep.equal( zero3 );
+			expect( aabb.min ).to.deep.equal( new Vector3( Infinity, Infinity, Infinity ) );
+			expect( aabb.max ).to.deep.equal( new Vector3( - Infinity, - Infinity, - Infinity ) );
 
 		} );
 
@@ -134,6 +134,26 @@ describe( 'AABB', function () {
 
 	} );
 
+	describe( '#expand()', function () {
+
+		it( 'should expand the AABB by the given point', function () {
+
+			const aabb = new AABB();
+			const point1 = new Vector3( 1, 1, 1 );
+			const point2 = new Vector3( - 2, 2, - 2 );
+
+			aabb.expand( point1 );
+			expect( aabb.min ).to.deep.equal( new Vector3( 1, 1, 1 ) );
+			expect( aabb.max ).to.deep.equal( new Vector3( 1, 1, 1 ) );
+
+			aabb.expand( point2 );
+			expect( aabb.min ).to.deep.equal( new Vector3( - 2, 1, - 2 ) );
+			expect( aabb.max ).to.deep.equal( new Vector3( 1, 2, 1 ) );
+
+		} );
+
+	} );
+
 	describe( '#intersectsAABB()', function () {
 
 		it( 'should return true if the given AABB intersects this AABB', function () {
@@ -206,6 +226,20 @@ describe( 'AABB', function () {
 
 			expect( aabb.min ).to.deep.equal( new Vector3( - 0.5, 1.75, - 0.5 ) );
 			expect( aabb.max ).to.deep.equal( new Vector3( 0.5, 2.25, 0.5 ) );
+
+		} );
+
+	} );
+
+	describe( '#fromPoints()', function () {
+
+		it( 'should set the min and max vector of the AABB according to the given parameter', function () {
+
+			const points = [ new Vector3( 1, 1, 1 ), new Vector3( - 2, 2, - 2 ) ];
+			const aabb = new AABB().fromPoints( points );
+
+			expect( aabb.min ).to.deep.equal( new Vector3( - 2, 1, - 2 ) );
+			expect( aabb.max ).to.deep.equal( new Vector3( 1, 2, 1 ) );
 
 		} );
 

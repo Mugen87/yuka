@@ -9,6 +9,7 @@ const NavMesh = YUKA.NavMesh;
 const Polygon = YUKA.Polygon;
 const Graph = YUKA.Graph;
 const Vector3 = YUKA.Vector3;
+const CellSpacePartitioning = YUKA.CellSpacePartitioning;
 
 // setup navigation mesh
 
@@ -48,6 +49,9 @@ p4.fromContour( v4 );
 
 const navMesh = new NavMesh().fromPolygons( [ p1, p2, p3, p4 ] );
 
+const width = 4, height = 1, depth = 4;
+const cellsX = 2, cellsY = 1, cellsZ = 2;
+
 //
 
 describe( 'NavMesh', function () {
@@ -59,6 +63,7 @@ describe( 'NavMesh', function () {
 			const navMesh = new NavMesh();
 			expect( navMesh ).to.have.a.property( 'regions' ).that.is.an( 'array' );
 			expect( navMesh ).to.have.a.property( 'graph' ).that.is.an.instanceof( Graph );
+			expect( navMesh ).to.have.a.property( 'spatialIndex' ).that.is.null;
 			expect( navMesh ).to.have.a.property( 'epsilonCoplanarTest' ).that.is.equal( 1e-3 );
 			expect( navMesh ).to.have.a.property( 'epsilonContainsTest' ).that.is.equal( 1 );
 			expect( navMesh.graph.digraph ).to.be.true;
@@ -202,6 +207,25 @@ describe( 'NavMesh', function () {
 
 		} );
 
+		it( 'should use a spatial index if possible', function () {
+
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
+			navMesh.spatialIndex = spatialIndex;
+			navMesh.updateSpatialIndex();
+
+			const point1 = new Vector3( 0.5, 0, 0.5 );
+			const point2 = new Vector3( 0.9, 0, 0.9 );
+
+			const region1 = navMesh.getRegionForPoint( point1 );
+			const region2 = navMesh.getRegionForPoint( point2 );
+
+			expect( region1 ).to.equal( p1 );
+			expect( region2 ).to.equal( p2 );
+
+			navMesh.spatialIndex = null;
+
+		} );
+
 	} );
 
 	describe( '#findPath()', function () {
@@ -286,7 +310,7 @@ describe( 'NavMesh', function () {
 
 		} );
 
-		it( 'should prevent any movement if the new position would lie outside of the navMesh', function () {
+		it( 'should prevent any movement if the new position lies outside of the navMesh', function () {
 
 			const from = new Vector3( 0.5, 0, 0.5 );
 			const to = new Vector3( 2, 0, - 1 );
@@ -302,6 +326,24 @@ describe( 'NavMesh', function () {
 
 	} );
 
+	describe( '#updateSpatialIndex()', function () {
+
+		it( 'should set the given spatial index', function () {
+
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
+			navMesh.spatialIndex = spatialIndex;
+			navMesh.updateSpatialIndex();
+
+			expect( spatialIndex.cells[ 0 ].entries ).to.include( p1 );
+			expect( spatialIndex.cells[ 1 ].entries ).to.include( p1 );
+			expect( spatialIndex.cells[ 2 ].entries ).to.include( p1, p2 );
+			expect( spatialIndex.cells[ 3 ].entries ).to.include( p1, p2 );
+
+		} );
+
+	} );
+
+
 	describe( '#clear()', function () {
 
 		it( 'should merge polygons to convex regions if possible', function () {
@@ -310,6 +352,7 @@ describe( 'NavMesh', function () {
 			expect( navMesh.regions ).to.be.empty;
 			expect( navMesh.graph.getNodeCount() ).to.equal( 0 );
 			expect( navMesh.graph.getEdgeCount() ).to.equal( 0 );
+			expect( navMesh.spatialIndex ).to.be.null;
 
 		} );
 

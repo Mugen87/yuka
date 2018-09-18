@@ -583,6 +583,26 @@ class Vector3 {
 
 	}
 
+	min( v ) {
+
+		this.x = Math.min( this.x, v.x );
+		this.y = Math.min( this.y, v.y );
+		this.z = Math.min( this.z, v.z );
+
+		return this;
+
+	}
+
+	max( v ) {
+
+		this.x = Math.max( this.x, v.x );
+		this.y = Math.max( this.y, v.y );
+		this.z = Math.max( this.z, v.z );
+
+		return this;
+
+	}
+
 	dot( v ) {
 
 		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
@@ -3487,6 +3507,7 @@ class NavMesh {
 		this.graph.digraph = true;
 
 		this.regions = new Array();
+		this.spatialIndex = null;
 
 		this.epsilonCoplanarTest = 1e-3;
 		this.epsilonContainsTest = 1;
@@ -3584,6 +3605,7 @@ class NavMesh {
 
 		this.graph.clear();
 		this.regions.length = 0;
+		this.spatialIndex = null;
 
 		return this;
 
@@ -3686,7 +3708,20 @@ class NavMesh {
 
 	getRegionForPoint( point, epsilon = 1e-3 ) {
 
-		const regions = this.regions;
+		let regions;
+
+		if ( this.spatialIndex !== null ) {
+
+			const index = this.spatialIndex.getIndexForPosition( point );
+			regions = this.spatialIndex.cells[ index ].entries;
+
+		} else {
+
+			regions = this.regions;
+
+		}
+
+		//
 
 		for ( let i = 0, l = regions.length; i < l; i ++ ) {
 
@@ -3707,11 +3742,10 @@ class NavMesh {
 	findPath( from, to ) {
 
 		const graph = this.graph;
+		const path = new Array();
 
 		let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
 		let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
-
-		const path = new Array();
 
 		if ( fromRegion === null || toRegion === null ) {
 
@@ -3914,6 +3948,28 @@ class NavMesh {
 			return newRegion;
 
 		}
+
+	}
+
+	updateSpatialIndex() {
+
+		if ( this.spatialIndex !== null ) {
+
+			this.spatialIndex.makeEmpty();
+
+			const regions = this.regions;
+
+			for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+				const region = regions[ i ];
+
+				this.spatialIndex.addPolygon( region );
+
+			}
+
+		}
+
+		return this;
 
 	}
 
@@ -4401,6 +4457,24 @@ class Polygon {
 		} while ( edge !== this.edge );
 
 		return true;
+
+	}
+
+	getContour( result ) {
+
+		let edge = this.edge;
+
+		result.length = 0;
+
+		do {
+
+			result.push( edge.vertex );
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return result;
 
 	}
 
@@ -5328,7 +5402,7 @@ const vector = new Vector3();
 
 class AABB {
 
-	constructor( min = new Vector3(), max = new Vector3() ) {
+	constructor( min = new Vector3( Infinity, Infinity, Infinity ), max = new Vector3( - Infinity, - Infinity, - Infinity ) ) {
 
 		this.min = min;
 		this.max = max;
@@ -5375,6 +5449,15 @@ class AABB {
 
 	}
 
+	expand( point ) {
+
+		this.min.min( point );
+		this.max.max( point );
+
+		return this;
+
+	}
+
 	intersectsAABB( aabb ) {
 
 		return aabb.max.x < this.min.x || aabb.min.x > this.max.x ||
@@ -5401,6 +5484,21 @@ class AABB {
 
 		this.min.copy( center ).sub( vector );
 		this.max.copy( center ).add( vector );
+
+		return this;
+
+	}
+
+	fromPoints( points ) {
+
+		this.min.set( Infinity, Infinity, Infinity );
+		this.max.set( - Infinity, - Infinity, - Infinity );
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+			this.expand( points[ i ] );
+
+		}
 
 		return this;
 
@@ -5577,26 +5675,38 @@ class Cell {
 	constructor( aabb = new AABB() ) {
 
 		this.aabb = aabb;
-		this.entities = new Array();
+		this.entries = new Array();
 
 	}
 
-	add( entity ) {
+	add( entry ) {
 
-		this.entities.push( entity );
+		this.entries.push( entry );
+
+		return this;
 
 	}
 
-	remove( entity ) {
+	remove( entry ) {
 
-		const index = this.entities.indexOf( entity );
-		this.entities.splice( index, 1 );
+		const index = this.entries.indexOf( entry );
+		this.entries.splice( index, 1 );
+
+		return this;
+
+	}
+
+	makeEmpty() {
+
+		this.entries.length = 0;
+
+		return this;
 
 	}
 
 	empty() {
 
-		return this.entities.length === 0;
+		return this.entries.length === 0;
 
 	}
 
@@ -5614,6 +5724,7 @@ class Cell {
 
 const clampedPosition = new Vector3();
 const aabb = new AABB();
+const contour = [];
 
 class CellSpacePartitioning {
 
@@ -5701,12 +5812,16 @@ class CellSpacePartitioning {
 		const cell = this.cells[ index ];
 		cell.add( entity );
 
+		return this;
+
 	}
 
 	removeEntityFromPartition( entity, index ) {
 
 		const cell = this.cells[ index ];
 		cell.remove( entity );
+
+		return this;
 
 	}
 
@@ -5749,11 +5864,51 @@ class CellSpacePartitioning {
 
 			if ( cell.empty() === false && cell.intersects( aabb ) === true ) {
 
-				result.push( ...cell.entities );
+				result.push( ...cell.entries );
 
 			}
 
 		}
+
+		return result;
+
+	}
+
+	makeEmpty() {
+
+		const cells = this.cells;
+
+		for ( let i = 0, l = cells.length; i < l; i ++ ) {
+
+			cells[ i ].makeEmpty();
+
+		}
+
+		return this;
+
+	}
+
+	addPolygon( polygon ) {
+
+		const cells = this.cells;
+
+		polygon.getContour( contour );
+
+		aabb.fromPoints( contour );
+
+		for ( let i = 0, l = cells.length; i < l; i ++ ) {
+
+			const cell = cells[ i ];
+
+			if ( cell.intersects( aabb ) === true ) {
+
+				cell.add( polygon );
+
+			}
+
+		}
+
+		return this;
 
 	}
 

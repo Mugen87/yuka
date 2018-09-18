@@ -188,6 +188,24 @@ class Polygon {
 
 	}
 
+	getContour( result ) {
+
+		let edge = this.edge;
+
+		result.length = 0;
+
+		do {
+
+			result.push( edge.vertex );
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return result;
+
+	}
+
 }
 
 // from the book "Computational Geometry in C, Joseph O'Rourke"

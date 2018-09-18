@@ -9,26 +9,38 @@ class Cell {
 	constructor( aabb = new AABB() ) {
 
 		this.aabb = aabb;
-		this.entities = new Array();
+		this.entries = new Array();
 
 	}
 
-	add( entity ) {
+	add( entry ) {
 
-		this.entities.push( entity );
+		this.entries.push( entry );
+
+		return this;
 
 	}
 
-	remove( entity ) {
+	remove( entry ) {
 
-		const index = this.entities.indexOf( entity );
-		this.entities.splice( index, 1 );
+		const index = this.entries.indexOf( entry );
+		this.entries.splice( index, 1 );
+
+		return this;
+
+	}
+
+	makeEmpty() {
+
+		this.entries.length = 0;
+
+		return this;
 
 	}
 
 	empty() {
 
-		return this.entities.length === 0;
+		return this.entries.length === 0;
 
 	}
 

@@ -11,7 +11,7 @@ const vector = new Vector3();
 
 class AABB {
 
-	constructor( min = new Vector3(), max = new Vector3() ) {
+	constructor( min = new Vector3( Infinity, Infinity, Infinity ), max = new Vector3( - Infinity, - Infinity, - Infinity ) ) {
 
 		this.min = min;
 		this.max = max;
@@ -58,6 +58,15 @@ class AABB {
 
 	}
 
+	expand( point ) {
+
+		this.min.min( point );
+		this.max.max( point );
+
+		return this;
+
+	}
+
 	intersectsAABB( aabb ) {
 
 		return aabb.max.x < this.min.x || aabb.min.x > this.max.x ||
@@ -84,6 +93,21 @@ class AABB {
 
 		this.min.copy( center ).sub( vector );
 		this.max.copy( center ).add( vector );
+
+		return this;
+
+	}
+
+	fromPoints( points ) {
+
+		this.min.set( Infinity, Infinity, Infinity );
+		this.max.set( - Infinity, - Infinity, - Infinity );
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+			this.expand( points[ i ] );
+
+		}
 
 		return this;
 

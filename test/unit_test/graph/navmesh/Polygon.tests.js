@@ -285,4 +285,32 @@ describe( 'Polygon', function () {
 
 	} );
 
+	describe( '#getContour()', function () {
+
+		it( 'should return store the vertices of the polygon in the given array', function () {
+
+			const polygon = new Polygon();
+
+			const vertices = [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 0, 0 )
+			];
+
+			polygon.fromContour( vertices );
+
+			const result = [];
+
+			polygon.getContour( result );
+
+			expect( result[ 0 ] ).to.be.equal( vertices[ 0 ] );
+			expect( result[ 1 ] ).to.be.equal( vertices[ 1 ] );
+			expect( result[ 2 ] ).to.be.equal( vertices[ 2 ] );
+			expect( result[ 3 ] ).to.be.equal( vertices[ 3 ] );
+
+		} );
+
+	} );
+
 } );

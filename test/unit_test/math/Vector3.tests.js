@@ -247,6 +247,36 @@ describe( 'Vector3', function () {
 
 	} );
 
+	describe( '#min()', function () {
+
+		it( 'should produce a vector with minimum values of the given vector and this istance', function () {
+
+			const v0 = new Vector3( 4, 5, 6 );
+			const v1 = new Vector3( 6, 5, 4 );
+
+			v0.min( v1 );
+
+			expect( v0 ).to.deep.equal( { x: 4, y: 5, z: 4 } );
+
+		} );
+
+	} );
+
+	describe( '#max()', function () {
+
+		it( 'should produce a vector with maximum values of the given vector and this istance', function () {
+
+			const v0 = new Vector3( 4, 5, 6 );
+			const v1 = new Vector3( 6, 5, 4 );
+
+			v0.max( v1 );
+
+			expect( v0 ).to.deep.equal( { x: 6, y: 5, z: 6 } );
+
+		} );
+
+	} );
+
 	describe( '#dot()', function () {
 
 		it( 'should return the result of the dot product', function () {
