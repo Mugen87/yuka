@@ -37,7 +37,7 @@
 	import * as THREE from '../../lib/three.module.js';
 
 	import { Player } from './src/Player.js';
-	import { createConvexRegionHelper } from '../../graph/navmesh/src/NavMeshHelper.js';
+	import { createConvexRegionHelper } from '../../graph/common/js/NavMeshHelper.js';
 
 	let camera, scene, renderer;
 
@@ -83,6 +83,8 @@
 
 			const audioLoader = new THREE.AudioLoader();
 			const listener = new THREE.AudioListener();
+			camera.add( listener );
+
 			const step1 = new THREE.Audio( listener );
 			const step2 = new THREE.Audio( listener );
 

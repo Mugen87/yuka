@@ -19,9 +19,8 @@
 		import * as THREE from '../../lib/three.module.js';
 		import * as DAT from 'https://cdn.rawgit.com/dataarts/dat.gui/979f2fc39dbe89af561094a158c906ee9c047886/build/dat.gui.module.js';
 
-		import { createGraphHelper } from '../basic/src/GraphHelper.js';
-		import { CustomVehicle } from './src/CustomVehicle.js';
-		import { createConvexRegionHelper } from './src/NavMeshHelper.js';
+		import { createGraphHelper } from '../common/js/GraphHelper.js';
+		import { createConvexRegionHelper } from '../common/js/NavMeshHelper.js';
 
 		let renderer, scene, camera, vehicleMesh, navMeshGroup;
 
@@ -98,7 +97,7 @@
 
 			const loader = new YUKA.NavMeshLoader();
 
-			loader.load( './basic/navmesh.gltf' ).then( ( navigationMesh ) => {
+			loader.load( '../common/navmeshes/basic/navmesh.gltf' ).then( ( navigationMesh ) => {
 
 				// visualize convex regions
 
@@ -118,7 +117,7 @@
 
 				entityManager = new YUKA.EntityManager();
 				time = new YUKA.Time();
-				vehicle = new CustomVehicle();
+				vehicle = new YUKA.Vehicle();
 				vehicle.navMesh = navMesh;
 				vehicle.maxSpeed = 1.5;
 				vehicle.maxForce = 10;
