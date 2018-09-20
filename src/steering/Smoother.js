@@ -3,7 +3,7 @@
  * @author robp94 / https://github.com/robp94
  */
 
-import { Vector3 } from '../Math/Vector3';
+import { Vector3 } from '../math/Vector3.js';
 
 class Smoother {
 

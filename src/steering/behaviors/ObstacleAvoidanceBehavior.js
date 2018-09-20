@@ -3,11 +3,11 @@
  * @author robp94 / https://github.com/robp94
  */
 
-import { SteeringBehavior } from '../SteeringBehavior';
-import { Vector3 } from '../../Math/Vector3';
-import { BoundingSphere } from "../../math/BoundingSphere";
-import { Matrix4 } from '../../Math/Matrix4';
-import { Ray } from '../../Math/Ray';
+import { SteeringBehavior } from '../SteeringBehavior.js';
+import { Vector3 } from '../../math/Vector3.js';
+import { BoundingSphere } from '../../math/BoundingSphere.js';
+import { Matrix4 } from '../../math/Matrix4.js';
+import { Ray } from '../../math/Ray.js';
 
 const inverse = new Matrix4();
 const localPositionOfObstacle = new Vector3();
@@ -21,18 +21,19 @@ const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
-	constructor( entityManager ) {
+	constructor( obstacles = new Array() ) {
 
 		super();
 
-		this.entityManager = entityManager;
-		this.weigth = 3; // this behavior needs a high value in order to prioritize the produced force
+		this.obstacles = obstacles;
 		this.brakingWeight = 0.2;
-		this.dBoxMinLength = 5; // minimum length of the detection box
+		this.dBoxMinLength = 4; // minimum length of the detection box
 
 	}
 
 	calculate( vehicle, force /*, delta */ ) {
+
+		const obstacles = this.obstacles;
 
 		// this will keep track of the closest intersecting obstacle
 
@@ -41,10 +42,6 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 		// this will be used to track the distance to the closest obstacle
 
 		let distanceToClosestObstacle = Infinity;
-
-		// the obstacles in the game world
-
-		const obstacles = this.entityManager.entities;
 
 		// the detection box length is proportional to the agent's velocity
 
@@ -71,6 +68,8 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 				// than its radius + half the width of the detection box then there is a potential intersection
 
 				const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
+
+				console.log( expandedRadius );
 
 				if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
 

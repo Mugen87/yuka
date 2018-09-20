@@ -16,12 +16,13 @@
 
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
+		import { OrbitControls } from '../../lib/OrbitControls.module.js';
 
 		let renderer, scene, camera, vehicleMesh;
 
-		let entityManager, time, vehicle, arrowHelper;
+		let entityManager, time, vehicle;
 
-		const direction = new THREE.Vector3();
+		const obstacles = new Array();
 
 		init();
 		animate();
@@ -64,6 +65,8 @@
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
+			const controls = new OrbitControls( camera, renderer.domElement );
+
 			// game setup
 
 			entityManager = new YUKA.EntityManager();
@@ -78,16 +81,14 @@
 			vehicle = new YUKA.Vehicle();
 			vehicle.maxSpeed = 3;
 			vehicle.boundingRadius = vehicleGeometry.boundingSphere.radius;
-			vehicle.enableSmoothing( 20 );
+			vehicle.smoother = new YUKA.Smoother( 20 );
 			entityManager.add( vehicle );
 
-			const obstacleAvoidance = new YUKA.ObstacleAvoidanceBehavior( entityManager );
-			obstacleAvoidance.weight = 1.5;
-			obstacleAvoidance.dBoxMinLength = 4;
-			vehicle.steering.add( obstacleAvoidance );
+			const obstacleAvoidanceBehavior = new YUKA.ObstacleAvoidanceBehavior( obstacles );
+			vehicle.steering.add( obstacleAvoidanceBehavior );
 
-			const followPath = new YUKA.FollowPathBehavior( path );
-			vehicle.steering.add( followPath );
+			const followPathBehavior = new YUKA.FollowPathBehavior( path );
+			vehicle.steering.add( followPathBehavior );
 
 			// obstacles
 
@@ -140,16 +141,19 @@
 			obstacle1.position.copy( mesh1.position );
 			obstacle1.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( obstacle1 );
+			obstacles.push( obstacle1 );
 
 			const obstacle2 = new YUKA.GameEntity();
 			obstacle2.position.copy( mesh2.position );
 			obstacle2.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( obstacle2 );
+			obstacles.push( obstacle2 );
 
 			const obstacle3 = new YUKA.GameEntity();
 			obstacle3.position.copy( mesh3.position );
 			obstacle3.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( obstacle3 );
+			obstacles.push( obstacle3 );
 
 		}
 

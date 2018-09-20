@@ -7,6 +7,7 @@ const YUKA = require( '../../../build/yuka.js' );
 
 const Vehicle = YUKA.Vehicle;
 const SteeringManager = YUKA.SteeringManager;
+const Smoother = YUKA.Smoother;
 
 describe( 'Vehicle', function () {
 
@@ -18,6 +19,7 @@ describe( 'Vehicle', function () {
 			expect( vehicle ).to.have.a.property( 'mass' ).that.is.equal( 1 );
 			expect( vehicle ).to.have.a.property( 'maxForce' ).that.is.equal( 100 );
 			expect( vehicle ).to.have.a.property( 'steering' ).that.is.an.instanceof( SteeringManager );
+			expect( vehicle ).to.have.a.property( 'smoother' ).that.is.null;
 
 		} );
 
@@ -94,6 +96,24 @@ describe( 'Vehicle', function () {
 
 		} );
 
+		it( 'should use a smoothed velocity vector to adjust the orientation if a smoother is set', function () {
+
+			const vehicle = new Vehicle();
+
+			vehicle.steering = new SteeringManagerStubSmooth( vehicle );
+			vehicle.smoother = new Smoother( 2 );
+
+			vehicle.update( 1 );
+			expect( vehicle.rotation ).to.deep.equal( { x: 0, y: 1, z: 0, w: 0 } );
+
+			vehicle.update( 1 );
+			expect( vehicle.rotation.x ).to.closeTo( 0, Number.EPSILON );
+			expect( vehicle.rotation.y ).to.closeTo( 0.9651052298741876, Number.EPSILON );
+			expect( vehicle.rotation.z ).to.closeTo( 0.26186235939800817, Number.EPSILON );
+			expect( vehicle.rotation.w ).to.closeTo( 0, Number.EPSILON );
+
+		} );
+
 	} );
 
 } );
@@ -115,6 +135,24 @@ class SteeringManagerStubMinForce {
 	calculate( delta, force ) {
 
 		force.set( 0, 0, - Number.EPSILON );
+
+	}
+
+}
+
+class SteeringManagerStubSmooth {
+
+	constructor() {
+
+		this.count = 0;
+
+	}
+
+	calculate( delta, force ) {
+
+		force.set( 0, this.count, - 0.5 );
+
+		this.count ++;
 
 	}
 
