@@ -6196,7 +6196,7 @@ class Vehicle extends MovingEntity {
 
 		this.steering = new SteeringManager( this );
 
-		this.smoother = null;
+		this.smoother = null; // can be used to avoid shakiness due to conflicting steering behaviors
 
 	}
 
