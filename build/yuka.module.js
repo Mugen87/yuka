@@ -6729,8 +6729,6 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 				const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
 
-				console.log( expandedRadius );
-
 				if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
 
 					// do intersection test in local space of the vehicle
