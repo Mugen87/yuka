@@ -41,6 +41,7 @@ export { Vector3 } from './math/Vector3.js';
 export { Cell } from './partitioning/Cell.js';
 export { CellSpacePartitioning } from './partitioning/CellSpacePartitioning.js';
 export { Path } from './steering/Path.js';
+export { Smoother } from './steering/Smoother.js';
 export { SteeringBehavior } from './steering/SteeringBehavior.js';
 export { SteeringManager } from './steering/SteeringManager.js';
 export { Vehicle } from './steering/Vehicle.js';

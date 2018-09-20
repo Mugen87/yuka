@@ -78,6 +78,7 @@
 			vehicle = new YUKA.Vehicle();
 			vehicle.maxSpeed = 3;
 			vehicle.boundingRadius = vehicleGeometry.boundingSphere.radius;
+			vehicle.enableSmoothing( 20 );
 			entityManager.add( vehicle );
 
 			const obstacleAvoidance = new YUKA.ObstacleAvoidanceBehavior( entityManager );

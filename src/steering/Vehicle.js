@@ -1,10 +1,12 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ * @author robp94 / https://github.com/robp94
  */
 
 import { MovingEntity } from '../core/MovingEntity.js';
 import { SteeringManager } from './SteeringManager.js';
 import { Vector3 } from '../math/Vector3.js';
+import { Smoother } from "./Smoother";
 
 const steeringForce = new Vector3();
 const displacement = new Vector3();
@@ -21,6 +23,21 @@ class Vehicle extends MovingEntity {
 		this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 
 		this.steering = new SteeringManager( this );
+
+		this._smoother = null;
+		this._smoothedVelocity = new Vector3();
+
+	}
+
+	enableSmoothing( sampleCount ) {
+
+		this._smoother = new Smoother( sampleCount );
+
+	}
+
+	disableSmoothing() {
+
+		this._smoother = null;
 
 	}
 
@@ -66,6 +83,19 @@ class Vehicle extends MovingEntity {
 		// update position
 
 		this.position.copy( target );
+
+		// smoothing
+
+		if ( this.updateOrientation && this._smoother !== null ) {
+
+			this._smoother.update( this.velocity, this._smoothedVelocity );
+
+			displacement.copy( this._smoothedVelocity ).multiplyScalar( delta );
+			target.copy( this.position ).add( displacement );
+
+			this.lookAt( target );
+
+		}
 
 	}
 
