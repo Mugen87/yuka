@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Node } from '../core/Node.js';
+import { Node } from '../../graph/core/Node.js';
 import { Vector3 } from '../../math/Vector3.js';
 
 class NavNode extends Node {

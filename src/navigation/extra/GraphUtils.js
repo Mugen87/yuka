@@ -2,9 +2,9 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Graph } from '../core/Graph.js';
-import { NavNode } from '../navigation/NavNode.js';
-import { NavEdge } from '../navigation/NavEdge.js';
+import { Graph } from '../../graph/core/Graph.js';
+import { NavNode } from '../core/NavNode.js';
+import { NavEdge } from '../core/NavEdge.js';
 import { Vector3 } from '../../math/Vector3.js';
 
 class GraphUtils {

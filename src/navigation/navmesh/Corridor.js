@@ -43,7 +43,7 @@ class Corridor {
 
 		path.push( portalApex );
 
-		for ( let i = 1; i < portalEdges.length; i ++ ) {
+		for ( let i = 1, l = portalEdges.length; i < l; i ++ ) {
 
 			const left = portalEdges[ i ].left;
 			const right = portalEdges[ i ].right;

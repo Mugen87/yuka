@@ -210,8 +210,6 @@ class Polygon {
 
 	getPortalEdgeTo( polygon, portalEdge ) {
 
-		portalEdge.length = 0;
-
 		let edge = this.edge;
 
 		do {

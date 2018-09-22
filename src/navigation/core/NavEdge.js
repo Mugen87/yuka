@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Edge } from '../core/Edge.js';
+import { Edge } from '../../graph/core/Edge.js';
 
 class NavEdge extends Edge {
 

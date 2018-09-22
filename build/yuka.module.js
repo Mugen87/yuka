@@ -2620,20 +2620,6 @@ class Edge {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class Node {
-
-	constructor( index = - 1 ) {
-
-		this.index = index;
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 class Graph {
 
 	constructor() {
@@ -2903,107 +2889,11 @@ class Graph {
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-class NavNode extends Node {
+class Node {
 
-	constructor( index = - 1, position = new Vector3(), userData = {} ) {
+	constructor( index = - 1 ) {
 
-		super( index );
-
-		this.position = position;
-		this.userData = userData;
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class NavEdge extends Edge {
-
-	constructor( from = - 1, to = - 1, cost = 0 ) {
-
-		super( from, to, cost );
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class GraphUtils {
-
-	static createGridLayout( size, segments ) {
-
-		const graph = new Graph();
-		graph.digraph = true;
-
-		const halfSize = size / 2;
-		const segmentSize = size / segments;
-
-		// nodes
-
-		let index = 0;
-
-		for ( let i = 0; i <= segments; i ++ ) {
-
-			const z = ( i * segmentSize ) - halfSize;
-
-			for ( let j = 0; j <= segments; j ++ ) {
-
-				const x = ( j * segmentSize ) - halfSize;
-
-				const position = new Vector3( x, 0, z );
-
-				const node = new NavNode( index, position );
-
-				graph.addNode( node );
-
-				index ++;
-
-			}
-
-		}
-
-		// edges
-
-		const count = graph.getNodeCount();
-		const range = Math.pow( segmentSize + ( segmentSize / 2 ), 2 );
-
-		for ( let i = 0; i < count; i ++ ) {
-
-			const node = graph.getNode( i );
-
-			// check distance to all other nodes
-
-			for ( let j = 0; j < count; j ++ ) {
-
-				if ( i !== j ) {
-
-					const neighbor = graph.getNode( j );
-
-					const distanceSquared = neighbor.position.squaredDistanceTo( node.position );
-
-					if ( distanceSquared <= range ) {
-
-						const distance = Math.sqrt( distanceSquared );
-
-						const edge = new NavEdge( i, j, distance );
-
-						graph.addEdge( edge );
-
-					}
-
-				}
-
-			}
-
-		}
-
-		return graph;
+		this.index = index;
 
 	}
 
@@ -3175,213 +3065,6 @@ function defaultCompare( a, b ) {
 }
 
 /**
- * @author robp94 / https://github.com/robp94
- * @author Mugen87 / https://github.com/Mugen8
- *
- * Reference: https://github.com/donmccurdy/three-pathfinding/blob/master/src/Channel.js
- *
- */
-
-class Corridor {
-
-	constructor() {
-
-		this.portalEdges = new Array();
-
-	}
-
-	push( left, right ) {
-
-		this.portalEdges.push( {
-			left: left,
-			right: right
-		} );
-
-	}
-
-	generate() {
-
-		const portalEdges = this.portalEdges;
-		const path = new Array();
-
-		// init scan state
-
-		let portalApex, portalLeft, portalRight;
-		let apexIndex = 0, leftIndex = 0, rightIndex = 0;
-
-		portalApex = portalEdges[ 0 ].left;
-		portalLeft = portalEdges[ 0 ].left;
-		portalRight = portalEdges[ 0 ].right;
-
-		// add start point
-
-		path.push( portalApex );
-
-		for ( let i = 1; i < portalEdges.length; i ++ ) {
-
-			const left = portalEdges[ i ].left;
-			const right = portalEdges[ i ].right;
-
-			// update right vertex
-
-			if ( _Math.area( portalApex, portalRight, right ) <= 0.0 ) {
-
-				if ( portalApex === portalRight || _Math.area( portalApex, portalLeft, right ) > 0.0 ) {
-
-					// tighten the funnel
-
-					portalRight = right;
-					rightIndex = i;
-
-				} else {
-
-					// right over left, insert left to path and restart scan from portal left point
-
-					path.push( portalLeft );
-
-					// make current left the new apex
-
-					portalApex = portalLeft;
-					apexIndex = leftIndex;
-
-					// review eset portal
-
-					portalLeft = portalApex;
-					portalRight = portalApex;
-					leftIndex = apexIndex;
-					rightIndex = apexIndex;
-
-					// restart scan
-
-					i = apexIndex;
-
-					continue;
-
-				}
-
-			}
-
-			// update left vertex
-
-			if ( _Math.area( portalApex, portalLeft, left ) >= 0.0 ) {
-
-				if ( portalApex === portalLeft || _Math.area( portalApex, portalRight, left ) < 0.0 ) {
-
-					// tighten the funnel
-
-					portalLeft = left;
-					leftIndex = i;
-
-				} else {
-
-					// left over right, insert right to path and restart scan from portal right point
-
-					path.push( portalRight );
-
-					// make current right the new apex
-
-					portalApex = portalRight;
-					apexIndex = rightIndex;
-
-					// reset portal
-
-					portalLeft = portalApex;
-					portalRight = portalApex;
-					leftIndex = apexIndex;
-					rightIndex = apexIndex;
-
-					// restart scan
-
-					i = apexIndex;
-
-					continue;
-
-				}
-
-			}
-
-		}
-
-		if ( ( path.length === 0 ) || ( path[ path.length - 1 ] !== portalEdges[ portalEdges.length - 1 ].left ) ) {
-
-			// append last point to path
-
-			path.push( portalEdges[ portalEdges.length - 1 ].left );
-
-		}
-
-		return path;
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * https://en.wikipedia.org/wiki/Doubly_connected_edge_list
- *
- */
-
-class HalfEdge {
-
-	constructor( vertex = new Vector3() ) {
-
-		this.vertex = vertex;
-		this.next = null;
-		this.prev = null;
-		this.twin = null;
-		this.polygon = null;
-
-		this.nodeIndex = - 1;
-
-	}
-
-	from() {
-
-		return this.vertex;
-
-	}
-
-	to() {
-
-		return this.next ? this.next.vertex : null;
-
-	}
-
-	length() {
-
-		const from = this.from();
-		const to = this.to();
-
-		if ( to !== null ) {
-
-			return from.distanceTo( to );
-
-		}
-
-		return - 1;
-
-	}
-
-	squaredLength() {
-
-		const from = this.from();
-		const to = this.to();
-
-		if ( to !== null ) {
-
-			return from.squaredDistanceTo( to );
-
-		}
-
-		return - 1;
-
-	}
-
-}
-
-/**
  * @author Mugen87 / https://github.com/Mugen87
  */
 
@@ -3548,1461 +3231,6 @@ function compare( a, b ) {
 	return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
 
 }
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Line3.js
- *
- */
-
-const p1 = new Vector3();
-const p2 = new Vector3();
-
-class LineSegment {
-
-	constructor( from = new Vector3(), to = new Vector3() ) {
-
-		this.from = from;
-		this.to = to;
-
-	}
-
-	set( from, to ) {
-
-		this.from = from;
-		this.to = to;
-
-		return this;
-
-	}
-
-	copy( lineSegment ) {
-
-		this.from.copy( lineSegment.from );
-		this.to.copy( lineSegment.to );
-
-		return this;
-
-	}
-
-	clone() {
-
-		return new this.constructor().copy( this );
-
-	}
-
-	delta( result ) {
-
-		return result.subVectors( this.to, this.from );
-
-	}
-
-	at( t, result ) {
-
-		return this.delta( result ).multiplyScalar( t ).add( this.from );
-
-	}
-
-	closestPointToPoint( point, clampToLine, result ) {
-
-		const t = this.closestPointToPointParameter( point, clampToLine );
-
-		return this.at( t, result );
-
-	}
-
-	closestPointToPointParameter( point, clampToLine = true ) {
-
-		p1.subVectors( point, this.from );
-		p2.subVectors( this.to, this.from );
-
-		const dotP2P2 = p2.dot( p2 );
-		const dotP2P1 = p2.dot( p1 );
-
-		let t = dotP2P1 / dotP2P2;
-
-		if ( clampToLine ) t = _Math.clamp( t, 0, 1 );
-
-		return t;
-
-	}
-
-	equals( lineSegment ) {
-
-		return lineSegment.from.equals( this.from ) && lineSegment.to.equals( this.to );
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- * @author robp94 / https://github.com/robp94
- */
-
-const pointOnLineSegment = new Vector3();
-const closestPoint = new Vector3();
-const edgeDirection = new Vector3();
-const movementDirection = new Vector3();
-const newPosition = new Vector3();
-const lineSegment = new LineSegment();
-
-class NavMesh {
-
-	constructor() {
-
-		this.graph = new Graph();
-		this.graph.digraph = true;
-
-		this.regions = new Array();
-		this.spatialIndex = null;
-
-		this.epsilonCoplanarTest = 1e-3;
-		this.epsilonContainsTest = 1;
-
-	}
-
-	fromPolygons( polygons ) {
-
-		this.clear();
-
-		//
-
-		const initialEdgeList = new Array();
-		const sortedEdgeList = new Array();
-
-		// setup list with all edges
-
-		for ( let i = 0, l = polygons.length; i < l; i ++ ) {
-
-			const polygon = polygons[ i ];
-
-			let edge = polygon.edge;
-
-			do {
-
-				initialEdgeList.push( edge );
-
-				edge = edge.next;
-
-			} while ( edge !== polygon.edge );
-
-			//
-
-			this.regions.push( polygon );
-
-		}
-
-		// setup twin references and sorted list of edges
-
-		for ( let i = 0, il = initialEdgeList.length; i < il; i ++ ) {
-
-			let edge0 = initialEdgeList[ i ];
-
-			if ( edge0.twin !== null ) continue;
-
-			for ( let j = i + 1, jl = initialEdgeList.length; j < jl; j ++ ) {
-
-				let edge1 = initialEdgeList[ j ];
-
-				if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
-
-					// twin found, set references
-
-					edge0.twin = edge1;
-					edge1.twin = edge0;
-
-					// add edge to list
-
-					const cost = edge0.squaredLength();
-
-					sortedEdgeList.push( {
-						cost: cost,
-						edge: edge0
-					} );
-
-					// there can only be a single twin
-
-					break;
-
-				}
-
-			}
-
-		}
-
-		sortedEdgeList.sort( descending );
-
-		// hald-edge data structure is now complete, begin build of convex regions
-
-		this._buildRegions( sortedEdgeList );
-
-		// ensure unique node indices for all twin edges
-
-		this._buildNodeIndices();
-
-		// now build the navigation graph
-
-		this._buildGraph();
-
-		return this;
-
-	}
-
-	clear() {
-
-		this.graph.clear();
-		this.regions.length = 0;
-		this.spatialIndex = null;
-
-		return this;
-
-	}
-
-	getClosestRegion( point ) {
-
-		const regions = this.regions;
-		let closesRegion = null;
-		let minDistance = Infinity;
-
-		for ( let i = 0, l = regions.length; i < l; i ++ ) {
-
-			const region = regions[ i ];
-
-			const distance = point.squaredDistanceTo( region.centroid );
-
-			if ( distance < minDistance ) {
-
-				minDistance = distance;
-
-				closesRegion = region;
-
-			}
-
-		}
-
-		return closesRegion;
-
-	}
-
-	getRegionForPoint( point, epsilon = 1e-3 ) {
-
-		let regions;
-
-		if ( this.spatialIndex !== null ) {
-
-			const index = this.spatialIndex.getIndexForPosition( point );
-			regions = this.spatialIndex.cells[ index ].entries;
-
-		} else {
-
-			regions = this.regions;
-
-		}
-
-		//
-
-		for ( let i = 0, l = regions.length; i < l; i ++ ) {
-
-			const region = regions[ i ];
-
-			if ( region.contains( point, epsilon ) === true ) {
-
-				return region;
-
-			}
-
-		}
-
-		return null;
-
-	}
-
-	findPath( from, to ) {
-
-		const graph = this.graph;
-		const path = new Array();
-
-		let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
-		let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
-
-		if ( fromRegion === null || toRegion === null ) {
-
-			// if source or target are outside the navmesh, choose the nearest convex region
-
-			if ( fromRegion === null ) fromRegion = this.getClosestRegion( from );
-			if ( toRegion === null ) toRegion = this.getClosestRegion( to );
-
-		}
-
-		// check if both convex region are identical
-
-		if ( fromRegion === toRegion ) {
-
-			// no search necessary, directly create the path
-
-			path.push( new Vector3().copy( from ) );
-			path.push( new Vector3().copy( to ) );
-			return path;
-
-		} else {
-
-			// source and target are not in same region, peform search
-
-			const source = this.regions.indexOf( fromRegion );
-			const target = this.regions.indexOf( toRegion );
-
-			const astar = new AStar( graph, source, target );
-			astar.search();
-
-			if ( astar.found === true ) {
-
-				const polygonPath = astar.getPath();
-
-				const corridor = new Corridor();
-				corridor.push( from, from );
-
-				// push sequence of portal edges to corridor
-
-				const portalEdge = { left: null, right: null };
-
-				for ( let i = 0, l = ( polygonPath.length - 1 ); i < l; i ++ ) {
-
-					const region = this.regions[ polygonPath[ i ] ];
-					const nextRegion = this.regions[ polygonPath[ i + 1 ] ];
-
-					region.getPortalEdgeTo( nextRegion, portalEdge );
-
-					corridor.push( portalEdge.left, portalEdge.right );
-
-				}
-
-				corridor.push( to, to );
-
-				path.push( ...corridor.generate() );
-
-			}
-
-			return path;
-
-		}
-
-	}
-
-	clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
-
-		let newRegion = this.getRegionForPoint( endPosition, this.epsilonContainsTest );
-
-		// endPosition lies outside navMesh
-
-		if ( newRegion === null ) {
-
-			if ( currentRegion === null ) throw new Error( 'YUKA.NavMesh.clampMovement(): No current region available.' );
-
-			// determine closest edge in current convex region
-
-			let closestEdge = null;
-			let minDistance = Infinity;
-
-			let edge = currentRegion.edge;
-
-			do {
-
-				// only consider border edges
-
-				if ( edge.twin === null ) {
-
-					lineSegment.set( edge.vertex, edge.next.vertex );
-					const t = lineSegment.closestPointToPointParameter( startPosition );
-					lineSegment.at( t, pointOnLineSegment );
-
-					const distance = pointOnLineSegment.squaredDistanceTo( startPosition );
-
-					if ( distance < minDistance ) {
-
-						minDistance = distance;
-
-						closestEdge = edge;
-						closestPoint.copy( pointOnLineSegment );
-
-					}
-
-				}
-
-				edge = edge.next;
-
-			} while ( edge !== currentRegion.edge );
-
-			// calculate movement and edge direction
-
-			edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
-			const length = movementDirection.subVectors( endPosition, startPosition ).length();
-			movementDirection.divideScalar( length );
-
-			// this value influences the speed at which the entity moves along the edge
-
-			const f = edgeDirection.dot( movementDirection );
-
-			// calculate new position on the edge
-
-			newPosition.copy( closestPoint ).add( edgeDirection.multiplyScalar( f * length ) );
-
-			// the following value "t" tells us if the point exceeds the line segment
-
-			lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
-			const t = lineSegment.closestPointToPointParameter( newPosition, false );
-
-			//
-
-			if ( t >= 0 && t <= 1 ) {
-
-				// point is within line segment, we can safely use the new position
-
-				clampPosition.copy( newPosition );
-
-			} else {
-
-				// check, if the new point lies outside the navMesh
-
-				newRegion = this.getRegionForPoint( newPosition, this.epsilonContainsTest );
-
-				if ( newRegion !== null ) {
-
-					// if not, everything is fine
-
-					clampPosition.copy( newPosition );
-					return newRegion;
-
-				}
-
-				// otherwise prevent movement
-
-				clampPosition.copy( startPosition );
-
-			}
-
-			return currentRegion;
-
-		} else {
-
-			// return the new region
-
-			return newRegion;
-
-		}
-
-	}
-
-	updateSpatialIndex() {
-
-		if ( this.spatialIndex !== null ) {
-
-			this.spatialIndex.makeEmpty();
-
-			const regions = this.regions;
-
-			for ( let i = 0, l = regions.length; i < l; i ++ ) {
-
-				const region = regions[ i ];
-
-				this.spatialIndex.addPolygon( region );
-
-			}
-
-		}
-
-		return this;
-
-	}
-
-	_buildRegions( edgeList ) {
-
-		const regions = this.regions;
-
-		const cache = {
-			leftPrev: null,
-			leftNext: null,
-			rightPrev: null,
-			rightNext: null
-		};
-
-		// process edges from longest to shortest
-
-		for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
-
-			const entry = edgeList[ i ];
-
-			let candidate = entry.edge;
-
-			// cache current references for possible restore
-
-			cache.prev = candidate.prev;
-			cache.next = candidate.next;
-			cache.prevTwin = candidate.twin.prev;
-			cache.nextTwin = candidate.twin.next;
-
-			// temporarily change the first polygon in order to represent both polygons
-
-			candidate.prev.next = candidate.twin.next;
-			candidate.next.prev = candidate.twin.prev;
-			candidate.twin.prev.next = candidate.next;
-			candidate.twin.next.prev = candidate.prev;
-
-			const polygon = candidate.polygon;
-			polygon.edge = candidate.prev;
-
-			if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
-
-				// correct polygon reference of all edges
-
-				let edge = polygon.edge;
-
-				do {
-
-					edge.polygon = polygon;
-
-					edge = edge.next;
-
-				} while ( edge !== polygon.edge );
-
-				// delete obsolete polygon
-
-				const index = regions.indexOf( entry.edge.twin.polygon );
-				regions.splice( index, 1 );
-
-			} else {
-
-				// restore
-
-				cache.prev.next = candidate;
-				cache.next.prev = candidate;
-				cache.prevTwin.next = candidate.twin;
-				cache.nextTwin.prev = candidate.twin;
-
-				polygon.edge = candidate;
-
-			}
-
-		}
-
-		//
-
-		for ( let i = 0, l = regions.length; i < l; i ++ ) {
-
-			const region = regions[ i ];
-
-			region.computeCentroid();
-
-		}
-
-	}
-
-	_buildNodeIndices() {
-
-		const regions = this.regions;
-
-		const indicesMap = new Map();
-		let nextNodeIndex = 0;
-
-		for ( let i = 0, l = regions.length; i < l; i ++ ) {
-
-			const region = regions[ i ];
-
-			let edge = region.edge;
-
-			do {
-
-				// only edges with a twin reference needs to be considered
-
-				if ( edge.twin !== null && edge.nodeIndex === null ) {
-
-					let nodeIndex = - 1;
-					const position = edge.from();
-
-					// check all existing entries
-
-					for ( const [ index, pos ] of indicesMap.entries() ) {
-
-						if ( position.equals( pos ) === true ) {
-
-							// found, use the existing index
-
-							nodeIndex = index;
-							break;
-
-						}
-
-					}
-
-					// if no suitable index was found, create a new one
-
-					if ( nodeIndex === - 1 ) {
-
-						nodeIndex = nextNodeIndex ++;
-						indicesMap.set( nodeIndex, position );
-
-					}
-
-					// assign unique node index to edge
-
-					edge.nodeIndex = nodeIndex;
-					edge.twin.next.nodeIndex = nodeIndex;
-
-				}
-
-				edge = edge.next;
-
-			} while ( edge !== region.edge );
-
-		}
-
-	}
-
-	_buildGraph() {
-
-		const graph = this.graph;
-		const regions = this.regions;
-
-		// for each region, the code creates an array of directly accessible node indices
-
-		const regionNeighbourhood = new Array();
-
-		for ( let i = 0, l = regions.length; i < l; i ++ ) {
-
-			const region = regions[ i ];
-
-			const regionIndices = new Array();
-			regionNeighbourhood.push( regionIndices );
-
-			let edge = region.edge;
-			do {
-
-				if ( edge.twin !== null ) {
-
-					regionIndices.push( this.regions.indexOf( edge.twin.polygon ) );
-
-					// add node to graph if necessary
-
-					if ( graph.hasNode( this.regions.indexOf( edge.polygon ) ) === false ) {
-
-						graph.addNode( new NavNode( this.regions.indexOf( edge.polygon ), edge.polygon.centroid ) );
-
-					}
-
-				}
-
-				edge = edge.next;
-
-			} while ( edge !== region.edge );
-
-		}
-
-		// add navigation edges
-
-		for ( let i = 0, il = regionNeighbourhood.length; i < il; i ++ ) {
-
-			const indices = regionNeighbourhood[ i ];
-			const from = i;
-
-			for ( let j = 0, jl = indices.length; j < jl; j ++ ) {
-
-				const to = indices[ j ];
-
-				if ( from !== to ) {
-
-					if ( graph.hasEdge( from, to ) === false ) {
-
-						const nodeFrom = graph.getNode( from );
-						const nodeTo = graph.getNode( to );
-
-						const cost = nodeFrom.position.distanceTo( nodeTo.position );
-
-						graph.addEdge( new NavEdge( from, to, cost ) );
-
-					}
-
-				}
-
-			}
-
-		}
-
-		return this;
-
-	}
-
-}
-
-//
-
-function descending( a, b ) {
-
-	return ( a.cost < b.cost ) ? 1 : ( a.cost > b.cost ) ? - 1 : 0;
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Plane.js
- *
- */
-
-const v1 = new Vector3();
-const v2 = new Vector3();
-
-class Plane {
-
-	constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
-
-		this.normal = normal;
-		this.constant = constant;
-
-	}
-
-	set( normal, constant ) {
-
-		this.normal = normal;
-		this.constant = constant;
-
-		return this;
-
-	}
-
-	copy( plane ) {
-
-		this.normal.copy( plane.normal );
-		this.constant = plane.constant;
-
-		return this;
-
-	}
-
-	clone() {
-
-		return new this.constructor().copy( this );
-
-	}
-
-	distanceToPoint( point ) {
-
-		return this.normal.dot( point ) + this.constant;
-
-	}
-
-	fromNormalAndCoplanarPoint( normal, point ) {
-
-		this.normal.copy( normal );
-		this.constant = - point.dot( this.normal );
-
-		return this;
-
-	}
-
-	fromCoplanarPoints( a, b, c ) {
-
-		v1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
-
-		this.fromNormalAndCoplanarPoint( v1, a );
-
-		return this;
-
-	}
-
-	equals( plane ) {
-
-		return plane.normal.equals( this.normal ) && plane.constant === this.constant;
-
-	}
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- * @author robp94 / https://github.com/robp94
- */
-
-class Polygon {
-
-	constructor() {
-
-		this.centroid = new Vector3();
-		this.edge = null;
-		this.plane = new Plane();
-
-	}
-
-	fromContour( points ) {
-
-		// create edges from points (assuming CCW order)
-
-		const edges = new Array();
-
-		if ( points.length < 3 ) {
-
-			Logger.error( 'YUKA.Polygon: Unable to create polygon from contour. It needs at least three points.' );
-			return this;
-
-		}
-
-		for ( let i = 0, l = points.length; i < l; i ++ ) {
-
-			const edge = new HalfEdge( points[ i ] );
-			edges.push( edge );
-
-		}
-
-		// link edges
-
-		for ( let i = 0, l = edges.length; i < l; i ++ ) {
-
-			let current, prev, next;
-
-			if ( i === 0 ) {
-
-				current = edges[ i ];
-				prev = edges[ l - 1 ];
-			 	next = edges[ i + 1 ];
-
-			} else if ( i === ( l - 1 ) ) {
-
-				current = edges[ i ];
-			 	prev = edges[ i - 1 ];
-				next = edges[ 0 ];
-
-			} else {
-
-			 	current = edges[ i ];
-				prev = edges[ i - 1 ];
-				next = edges[ i + 1 ];
-
-			}
-
-			current.prev = prev;
-			current.next = next;
-			current.polygon = this;
-
-		}
-
-		//
-
-		this.edge = edges[ 0 ];
-
-		//
-
-		this.plane.fromCoplanarPoints( points[ 0 ], points[ 1 ], points[ 2 ] );
-
-		return this;
-
-	}
-
-	computeCentroid() {
-
-		const centroid = this.centroid;
-		let edge = this.edge;
-		let count = 0;
-
-		centroid.set( 0, 0, 0 );
-
-		do {
-
-			centroid.add( edge.from() );
-
-			count ++;
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		centroid.divideScalar( count );
-
-		return this;
-
-	}
-
-	contains( point, epsilon = 1e-3 ) {
-
-		const plane = this.plane;
-		let edge = this.edge;
-
-		// convex test
-
-		do {
-
-			const v1 = edge.from();
-			const v2 = edge.to();
-
-			if ( leftOn( v1, v2, point ) === false ) {
-
-				return false;
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		// ensure the given point lies within a defined tolerance range
-
-		const distance = plane.distanceToPoint( point );
-
-		if ( Math.abs( distance ) > epsilon ) {
-
-			return false;
-
-		}
-
-		return true;
-
-	}
-
-	convex() {
-
-		let edge = this.edge;
-
-		do {
-
-			const v1 = edge.from();
-			const v2 = edge.to();
-			const v3 = edge.next.to();
-
-			if ( leftOn( v1, v2, v3 ) === false ) {
-
-				return false;
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		return true;
-
-	}
-
-	coplanar( epsilon = 1e-3 ) {
-
-		const plane = this.plane;
-		let edge = this.edge;
-
-		do {
-
-			const distance = plane.distanceToPoint( edge.from() );
-
-			if ( Math.abs( distance ) > epsilon ) {
-
-				return false;
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		return true;
-
-	}
-
-	getContour( result ) {
-
-		let edge = this.edge;
-
-		result.length = 0;
-
-		do {
-
-			result.push( edge.vertex );
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		return result;
-
-	}
-
-	getPortalEdgeTo( polygon, portalEdge ) {
-
-		portalEdge.length = 0;
-
-		let edge = this.edge;
-
-		do {
-
-			if ( edge.twin !== null ) {
-
-				if ( edge.twin.polygon === polygon ) {
-
-					portalEdge.left = edge.vertex;
-					portalEdge.right = edge.next.vertex;
-					return portalEdge;
-
-				}
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		portalEdge.left = null;
-		portalEdge.right = null;
-
-		return portalEdge;
-
-	}
-
-}
-
-// from the book "Computational Geometry in C, Joseph O'Rourke"
-
-function leftOn( a, b, c ) {
-
-	return _Math.area( a, b, c ) >= 0;
-
-}
-
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-class NavMeshLoader {
-
-	load( url, options ) {
-
-		return new Promise( ( resolve, reject ) => {
-
-			fetch( url )
-
-				.then( response => {
-
-					if ( response.status >= 200 && response.status < 300 ) {
-
-						return response.arrayBuffer();
-
-					} else {
-
-						const error = new Error( response.statusText || response.status );
-						error.response = response;
-						return Promise.reject( error );
-
-					}
-
-				} )
-
-				.then( ( arrayBuffer ) => {
-
-					const parser = new Parser();
-					const decoder = new TextDecoder();
-					let data;
-
-					const magic = decoder.decode( new Uint8Array( arrayBuffer, 0, 4 ) );
-
-					if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
-
-						parser.parseBinary( arrayBuffer );
-
-						data = parser.extensions.get( 'BINARY' ).content;
-
-					} else {
-
-						data = decoder.decode( new Uint8Array( arrayBuffer ) );
-
-					}
-
-					const json = JSON.parse( data );
-
-					if ( json.asset === undefined || json.asset.version[ 0 ] < 2 ) {
-
-						throw new Error( 'YUKA.NavMeshLoader: Unsupported asset version.' );
-
-					} else {
-
-						const path = extractUrlBase( url );
-
-						return parser.parse( json, path, options );
-
-					}
-
-				} )
-
-				.then( ( data ) => {
-
-					resolve( data );
-
-				} )
-
-				.catch( ( error ) => {
-
-					Logger.error( 'YUKA.NavMeshLoader: Unable to load navigation mesh.', error );
-
-					reject( error );
-
-				} );
-
-		} );
-
-	}
-
-}
-
-class Parser {
-
-	constructor() {
-
-		this.json = null;
-		this.path = null;
-		this.cache = new Map();
-		this.extensions = new Map();
-
-	}
-
-	parse( json, path, options ) {
-
-		this.json = json;
-		this.path = path;
-
-		// read the first mesh in the glTF file
-
-		return this.getDependency( 'mesh', 0 ).then( ( data ) => {
-
-			// parse the raw geometry data into a bunch of polygons
-
-			const polygons = this.parseGeometry( data );
-
-			// create and config navMesh
-
-			const navMesh = new NavMesh();
-
-			if ( options ) {
-
-				if ( options.epsilonCoplanarTest ) navMesh.epsilonCoplanarTest = options.epsilonCoplanarTest;
-
-			}
-
-			// use polygons to setup the nav mesh
-
-			return navMesh.fromPolygons( polygons );
-
-		} );
-
-	}
-
-	parseGeometry( data ) {
-
-		const index = data.index;
-		const position = data.position;
-
-		const vertices = new Array();
-		const polygons = new Array();
-
-		// vertices
-
-		for ( let i = 0, l = position.length; i < l; i += 3 ) {
-
-			const v = new Vector3();
-
-			v.x = position[ i + 0 ];
-			v.y = position[ i + 1 ];
-			v.z = position[ i + 2 ];
-
-			vertices.push( v );
-
-		}
-
-		// polygons
-
-		if ( index ) {
-
-			// indexed geometry
-
-			for ( let i = 0, l = index.length; i < l; i += 3 ) {
-
-				const a = index[ i + 0 ];
-				const b = index[ i + 1 ];
-				const c = index[ i + 2 ];
-
-				const contour = [ vertices[ a ], vertices[ b ], vertices[ c ] ];
-
-				const polygon = new Polygon().fromContour( contour );
-
-				polygons.push( polygon );
-
-			}
-
-		} else {
-
-			// non-indexed geometry
-
-			for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
-
-				const contour = [ vertices[ i + 0 ], vertices[ i + 1 ], vertices[ i + 2 ] ];
-
-				const polygon = new Polygon().fromContour( contour );
-
-				polygons.push( polygon );
-
-			}
-
-		}
-
-		return polygons;
-
-	}
-
-	getDependencies( type ) {
-
-		const cache = this.cache;
-
-		let dependencies = cache.get( type );
-
-		if ( ! dependencies ) {
-
-			const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || [];
-
-			dependencies = Promise.all( definitions.map( ( definition, index ) => {
-
-				return this.getDependency( type, index );
-
-			} ) );
-
-			cache.set( type, dependencies );
-
-		}
-
-		return dependencies;
-
-	}
-
-	getDependency( type, index ) {
-
-		const cache = this.cache;
-		const key = type + ':' + index;
-
-		let dependency = cache.get( key );
-
-		if ( dependency === undefined ) {
-
-			switch ( type ) {
-
-				case 'accessor':
-					dependency = this.loadAccessor( index );
-					break;
-
-				case 'buffer':
-					dependency = this.loadBuffer( index );
-					break;
-
-				case 'bufferView':
-					dependency = this.loadBufferView( index );
-					break;
-
-				case 'mesh':
-					dependency = this.loadMesh( index );
-					break;
-
-				default:
-					throw new Error( 'Unknown type: ' + type );
-
-			}
-
-			cache.set( key, dependency );
-
-		}
-
-		return dependency;
-
-	}
-
-	loadBuffer( index ) {
-
-		const json = this.json;
-		const definition = json.buffers[ index ];
-
-		if ( definition.uri === undefined && index === 0 ) {
-
-			return Promise.resolve( this.extensions.get( 'BINARY' ).body );
-
-		}
-
-		return new Promise( ( resolve, reject ) => {
-
-			const url = resolveURI( definition.uri, this.path );
-
-			fetch( url )
-
-				.then( response => {
-
-					return response.arrayBuffer();
-
-				} )
-
-				.then( ( arrayBuffer ) => {
-
-					resolve( arrayBuffer );
-
-				} ).catch( ( error ) => {
-
-					Logger.error( 'YUKA.NavMeshLoader: Unable to load buffer.', error );
-
-					reject( error );
-
-				} );
-
-		} );
-
-	}
-
-	loadBufferView( index ) {
-
-		const json = this.json;
-
-		const definition = json.bufferViews[ index ];
-
-		return this.getDependency( 'buffer', definition.buffer ).then( ( buffer ) => {
-
-			const byteLength = definition.byteLength || 0;
-			const byteOffset = definition.byteOffset || 0;
-			return buffer.slice( byteOffset, byteOffset + byteLength );
-
-		} );
-
-	}
-
-	loadAccessor( index ) {
-
-		const json = this.json;
-		const definition = json.accessors[ index ];
-
-		return this.getDependency( 'bufferView', definition.bufferView ).then( ( bufferView ) => {
-
-			const itemSize = WEBGL_TYPE_SIZES[ definition.type ];
-			const TypedArray = WEBGL_COMPONENT_TYPES[ definition.componentType ];
-			const byteOffset = definition.byteOffset || 0;
-
-			return new TypedArray( bufferView, byteOffset, definition.count * itemSize );
-
-		} );
-
-	}
-
-	loadMesh( index ) {
-
-		const json = this.json;
-		const definition = json.meshes[ index ];
-
-		return this.getDependencies( 'accessor' ).then( ( accessors ) => {
-
-			// assuming a single primitve
-
-			const primitive = definition.primitives[ 0 ];
-
-			if ( primitive.mode !== 4 ) {
-
-				throw new Error( 'YUKA.NavMeshLoader: Invalid geometry format. Please ensure to represent your geometry as triangles.' );
-
-			}
-
-			return {
-				index: accessors[ primitive.indices ],
-				position: accessors[ primitive.attributes.POSITION ],
-				normal: accessors[ primitive.attributes.NORMAL ]
-			};
-
-		} );
-
-	}
-
-	parseBinary( data ) {
-
-		const chunkView = new DataView( data, BINARY_EXTENSION_HEADER_LENGTH );
-		let chunkIndex = 0;
-
-		const decoder = new TextDecoder();
-		let content = null;
-		let body = null;
-
-		while ( chunkIndex < chunkView.byteLength ) {
-
-			const chunkLength = chunkView.getUint32( chunkIndex, true );
-			chunkIndex += 4;
-
-			const chunkType = chunkView.getUint32( chunkIndex, true );
-			chunkIndex += 4;
-
-			if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.JSON ) {
-
-				const contentArray = new Uint8Array( data, BINARY_EXTENSION_HEADER_LENGTH + chunkIndex, chunkLength );
-				content = decoder.decode( contentArray );
-
-			} else if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.BIN ) {
-
-				const byteOffset = BINARY_EXTENSION_HEADER_LENGTH + chunkIndex;
-				body = data.slice( byteOffset, byteOffset + chunkLength );
-
-			}
-
-			chunkIndex += chunkLength;
-
-		}
-
-		this.extensions.set( 'BINARY', { content: content, body: body } );
-
-	}
-
-}
-
-// helper functions
-
-function extractUrlBase( url ) {
-
-	const index = url.lastIndexOf( '/' );
-
-	if ( index === - 1 ) return './';
-
-	return url.substr( 0, index + 1 );
-
-}
-
-function resolveURI( uri, path ) {
-
-	if ( typeof uri !== 'string' || uri === '' ) return '';
-
-	if ( /^(https?:)?\/\//i.test( uri ) ) return uri;
-
-	if ( /^data:.*,.*$/i.test( uri ) ) return uri;
-
-	if ( /^blob:.*$/i.test( uri ) ) return uri;
-
-	return path + uri;
-
-}
-
-//
-
-const WEBGL_TYPE_SIZES = {
-	'SCALAR': 1,
-	'VEC2': 2,
-	'VEC3': 3,
-	'VEC4': 4,
-	'MAT2': 4,
-	'MAT3': 9,
-	'MAT4': 16
-};
-
-const WEBGL_COMPONENT_TYPES = {
-	5120: Int8Array,
-	5121: Uint8Array,
-	5122: Int16Array,
-	5123: Uint16Array,
-	5125: Uint32Array,
-	5126: Float32Array
-};
-
-const BINARY_EXTENSION_HEADER_MAGIC = 'glTF';
-const BINARY_EXTENSION_HEADER_LENGTH = 12;
-const BINARY_EXTENSION_CHUNK_TYPES = { JSON: 0x4E4F534A, BIN: 0x004E4942 };
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -5646,6 +3874,169 @@ class BoundingSphere {
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Line3.js
+ *
+ */
+
+const p1 = new Vector3();
+const p2 = new Vector3();
+
+class LineSegment {
+
+	constructor( from = new Vector3(), to = new Vector3() ) {
+
+		this.from = from;
+		this.to = to;
+
+	}
+
+	set( from, to ) {
+
+		this.from = from;
+		this.to = to;
+
+		return this;
+
+	}
+
+	copy( lineSegment ) {
+
+		this.from.copy( lineSegment.from );
+		this.to.copy( lineSegment.to );
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	delta( result ) {
+
+		return result.subVectors( this.to, this.from );
+
+	}
+
+	at( t, result ) {
+
+		return this.delta( result ).multiplyScalar( t ).add( this.from );
+
+	}
+
+	closestPointToPoint( point, clampToLine, result ) {
+
+		const t = this.closestPointToPointParameter( point, clampToLine );
+
+		return this.at( t, result );
+
+	}
+
+	closestPointToPointParameter( point, clampToLine = true ) {
+
+		p1.subVectors( point, this.from );
+		p2.subVectors( this.to, this.from );
+
+		const dotP2P2 = p2.dot( p2 );
+		const dotP2P1 = p2.dot( p1 );
+
+		let t = dotP2P1 / dotP2P2;
+
+		if ( clampToLine ) t = _Math.clamp( t, 0, 1 );
+
+		return t;
+
+	}
+
+	equals( lineSegment ) {
+
+		return lineSegment.from.equals( this.from ) && lineSegment.to.equals( this.to );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Plane.js
+ *
+ */
+
+const v1 = new Vector3();
+const v2 = new Vector3();
+
+class Plane {
+
+	constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
+
+		this.normal = normal;
+		this.constant = constant;
+
+	}
+
+	set( normal, constant ) {
+
+		this.normal = normal;
+		this.constant = constant;
+
+		return this;
+
+	}
+
+	copy( plane ) {
+
+		this.normal.copy( plane.normal );
+		this.constant = plane.constant;
+
+		return this;
+
+	}
+
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	distanceToPoint( point ) {
+
+		return this.normal.dot( point ) + this.constant;
+
+	}
+
+	fromNormalAndCoplanarPoint( normal, point ) {
+
+		this.normal.copy( normal );
+		this.constant = - point.dot( this.normal );
+
+		return this;
+
+	}
+
+	fromCoplanarPoints( a, b, c ) {
+
+		v1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+
+		this.fromNormalAndCoplanarPoint( v1, a );
+
+		return this;
+
+	}
+
+	equals( plane ) {
+
+		return plane.normal.equals( this.normal ) && plane.constant === this.constant;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
  * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
  *
  */
@@ -5734,6 +4125,1613 @@ class Ray {
 	}
 
 }
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class NavEdge extends Edge {
+
+	constructor( from = - 1, to = - 1, cost = 0 ) {
+
+		super( from, to, cost );
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class NavNode extends Node {
+
+	constructor( index = - 1, position = new Vector3(), userData = {} ) {
+
+		super( index );
+
+		this.position = position;
+		this.userData = userData;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class GraphUtils {
+
+	static createGridLayout( size, segments ) {
+
+		const graph = new Graph();
+		graph.digraph = true;
+
+		const halfSize = size / 2;
+		const segmentSize = size / segments;
+
+		// nodes
+
+		let index = 0;
+
+		for ( let i = 0; i <= segments; i ++ ) {
+
+			const z = ( i * segmentSize ) - halfSize;
+
+			for ( let j = 0; j <= segments; j ++ ) {
+
+				const x = ( j * segmentSize ) - halfSize;
+
+				const position = new Vector3( x, 0, z );
+
+				const node = new NavNode( index, position );
+
+				graph.addNode( node );
+
+				index ++;
+
+			}
+
+		}
+
+		// edges
+
+		const count = graph.getNodeCount();
+		const range = Math.pow( segmentSize + ( segmentSize / 2 ), 2 );
+
+		for ( let i = 0; i < count; i ++ ) {
+
+			const node = graph.getNode( i );
+
+			// check distance to all other nodes
+
+			for ( let j = 0; j < count; j ++ ) {
+
+				if ( i !== j ) {
+
+					const neighbor = graph.getNode( j );
+
+					const distanceSquared = neighbor.position.squaredDistanceTo( node.position );
+
+					if ( distanceSquared <= range ) {
+
+						const distance = Math.sqrt( distanceSquared );
+
+						const edge = new NavEdge( i, j, distance );
+
+						graph.addEdge( edge );
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return graph;
+
+	}
+
+}
+
+/**
+ * @author robp94 / https://github.com/robp94
+ * @author Mugen87 / https://github.com/Mugen8
+ *
+ * Reference: https://github.com/donmccurdy/three-pathfinding/blob/master/src/Channel.js
+ *
+ */
+
+class Corridor {
+
+	constructor() {
+
+		this.portalEdges = new Array();
+
+	}
+
+	push( left, right ) {
+
+		this.portalEdges.push( {
+			left: left,
+			right: right
+		} );
+
+	}
+
+	generate() {
+
+		const portalEdges = this.portalEdges;
+		const path = new Array();
+
+		// init scan state
+
+		let portalApex, portalLeft, portalRight;
+		let apexIndex = 0, leftIndex = 0, rightIndex = 0;
+
+		portalApex = portalEdges[ 0 ].left;
+		portalLeft = portalEdges[ 0 ].left;
+		portalRight = portalEdges[ 0 ].right;
+
+		// add start point
+
+		path.push( portalApex );
+
+		for ( let i = 1, l = portalEdges.length; i < l; i ++ ) {
+
+			const left = portalEdges[ i ].left;
+			const right = portalEdges[ i ].right;
+
+			// update right vertex
+
+			if ( _Math.area( portalApex, portalRight, right ) <= 0.0 ) {
+
+				if ( portalApex === portalRight || _Math.area( portalApex, portalLeft, right ) > 0.0 ) {
+
+					// tighten the funnel
+
+					portalRight = right;
+					rightIndex = i;
+
+				} else {
+
+					// right over left, insert left to path and restart scan from portal left point
+
+					path.push( portalLeft );
+
+					// make current left the new apex
+
+					portalApex = portalLeft;
+					apexIndex = leftIndex;
+
+					// review eset portal
+
+					portalLeft = portalApex;
+					portalRight = portalApex;
+					leftIndex = apexIndex;
+					rightIndex = apexIndex;
+
+					// restart scan
+
+					i = apexIndex;
+
+					continue;
+
+				}
+
+			}
+
+			// update left vertex
+
+			if ( _Math.area( portalApex, portalLeft, left ) >= 0.0 ) {
+
+				if ( portalApex === portalLeft || _Math.area( portalApex, portalRight, left ) < 0.0 ) {
+
+					// tighten the funnel
+
+					portalLeft = left;
+					leftIndex = i;
+
+				} else {
+
+					// left over right, insert right to path and restart scan from portal right point
+
+					path.push( portalRight );
+
+					// make current right the new apex
+
+					portalApex = portalRight;
+					apexIndex = rightIndex;
+
+					// reset portal
+
+					portalLeft = portalApex;
+					portalRight = portalApex;
+					leftIndex = apexIndex;
+					rightIndex = apexIndex;
+
+					// restart scan
+
+					i = apexIndex;
+
+					continue;
+
+				}
+
+			}
+
+		}
+
+		if ( ( path.length === 0 ) || ( path[ path.length - 1 ] !== portalEdges[ portalEdges.length - 1 ].left ) ) {
+
+			// append last point to path
+
+			path.push( portalEdges[ portalEdges.length - 1 ].left );
+
+		}
+
+		return path;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * https://en.wikipedia.org/wiki/Doubly_connected_edge_list
+ *
+ */
+
+class HalfEdge {
+
+	constructor( vertex = new Vector3() ) {
+
+		this.vertex = vertex;
+		this.next = null;
+		this.prev = null;
+		this.twin = null;
+		this.polygon = null;
+
+		this.nodeIndex = - 1;
+
+	}
+
+	from() {
+
+		return this.vertex;
+
+	}
+
+	to() {
+
+		return this.next ? this.next.vertex : null;
+
+	}
+
+	length() {
+
+		const from = this.from();
+		const to = this.to();
+
+		if ( to !== null ) {
+
+			return from.distanceTo( to );
+
+		}
+
+		return - 1;
+
+	}
+
+	squaredLength() {
+
+		const from = this.from();
+		const to = this.to();
+
+		if ( to !== null ) {
+
+			return from.squaredDistanceTo( to );
+
+		}
+
+		return - 1;
+
+	}
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ * @author robp94 / https://github.com/robp94
+ */
+
+const pointOnLineSegment = new Vector3();
+const closestPoint = new Vector3();
+const edgeDirection = new Vector3();
+const movementDirection = new Vector3();
+const newPosition = new Vector3();
+const lineSegment = new LineSegment();
+
+class NavMesh {
+
+	constructor() {
+
+		this.graph = new Graph();
+		this.graph.digraph = true;
+
+		this.regions = new Array();
+		this.spatialIndex = null;
+
+		this.epsilonCoplanarTest = 1e-3;
+		this.epsilonContainsTest = 1;
+
+	}
+
+	fromPolygons( polygons ) {
+
+		this.clear();
+
+		//
+
+		const initialEdgeList = new Array();
+		const sortedEdgeList = new Array();
+
+		// setup list with all edges
+
+		for ( let i = 0, l = polygons.length; i < l; i ++ ) {
+
+			const polygon = polygons[ i ];
+
+			let edge = polygon.edge;
+
+			do {
+
+				initialEdgeList.push( edge );
+
+				edge = edge.next;
+
+			} while ( edge !== polygon.edge );
+
+			//
+
+			this.regions.push( polygon );
+
+		}
+
+		// setup twin references and sorted list of edges
+
+		for ( let i = 0, il = initialEdgeList.length; i < il; i ++ ) {
+
+			let edge0 = initialEdgeList[ i ];
+
+			if ( edge0.twin !== null ) continue;
+
+			for ( let j = i + 1, jl = initialEdgeList.length; j < jl; j ++ ) {
+
+				let edge1 = initialEdgeList[ j ];
+
+				if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
+
+					// twin found, set references
+
+					edge0.twin = edge1;
+					edge1.twin = edge0;
+
+					// add edge to list
+
+					const cost = edge0.squaredLength();
+
+					sortedEdgeList.push( {
+						cost: cost,
+						edge: edge0
+					} );
+
+					// there can only be a single twin
+
+					break;
+
+				}
+
+			}
+
+		}
+
+		sortedEdgeList.sort( descending );
+
+		// hald-edge data structure is now complete, begin build of convex regions
+
+		this._buildRegions( sortedEdgeList );
+
+		// ensure unique node indices for all twin edges
+
+		this._buildNodeIndices();
+
+		// now build the navigation graph
+
+		this._buildGraph();
+
+		return this;
+
+	}
+
+	clear() {
+
+		this.graph.clear();
+		this.regions.length = 0;
+		this.spatialIndex = null;
+
+		return this;
+
+	}
+
+	getClosestRegion( point ) {
+
+		const regions = this.regions;
+		let closesRegion = null;
+		let minDistance = Infinity;
+
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
+
+			const distance = point.squaredDistanceTo( region.centroid );
+
+			if ( distance < minDistance ) {
+
+				minDistance = distance;
+
+				closesRegion = region;
+
+			}
+
+		}
+
+		return closesRegion;
+
+	}
+
+	getRegionForPoint( point, epsilon = 1e-3 ) {
+
+		let regions;
+
+		if ( this.spatialIndex !== null ) {
+
+			const index = this.spatialIndex.getIndexForPosition( point );
+			regions = this.spatialIndex.cells[ index ].entries;
+
+		} else {
+
+			regions = this.regions;
+
+		}
+
+		//
+
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
+
+			if ( region.contains( point, epsilon ) === true ) {
+
+				return region;
+
+			}
+
+		}
+
+		return null;
+
+	}
+
+	findPath( from, to ) {
+
+		const graph = this.graph;
+		const path = new Array();
+
+		let fromRegion = this.getRegionForPoint( from, this.epsilonContainsTest );
+		let toRegion = this.getRegionForPoint( to, this.epsilonContainsTest );
+
+		if ( fromRegion === null || toRegion === null ) {
+
+			// if source or target are outside the navmesh, choose the nearest convex region
+
+			if ( fromRegion === null ) fromRegion = this.getClosestRegion( from );
+			if ( toRegion === null ) toRegion = this.getClosestRegion( to );
+
+		}
+
+		// check if both convex region are identical
+
+		if ( fromRegion === toRegion ) {
+
+			// no search necessary, directly create the path
+
+			path.push( new Vector3().copy( from ) );
+			path.push( new Vector3().copy( to ) );
+			return path;
+
+		} else {
+
+			// source and target are not in same region, peform search
+
+			const source = this.regions.indexOf( fromRegion );
+			const target = this.regions.indexOf( toRegion );
+
+			const astar = new AStar( graph, source, target );
+			astar.search();
+
+			if ( astar.found === true ) {
+
+				const polygonPath = astar.getPath();
+
+				const corridor = new Corridor();
+				corridor.push( from, from );
+
+				// push sequence of portal edges to corridor
+
+				const portalEdge = { left: null, right: null };
+
+				for ( let i = 0, l = ( polygonPath.length - 1 ); i < l; i ++ ) {
+
+					const region = this.regions[ polygonPath[ i ] ];
+					const nextRegion = this.regions[ polygonPath[ i + 1 ] ];
+
+					region.getPortalEdgeTo( nextRegion, portalEdge );
+
+					corridor.push( portalEdge.left, portalEdge.right );
+
+				}
+
+				corridor.push( to, to );
+
+				path.push( ...corridor.generate() );
+
+			}
+
+			return path;
+
+		}
+
+	}
+
+	clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
+
+		let newRegion = this.getRegionForPoint( endPosition, this.epsilonContainsTest );
+
+		// endPosition lies outside navMesh
+
+		if ( newRegion === null ) {
+
+			if ( currentRegion === null ) throw new Error( 'YUKA.NavMesh.clampMovement(): No current region available.' );
+
+			// determine closest edge in current convex region
+
+			let closestEdge = null;
+			let minDistance = Infinity;
+
+			let edge = currentRegion.edge;
+
+			do {
+
+				// only consider border edges
+
+				if ( edge.twin === null ) {
+
+					lineSegment.set( edge.vertex, edge.next.vertex );
+					const t = lineSegment.closestPointToPointParameter( startPosition );
+					lineSegment.at( t, pointOnLineSegment );
+
+					const distance = pointOnLineSegment.squaredDistanceTo( startPosition );
+
+					if ( distance < minDistance ) {
+
+						minDistance = distance;
+
+						closestEdge = edge;
+						closestPoint.copy( pointOnLineSegment );
+
+					}
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== currentRegion.edge );
+
+			// calculate movement and edge direction
+
+			edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
+			const length = movementDirection.subVectors( endPosition, startPosition ).length();
+			movementDirection.divideScalar( length );
+
+			// this value influences the speed at which the entity moves along the edge
+
+			const f = edgeDirection.dot( movementDirection );
+
+			// calculate new position on the edge
+
+			newPosition.copy( closestPoint ).add( edgeDirection.multiplyScalar( f * length ) );
+
+			// the following value "t" tells us if the point exceeds the line segment
+
+			lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
+			const t = lineSegment.closestPointToPointParameter( newPosition, false );
+
+			//
+
+			if ( t >= 0 && t <= 1 ) {
+
+				// point is within line segment, we can safely use the new position
+
+				clampPosition.copy( newPosition );
+
+			} else {
+
+				// check, if the new point lies outside the navMesh
+
+				newRegion = this.getRegionForPoint( newPosition, this.epsilonContainsTest );
+
+				if ( newRegion !== null ) {
+
+					// if not, everything is fine
+
+					clampPosition.copy( newPosition );
+					return newRegion;
+
+				}
+
+				// otherwise prevent movement
+
+				clampPosition.copy( startPosition );
+
+			}
+
+			return currentRegion;
+
+		} else {
+
+			// return the new region
+
+			return newRegion;
+
+		}
+
+	}
+
+	updateSpatialIndex() {
+
+		if ( this.spatialIndex !== null ) {
+
+			this.spatialIndex.makeEmpty();
+
+			const regions = this.regions;
+
+			for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+				const region = regions[ i ];
+
+				this.spatialIndex.addPolygon( region );
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+	_buildRegions( edgeList ) {
+
+		const regions = this.regions;
+
+		const cache = {
+			leftPrev: null,
+			leftNext: null,
+			rightPrev: null,
+			rightNext: null
+		};
+
+		// process edges from longest to shortest
+
+		for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
+
+			const entry = edgeList[ i ];
+
+			let candidate = entry.edge;
+
+			// cache current references for possible restore
+
+			cache.prev = candidate.prev;
+			cache.next = candidate.next;
+			cache.prevTwin = candidate.twin.prev;
+			cache.nextTwin = candidate.twin.next;
+
+			// temporarily change the first polygon in order to represent both polygons
+
+			candidate.prev.next = candidate.twin.next;
+			candidate.next.prev = candidate.twin.prev;
+			candidate.twin.prev.next = candidate.next;
+			candidate.twin.next.prev = candidate.prev;
+
+			const polygon = candidate.polygon;
+			polygon.edge = candidate.prev;
+
+			if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
+
+				// correct polygon reference of all edges
+
+				let edge = polygon.edge;
+
+				do {
+
+					edge.polygon = polygon;
+
+					edge = edge.next;
+
+				} while ( edge !== polygon.edge );
+
+				// delete obsolete polygon
+
+				const index = regions.indexOf( entry.edge.twin.polygon );
+				regions.splice( index, 1 );
+
+			} else {
+
+				// restore
+
+				cache.prev.next = candidate;
+				cache.next.prev = candidate;
+				cache.prevTwin.next = candidate.twin;
+				cache.nextTwin.prev = candidate.twin;
+
+				polygon.edge = candidate;
+
+			}
+
+		}
+
+		//
+
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
+
+			region.computeCentroid();
+
+		}
+
+	}
+
+	_buildNodeIndices() {
+
+		const regions = this.regions;
+
+		const indicesMap = new Map();
+		let nextNodeIndex = 0;
+
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
+
+			let edge = region.edge;
+
+			do {
+
+				// only edges with a twin reference needs to be considered
+
+				if ( edge.twin !== null && edge.nodeIndex === null ) {
+
+					let nodeIndex = - 1;
+					const position = edge.from();
+
+					// check all existing entries
+
+					for ( const [ index, pos ] of indicesMap.entries() ) {
+
+						if ( position.equals( pos ) === true ) {
+
+							// found, use the existing index
+
+							nodeIndex = index;
+							break;
+
+						}
+
+					}
+
+					// if no suitable index was found, create a new one
+
+					if ( nodeIndex === - 1 ) {
+
+						nodeIndex = nextNodeIndex ++;
+						indicesMap.set( nodeIndex, position );
+
+					}
+
+					// assign unique node index to edge
+
+					edge.nodeIndex = nodeIndex;
+					edge.twin.next.nodeIndex = nodeIndex;
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== region.edge );
+
+		}
+
+	}
+
+	_buildGraph() {
+
+		const graph = this.graph;
+		const regions = this.regions;
+
+		// for each region, the code creates an array of directly accessible node indices
+
+		const regionNeighbourhood = new Array();
+
+		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+			const region = regions[ i ];
+
+			const regionIndices = new Array();
+			regionNeighbourhood.push( regionIndices );
+
+			let edge = region.edge;
+			do {
+
+				if ( edge.twin !== null ) {
+
+					regionIndices.push( this.regions.indexOf( edge.twin.polygon ) );
+
+					// add node to graph if necessary
+
+					if ( graph.hasNode( this.regions.indexOf( edge.polygon ) ) === false ) {
+
+						graph.addNode( new NavNode( this.regions.indexOf( edge.polygon ), edge.polygon.centroid ) );
+
+					}
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== region.edge );
+
+		}
+
+		// add navigation edges
+
+		for ( let i = 0, il = regionNeighbourhood.length; i < il; i ++ ) {
+
+			const indices = regionNeighbourhood[ i ];
+			const from = i;
+
+			for ( let j = 0, jl = indices.length; j < jl; j ++ ) {
+
+				const to = indices[ j ];
+
+				if ( from !== to ) {
+
+					if ( graph.hasEdge( from, to ) === false ) {
+
+						const nodeFrom = graph.getNode( from );
+						const nodeTo = graph.getNode( to );
+
+						const cost = nodeFrom.position.distanceTo( nodeTo.position );
+
+						graph.addEdge( new NavEdge( from, to, cost ) );
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+}
+
+//
+
+function descending( a, b ) {
+
+	return ( a.cost < b.cost ) ? 1 : ( a.cost > b.cost ) ? - 1 : 0;
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ * @author robp94 / https://github.com/robp94
+ */
+
+class Polygon {
+
+	constructor() {
+
+		this.centroid = new Vector3();
+		this.edge = null;
+		this.plane = new Plane();
+
+	}
+
+	fromContour( points ) {
+
+		// create edges from points (assuming CCW order)
+
+		const edges = new Array();
+
+		if ( points.length < 3 ) {
+
+			Logger.error( 'YUKA.Polygon: Unable to create polygon from contour. It needs at least three points.' );
+			return this;
+
+		}
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+			const edge = new HalfEdge( points[ i ] );
+			edges.push( edge );
+
+		}
+
+		// link edges
+
+		for ( let i = 0, l = edges.length; i < l; i ++ ) {
+
+			let current, prev, next;
+
+			if ( i === 0 ) {
+
+				current = edges[ i ];
+				prev = edges[ l - 1 ];
+			 	next = edges[ i + 1 ];
+
+			} else if ( i === ( l - 1 ) ) {
+
+				current = edges[ i ];
+			 	prev = edges[ i - 1 ];
+				next = edges[ 0 ];
+
+			} else {
+
+			 	current = edges[ i ];
+				prev = edges[ i - 1 ];
+				next = edges[ i + 1 ];
+
+			}
+
+			current.prev = prev;
+			current.next = next;
+			current.polygon = this;
+
+		}
+
+		//
+
+		this.edge = edges[ 0 ];
+
+		//
+
+		this.plane.fromCoplanarPoints( points[ 0 ], points[ 1 ], points[ 2 ] );
+
+		return this;
+
+	}
+
+	computeCentroid() {
+
+		const centroid = this.centroid;
+		let edge = this.edge;
+		let count = 0;
+
+		centroid.set( 0, 0, 0 );
+
+		do {
+
+			centroid.add( edge.from() );
+
+			count ++;
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		centroid.divideScalar( count );
+
+		return this;
+
+	}
+
+	contains( point, epsilon = 1e-3 ) {
+
+		const plane = this.plane;
+		let edge = this.edge;
+
+		// convex test
+
+		do {
+
+			const v1 = edge.from();
+			const v2 = edge.to();
+
+			if ( leftOn( v1, v2, point ) === false ) {
+
+				return false;
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		// ensure the given point lies within a defined tolerance range
+
+		const distance = plane.distanceToPoint( point );
+
+		if ( Math.abs( distance ) > epsilon ) {
+
+			return false;
+
+		}
+
+		return true;
+
+	}
+
+	convex() {
+
+		let edge = this.edge;
+
+		do {
+
+			const v1 = edge.from();
+			const v2 = edge.to();
+			const v3 = edge.next.to();
+
+			if ( leftOn( v1, v2, v3 ) === false ) {
+
+				return false;
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return true;
+
+	}
+
+	coplanar( epsilon = 1e-3 ) {
+
+		const plane = this.plane;
+		let edge = this.edge;
+
+		do {
+
+			const distance = plane.distanceToPoint( edge.from() );
+
+			if ( Math.abs( distance ) > epsilon ) {
+
+				return false;
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return true;
+
+	}
+
+	getContour( result ) {
+
+		let edge = this.edge;
+
+		result.length = 0;
+
+		do {
+
+			result.push( edge.vertex );
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return result;
+
+	}
+
+	getPortalEdgeTo( polygon, portalEdge ) {
+
+		let edge = this.edge;
+
+		do {
+
+			if ( edge.twin !== null ) {
+
+				if ( edge.twin.polygon === polygon ) {
+
+					portalEdge.left = edge.vertex;
+					portalEdge.right = edge.next.vertex;
+					return portalEdge;
+
+				}
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		portalEdge.left = null;
+		portalEdge.right = null;
+
+		return portalEdge;
+
+	}
+
+}
+
+// from the book "Computational Geometry in C, Joseph O'Rourke"
+
+function leftOn( a, b, c ) {
+
+	return _Math.area( a, b, c ) >= 0;
+
+}
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
+class NavMeshLoader {
+
+	load( url, options ) {
+
+		return new Promise( ( resolve, reject ) => {
+
+			fetch( url )
+
+				.then( response => {
+
+					if ( response.status >= 200 && response.status < 300 ) {
+
+						return response.arrayBuffer();
+
+					} else {
+
+						const error = new Error( response.statusText || response.status );
+						error.response = response;
+						return Promise.reject( error );
+
+					}
+
+				} )
+
+				.then( ( arrayBuffer ) => {
+
+					const parser = new Parser();
+					const decoder = new TextDecoder();
+					let data;
+
+					const magic = decoder.decode( new Uint8Array( arrayBuffer, 0, 4 ) );
+
+					if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
+
+						parser.parseBinary( arrayBuffer );
+
+						data = parser.extensions.get( 'BINARY' ).content;
+
+					} else {
+
+						data = decoder.decode( new Uint8Array( arrayBuffer ) );
+
+					}
+
+					const json = JSON.parse( data );
+
+					if ( json.asset === undefined || json.asset.version[ 0 ] < 2 ) {
+
+						throw new Error( 'YUKA.NavMeshLoader: Unsupported asset version.' );
+
+					} else {
+
+						const path = extractUrlBase( url );
+
+						return parser.parse( json, path, options );
+
+					}
+
+				} )
+
+				.then( ( data ) => {
+
+					resolve( data );
+
+				} )
+
+				.catch( ( error ) => {
+
+					Logger.error( 'YUKA.NavMeshLoader: Unable to load navigation mesh.', error );
+
+					reject( error );
+
+				} );
+
+		} );
+
+	}
+
+}
+
+class Parser {
+
+	constructor() {
+
+		this.json = null;
+		this.path = null;
+		this.cache = new Map();
+		this.extensions = new Map();
+
+	}
+
+	parse( json, path, options ) {
+
+		this.json = json;
+		this.path = path;
+
+		// read the first mesh in the glTF file
+
+		return this.getDependency( 'mesh', 0 ).then( ( data ) => {
+
+			// parse the raw geometry data into a bunch of polygons
+
+			const polygons = this.parseGeometry( data );
+
+			// create and config navMesh
+
+			const navMesh = new NavMesh();
+
+			if ( options ) {
+
+				if ( options.epsilonCoplanarTest ) navMesh.epsilonCoplanarTest = options.epsilonCoplanarTest;
+
+			}
+
+			// use polygons to setup the nav mesh
+
+			return navMesh.fromPolygons( polygons );
+
+		} );
+
+	}
+
+	parseGeometry( data ) {
+
+		const index = data.index;
+		const position = data.position;
+
+		const vertices = new Array();
+		const polygons = new Array();
+
+		// vertices
+
+		for ( let i = 0, l = position.length; i < l; i += 3 ) {
+
+			const v = new Vector3();
+
+			v.x = position[ i + 0 ];
+			v.y = position[ i + 1 ];
+			v.z = position[ i + 2 ];
+
+			vertices.push( v );
+
+		}
+
+		// polygons
+
+		if ( index ) {
+
+			// indexed geometry
+
+			for ( let i = 0, l = index.length; i < l; i += 3 ) {
+
+				const a = index[ i + 0 ];
+				const b = index[ i + 1 ];
+				const c = index[ i + 2 ];
+
+				const contour = [ vertices[ a ], vertices[ b ], vertices[ c ] ];
+
+				const polygon = new Polygon().fromContour( contour );
+
+				polygons.push( polygon );
+
+			}
+
+		} else {
+
+			// non-indexed geometry
+
+			for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
+
+				const contour = [ vertices[ i + 0 ], vertices[ i + 1 ], vertices[ i + 2 ] ];
+
+				const polygon = new Polygon().fromContour( contour );
+
+				polygons.push( polygon );
+
+			}
+
+		}
+
+		return polygons;
+
+	}
+
+	getDependencies( type ) {
+
+		const cache = this.cache;
+
+		let dependencies = cache.get( type );
+
+		if ( ! dependencies ) {
+
+			const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || [];
+
+			dependencies = Promise.all( definitions.map( ( definition, index ) => {
+
+				return this.getDependency( type, index );
+
+			} ) );
+
+			cache.set( type, dependencies );
+
+		}
+
+		return dependencies;
+
+	}
+
+	getDependency( type, index ) {
+
+		const cache = this.cache;
+		const key = type + ':' + index;
+
+		let dependency = cache.get( key );
+
+		if ( dependency === undefined ) {
+
+			switch ( type ) {
+
+				case 'accessor':
+					dependency = this.loadAccessor( index );
+					break;
+
+				case 'buffer':
+					dependency = this.loadBuffer( index );
+					break;
+
+				case 'bufferView':
+					dependency = this.loadBufferView( index );
+					break;
+
+				case 'mesh':
+					dependency = this.loadMesh( index );
+					break;
+
+				default:
+					throw new Error( 'Unknown type: ' + type );
+
+			}
+
+			cache.set( key, dependency );
+
+		}
+
+		return dependency;
+
+	}
+
+	loadBuffer( index ) {
+
+		const json = this.json;
+		const definition = json.buffers[ index ];
+
+		if ( definition.uri === undefined && index === 0 ) {
+
+			return Promise.resolve( this.extensions.get( 'BINARY' ).body );
+
+		}
+
+		return new Promise( ( resolve, reject ) => {
+
+			const url = resolveURI( definition.uri, this.path );
+
+			fetch( url )
+
+				.then( response => {
+
+					return response.arrayBuffer();
+
+				} )
+
+				.then( ( arrayBuffer ) => {
+
+					resolve( arrayBuffer );
+
+				} ).catch( ( error ) => {
+
+					Logger.error( 'YUKA.NavMeshLoader: Unable to load buffer.', error );
+
+					reject( error );
+
+				} );
+
+		} );
+
+	}
+
+	loadBufferView( index ) {
+
+		const json = this.json;
+
+		const definition = json.bufferViews[ index ];
+
+		return this.getDependency( 'buffer', definition.buffer ).then( ( buffer ) => {
+
+			const byteLength = definition.byteLength || 0;
+			const byteOffset = definition.byteOffset || 0;
+			return buffer.slice( byteOffset, byteOffset + byteLength );
+
+		} );
+
+	}
+
+	loadAccessor( index ) {
+
+		const json = this.json;
+		const definition = json.accessors[ index ];
+
+		return this.getDependency( 'bufferView', definition.bufferView ).then( ( bufferView ) => {
+
+			const itemSize = WEBGL_TYPE_SIZES[ definition.type ];
+			const TypedArray = WEBGL_COMPONENT_TYPES[ definition.componentType ];
+			const byteOffset = definition.byteOffset || 0;
+
+			return new TypedArray( bufferView, byteOffset, definition.count * itemSize );
+
+		} );
+
+	}
+
+	loadMesh( index ) {
+
+		const json = this.json;
+		const definition = json.meshes[ index ];
+
+		return this.getDependencies( 'accessor' ).then( ( accessors ) => {
+
+			// assuming a single primitve
+
+			const primitive = definition.primitives[ 0 ];
+
+			if ( primitive.mode !== 4 ) {
+
+				throw new Error( 'YUKA.NavMeshLoader: Invalid geometry format. Please ensure to represent your geometry as triangles.' );
+
+			}
+
+			return {
+				index: accessors[ primitive.indices ],
+				position: accessors[ primitive.attributes.POSITION ],
+				normal: accessors[ primitive.attributes.NORMAL ]
+			};
+
+		} );
+
+	}
+
+	parseBinary( data ) {
+
+		const chunkView = new DataView( data, BINARY_EXTENSION_HEADER_LENGTH );
+		let chunkIndex = 0;
+
+		const decoder = new TextDecoder();
+		let content = null;
+		let body = null;
+
+		while ( chunkIndex < chunkView.byteLength ) {
+
+			const chunkLength = chunkView.getUint32( chunkIndex, true );
+			chunkIndex += 4;
+
+			const chunkType = chunkView.getUint32( chunkIndex, true );
+			chunkIndex += 4;
+
+			if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.JSON ) {
+
+				const contentArray = new Uint8Array( data, BINARY_EXTENSION_HEADER_LENGTH + chunkIndex, chunkLength );
+				content = decoder.decode( contentArray );
+
+			} else if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.BIN ) {
+
+				const byteOffset = BINARY_EXTENSION_HEADER_LENGTH + chunkIndex;
+				body = data.slice( byteOffset, byteOffset + chunkLength );
+
+			}
+
+			chunkIndex += chunkLength;
+
+		}
+
+		this.extensions.set( 'BINARY', { content: content, body: body } );
+
+	}
+
+}
+
+// helper functions
+
+function extractUrlBase( url ) {
+
+	const index = url.lastIndexOf( '/' );
+
+	if ( index === - 1 ) return './';
+
+	return url.substr( 0, index + 1 );
+
+}
+
+function resolveURI( uri, path ) {
+
+	if ( typeof uri !== 'string' || uri === '' ) return '';
+
+	if ( /^(https?:)?\/\//i.test( uri ) ) return uri;
+
+	if ( /^data:.*,.*$/i.test( uri ) ) return uri;
+
+	if ( /^blob:.*$/i.test( uri ) ) return uri;
+
+	return path + uri;
+
+}
+
+//
+
+const WEBGL_TYPE_SIZES = {
+	'SCALAR': 1,
+	'VEC2': 2,
+	'VEC3': 3,
+	'VEC4': 4,
+	'MAT2': 4,
+	'MAT3': 9,
+	'MAT4': 16
+};
+
+const WEBGL_COMPONENT_TYPES = {
+	5120: Int8Array,
+	5121: Uint8Array,
+	5122: Int16Array,
+	5123: Uint16Array,
+	5125: Uint32Array,
+	5126: Float32Array
+};
+
+const BINARY_EXTENSION_HEADER_MAGIC = 'glTF';
+const BINARY_EXTENSION_HEADER_LENGTH = 12;
+const BINARY_EXTENSION_CHUNK_TYPES = { JSON: 0x4E4F534A, BIN: 0x004E4942 };
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -7204,4 +7202,4 @@ class Trigger {
 
 }
 
-export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Node, Graph, GraphUtils, PriorityQueue, NavEdge, NavNode, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, _Math as Math, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, Cell, CellSpacePartitioning, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, _Math as Math, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };

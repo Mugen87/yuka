@@ -3,10 +3,10 @@
  * @author robp94 / https://github.com/robp94
  */
 
-import { Graph } from '../core/Graph.js';
-import { NavNode } from '../navigation/NavNode.js';
-import { NavEdge } from '../navigation/NavEdge.js';
-import { AStar } from '../search/AStar.js';
+import { Graph } from '../../graph/core/Graph.js';
+import { AStar } from '../../graph/search/AStar.js';
+import { NavNode } from '../core/NavNode.js';
+import { NavEdge } from '../core/NavEdge.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { LineSegment } from '../../math/LineSegment.js';
 import { Corridor } from "./Corridor.js";
