@@ -35,6 +35,7 @@
 
 	import * as YUKA from '../../../build/yuka.module.js';
 	import * as THREE from '../../lib/three.module.js';
+	import { GLTFLoader } from '../../lib/GLTFLoader.module.js';
 
 	import { Player } from './src/Player.js';
 	import { createConvexRegionHelper } from '../../graph/common/js/NavMeshHelper.js';
@@ -54,20 +55,18 @@
 
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color( 0xa0a0a0 );
-			scene.fog = new THREE.Fog( 0xa0a0a0, 10, 40 );
+			scene.fog = new THREE.Fog( 0xa0a0a0, 20, 40 );
 
 			//
 
-			const geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+			const geometry = new THREE.PlaneBufferGeometry( 150, 150 );
 			const material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
 
 			const ground = new THREE.Mesh( geometry, material );
 			ground.rotation.x = - Math.PI / 2;
+			ground.matrixAutoUpdate = false;
+			ground.updateMatrix();
 			scene.add( ground );
-
-			const axesHelper = new THREE.AxesHelper( 3 );
-			axesHelper.position.y = 0.001;
-			scene.add( axesHelper );
 
 			//
 
@@ -93,9 +92,54 @@
 
 			//
 
+			const glTFLoader = new GLTFLoader();
+			glTFLoader.load( 'model/house.glb', ( gltf ) => {
+
+				// add object to scene
+
+				scene.add( gltf.scene );
+
+				gltf.scene.traverse( ( object ) => {
+
+					object.matrixAutoUpdate = false;
+					object.updateMatrix();
+
+					if ( object.isMesh ) {
+
+						for ( const material of object.material ) {
+
+							if ( material.transparent === true ) material.depthWrite = false;
+
+						}
+
+					}
+
+				} );
+
+				// load respective navmesh
+
+				const loader = new YUKA.NavMeshLoader();
+
+				loader.load( './navmesh/navmesh.glb', { epsilonCoplanarTest: 0.25 } ).then( ( navMesh ) => {
+
+					// visualize convex regions
+
+					const navMeshGroup = createConvexRegionHelper( navMesh );
+					//scene.add( navMeshGroup );
+
+					player.navMesh = navMesh;
+
+					animate();
+
+				} );
+
+			} );
+
+			//
+
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
-			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.gammaOutput = true;
 			document.body.appendChild( renderer.domElement );
 
 			window.addEventListener( 'resize', onWindowResize, false );
@@ -114,6 +158,8 @@
 			time = new YUKA.Time();
 
 			player = new Player();
+			player.position.set( - 13, - 0.75, - 9 );
+			player.setRotation( - 2.2, 0.2 );
 			player.lookSpeed = 2;
 			player.height = 2;
 			player.maxSpeed = 40;
@@ -128,23 +174,6 @@
 			};
 
 			entityManager.add( player );
-
-			// load navmesh
-
-			const loader = new YUKA.NavMeshLoader();
-
-			loader.load( './navmesh/navmesh.gltf', { epsilonCoplanarTest: 0.25 } ).then( ( navMesh ) => {
-
-				// visualize convex regions
-
-				const navMeshGroup = createConvexRegionHelper( navMesh );
-				scene.add( navMeshGroup );
-
-				player.navMesh = navMesh;
-
-				animate();
-
-			} );
 
 		}
 

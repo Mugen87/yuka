@@ -5791,7 +5791,7 @@ class Cell {
 
 const clampedPosition = new Vector3();
 const aabb = new AABB();
-const contour = [];
+const contour = new Array();
 
 class CellSpacePartitioning {
 

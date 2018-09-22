@@ -121,6 +121,16 @@ class Player extends MovingEntity {
 
 	}
 
+	setRotation( yaw, pitch ) {
+
+		this.movementX = yaw;
+		this.movementY = pitch;
+
+		this.rotation.fromEuler( 0, this.movementX, 0 );
+		this.head.rotation.fromEuler( this.movementY, 0, 0 );
+
+	}
+
 	_updateHead( delta ) {
 
 		const head = this.head;
