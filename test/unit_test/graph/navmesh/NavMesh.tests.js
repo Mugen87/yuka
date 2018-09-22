@@ -90,14 +90,11 @@ describe( 'NavMesh', function () {
 			expect( navMesh.graph.getNodeCount() ).to.equal( 2 );
 			expect( navMesh.graph.getEdgeCount() ).to.equal( 2 );
 
-			const position1 = new Vector3( 0.5, 0, 1 );
-			const position2 = new Vector3( 1, 0, 0 );
-
 			const node1 = navMesh.graph.getNode( 0 );
 			const node2 = navMesh.graph.getNode( 1 );
 
-			expect( node1.position ).to.deep.equal( position1 );
-			expect( node2.position ).to.deep.equal( position2 );
+			expect( node1.position ).to.deep.equal( p1.centroid );
+			expect( node2.position ).to.deep.equal( p2.centroid );
 
 			const edge1 = navMesh.graph.getEdge( 0, 1 );
 			const edge2 = navMesh.graph.getEdge( 1, 0 );
@@ -106,57 +103,6 @@ describe( 'NavMesh', function () {
 			expect( edge1.to ).to.equal( 1 );
 			expect( edge2.from ).to.equal( 1 );
 			expect( edge2.to ).to.equal( 0 );
-
-		} );
-
-	} );
-
-	describe( '#getClosestNodeIndex()', function () {
-
-		it( 'should return the closest node index for the given point', function () {
-
-			const point1 = new Vector3( 0.6, 0, 1 );
-			const point2 = new Vector3( 1.2, 0, 0.2 );
-
-			const nodeIndex1 = navMesh.getClosestNodeIndex( point1 );
-			const nodeIndex2 = navMesh.getClosestNodeIndex( point2 );
-
-			expect( nodeIndex1 ).to.equal( 0 );
-			expect( nodeIndex2 ).to.equal( 1 );
-
-		} );
-
-	} );
-
-	describe( '#getClosestNodeIndexInRegion()', function () {
-
-		it( 'should return the closest node index of a region for the given point', function () {
-
-			// nodes are ( 0.5, 0, 1 ) and ( 1, 0, 0 )
-
-			const point1 = new Vector3( 0.6, 0, 1 );
-			const point2 = new Vector3( 1.2, 0, 0.2 );
-
-			const nodeIndex1 = navMesh.getClosestNodeIndexInRegion( point1, p1 );
-			const nodeIndex2 = navMesh.getClosestNodeIndexInRegion( point2, p2 );
-
-			expect( nodeIndex1 ).to.equal( 0 );
-			expect( nodeIndex2 ).to.equal( 1 );
-
-		} );
-
-		it( 'should use the third parameter to calculate a heuristic used to pick the best possible node', function () {
-
-			// nodes are ( 0.5, 0, 1 ) and ( 1, 0, 0 )
-
-			const point = new Vector3( 0.8, 0, 0.5 );
-			const target = new Vector3( 0, 0, 1.5 );
-
-			const nodeIndex1 = navMesh.getClosestNodeIndexInRegion( point, p1 );
-			const nodeIndex2 = navMesh.getClosestNodeIndexInRegion( point, p1, target );
-
-			expect( nodeIndex1 ).to.equal( 1 );
-			expect( nodeIndex2 ).to.equal( 0 ); // nodeIndex 0 is actually the better choice since
 
 		} );
 
@@ -232,7 +178,7 @@ describe( 'NavMesh', function () {
 
 		it( 'should return a path as an array of Vector3 from the start to end position', function () {
 
-			const from = new Vector3( - 1, 0, 1 );
+			const from = new Vector3( 0, 0, 1.5 );
 			const to = new Vector3( 0.9, 0, 0.9 );
 
 			const path = navMesh.findPath( from, to );
@@ -268,6 +214,20 @@ describe( 'NavMesh', function () {
 
 			const from = new Vector3( - 1, 0, 1 );
 			const to = new Vector3( - 0.5, 0, 1 );
+
+			const path = navMesh.findPath( from, to );
+
+			expect( path ).to.be.an( 'array' );
+			expect( path ).to.have.lengthOf( 2 );
+			expect( path[ 0 ] ).to.deep.equal( from );
+			expect( path[ 1 ] ).to.deep.equal( to );
+
+		} );
+
+		it( 'should smooth the path if navigation points are directly visible', function () {
+
+			const from = new Vector3( 0, 0, 0.5 );
+			const to = new Vector3( 0.9, 0, 0.5 );
 
 			const path = navMesh.findPath( from, to );
 

@@ -20,6 +20,7 @@ export * from './graph/extra/HeuristicPolicy.js';
 export { PriorityQueue } from './graph/extra/PriorityQueue.js';
 export { NavEdge } from './graph/navigation/NavEdge.js';
 export { NavNode } from './graph/navigation/NavNode.js';
+export { Corridor } from './graph/navmesh/Corridor.js';
 export { HalfEdge } from './graph/navmesh/HalfEdge.js';
 export { NavMesh } from './graph/navmesh/NavMesh.js';
 export { NavMeshLoader } from './graph/navmesh/NavMeshLoader.js';

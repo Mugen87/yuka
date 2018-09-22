@@ -1,11 +1,13 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ * @author robp94 / https://github.com/robp94
  */
 
 import { HalfEdge } from './HalfEdge.js';
 import { Plane } from '../../math/Plane.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { Logger } from '../../core/Logger.js';
+import { _Math } from '../../math/Math.js';
 
 class Polygon {
 
@@ -206,19 +208,44 @@ class Polygon {
 
 	}
 
+	getPortalEdgeTo( polygon, portalEdge ) {
+
+		portalEdge.length = 0;
+
+		let edge = this.edge;
+
+		do {
+
+			if ( edge.twin !== null ) {
+
+				if ( edge.twin.polygon === polygon ) {
+
+					portalEdge.left = edge.vertex;
+					portalEdge.right = edge.next.vertex;
+					return portalEdge;
+
+				}
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		portalEdge.left = null;
+		portalEdge.right = null;
+
+		return portalEdge;
+
+	}
+
 }
 
 // from the book "Computational Geometry in C, Joseph O'Rourke"
 
 function leftOn( a, b, c ) {
 
-	return area( a, b, c ) >= 0;
-
-}
-
-function area( a, b, c ) {
-
-	return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
+	return _Math.area( a, b, c ) >= 0;
 
 }
 

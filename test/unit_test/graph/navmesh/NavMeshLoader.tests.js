@@ -31,8 +31,8 @@ describe( 'NavMeshLoader', function () {
 
 				expect( navMesh ).is.an.instanceof( NavMesh );
 				expect( navMesh.regions ).to.have.lengthOf( 5 );
-				expect( navMesh.graph.getNodeCount() ).is.equal( 8 );
-				expect( navMesh.graph.getEdgeCount() ).is.equal( 40 );
+				expect( navMesh.graph.getNodeCount() ).is.equal( 5 );
+				expect( navMesh.graph.getEdgeCount() ).is.equal( 8 );
 
 				done();
 
@@ -52,8 +52,8 @@ describe( 'NavMeshLoader', function () {
 
 				expect( navMesh ).is.an.instanceof( NavMesh );
 				expect( navMesh.regions ).to.have.lengthOf( 5 );
-				expect( navMesh.graph.getNodeCount() ).is.equal( 8 );
-				expect( navMesh.graph.getEdgeCount() ).is.equal( 40 );
+				expect( navMesh.graph.getNodeCount() ).is.equal( 5 );
+				expect( navMesh.graph.getEdgeCount() ).is.equal( 8 );
 
 				done();
 
@@ -73,8 +73,8 @@ describe( 'NavMeshLoader', function () {
 
 				expect( navMesh ).is.an.instanceof( NavMesh );
 				expect( navMesh.regions ).to.have.lengthOf( 5 );
-				expect( navMesh.graph.getNodeCount() ).is.equal( 8 );
-				expect( navMesh.graph.getEdgeCount() ).is.equal( 40 );
+				expect( navMesh.graph.getNodeCount() ).is.equal( 5 );
+				expect( navMesh.graph.getEdgeCount() ).is.equal( 8 );
 
 				done();
 

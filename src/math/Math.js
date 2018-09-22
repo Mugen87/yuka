@@ -17,6 +17,12 @@ const _Math = {
 
 		return min + Math.random() * ( max - min );
 
+	},
+
+	area( a, b, c ) {
+
+		return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
+
 	}
 
 };

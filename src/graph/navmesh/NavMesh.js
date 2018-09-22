@@ -1,5 +1,6 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
+ * @author robp94 / https://github.com/robp94
  */
 
 import { Graph } from '../core/Graph.js';
@@ -8,6 +9,7 @@ import { NavEdge } from '../navigation/NavEdge.js';
 import { AStar } from '../search/AStar.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { LineSegment } from '../../math/LineSegment.js';
+import { Corridor } from "./Corridor.js";
 
 const pointOnLineSegment = new Vector3();
 const closestPoint = new Vector3();
@@ -128,75 +130,6 @@ class NavMesh {
 
 	}
 
-	getClosestNodeIndex( point ) {
-
-		const graph = this.graph;
-		let closesNodeIndex = null;
-		let minDistance = Infinity;
-
-		const nodes = new Array();
-
-		graph.getNodes( nodes );
-
-		for ( let i = 0, l = nodes.length; i < l; i ++ ) {
-
-			const node = nodes[ i ];
-
-			const distance = point.squaredDistanceTo( node.position );
-
-			if ( distance < minDistance ) {
-
-				minDistance = distance;
-
-				closesNodeIndex = node.index;
-
-			}
-
-		}
-
-		return closesNodeIndex;
-
-	}
-
-	getClosestNodeIndexInRegion( point, region, target ) {
-
-		let closesNodeIndex = null;
-		let minDistance = Infinity;
-
-		let edge = region.edge;
-
-		do {
-
-			if ( edge.twin || edge.prev.twin ) {
-
-				let distance = point.squaredDistanceTo( edge.from() );
-
-				if ( target ) {
-
-					// use heuristic if possible (prefer nodes which are closer to the given target point)
-
-					distance += target.squaredDistanceTo( edge.from() );
-
-				}
-
-				if ( distance < minDistance ) {
-
-					minDistance = distance;
-
-					closesNodeIndex = edge.twin ? edge.nodeIndex : edge.prev.twin.nodeIndex;
-
-				}
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== region.edge );
-
-		return closesNodeIndex;
-
-	}
-
 	getClosestRegion( point ) {
 
 		const regions = this.regions;
@@ -287,74 +220,37 @@ class NavMesh {
 
 			// source and target are not in same region, peform search
 
-			const source = this.getClosestNodeIndexInRegion( from, fromRegion, to );
-			const target = this.getClosestNodeIndexInRegion( to, toRegion, from );
+			const source = this.regions.indexOf( fromRegion );
+			const target = this.regions.indexOf( toRegion );
 
 			const astar = new AStar( graph, source, target );
 			astar.search();
 
 			if ( astar.found === true ) {
 
-				const shortestPath = astar.getPath();
+				const polygonPath = astar.getPath();
 
-				// smoothing
+				const corridor = new Corridor();
+				corridor.push( from, from );
 
-				let count = shortestPath.length;
+				// push sequence of portal edges to corridor
 
-				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
+				const portalEdge = { left: null, right: null };
 
-					const index = shortestPath[ i ];
-					const node = graph.getNode( index );
+				for ( let i = 0, l = ( polygonPath.length - 1 ); i < l; i ++ ) {
 
-					if ( fromRegion.contains( node.position ) === false ) {
+					const region = this.regions[ polygonPath[ i ] ];
+					const nextRegion = this.regions[ polygonPath[ i + 1 ] ];
 
-						count = i;
-						break;
+					region.getPortalEdgeTo( nextRegion, portalEdge );
 
-					}
-
-				}
-
-				shortestPath.splice( 0, count - 1 );
-
-				//
-
-				shortestPath.reverse();
-
-				count = shortestPath.length;
-
-				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
-
-					const index = shortestPath[ i ];
-					const node = graph.getNode( index );
-
-					if ( toRegion.contains( node.position ) === false ) {
-
-						count = i;
-						break;
-
-					}
+					corridor.push( portalEdge.left, portalEdge.right );
 
 				}
 
-				shortestPath.splice( 0, count - 1 );
+				corridor.push( to, to );
 
-				shortestPath.reverse();
-
-
-				// create final path
-
-				path.push( new Vector3().copy( from ) );
-
-				for ( let i = 0, l = shortestPath.length; i < l; i ++ ) {
-
-					const index = shortestPath[ i ];
-					const node = graph.getNode( index );
-					path.push( new Vector3().copy( node.position ) );
-
-				}
-
-				path.push( new Vector3().copy( to ) );
+				path.push( ...corridor.generate() );
 
 			}
 
@@ -589,7 +485,7 @@ class NavMesh {
 
 				// only edges with a twin reference needs to be considered
 
-				if ( edge.twin !== null ) {
+				if ( edge.twin !== null && edge.nodeIndex === null ) {
 
 					let nodeIndex = - 1;
 					const position = edge.from();
@@ -640,28 +536,27 @@ class NavMesh {
 
 		// for each region, the code creates an array of directly accessible node indices
 
-		const nodeIndicesPerRegion = new Set();
+		const regionNeighbourhood = new Array();
 
 		for ( let i = 0, l = regions.length; i < l; i ++ ) {
 
 			const region = regions[ i ];
 
-			const nodeIndices = new Array();
-			nodeIndicesPerRegion.add( nodeIndices );
+			const regionIndices = new Array();
+			regionNeighbourhood.push( regionIndices );
 
 			let edge = region.edge;
-
 			do {
 
 				if ( edge.twin !== null ) {
 
-					nodeIndices.push( edge.nodeIndex, edge.twin.nodeIndex );
+					regionIndices.push( this.regions.indexOf( edge.twin.polygon ) );
 
 					// add node to graph if necessary
 
-					if ( graph.hasNode( edge.nodeIndex ) === false ) {
+					if ( graph.hasNode( this.regions.indexOf( edge.polygon ) ) === false ) {
 
-						graph.addNode( new NavNode( edge.nodeIndex, edge.from() ) );
+						graph.addNode( new NavNode( this.regions.indexOf( edge.polygon ), edge.polygon.centroid ) );
 
 					}
 
@@ -675,24 +570,25 @@ class NavMesh {
 
 		// add navigation edges
 
-		for ( const indices of nodeIndicesPerRegion ) {
+		for ( let i = 0, il = regionNeighbourhood.length; i < il; i ++ ) {
 
-			for ( const from of indices ) {
+			const indices = regionNeighbourhood[ i ];
+			const from = i;
 
-				for ( const to of indices ) {
+			for ( let j = 0, jl = indices.length; j < jl; j ++ ) {
 
-					if ( from !== to ) {
+				const to = indices[ j ];
 
-						if ( graph.hasEdge( from, to ) === false ) {
+				if ( from !== to ) {
 
-							const nodeFrom = graph.getNode( from );
-							const nodeTo = graph.getNode( to );
+					if ( graph.hasEdge( from, to ) === false ) {
 
-							const cost = nodeFrom.position.distanceTo( nodeTo.position );
+						const nodeFrom = graph.getNode( from );
+						const nodeTo = graph.getNode( to );
 
-							graph.addEdge( new NavEdge( from, to, cost ) );
+						const cost = nodeFrom.position.distanceTo( nodeTo.position );
 
-						}
+						graph.addEdge( new NavEdge( from, to, cost ) );
 
 					}
 
