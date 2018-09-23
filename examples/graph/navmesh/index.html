@@ -165,21 +165,21 @@
 			const from = vehicle.position;
 			const to = target;
 
-				const path = navMesh.findPath( from, to );
+			const path = navMesh.findPath( from, to );
 
-				pathHelper.visible = true;
-				pathHelper.geometry.dispose();
-				pathHelper.geometry = new THREE.BufferGeometry().setFromPoints( path );
+			pathHelper.visible = true;
+			pathHelper.geometry.dispose();
+			pathHelper.geometry = new THREE.BufferGeometry().setFromPoints( path );
 
-				const followPathBehavior = vehicle.steering.behaviors[ 0 ];
-				followPathBehavior.active = true;
-				followPathBehavior.path.clear();
+			const followPathBehavior = vehicle.steering.behaviors[ 0 ];
+			followPathBehavior.active = true;
+			followPathBehavior.path.clear();
 
-				for ( const point of path ) {
+			for ( const point of path ) {
 
-					followPathBehavior.path.add( point );
+				followPathBehavior.path.add( point );
 
-				}
+			}
 
 		}
 

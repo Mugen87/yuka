@@ -125,6 +125,17 @@ describe( 'NavMesh', function () {
 
 	} );
 
+	describe( '#getRandomRegion()', function () {
+
+		it( 'should return a random region from the navigation mesh', function () {
+
+			const region = navMesh.getRandomRegion();
+			expect( navMesh.regions ).to.include( region );
+
+		} );
+
+	} );
+
 	describe( '#getRegionForPoint()', function () {
 
 		it( 'should return the region that contains the given point', function () {

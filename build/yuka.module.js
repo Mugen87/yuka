@@ -4593,6 +4593,18 @@ class NavMesh {
 
 	}
 
+	getRandomRegion() {
+
+		const regions = this.regions;
+
+		let index = Math.floor( Math.random() * ( regions.length ) );
+
+		if ( index === regions.length ) index = regions.length - 1;
+
+		return regions[ index ];
+
+	}
+
 	getRegionForPoint( point, epsilon = 1e-3 ) {
 
 		let regions;
