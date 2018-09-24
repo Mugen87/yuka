@@ -2092,13 +2092,13 @@ class Regulator {
 
 class State {
 
-	enter() {}
+	enter( /* owner */ ) {}
 
-	execute() {}
+	execute( /* owner */ ) {}
 
-	exit() {}
+	exit( /* owner */ ) {}
 
-	onMessage() {
+	onMessage( /* owner, telegram */ ) {
 
 		return false;
 
