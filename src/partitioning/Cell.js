@@ -3,7 +3,7 @@ import { AABB } from '../math/AABB.js';
 /**
 * Class for representing a single partition in context of cell-space partitioning.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Cell {
 
@@ -22,7 +22,7 @@ class Cell {
 
 		/**
 		* The list of entries which belong to this cell.
-		* @type array
+		* @type Array
 		*/
 		this.entries = new Array();
 

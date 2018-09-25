@@ -3,7 +3,7 @@ import { _Math } from './Math.js';
 /**
 * Class representing a 3D vector.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Vector3 {
 
@@ -18,19 +18,19 @@ class Vector3 {
 
 		/**
 		* The x component.
-		* @type number
+		* @type Number
 		*/
 		this.x = x;
 
 		/**
 		* The y component.
-		* @type number
+		* @type Number
 		*/
 		this.y = y;
 
 		/**
 		* The z component.
-		* @type number
+		* @type Number
 		*/
 		this.z = z;
 

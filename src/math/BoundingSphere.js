@@ -3,7 +3,7 @@ import { Vector3 } from './Vector3.js';
 /**
 * Class representing a bounding sphere.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class BoundingSphere {
 
@@ -23,7 +23,7 @@ class BoundingSphere {
 
 		/**
 		*  The radius of the bounding sphere.
-		* @type number
+		* @type Number
 		*/
 		this.radius = radius;
 

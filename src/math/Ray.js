@@ -5,7 +5,7 @@ const v1 = new Vector3();
 /**
 * Class representing a ray in 3D space.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Ray {
 

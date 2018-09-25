@@ -8,7 +8,7 @@ const boundingSphereEntity = new BoundingSphere();
 /**
 * Class for represeting a rectangular trigger region as an AABB.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 * @augments TriggerRegion
 */
 class RectangularTriggerRegion extends TriggerRegion {

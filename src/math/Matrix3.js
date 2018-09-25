@@ -10,7 +10,7 @@ const temp = new Vector3();
 * Class representing a 3x3 matrix. The elements of the matrix
 * are stored in column-major order.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Matrix3 {
 
@@ -21,7 +21,7 @@ class Matrix3 {
 
 		/**
 		* The elements of the matrix in column-major order.
-		* @type array
+		* @type Array
 		*/
 		this.elements = [
 

@@ -4,7 +4,7 @@ import { Logger } from '../core/Logger.js';
 * Class representing a 4x4 matrix. The elements of the matrix
 * are stored in column-major order.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Matrix4 {
 
@@ -15,7 +15,7 @@ class Matrix4 {
 
 		/**
 		* The elements of the matrix in column-major order.
-		* @type array
+		* @type Array
 		*/
 		this.elements = [
 

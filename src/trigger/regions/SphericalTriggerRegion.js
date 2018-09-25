@@ -7,7 +7,7 @@ const boundingSphereEntity = new BoundingSphere();
 /**
 * Class for represeting a spherical trigger region as a bounding sphere.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 * @augments TriggerRegion
 */
 class SphericalTriggerRegion extends TriggerRegion {

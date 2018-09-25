@@ -4,7 +4,7 @@ import { Logger } from '../core/Logger.js';
 /**
 * Finite state machine (FSM) for implementing State-driven agent design.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class StateMachine {
 

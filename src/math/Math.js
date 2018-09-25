@@ -1,7 +1,7 @@
 /**
-* Class with various math helper functions.
+* Class with various math helpers.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class _Math {
 

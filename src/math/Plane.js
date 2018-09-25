@@ -6,7 +6,7 @@ const v2 = new Vector3();
 /**
 * Class representing a plane in 3D space. The plane is specified in Hessian normal form.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Plane {
 
@@ -26,7 +26,7 @@ class Plane {
 
 		/**
 		* The distance of the plane from the origin.
-		* @type number
+		* @type Number
 		*/
 		this.constant = constant;
 

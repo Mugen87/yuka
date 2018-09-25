@@ -4,7 +4,7 @@ import { TriggerRegion } from './TriggerRegion.js';
 * Base class for represeting triggers. A trigger generates an action if a game entity
 * touches its trigger region, a predefine region in 3D space.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Trigger {
 

@@ -5,7 +5,7 @@ const vector = new Vector3();
 /**
 * Class representing an axis-aligned bounding box (AABB).
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class AABB {
 

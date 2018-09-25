@@ -7,7 +7,7 @@ const p2 = new Vector3();
 /**
 * Class representing a 3D line segment.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class LineSegment {
 

@@ -388,9 +388,9 @@ class EntityManager {
 }
 
 /**
-* Class with various math helper functions.
+* Class with various math helpers.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class _Math {
 
@@ -441,7 +441,7 @@ class _Math {
 /**
 * Class representing a 3D vector.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Vector3 {
 
@@ -456,19 +456,19 @@ class Vector3 {
 
 		/**
 		* The x component.
-		* @type number
+		* @type Number
 		*/
 		this.x = x;
 
 		/**
 		* The y component.
-		* @type number
+		* @type Number
 		*/
 		this.y = y;
 
 		/**
 		* The z component.
-		* @type number
+		* @type Number
 		*/
 		this.z = z;
 
@@ -1076,7 +1076,7 @@ const temp = new Vector3();
 * Class representing a 3x3 matrix. The elements of the matrix
 * are stored in column-major order.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Matrix3 {
 
@@ -1087,7 +1087,7 @@ class Matrix3 {
 
 		/**
 		* The elements of the matrix in column-major order.
-		* @type array
+		* @type Array
 		*/
 		this.elements = [
 
@@ -1462,7 +1462,7 @@ const matrix = new Matrix3();
 /**
 * Class representing a quaternion.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Quaternion {
 
@@ -1478,25 +1478,25 @@ class Quaternion {
 
 		/**
 		* The x component.
-		* @type number
+		* @type Number
 		*/
 		this.x = x;
 
 		/**
 		* The y component.
-		* @type number
+		* @type Number
 		*/
 		this.y = y;
 
 		/**
 		* The z component.
-		* @type number
+		* @type Number
 		*/
 		this.z = z;
 
 		/**
 		* The w component.
-		* @type number
+		* @type Number
 		*/
 		this.w = w;
 
@@ -1944,7 +1944,7 @@ class Quaternion {
 * Class representing a 4x4 matrix. The elements of the matrix
 * are stored in column-major order.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Matrix4 {
 
@@ -1955,7 +1955,7 @@ class Matrix4 {
 
 		/**
 		* The elements of the matrix in column-major order.
-		* @type array
+		* @type Array
 		*/
 		this.elements = [
 
@@ -2790,7 +2790,7 @@ class Regulator {
 /**
 * Base class for represeting a state in context of State-driven agent design.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class State {
 
@@ -2835,7 +2835,7 @@ class State {
 /**
 * Finite state machine (FSM) for implementing State-driven agent design.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class StateMachine {
 
@@ -4504,7 +4504,7 @@ const vector = new Vector3();
 /**
 * Class representing an axis-aligned bounding box (AABB).
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class AABB {
 
@@ -4706,7 +4706,7 @@ class AABB {
 /**
 * Class representing a bounding sphere.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class BoundingSphere {
 
@@ -4726,7 +4726,7 @@ class BoundingSphere {
 
 		/**
 		*  The radius of the bounding sphere.
-		* @type number
+		* @type Number
 		*/
 		this.radius = radius;
 
@@ -4820,7 +4820,7 @@ const p2 = new Vector3();
 /**
 * Class representing a 3D line segment.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class LineSegment {
 
@@ -4979,7 +4979,7 @@ const v2 = new Vector3();
 /**
 * Class representing a plane in 3D space. The plane is specified in Hessian normal form.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Plane {
 
@@ -4999,7 +4999,7 @@ class Plane {
 
 		/**
 		* The distance of the plane from the origin.
-		* @type number
+		* @type Number
 		*/
 		this.constant = constant;
 
@@ -5114,7 +5114,7 @@ const v1$1 = new Vector3();
 /**
 * Class representing a ray in 3D space.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Ray {
 
@@ -6877,7 +6877,7 @@ const BINARY_EXTENSION_CHUNK_TYPES = { JSON: 0x4E4F534A, BIN: 0x004E4942 };
 /**
 * Class for representing a single partition in context of cell-space partitioning.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Cell {
 
@@ -6896,7 +6896,7 @@ class Cell {
 
 		/**
 		* The list of entries which belong to this cell.
-		* @type array
+		* @type Array
 		*/
 		this.entries = new Array();
 
@@ -6980,7 +6980,7 @@ const contour = new Array();
 * Octrees, the division of the 3D space is coarse and often not balanced but the
 * computational overhead for calculating the index of a specifc cell based on a position is very fast.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class CellSpacePartitioning {
 
@@ -6990,51 +6990,51 @@ class CellSpacePartitioning {
 	* @param {Number} width - The width of the entire spatial index.
 	* @param {Number} height - The height of the entire spatial index.
 	* @param {Number} depth - The depth of the entire spatial index.
-	* @param {Number} cellsX - The amount of cells in along the width (x-axis).
-	* @param {Number} cellsY - The amount of cells in along the height (y-axis).
-	* @param {Number} cellsZ - The amount of cells in along the depth (z-axis).
+	* @param {Number} cellsX - The amount of cells along the x-axis.
+	* @param {Number} cellsY - The amount of cells along the y-axis.
+	* @param {Number} cellsZ - The amount of cells along the z-axis.
 	*/
 	constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
 		/**
 		* The list of partitions.
-		* @type array
+		* @type Array
 		*/
 		this.cells = new Array();
 
 		/**
 		* The width of the entire spatial index.
-		* @type number
+		* @type Number
 		*/
 		this.width = width;
 
 		/**
 		* The height of the entire spatial index.
-		* @type number
+		* @type Number
 		*/
 		this.height = height;
 
 		/**
 		* The depth of the entire spatial index.
-		* @type number
+		* @type Number
 		*/
 		this.depth = depth;
 
 		/**
-		* The amount of cells in along the width (x-axis).
-		* @type number
+		* The amount of cells along the x-axis.
+		* @type Number
 		*/
 		this.cellsX = cellsX;
 
 		/**
-		* The amount of cells in along the height (y-axis).
-		* @type number
+		* The amount of cells along the y-axis.
+		* @type Number
 		*/
 		this.cellsY = cellsY;
 
 		/**
-		* The amount of cells in along the depth (z-axis).
-		* @type number
+		* The amount of cells along the z-axis.
+		* @type Number
 		*/
 		this.cellsZ = cellsZ;
 
@@ -8333,7 +8333,7 @@ function generateRandomPointOnCircle( radius, target ) {
 * Base class for represeting trigger regions. It's a predefine region in 3D space,
 * owned by one or more triggers. The shape of the trigger can be arbitrary.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class TriggerRegion {
 
@@ -8357,7 +8357,7 @@ const boundingSphereEntity = new BoundingSphere();
 /**
 * Class for represeting a rectangular trigger region as an AABB.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 * @augments TriggerRegion
 */
 class RectangularTriggerRegion extends TriggerRegion {
@@ -8438,7 +8438,7 @@ const boundingSphereEntity$1 = new BoundingSphere();
 /**
 * Class for represeting a spherical trigger region as a bounding sphere.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 * @augments TriggerRegion
 */
 class SphericalTriggerRegion extends TriggerRegion {
@@ -8503,7 +8503,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 * Base class for represeting triggers. A trigger generates an action if a game entity
 * touches its trigger region, a predefine region in 3D space.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Trigger {
 

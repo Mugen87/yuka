@@ -13,7 +13,7 @@ const contour = new Array();
 * Octrees, the division of the 3D space is coarse and often not balanced but the
 * computational overhead for calculating the index of a specifc cell based on a position is very fast.
 *
-* @author {@link https://github.com/Mugen87|Mugen87 }
+* @author {@link https://github.com/Mugen87|Mugen87}
 */
 class CellSpacePartitioning {
 
@@ -23,51 +23,51 @@ class CellSpacePartitioning {
 	* @param {Number} width - The width of the entire spatial index.
 	* @param {Number} height - The height of the entire spatial index.
 	* @param {Number} depth - The depth of the entire spatial index.
-	* @param {Number} cellsX - The amount of cells in along the width (x-axis).
-	* @param {Number} cellsY - The amount of cells in along the height (y-axis).
-	* @param {Number} cellsZ - The amount of cells in along the depth (z-axis).
+	* @param {Number} cellsX - The amount of cells along the x-axis.
+	* @param {Number} cellsY - The amount of cells along the y-axis.
+	* @param {Number} cellsZ - The amount of cells along the z-axis.
 	*/
 	constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
 		/**
 		* The list of partitions.
-		* @type array
+		* @type Array
 		*/
 		this.cells = new Array();
 
 		/**
 		* The width of the entire spatial index.
-		* @type number
+		* @type Number
 		*/
 		this.width = width;
 
 		/**
 		* The height of the entire spatial index.
-		* @type number
+		* @type Number
 		*/
 		this.height = height;
 
 		/**
 		* The depth of the entire spatial index.
-		* @type number
+		* @type Number
 		*/
 		this.depth = depth;
 
 		/**
-		* The amount of cells in along the width (x-axis).
-		* @type number
+		* The amount of cells along the x-axis.
+		* @type Number
 		*/
 		this.cellsX = cellsX;
 
 		/**
-		* The amount of cells in along the height (y-axis).
-		* @type number
+		* The amount of cells along the y-axis.
+		* @type Number
 		*/
 		this.cellsY = cellsY;
 
 		/**
-		* The amount of cells in along the depth (z-axis).
-		* @type number
+		* The amount of cells along the z-axis.
+		* @type Number
 		*/
 		this.cellsZ = cellsZ;
 
