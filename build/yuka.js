@@ -3660,7 +3660,7 @@
 		* Removes the given node from the graph and all edges which are connected
 		* with this node.
 		*
-		*	@param {Node} node - The node to remove.
+		* @param {Node} node - The node to remove.
 		* @return {Graph} A reference to this graph.
 		*/
 		removeNode( node ) {
@@ -3729,7 +3729,7 @@
 		* Removes the given edge from the graph. If the graph is undirected, the
 		* method also removes the opponent edge.
 		*
-		*	@param {Edge} edge - The edge to remove.
+		* @param {Edge} edge - The edge to remove.
 		* @return {Graph} A reference to this graph.
 		*/
 		removeEdge( edge ) {
@@ -3774,7 +3774,7 @@
 		/**
 		* Return true if the graph has the given node index.
 		*
-		*	@param {Number} index - The node index to test.
+		* @param {Number} index - The node index to test.
 		* @return {Boolean} Whether this graph has the node or not.
 		*/
 		hasNode( index ) {
