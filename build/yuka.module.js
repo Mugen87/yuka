@@ -454,8 +454,22 @@ class Vector3 {
 	*/
 	constructor( x = 0, y = 0, z = 0 ) {
 
+		/**
+		* The x component.
+		* @type number
+		*/
 		this.x = x;
+
+		/**
+		* The y component.
+		* @type number
+		*/
 		this.y = y;
+
+		/**
+		* The z component.
+		* @type number
+		*/
 		this.z = z;
 
 	}
@@ -1071,6 +1085,10 @@ class Matrix3 {
 	*/
 	constructor() {
 
+		/**
+		* The elements of the matrix in column-major order.
+		* @type array
+		*/
 		this.elements = [
 
 			1, 0, 0,
@@ -1439,13 +1457,6 @@ class Matrix3 {
 const m1 = new Matrix3();
 const m2 = new Matrix3();
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js
- *
- */
-
 const matrix = new Matrix3();
 
 /**
@@ -1465,9 +1476,28 @@ class Quaternion {
 	*/
 	constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
+		/**
+		* The x component.
+		* @type number
+		*/
 		this.x = x;
+
+		/**
+		* The y component.
+		* @type number
+		*/
 		this.y = y;
+
+		/**
+		* The z component.
+		* @type number
+		*/
 		this.z = z;
+
+		/**
+		* The w component.
+		* @type number
+		*/
 		this.w = w;
 
 	}
@@ -1923,6 +1953,10 @@ class Matrix4 {
 	*/
 	constructor() {
 
+		/**
+		* The elements of the matrix in column-major order.
+		* @type array
+		*/
 		this.elements = [
 
 			1, 0, 0, 0,
@@ -2754,17 +2788,42 @@ class Regulator {
 }
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Base class for represeting a state in context of State-driven agent design.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class State {
 
+	/**
+	* This method is called once during a state transition when the {@link StateMachine} makes
+	* this state active.
+	*
+	* @param {GameEntity} owner - The game entity that represents the execution context of this state.
+	*/
 	enter( /* owner */ ) {}
 
+	/**
+	* This method is called per simulation step if this state is active.
+	*
+	* @param {GameEntity} owner - The game entity that represents the execution context of this state.
+	*/
 	execute( /* owner */ ) {}
 
+	/**
+	* This method is called once during a state transition when the {@link StateMachine} makes
+	* this state inactive.
+	*
+	* @param {GameEntity} owner - The game entity that represents the execution context of this state.
+	*/
 	exit( /* owner */ ) {}
 
+	/**
+	* This method is called when messaging between game entities occurs.
+	*
+	* @param {GameEntity} owner - The game entity that represents the execution context of this state.
+	* @param {Telegram} telegram - A data structure containing the actual message.
+	* @return {boolean}  Whether the message was processed or not.
+	*/
 	onMessage( /* owner, telegram */ ) {
 
 		return false;
@@ -2774,22 +2833,56 @@ class State {
 }
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Finite state machine (FSM) for implementing State-driven agent design.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class StateMachine {
 
+	/**
+	* Constructs a new state machine with the given values.
+	*
+	* @param {GameEntity} owner - The owner of this state machine.
+	*/
 	constructor( owner ) {
 
-		this.owner = owner; // a reference to the agent that owns this instance
-		this.currentState = null; // the current state of the agent
-		this.previousState = null; // a reference to the last state the agent was in
-		this.globalState = null; // this state logic is called every time the FSM is updated
+		/**
+		* The game entity that owns this state machine.
+		* @type GameEntity
+		*/
+		this.owner = owner;
 
+		/**
+		* The current state of the game entity.
+		* @type State
+		*/
+		this.currentState = null;
+
+		/**
+		* The previous state of the game entity.
+		* @type State
+		*/
+		this.previousState = null; // a reference to the last state the agent was in
+
+		/**
+		* This state logic is called every time the state machine is updated.
+		* @type State
+		*/
+		this.globalState = null;
+
+		/**
+		* A map with all states of the state machine.
+		* @type Map
+		*/
 		this.states = new Map();
 
 	}
 
+	/**
+	* Updates the internal state of the FSM. Usually called by the {@link GameEntity#update}.
+	*
+	* @return {StateMachine} A reference to this state machine.
+	*/
 	update() {
 
 		if ( this.globalState !== null ) {
@@ -2804,8 +2897,17 @@ class StateMachine {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Adds a new state with the given ID to the state machine.
+	*
+	* @param {string} id - The ID of the state.
+	* @param {State} state - The state.
+	* @return {StateMachine} A reference to this state machine.
+	*/
 	add( id, state ) {
 
 		if ( state instanceof State ) {
@@ -2818,34 +2920,70 @@ class StateMachine {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Removes a state via its ID from the state machine.
+	*
+	* @param {string} id - The ID of the state.
+	* @return {StateMachine} A reference to this state machine.
+	*/
 	remove( id ) {
 
 		this.states.delete( id );
 
+		return this;
+
 	}
 
+	/**
+	* Returns the state for the given ID.
+	*
+	* @param {string} id - The ID of the state.
+	* @return {State} The state for the given ID.
+	*/
 	get( id ) {
 
 		return this.states.get( id );
 
 	}
 
+	/**
+	* Performs a state change to the state defined by its ID.
+	*
+	* @param {string} id - The ID of the state.
+	* @return {StateMachine} A reference to this state machine.
+	*/
 	changeTo( id ) {
 
 		const state = this.get( id );
 
 		this._change( state );
 
+		return this;
+
 	}
 
+	/**
+	* Returns to the previous state.
+	*
+	* @return {StateMachine} A reference to this state machine.
+	*/
 	revert() {
 
 		this._change( this.previousState );
 
+		return this;
+
 	}
 
+	/**
+	* Returns true if the state machine is in the given state.
+	*
+	* @return {Boolean} The result of the test.
+	*/
 	in( id ) {
 
 		const state = this.get( id );
@@ -2854,6 +2992,12 @@ class StateMachine {
 
 	}
 
+	/**
+	* Tries to dispatch the massage to the current or global state and returns true
+	* if the message was processed successfully.
+	*
+	* @return {Boolean} The result of the message handling.
+	*/
 	handleMessage( telegram ) {
 
 		// first see, if the current state is valid and that it can handle the message
@@ -4372,7 +4516,16 @@ class AABB {
 	*/
 	constructor( min = new Vector3( Infinity, Infinity, Infinity ), max = new Vector3( - Infinity, - Infinity, - Infinity ) ) {
 
+		/**
+		* The minimum bounds of the AABB.
+		* @type Vector3
+		*/
 		this.min = min;
+
+		/**
+		* The maximum bounds of the AABB.
+		* @type Vector3
+		*/
 		this.max = max;
 
 	}
@@ -4560,12 +4713,21 @@ class BoundingSphere {
 	/**
 	* Constructs a new bounding sphere with the given values.
 	*
-	* @param {Vector3} center - The center point of the bounding sphere.
+	* @param {Vector3} center - The center position of the bounding sphere.
 	* @param {number} radius - The radius of the bounding sphere.
 	*/
 	constructor( center = new Vector3(), radius = 0 ) {
 
+		/**
+		* The center position of the bounding sphere.
+		* @type Vector3
+		*/
 		this.center = center;
+
+		/**
+		*  The radius of the bounding sphere.
+		* @type number
+		*/
 		this.radius = radius;
 
 	}
@@ -4573,7 +4735,7 @@ class BoundingSphere {
 	/**
 	* Sets the given values to this bounding sphere.
 	*
-	* @param {Vector3} center - The center point of the bounding sphere.
+	* @param {Vector3} center - The center position of the bounding sphere.
 	* @param {number} radius - The radius of the bounding sphere.
 	* @return {BoundingSphere} A reference to this bounding sphere.
 	*/
@@ -4670,7 +4832,16 @@ class LineSegment {
 	*/
 	constructor( from = new Vector3(), to = new Vector3() ) {
 
+		/**
+		* The start point of the line segment.
+		* @type Vector3
+		*/
 		this.from = from;
+
+		/**
+		* The end point of the line segment.
+		* @type Vector3
+		*/
 		this.to = to;
 
 	}
@@ -4820,7 +4991,16 @@ class Plane {
 	*/
 	constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
 
+		/**
+		* The normal vector of the plane.
+		* @type Vector3
+		*/
 		this.normal = normal;
+
+		/**
+		* The distance of the plane from the origin.
+		* @type number
+		*/
 		this.constant = constant;
 
 	}
@@ -4946,7 +5126,16 @@ class Ray {
 	*/
 	constructor( origin = new Vector3(), direction = new Vector3() ) {
 
+		/**
+		* The origin of the ray.
+		* @type Vector3
+		*/
 		this.origin = origin;
+
+		/**
+		* The direction of the ray.
+		* @type Vector3
+		*/
 		this.direction = direction;
 
 	}
@@ -6686,18 +6875,39 @@ const BINARY_EXTENSION_HEADER_LENGTH = 12;
 const BINARY_EXTENSION_CHUNK_TYPES = { JSON: 0x4E4F534A, BIN: 0x004E4942 };
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Class for representing a single partition in context of cell-space partitioning.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class Cell {
 
+	/**
+	* Constructs a new cell with the given values.
+	*
+	* @param {AABB} aabb - The bounding volume of the cell.
+	*/
 	constructor( aabb = new AABB() ) {
 
+		/**
+		* The bounding volume of the cell.
+		* @type AABB
+		*/
 		this.aabb = aabb;
+
+		/**
+		* The list of entries which belong to this cell.
+		* @type array
+		*/
 		this.entries = new Array();
 
 	}
 
+	/**
+	* Adds an entry to this cell.
+	*
+	* @param {any} entry - The entry to add.
+	* @return {Cell} A reference to this cell.
+	*/
 	add( entry ) {
 
 		this.entries.push( entry );
@@ -6706,6 +6916,12 @@ class Cell {
 
 	}
 
+	/**
+	* Removes an entry from this cell.
+	*
+	* @param {any} entry - The entry to remove.
+	* @return {Cell} A reference to this cell.
+	*/
 	remove( entry ) {
 
 		const index = this.entries.indexOf( entry );
@@ -6715,6 +6931,11 @@ class Cell {
 
 	}
 
+	/**
+	* Removes all entries from the cell.
+	*
+	* @return {Cell} A reference to this cell.
+	*/
 	makeEmpty() {
 
 		this.entries.length = 0;
@@ -6723,12 +6944,23 @@ class Cell {
 
 	}
 
+	/**
+	* Returns true if the cell is empty.
+	*
+	* @return {boolean} The result of the test.
+	*/
 	empty() {
 
 		return this.entries.length === 0;
 
 	}
 
+	/**
+	* Returns true if the given AABB intersects the internal bounding volume of this cell.
+	*
+	* @param {AABB} aabb - The AABB to test.
+	* @return {boolean} The result of the intersection test.
+	*/
 	intersects( aabb ) {
 
 		return this.aabb.intersectsAABB( aabb );
@@ -6737,34 +6969,81 @@ class Cell {
 
 }
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 const clampedPosition = new Vector3();
 const aabb = new AABB();
 const contour = new Array();
 
+/**
+* This class is used for cell-space partitioning, a basic approach for implementing
+* a spatial index. The 3D space is divided up into a number of cells. A cell contains a
+* list of references to all the entities it contains. Compared to other spatial indices like
+* Octrees, the division of the 3D space is coarse and often not balanced but the
+* computational overhead for calculating the index of a specifc cell based on a position is very fast.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class CellSpacePartitioning {
 
+	/**
+	* Constructs a new spatial index with the given values.
+	*
+	* @param {number} width - The width of the entire spatial index.
+	* @param {number} height - The height of the entire spatial index.
+	* @param {number} depth - The depth of the entire spatial index.
+	* @param {number} cellsX - The amount of cells in along the width (x-axis).
+	* @param {number} cellsY - The amount of cells in along the height (y-axis).
+	* @param {number} cellsZ - The amount of cells in along the depth (z-axis).
+	*/
 	constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
+		/**
+		* The list of partitions.
+		* @type array
+		*/
 		this.cells = new Array();
 
+		/**
+		* The width of the entire spatial index.
+		* @type number
+		*/
 		this.width = width;
+
+		/**
+		* The height of the entire spatial index.
+		* @type number
+		*/
 		this.height = height;
+
+		/**
+		* The depth of the entire spatial index.
+		* @type number
+		*/
 		this.depth = depth;
 
-		this.halfWidth = width / 2;
-		this.halfHeight = height / 2;
-		this.halfDepth = depth / 2;
-
-		this.min = new Vector3( - this.halfWidth, - this.halfHeight, - this.halfDepth );
-		this.max = new Vector3( this.halfWidth, this.halfHeight, this.halfDepth );
-
+		/**
+		* The amount of cells in along the width (x-axis).
+		* @type number
+		*/
 		this.cellsX = cellsX;
+
+		/**
+		* The amount of cells in along the height (y-axis).
+		* @type number
+		*/
 		this.cellsY = cellsY;
+
+		/**
+		* The amount of cells in along the depth (z-axis).
+		* @type number
+		*/
 		this.cellsZ = cellsZ;
+
+		this._halfWidth = width / 2;
+		this._halfHeight = height / 2;
+		this._halfDepth = depth / 2;
+
+		this._min = new Vector3( - this._halfWidth, - this._halfHeight, - this._halfDepth );
+		this._max = new Vector3( this._halfWidth, this._halfHeight, this._halfDepth );
 
 		//
 
@@ -6774,15 +7053,15 @@ class CellSpacePartitioning {
 
 		for ( let i = 0; i < cellsX; i ++ ) {
 
-			const x = ( i * cellSizeX ) - this.halfWidth;
+			const x = ( i * cellSizeX ) - this._halfWidth;
 
 			for ( let j = 0; j < cellsY; j ++ ) {
 
-				const y = ( j * cellSizeY ) - this.halfHeight;
+				const y = ( j * cellSizeY ) - this._halfHeight;
 
 				for ( let k = 0; k < cellsZ; k ++ ) {
 
-					const z = ( k * cellSizeZ ) - this.halfDepth;
+					const z = ( k * cellSizeZ ) - this._halfDepth;
 
 					const min = new Vector3();
 					const max = new Vector3();
@@ -6806,6 +7085,13 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Updates the partitioning index of a given game entity.
+	*
+	* @param {GameEntity} entity - The entity to update.
+	* @param {number} currentIndex - The current partition index of the entity.
+	* @return {number} The new partitioning index for the given game entity.
+	*/
 	updateEntity( entity, currentIndex = - 1 ) {
 
 		const newIndex = this.getIndexForPosition( entity.position );
@@ -6826,6 +7112,13 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Adds an entity to a specific partition.
+	*
+	* @param {GameEntity} entity - The entity to add.
+	* @param {number} index - The partition index.
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	addEntityToPartition( entity, index ) {
 
 		const cell = this.cells[ index ];
@@ -6835,6 +7128,13 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Removes an entity from a specific partition.
+	*
+	* @param {GameEntity} entity - The entity to remove.
+	* @param {number} index - The partition index.
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	removeEntityFromPartition( entity, index ) {
 
 		const cell = this.cells[ index ];
@@ -6844,13 +7144,19 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Computes the parition index for the given position vector.
+	*
+	* @param {Vector3} position - The given position.
+	* @return {number} The partition index.
+	*/
 	getIndexForPosition( position ) {
 
-		clampedPosition.copy( position ).clamp( this.min, this.max );
+		clampedPosition.copy( position ).clamp( this._min, this._max );
 
-		let indexX = Math.abs( Math.floor( ( this.cellsX * ( clampedPosition.x + this.halfWidth ) ) / this.width ) );
-		let indexY = Math.abs( Math.floor( ( this.cellsY * ( clampedPosition.y + this.halfHeight ) ) / this.height ) );
-		let indexZ = Math.abs( Math.floor( ( this.cellsZ * ( clampedPosition.z + this.halfDepth ) ) / this.depth ) );
+		let indexX = Math.abs( Math.floor( ( this.cellsX * ( clampedPosition.x + this._halfWidth ) ) / this.width ) );
+		let indexY = Math.abs( Math.floor( ( this.cellsY * ( clampedPosition.y + this._halfHeight ) ) / this.height ) );
+		let indexZ = Math.abs( Math.floor( ( this.cellsZ * ( clampedPosition.z + this._halfDepth ) ) / this.depth ) );
 
 		// handle index overflow
 
@@ -6864,6 +7170,17 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Performs a query to the spatial index according the the given position and
+	* radius. The method approximates the query position and radius with an AABB and
+	* then performs an ntersection test with all non-empty cells in order to determine
+	* relevant paritions. Stores the result in the given result array.
+	*
+	* @param {Vector3} position - The given query position.
+	* @param {number} radius - The given query radius.
+	* @param {Array} result - The result array.
+	* @return {Array} The result array.
+	*/
 	query( position, radius, result ) {
 
 		const cells = this.cells;
@@ -6893,6 +7210,11 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Removes all entities from all partitions.
+	*
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	makeEmpty() {
 
 		const cells = this.cells;
@@ -6907,6 +7229,12 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Adds a polygon to the spatial index. A polygon is approximated with an AABB.
+	*
+	* @param {Polygon} polygon - The polygon to add.
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	addPolygon( polygon ) {
 
 		const cells = this.cells;
@@ -8002,11 +8330,20 @@ function generateRandomPointOnCircle( radius, target ) {
 }
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Base class for represeting trigger regions. It's a predefine region in 3D space,
+* owned by one or more triggers. The shape of the trigger can be arbitrary.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class TriggerRegion {
 
+	/**
+	* Returns true if the bounding volume of the given game entity touches/intersects
+	* the trigger region. Must be implemented by all concrete trigger regions.
+	*
+	* @param {GameEntity} entity - The entity to test.
+	* @return {boolean} The result of the intersection test.
+	*/
 	touching( /* entity */ ) {
 
 		return false;
@@ -8015,14 +8352,22 @@ class TriggerRegion {
 
 }
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 const boundingSphereEntity = new BoundingSphere();
 
+/**
+* Class for represeting a rectangular trigger region as an AABB.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+* @augments TriggerRegion
+*/
 class RectangularTriggerRegion extends TriggerRegion {
 
+	/**
+	* Constructs a new rectangular trigger region with the given values.
+	*
+	* @param {Vector3} min - The minimum bounds of the region.
+	* @param {Vector3} max - The maximum bounds of the region.
+	*/
 	constructor( min = new Vector3(), max = new Vector3() ) {
 
 		super();
@@ -8055,6 +8400,13 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 	}
 
+	/**
+	* Creates the new rectangular trigger region from a given position and size.
+	*
+	* @param {Vector3} position - The center position of the trigger region.
+	* @param {Vector3} size - The size of the trigger region per axis.
+	* @return {RectangularTriggerRegion} A reference to this trigger region.
+	*/
 	fromPositionAndSize( position, size ) {
 
 		this._aabb.fromCenterAndSize( position, size );
@@ -8063,6 +8415,13 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 	}
 
+	/**
+	* Returns true if the bounding volume of the given game entity touches/intersects
+	* the trigger region.
+	*
+	* @param {GameEntity} entity - The entity to test.
+	* @return {boolean} The result of the intersection test.
+	*/
 	touching( entity ) {
 
 		boundingSphereEntity.set( entity.position, entity.boundingRadius );
@@ -8074,14 +8433,22 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 }
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 const boundingSphereEntity$1 = new BoundingSphere();
 
+/**
+* Class for represeting a spherical trigger region as a bounding sphere.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+* @augments TriggerRegion
+*/
 class SphericalTriggerRegion extends TriggerRegion {
 
+	/**
+	* Constructs a new spherical trigger region with the given values.
+	*
+	* @param {Vector3} position - The center position of the region.
+	* @param {number} radius - The radius of the region.
+	*/
 	constructor( position = new Vector3(), radius = 0 ) {
 
 		super();
@@ -8114,6 +8481,13 @@ class SphericalTriggerRegion extends TriggerRegion {
 
 	}
 
+	/**
+	* Returns true if the bounding volume of the given game entity touches/intersects
+	* the trigger region.
+	*
+	* @param {GameEntity} entity - The entity to test.
+	* @return {boolean} The result of the intersection test.
+	*/
 	touching( entity ) {
 
 		boundingSphereEntity$1.set( entity.position, entity.boundingRadius );
@@ -8126,18 +8500,42 @@ class SphericalTriggerRegion extends TriggerRegion {
 }
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Base class for represeting triggers. A trigger generates an action if a game entity
+* touches its trigger region, a predefine region in 3D space.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class Trigger {
 
+	/**
+	* Constructs a new trigger with the given values.
+	*
+	* @param {TriggerRegion} region - The region of the trigger.
+	*/
 	constructor( region = new TriggerRegion() ) {
 
+		/**
+		* Whether this trigger is active or not.
+		* @type boolean
+		* @default true
+		*/
 		this.active = true;
+
+		/**
+		* The region of the trigger.
+		* @type TriggerRegion
+		*/
 		this.region = region;
 
 	}
 
+	/**
+	* This method is called per simulation step for all game entities. If the game
+	* entity touches the region of the trigger, the respective action is executed.
+	*
+	* @param {GameEntity} entity - The entity to test
+	* @return {Trigger} A reference to this trigger.
+	*/
 	check( entity ) {
 
 		if ( ( this.active === true ) && ( this.region.touching( entity ) === true ) ) {
@@ -8146,10 +8544,26 @@ class Trigger {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* This method is called when the trigger should execute its action.
+	* Must be implemented by all concrete triggers.
+	*
+	* @param {GameEntity} entity - The entity that touched the trigger region.
+	* @return {Trigger} A reference to this trigger.
+	*/
 	execute( /* entity */ ) {}
 
+	/**
+	* Triggers can have internal states. This method is called per simulation step
+	* and can be used to update the trigger.
+	*
+	* @param {number} delta - The time delta value.
+	* @return {Trigger} A reference to this trigger.
+	*/
 	update( /* delta */ ) {}
 
 }

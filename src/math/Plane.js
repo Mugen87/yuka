@@ -18,7 +18,16 @@ class Plane {
 	*/
 	constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
 
+		/**
+		* The normal vector of the plane.
+		* @type Vector3
+		*/
 		this.normal = normal;
+
+		/**
+		* The distance of the plane from the origin.
+		* @type number
+		*/
 		this.constant = constant;
 
 	}

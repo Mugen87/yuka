@@ -1,10 +1,3 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js
- *
- */
-
 import { _Math } from './Math.js';
 import { Matrix3 } from './Matrix3.js';
 
@@ -27,9 +20,28 @@ class Quaternion {
 	*/
 	constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
+		/**
+		* The x component.
+		* @type number
+		*/
 		this.x = x;
+
+		/**
+		* The y component.
+		* @type number
+		*/
 		this.y = y;
+
+		/**
+		* The z component.
+		* @type number
+		*/
 		this.z = z;
+
+		/**
+		* The w component.
+		* @type number
+		*/
 		this.w = w;
 
 	}

@@ -1,7 +1,3 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Cell } from './Cell.js';
 import { AABB } from '../math/AABB.js';
 import { Vector3 } from '../math/Vector3.js';
@@ -10,26 +6,77 @@ const clampedPosition = new Vector3();
 const aabb = new AABB();
 const contour = new Array();
 
+/**
+* This class is used for cell-space partitioning, a basic approach for implementing
+* a spatial index. The 3D space is divided up into a number of cells. A cell contains a
+* list of references to all the entities it contains. Compared to other spatial indices like
+* Octrees, the division of the 3D space is coarse and often not balanced but the
+* computational overhead for calculating the index of a specifc cell based on a position is very fast.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class CellSpacePartitioning {
 
+	/**
+	* Constructs a new spatial index with the given values.
+	*
+	* @param {number} width - The width of the entire spatial index.
+	* @param {number} height - The height of the entire spatial index.
+	* @param {number} depth - The depth of the entire spatial index.
+	* @param {number} cellsX - The amount of cells in along the width (x-axis).
+	* @param {number} cellsY - The amount of cells in along the height (y-axis).
+	* @param {number} cellsZ - The amount of cells in along the depth (z-axis).
+	*/
 	constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
+		/**
+		* The list of partitions.
+		* @type array
+		*/
 		this.cells = new Array();
 
+		/**
+		* The width of the entire spatial index.
+		* @type number
+		*/
 		this.width = width;
+
+		/**
+		* The height of the entire spatial index.
+		* @type number
+		*/
 		this.height = height;
+
+		/**
+		* The depth of the entire spatial index.
+		* @type number
+		*/
 		this.depth = depth;
 
-		this.halfWidth = width / 2;
-		this.halfHeight = height / 2;
-		this.halfDepth = depth / 2;
-
-		this.min = new Vector3( - this.halfWidth, - this.halfHeight, - this.halfDepth );
-		this.max = new Vector3( this.halfWidth, this.halfHeight, this.halfDepth );
-
+		/**
+		* The amount of cells in along the width (x-axis).
+		* @type number
+		*/
 		this.cellsX = cellsX;
+
+		/**
+		* The amount of cells in along the height (y-axis).
+		* @type number
+		*/
 		this.cellsY = cellsY;
+
+		/**
+		* The amount of cells in along the depth (z-axis).
+		* @type number
+		*/
 		this.cellsZ = cellsZ;
+
+		this._halfWidth = width / 2;
+		this._halfHeight = height / 2;
+		this._halfDepth = depth / 2;
+
+		this._min = new Vector3( - this._halfWidth, - this._halfHeight, - this._halfDepth );
+		this._max = new Vector3( this._halfWidth, this._halfHeight, this._halfDepth );
 
 		//
 
@@ -39,15 +86,15 @@ class CellSpacePartitioning {
 
 		for ( let i = 0; i < cellsX; i ++ ) {
 
-			const x = ( i * cellSizeX ) - this.halfWidth;
+			const x = ( i * cellSizeX ) - this._halfWidth;
 
 			for ( let j = 0; j < cellsY; j ++ ) {
 
-				const y = ( j * cellSizeY ) - this.halfHeight;
+				const y = ( j * cellSizeY ) - this._halfHeight;
 
 				for ( let k = 0; k < cellsZ; k ++ ) {
 
-					const z = ( k * cellSizeZ ) - this.halfDepth;
+					const z = ( k * cellSizeZ ) - this._halfDepth;
 
 					const min = new Vector3();
 					const max = new Vector3();
@@ -71,6 +118,13 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Updates the partitioning index of a given game entity.
+	*
+	* @param {GameEntity} entity - The entity to update.
+	* @param {number} currentIndex - The current partition index of the entity.
+	* @return {number} The new partitioning index for the given game entity.
+	*/
 	updateEntity( entity, currentIndex = - 1 ) {
 
 		const newIndex = this.getIndexForPosition( entity.position );
@@ -91,6 +145,13 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Adds an entity to a specific partition.
+	*
+	* @param {GameEntity} entity - The entity to add.
+	* @param {number} index - The partition index.
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	addEntityToPartition( entity, index ) {
 
 		const cell = this.cells[ index ];
@@ -100,6 +161,13 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Removes an entity from a specific partition.
+	*
+	* @param {GameEntity} entity - The entity to remove.
+	* @param {number} index - The partition index.
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	removeEntityFromPartition( entity, index ) {
 
 		const cell = this.cells[ index ];
@@ -109,13 +177,19 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Computes the parition index for the given position vector.
+	*
+	* @param {Vector3} position - The given position.
+	* @return {number} The partition index.
+	*/
 	getIndexForPosition( position ) {
 
-		clampedPosition.copy( position ).clamp( this.min, this.max );
+		clampedPosition.copy( position ).clamp( this._min, this._max );
 
-		let indexX = Math.abs( Math.floor( ( this.cellsX * ( clampedPosition.x + this.halfWidth ) ) / this.width ) );
-		let indexY = Math.abs( Math.floor( ( this.cellsY * ( clampedPosition.y + this.halfHeight ) ) / this.height ) );
-		let indexZ = Math.abs( Math.floor( ( this.cellsZ * ( clampedPosition.z + this.halfDepth ) ) / this.depth ) );
+		let indexX = Math.abs( Math.floor( ( this.cellsX * ( clampedPosition.x + this._halfWidth ) ) / this.width ) );
+		let indexY = Math.abs( Math.floor( ( this.cellsY * ( clampedPosition.y + this._halfHeight ) ) / this.height ) );
+		let indexZ = Math.abs( Math.floor( ( this.cellsZ * ( clampedPosition.z + this._halfDepth ) ) / this.depth ) );
 
 		// handle index overflow
 
@@ -129,6 +203,17 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Performs a query to the spatial index according the the given position and
+	* radius. The method approximates the query position and radius with an AABB and
+	* then performs an ntersection test with all non-empty cells in order to determine
+	* relevant paritions. Stores the result in the given result array.
+	*
+	* @param {Vector3} position - The given query position.
+	* @param {number} radius - The given query radius.
+	* @param {Array} result - The result array.
+	* @return {Array} The result array.
+	*/
 	query( position, radius, result ) {
 
 		const cells = this.cells;
@@ -158,6 +243,11 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Removes all entities from all partitions.
+	*
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	makeEmpty() {
 
 		const cells = this.cells;
@@ -172,6 +262,12 @@ class CellSpacePartitioning {
 
 	}
 
+	/**
+	* Adds a polygon to the spatial index. A polygon is approximated with an AABB.
+	*
+	* @param {Polygon} polygon - The polygon to add.
+	* @return {CellSpacePartitioning} A reference to this spatial index.
+	*/
 	addPolygon( polygon ) {
 
 		const cells = this.cells;

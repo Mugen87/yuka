@@ -13,6 +13,10 @@ class Matrix4 {
 	*/
 	constructor() {
 
+		/**
+		* The elements of the matrix in column-major order.
+		* @type array
+		*/
 		this.elements = [
 
 			1, 0, 0, 0,

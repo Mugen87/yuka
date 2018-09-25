@@ -16,8 +16,22 @@ class Vector3 {
 	*/
 	constructor( x = 0, y = 0, z = 0 ) {
 
+		/**
+		* The x component.
+		* @type number
+		*/
 		this.x = x;
+
+		/**
+		* The y component.
+		* @type number
+		*/
 		this.y = y;
+
+		/**
+		* The z component.
+		* @type number
+		*/
 		this.z = z;
 
 	}

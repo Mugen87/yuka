@@ -10,12 +10,21 @@ class BoundingSphere {
 	/**
 	* Constructs a new bounding sphere with the given values.
 	*
-	* @param {Vector3} center - The center point of the bounding sphere.
+	* @param {Vector3} center - The center position of the bounding sphere.
 	* @param {number} radius - The radius of the bounding sphere.
 	*/
 	constructor( center = new Vector3(), radius = 0 ) {
 
+		/**
+		* The center position of the bounding sphere.
+		* @type Vector3
+		*/
 		this.center = center;
+
+		/**
+		*  The radius of the bounding sphere.
+		* @type number
+		*/
 		this.radius = radius;
 
 	}
@@ -23,7 +32,7 @@ class BoundingSphere {
 	/**
 	* Sets the given values to this bounding sphere.
 	*
-	* @param {Vector3} center - The center point of the bounding sphere.
+	* @param {Vector3} center - The center position of the bounding sphere.
 	* @param {number} radius - The radius of the bounding sphere.
 	* @return {BoundingSphere} A reference to this bounding sphere.
 	*/

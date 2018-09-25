@@ -17,7 +17,16 @@ class Ray {
 	*/
 	constructor( origin = new Vector3(), direction = new Vector3() ) {
 
+		/**
+		* The origin of the ray.
+		* @type Vector3
+		*/
 		this.origin = origin;
+
+		/**
+		* The direction of the ray.
+		* @type Vector3
+		*/
 		this.direction = direction;
 
 	}
