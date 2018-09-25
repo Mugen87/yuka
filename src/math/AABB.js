@@ -93,7 +93,7 @@ class AABB {
 	* Returns true if the given point is inside this AABB.
 	*
 	* @param {Vector3} point - A point in 3D space.
-	* @return {boolean} The result of the containments test.
+	* @return {Boolean} The result of the containments test.
 	*/
 	containsPoint( point ) {
 
@@ -123,7 +123,7 @@ class AABB {
 	* Returns true if the given ABBB intersects this AABB.
 	*
 	* @param {AABB} aabb - The AABB to test.
-	* @return {boolean} The result of the intersection test.
+	* @return {Boolean} The result of the intersection test.
 	*/
 	intersectsAABB( aabb ) {
 
@@ -137,7 +137,7 @@ class AABB {
 	* Returns true if the given bounding sphere intersects this AABB.
 	*
 	* @param {BoundingSphere} sphere - The bounding sphere to test.
-	* @return {boolean} The result of the intersection test.
+	* @return {Boolean} The result of the intersection test.
 	*/
 	intersectsBoundingSphere( sphere ) {
 
@@ -172,7 +172,7 @@ class AABB {
 	/**
 	* Sets the values of the AABB from the given array of points.
 	*
-	* @param {array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array} points - An array of 3D vectors representing points in 3D space.
 	* @return {AABB} A reference to this AABB.
 	*/
 	fromPoints( points ) {
@@ -194,7 +194,7 @@ class AABB {
 	* Returns true if the given AABB is deep equal with this AABB.
 	*
 	* @param {AABB} aabb - The AABB to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( aabb ) {
 

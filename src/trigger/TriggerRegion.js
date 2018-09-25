@@ -11,7 +11,7 @@ class TriggerRegion {
 	* the trigger region. Must be implemented by all concrete trigger regions.
 	*
 	* @param {GameEntity} entity - The entity to test.
-	* @return {boolean} The result of the intersection test.
+	* @return {Boolean} The result of the intersection test.
 	*/
 	touching( /* entity */ ) {
 

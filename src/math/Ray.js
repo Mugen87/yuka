@@ -78,7 +78,7 @@ class Ray {
 	* and stores the result in the given 3D vector. The t value has a range of
 	* [0, Infinity] where 0 means the position is equal with the origin of the ray.
 	*
-	* @param {number} t - A scalar value representing a position on the ray.
+	* @param {Number} t - A scalar value representing a position on the ray.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
@@ -136,7 +136,7 @@ class Ray {
 	* Returns true if the given ray is deep equal with this ray.
 	*
 	* @param {Ray} ray - The ray to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( ray ) {
 

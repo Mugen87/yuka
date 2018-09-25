@@ -14,7 +14,7 @@ class Plane {
 	* Constructs a new plane with the given values. The sign of __Plane#constant__ determines the side of the plane on which the origin is located.
 	*
 	* @param {Vector3} normal - The normal vector of the plane.
-	* @param {number} constant - The distance of the plane from the origin.
+	* @param {Number} constant - The distance of the plane from the origin.
 	*/
 	constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
 
@@ -36,7 +36,7 @@ class Plane {
 	* Sets the given values to this plane.
 	*
 	* @param {Vector3} normal - The normal vector of the plane.
-	* @param {number} constant - The distance of the plane from the origin.
+	* @param {Number} constant - The distance of the plane from the origin.
 	* @return {Plane} A reference to this plane.
 	*/
 	set( normal, constant ) {
@@ -80,7 +80,7 @@ class Plane {
 	* Zero means the point lies on the plane.
 	*
 	* @param {Vector3} point - A point in 3D space.
-	* @return {number} The signed distance.
+	* @return {Number} The signed distance.
 	*/
 	distanceToPoint( point ) {
 
@@ -126,7 +126,7 @@ class Plane {
 	* Returns true if the given plane is deep equal with this plane.
 	*
 	* @param {Plane} plane - The plane to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( plane ) {
 

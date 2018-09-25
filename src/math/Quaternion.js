@@ -13,10 +13,10 @@ class Quaternion {
 	/**
 	* Constructs a new quaternion with the given values.
 	*
-	* @param {number} x - The x component.
-	* @param {number} y - The y component.
-	* @param {number} z - The z component.
-	* @param {number} w - The w component.
+	* @param {Number} x - The x component.
+	* @param {Number} y - The y component.
+	* @param {Number} z - The z component.
+	* @param {Number} w - The w component.
 	*/
 	constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
@@ -49,10 +49,10 @@ class Quaternion {
 	/**
 	* Sets the given values to this quaternion.
 	*
-	* @param {number} x - The x component.
-	* @param {number} y - The y component.
-	* @param {number} z - The z component.
-	* @param {number} w - The w component.
+	* @param {Number} x - The x component.
+	* @param {Number} y - The y component.
+	* @param {Number} z - The z component.
+	* @param {Number} w - The w component.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
 	set( x, y, z, w ) {
@@ -135,7 +135,7 @@ class Quaternion {
 	/**
 	* Computes the length of this quaternion.
 	*
-	* @return {number} The length of this quaternion.
+	* @return {Number} The length of this quaternion.
 	*/
 	length() {
 
@@ -146,7 +146,7 @@ class Quaternion {
 	/**
 	* Computes the squared length of this quaternion.
 	*
-	* @return {number} The squared length of this quaternion.
+	* @return {Number} The squared length of this quaternion.
 	*/
 	squaredLength() {
 
@@ -235,7 +235,7 @@ class Quaternion {
 	* Computes the shortest angle between two rotation defined by this quaternion and the given one.
 	*
 	* @param {Quaternion} q - The given quaternion.
-	* @return {number} The angle in radians.
+	* @return {Number} The angle in radians.
 	*/
 	angleTo( q ) {
 
@@ -248,7 +248,7 @@ class Quaternion {
 	* defined by the given quaternion by the given angular step. The rotation will not overshoot.
 	*
 	* @param {Quaternion} q - The target rotation.
-	* @param {number} step - The maximum step in radians.
+	* @param {Number} step - The maximum step in radians.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
 	rotateTo( q, step ) {
@@ -285,7 +285,7 @@ class Quaternion {
 	* The parameter t is clamped to the range [0, 1].
 	*
 	* @param {Quaternion} q - The target rotation.
-	* @param {number} t - The interpolation paramter.
+	* @param {Number} t - The interpolation paramter.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
 	slerp( q, t ) {
@@ -352,9 +352,9 @@ class Quaternion {
 	/**
 	* Sets the components of this quaternion from the an euler angle.
 	*
-	* @param {number} x - Rotation around x axis in radians.
-	* @param {number} y - Rotation around y axis in radians.
-	* @param {number} z - Rotation around z axis in radians.
+	* @param {Number} x - Rotation around x axis in radians.
+	* @param {Number} y - Rotation around y axis in radians.
+	* @param {Number} z - Rotation around z axis in radians.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
 	fromEuler( x, y, z ) {
@@ -438,7 +438,7 @@ class Quaternion {
 	* Sets the components of this quaternion from an array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
 	fromArray( array, offset = 0 ) {
@@ -456,7 +456,7 @@ class Quaternion {
 	* Copies all values of this quaternion to the given array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Array} The array with the quaternion components.
 	*/
 	toArray( array, offset = 0 ) {
@@ -474,7 +474,7 @@ class Quaternion {
 	* Returns true if the given quaternion is deep equal with this quaternion.
 	*
 	* @param {Quaternion} q - The quaternion to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( q ) {
 

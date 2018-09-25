@@ -16,7 +16,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 	* Constructs a new spherical trigger region with the given values.
 	*
 	* @param {Vector3} position - The center position of the region.
-	* @param {number} radius - The radius of the region.
+	* @param {Number} radius - The radius of the region.
 	*/
 	constructor( position = new Vector3(), radius = 0 ) {
 
@@ -55,7 +55,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 	* the trigger region.
 	*
 	* @param {GameEntity} entity - The entity to test.
-	* @return {boolean} The result of the intersection test.
+	* @return {Boolean} The result of the intersection test.
 	*/
 	touching( entity ) {
 

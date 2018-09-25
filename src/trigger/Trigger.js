@@ -17,7 +17,7 @@ class Trigger {
 
 		/**
 		* Whether this trigger is active or not.
-		* @type boolean
+		* @type Boolean
 		* @default true
 		*/
 		this.active = true;
@@ -62,7 +62,7 @@ class Trigger {
 	* Triggers can have internal states. This method is called per simulation step
 	* and can be used to update the trigger.
 	*
-	* @param {number} delta - The time delta value.
+	* @param {Number} delta - The time delta value.
 	* @return {Trigger} A reference to this trigger.
 	*/
 	update( /* delta */ ) {}

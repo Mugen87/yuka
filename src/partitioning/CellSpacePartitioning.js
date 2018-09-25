@@ -20,12 +20,12 @@ class CellSpacePartitioning {
 	/**
 	* Constructs a new spatial index with the given values.
 	*
-	* @param {number} width - The width of the entire spatial index.
-	* @param {number} height - The height of the entire spatial index.
-	* @param {number} depth - The depth of the entire spatial index.
-	* @param {number} cellsX - The amount of cells in along the width (x-axis).
-	* @param {number} cellsY - The amount of cells in along the height (y-axis).
-	* @param {number} cellsZ - The amount of cells in along the depth (z-axis).
+	* @param {Number} width - The width of the entire spatial index.
+	* @param {Number} height - The height of the entire spatial index.
+	* @param {Number} depth - The depth of the entire spatial index.
+	* @param {Number} cellsX - The amount of cells in along the width (x-axis).
+	* @param {Number} cellsY - The amount of cells in along the height (y-axis).
+	* @param {Number} cellsZ - The amount of cells in along the depth (z-axis).
 	*/
 	constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
@@ -122,8 +122,8 @@ class CellSpacePartitioning {
 	* Updates the partitioning index of a given game entity.
 	*
 	* @param {GameEntity} entity - The entity to update.
-	* @param {number} currentIndex - The current partition index of the entity.
-	* @return {number} The new partitioning index for the given game entity.
+	* @param {Number} currentIndex - The current partition index of the entity.
+	* @return {Number} The new partitioning index for the given game entity.
 	*/
 	updateEntity( entity, currentIndex = - 1 ) {
 
@@ -149,7 +149,7 @@ class CellSpacePartitioning {
 	* Adds an entity to a specific partition.
 	*
 	* @param {GameEntity} entity - The entity to add.
-	* @param {number} index - The partition index.
+	* @param {Number} index - The partition index.
 	* @return {CellSpacePartitioning} A reference to this spatial index.
 	*/
 	addEntityToPartition( entity, index ) {
@@ -165,7 +165,7 @@ class CellSpacePartitioning {
 	* Removes an entity from a specific partition.
 	*
 	* @param {GameEntity} entity - The entity to remove.
-	* @param {number} index - The partition index.
+	* @param {Number} index - The partition index.
 	* @return {CellSpacePartitioning} A reference to this spatial index.
 	*/
 	removeEntityFromPartition( entity, index ) {
@@ -181,7 +181,7 @@ class CellSpacePartitioning {
 	* Computes the parition index for the given position vector.
 	*
 	* @param {Vector3} position - The given position.
-	* @return {number} The partition index.
+	* @return {Number} The partition index.
 	*/
 	getIndexForPosition( position ) {
 
@@ -210,7 +210,7 @@ class CellSpacePartitioning {
 	* relevant paritions. Stores the result in the given result array.
 	*
 	* @param {Vector3} position - The given query position.
-	* @param {number} radius - The given query radius.
+	* @param {Number} radius - The given query radius.
 	* @param {Array} result - The result array.
 	* @return {Array} The result array.
 	*/

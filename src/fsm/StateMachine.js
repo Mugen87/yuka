@@ -48,7 +48,7 @@ class StateMachine {
 	}
 
 	/**
-	* Updates the internal state of the FSM. Usually called by the {@link GameEntity#update}.
+	* Updates the internal state of the FSM. Usually called by {@link GameEntity#update}.
 	*
 	* @return {StateMachine} A reference to this state machine.
 	*/

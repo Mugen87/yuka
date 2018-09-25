@@ -93,7 +93,7 @@ class LineSegment {
 	* and stores the result in the given 3D vector. The t value has usually a range of
 	* [0, 1] where 0 means start position and 1 the end position.
 	*
-	* @param {number} t - A scalar value representing a position on the line segment.
+	* @param {Number} t - A scalar value representing a position on the line segment.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
@@ -109,7 +109,7 @@ class LineSegment {
 	* end position of the line segment.
 	*
 	* @param {Vector3} point - A point in 3D space.
-	* @param {boolean} clampToLine - Indicates if the results should be clamped.
+	* @param {Boolean} clampToLine - Indicates if the results should be clamped.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The closest point.
 	*/
@@ -127,8 +127,8 @@ class LineSegment {
 	* exceed the start and end position of the line segment.
 	*
 	* @param {Vector3} point - A point in 3D space.
-	* @param {boolean} clampToLine - Indicates if the results should be clamped.
-	* @return {number} A scalar representing the closest point.
+	* @param {Boolean} clampToLine - Indicates if the results should be clamped.
+	* @return {Number} A scalar representing the closest point.
 	*/
 	closestPointToPointParameter( point, clampToLine = true ) {
 
@@ -150,7 +150,7 @@ class LineSegment {
 	* Returns true if the given line segment is deep equal with this line segment.
 	*
 	* @param {LineSegment} lineSegment - The line segment to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( lineSegment ) {
 

@@ -31,22 +31,22 @@ class Matrix4 {
 	/**
 	* Sets the given values to this matrix. The arguments are in row-major order.
 	*
-	* @param {number} n11 - An element of the matrix.
-	* @param {number} n12 - An element of the matrix.
-	* @param {number} n13 - An element of the matrix.
-	* @param {number} n14 - An element of the matrix.
-	* @param {number} n21 - An element of the matrix.
-	* @param {number} n22 - An element of the matrix.
-	* @param {number} n23 - An element of the matrix.
-	* @param {number} n24 - An element of the matrix.
-	* @param {number} n31 - An element of the matrix.
-	* @param {number} n32 - An element of the matrix.
-	* @param {number} n33 - An element of the matrix.
-	* @param {number} n34 - An element of the matrix.
-	* @param {number} n41 - An element of the matrix.
-	* @param {number} n42 - An element of the matrix.
-	* @param {number} n43 - An element of the matrix.
-	* @param {number} n44 - An element of the matrix.
+	* @param {Number} n11 - An element of the matrix.
+	* @param {Number} n12 - An element of the matrix.
+	* @param {Number} n13 - An element of the matrix.
+	* @param {Number} n14 - An element of the matrix.
+	* @param {Number} n21 - An element of the matrix.
+	* @param {Number} n22 - An element of the matrix.
+	* @param {Number} n23 - An element of the matrix.
+	* @param {Number} n24 - An element of the matrix.
+	* @param {Number} n31 - An element of the matrix.
+	* @param {Number} n32 - An element of the matrix.
+	* @param {Number} n33 - An element of the matrix.
+	* @param {Number} n34 - An element of the matrix.
+	* @param {Number} n41 - An element of the matrix.
+	* @param {Number} n42 - An element of the matrix.
+	* @param {Number} n43 - An element of the matrix.
+	* @param {Number} n44 - An element of the matrix.
 	* @return {Matrix4} A reference to this matrix.
 	*/
 	set( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
@@ -188,7 +188,7 @@ class Matrix4 {
 	/**
 	* Multiplies the given scalar with this matrix.
 	*
-	* @param {number} s - The scalar to multiply.
+	* @param {Number} s - The scalar to multiply.
 	* @return {Matrix4} A reference to this matrix.
 	*/
 	multiplyScalar( s ) {
@@ -424,7 +424,7 @@ class Matrix4 {
 	* Sets the elements of this matrix from an array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Matrix4} A reference to this matrix.
 	*/
 	fromArray( array, offset = 0 ) {
@@ -445,7 +445,7 @@ class Matrix4 {
 	* Copies all elements of this matrix to the given array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Array} The array with the elements of the matrix.
 	*/
 	toArray( array, offset = 0 ) {
@@ -480,7 +480,7 @@ class Matrix4 {
 	* Returns true if the given matrix is deep equal with this matrix.
 	*
 	* @param {Matrix4} m - The matrix to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( m ) {
 

@@ -33,7 +33,7 @@ class State {
 	*
 	* @param {GameEntity} owner - The game entity that represents the execution context of this state.
 	* @param {Telegram} telegram - A data structure containing the actual message.
-	* @return {boolean}  Whether the message was processed or not.
+	* @return {Boolean}  Whether the message was processed or not.
 	*/
 	onMessage( /* owner, telegram */ ) {
 

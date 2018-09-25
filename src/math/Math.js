@@ -8,10 +8,10 @@ class _Math {
 	/**
 	* Ensures the given scalar value is within a given min/max range.
 	*
-	* @param {number} value - The value to clamp.
+	* @param {Number} value - The value to clamp.
 	* @param {min} value - The min value.
 	* @param {max} value - The max value.
-	* @return {number} The clamped value.
+	* @return {Number} The clamped value.
 	*/
 	static clamp( value, min, max ) {
 
@@ -24,7 +24,7 @@ class _Math {
 	*
 	* @param {min} value - The min value.
 	* @param {max} value - The max value.
-	* @return {number} The random float value.
+	* @return {Number} The random float value.
 	*/
 	static randFloat( min, max ) {
 
@@ -39,7 +39,7 @@ class _Math {
 	* @param {Vector3} a - The first point in 3D space.
 	* @param {Vector3} b - The second point in 3D space.
 	* @param {Vector3} c - The third point in 3D space.
-	* @return {number} The signed area.
+	* @return {Number} The signed area.
 	*/
 	static area( a, b, c ) {
 

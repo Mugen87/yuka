@@ -36,15 +36,15 @@ class Matrix3 {
 	/**
 	* Sets the given values to this matrix. The arguments are in row-major order.
 	*
-	* @param {number} n11 - An element of the matrix.
-	* @param {number} n12 - An element of the matrix.
-	* @param {number} n13 - An element of the matrix.
-	* @param {number} n21 - An element of the matrix.
-	* @param {number} n22 - An element of the matrix.
-	* @param {number} n23 - An element of the matrix.
-	* @param {number} n31 - An element of the matrix.
-	* @param {number} n32 - An element of the matrix.
-	* @param {number} n33 - An element of the matrix.
+	* @param {Number} n11 - An element of the matrix.
+	* @param {Number} n12 - An element of the matrix.
+	* @param {Number} n13 - An element of the matrix.
+	* @param {Number} n21 - An element of the matrix.
+	* @param {Number} n22 - An element of the matrix.
+	* @param {Number} n23 - An element of the matrix.
+	* @param {Number} n31 - An element of the matrix.
+	* @param {Number} n32 - An element of the matrix.
+	* @param {Number} n33 - An element of the matrix.
 	* @return {Matrix3} A reference to this matrix.
 	*/
 	set( n11, n12, n13, n21, n22, n23, n31, n32, n33 ) {
@@ -173,7 +173,7 @@ class Matrix3 {
 	/**
 	* Multiplies the given scalar with this matrix.
 	*
-	* @param {number} s - The scalar to multiply.
+	* @param {Number} s - The scalar to multiply.
 	* @return {Matrix3} A reference to this matrix.
 	*/
 	multiplyScalar( s ) {
@@ -321,7 +321,7 @@ class Matrix3 {
 	* Sets the elements of this matrix from an array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Matrix3} A reference to this matrix.
 	*/
 	fromArray( array, offset = 0 ) {
@@ -342,7 +342,7 @@ class Matrix3 {
 	* Copies all elements of this matrix to the given array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Array} The array with the elements of the matrix.
 	*/
 	toArray( array, offset = 0 ) {
@@ -369,7 +369,7 @@ class Matrix3 {
 	* Returns true if the given matrix is deep equal with this matrix.
 	*
 	* @param {Matrix3} m - The matrix to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( m ) {
 

@@ -10,9 +10,9 @@ class Vector3 {
 	/**
 	* Constructs a new 3D vector with the given values.
 	*
-	* @param {number} x - The x component.
-	* @param {number} y - The y component.
-	* @param {number} z - The z component.
+	* @param {Number} x - The x component.
+	* @param {Number} y - The y component.
+	* @param {Number} z - The z component.
 	*/
 	constructor( x = 0, y = 0, z = 0 ) {
 
@@ -39,9 +39,9 @@ class Vector3 {
 	/**
 	* Sets the given values to this 3D vector.
 	*
-	* @param {number} x - The x component.
-	* @param {number} y - The y component.
-	* @param {number} z - The z component.
+	* @param {Number} x - The x component.
+	* @param {Number} y - The y component.
+	* @param {Number} z - The z component.
 	* @return {Vector3} A reference to this vector.
 	*/
 	set( x, y, z ) {
@@ -100,7 +100,7 @@ class Vector3 {
 	/**
 	* Adds the given scalar to this 3D vector.
 	*
-	* @param {number} s - The scalar to add.
+	* @param {Number} s - The scalar to add.
 	* @return {Vector3} A reference to this vector.
 	*/
 	addScalar( s ) {
@@ -149,7 +149,7 @@ class Vector3 {
 	/**
 	* Substracts the given scalar from this 3D vector.
 	*
-	* @param {number} s - The scalar to substract.
+	* @param {Number} s - The scalar to substract.
 	* @return {Vector3} A reference to this vector.
 	*/
 	subScalar( s ) {
@@ -198,7 +198,7 @@ class Vector3 {
 	/**
 	* Multiplies the given scalar with this 3D vector.
 	*
-	* @param {number} s - The scalar to multiply.
+	* @param {Number} s - The scalar to multiply.
 	* @return {Vector3} A reference to this vector.
 	*/
 	multiplyScalar( s ) {
@@ -247,7 +247,7 @@ class Vector3 {
 	/**
 	* Divides the given scalar through this 3D vector.
 	*
-	* @param {number} s - The scalar to multiply.
+	* @param {Number} s - The scalar to multiply.
 	* @return {Vector3} A reference to this vector.
 	*/
 	divideScalar( s ) {
@@ -332,7 +332,7 @@ class Vector3 {
 	* Computes the dot product of this and the given 3D vector.
 	*
 	* @param {Vector3} v - The given 3D vector.
-	* @return {number} The results of the dor product.
+	* @return {Number} The results of the dor product.
 	*/
 	dot( v ) {
 
@@ -384,7 +384,7 @@ class Vector3 {
 	* Computes the angle between this and the given vector.
 	*
 	* @param {Vector3} v - A 3D vector.
-	* @return {number} The angle in radians.
+	* @return {Number} The angle in radians.
 	*/
 	angleTo( v ) {
 
@@ -399,7 +399,7 @@ class Vector3 {
 	/**
 	* Computes the length of this 3D vector.
 	*
-	* @return {number} The length of this 3D vector.
+	* @return {Number} The length of this 3D vector.
 	*/
 	length() {
 
@@ -412,7 +412,7 @@ class Vector3 {
 	* Calling this method is faster than calling {@link Vector3#length},
 	* since it avoids computing a square root.
 	*
-	* @return {number} The squared length of this 3D vector.
+	* @return {Number} The squared length of this 3D vector.
 	*/
 	squaredLength() {
 
@@ -423,7 +423,7 @@ class Vector3 {
 	/**
 	* Computes the manhatten length of this 3D vector.
 	*
-	* @return {number} The manhatten length of this 3D vector.
+	* @return {Number} The manhatten length of this 3D vector.
 	*/
 	manhattanLength() {
 
@@ -435,7 +435,7 @@ class Vector3 {
 	* Computes the euclidean distance between this 3D vector and the given one.
 	*
 	* @param {Vector3} v - A 3D vector.
-	* @return {number} The euclidean distance between two 3D vectors.
+	* @return {Number} The euclidean distance between two 3D vectors.
 	*/
 	distanceTo( v ) {
 
@@ -449,7 +449,7 @@ class Vector3 {
 	* since it avoids computing a square root.
 	*
 	* @param {Vector3} v - A 3D vector.
-	* @return {number} The squared euclidean distance between two 3D vectors.
+	* @return {Number} The squared euclidean distance between two 3D vectors.
 	*/
 	squaredDistanceTo( v ) {
 
@@ -463,7 +463,7 @@ class Vector3 {
 	* Computes the manhatten distance between this 3D vector and the given one.
 	*
 	* @param {Vector3} v - A 3D vector.
-	* @return {number} The manhatten distance between two 3D vectors.
+	* @return {Number} The manhatten distance between two 3D vectors.
 	*/
 	manhattanDistanceTo( v ) {
 
@@ -537,7 +537,7 @@ class Vector3 {
 	* Sets the components of this 3D vector from a column of a 3x3 matrix.
 	*
 	* @param {Matrix3} m - A 3x3 matrix.
-	* @param {number} i - The index of the column.
+	* @param {Number} i - The index of the column.
 	* @return {Vector3} A reference to this vector.
 	*/
 	fromMatrix3Column( m, i ) {
@@ -550,7 +550,7 @@ class Vector3 {
 	* Sets the components of this 3D vector from a column of a 4x4 matrix.
 	*
 	* @param {Matrix3} m - A 4x4 matrix.
-	* @param {number} i - The index of the column.
+	* @param {Number} i - The index of the column.
 	* @return {Vector3} A reference to this vector.
 	*/
 	fromMatrix4Column( m, i ) {
@@ -562,9 +562,9 @@ class Vector3 {
 	/**
 	* Sets the components of this 3D vector from a spherical coordinate.
 	*
-	* @param {number} radius - The radius.
-	* @param {number} phi - The polar or inclination angle in radians. Should be in the range of (−π/2, +π/2].
-	* @param {number} theta - The azimuthal angle in radians. Should be in the range of (−π, +π].
+	* @param {Number} radius - The radius.
+	* @param {Number} phi - The polar or inclination angle in radians. Should be in the range of (−π/2, +π/2].
+	* @param {Number} theta - The azimuthal angle in radians. Should be in the range of (−π, +π].
 	* @return {Vector3} A reference to this vector.
 	*/
 	fromSpherical( radius, phi, theta ) {
@@ -583,7 +583,7 @@ class Vector3 {
 	* Sets the components of this 3D vector from an array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Vector3} A reference to this vector.
 	*/
 	fromArray( array, offset = 0 ) {
@@ -600,7 +600,7 @@ class Vector3 {
 	* Copies all values of this 3D vector to the given array.
 	*
 	* @param {Array} array - An array.
-	* @param {number} offset - An optional offset.
+	* @param {Number} offset - An optional offset.
 	* @return {Array} The array with the 3D vector components.
 	*/
 	toArray( array, offset = 0 ) {
@@ -617,7 +617,7 @@ class Vector3 {
 	* Returns true if the given 3D vector is deep equal with this 3D vector.
 	*
 	* @param {Vector3} v - The 3D vector to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( v ) {
 

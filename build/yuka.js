@@ -403,10 +403,10 @@
 		/**
 		* Ensures the given scalar value is within a given min/max range.
 		*
-		* @param {number} value - The value to clamp.
+		* @param {Number} value - The value to clamp.
 		* @param {min} value - The min value.
 		* @param {max} value - The max value.
-		* @return {number} The clamped value.
+		* @return {Number} The clamped value.
 		*/
 		static clamp( value, min, max ) {
 
@@ -419,7 +419,7 @@
 		*
 		* @param {min} value - The min value.
 		* @param {max} value - The max value.
-		* @return {number} The random float value.
+		* @return {Number} The random float value.
 		*/
 		static randFloat( min, max ) {
 
@@ -434,7 +434,7 @@
 		* @param {Vector3} a - The first point in 3D space.
 		* @param {Vector3} b - The second point in 3D space.
 		* @param {Vector3} c - The third point in 3D space.
-		* @return {number} The signed area.
+		* @return {Number} The signed area.
 		*/
 		static area( a, b, c ) {
 
@@ -454,9 +454,9 @@
 		/**
 		* Constructs a new 3D vector with the given values.
 		*
-		* @param {number} x - The x component.
-		* @param {number} y - The y component.
-		* @param {number} z - The z component.
+		* @param {Number} x - The x component.
+		* @param {Number} y - The y component.
+		* @param {Number} z - The z component.
 		*/
 		constructor( x = 0, y = 0, z = 0 ) {
 
@@ -483,9 +483,9 @@
 		/**
 		* Sets the given values to this 3D vector.
 		*
-		* @param {number} x - The x component.
-		* @param {number} y - The y component.
-		* @param {number} z - The z component.
+		* @param {Number} x - The x component.
+		* @param {Number} y - The y component.
+		* @param {Number} z - The z component.
 		* @return {Vector3} A reference to this vector.
 		*/
 		set( x, y, z ) {
@@ -544,7 +544,7 @@
 		/**
 		* Adds the given scalar to this 3D vector.
 		*
-		* @param {number} s - The scalar to add.
+		* @param {Number} s - The scalar to add.
 		* @return {Vector3} A reference to this vector.
 		*/
 		addScalar( s ) {
@@ -593,7 +593,7 @@
 		/**
 		* Substracts the given scalar from this 3D vector.
 		*
-		* @param {number} s - The scalar to substract.
+		* @param {Number} s - The scalar to substract.
 		* @return {Vector3} A reference to this vector.
 		*/
 		subScalar( s ) {
@@ -642,7 +642,7 @@
 		/**
 		* Multiplies the given scalar with this 3D vector.
 		*
-		* @param {number} s - The scalar to multiply.
+		* @param {Number} s - The scalar to multiply.
 		* @return {Vector3} A reference to this vector.
 		*/
 		multiplyScalar( s ) {
@@ -691,7 +691,7 @@
 		/**
 		* Divides the given scalar through this 3D vector.
 		*
-		* @param {number} s - The scalar to multiply.
+		* @param {Number} s - The scalar to multiply.
 		* @return {Vector3} A reference to this vector.
 		*/
 		divideScalar( s ) {
@@ -776,7 +776,7 @@
 		* Computes the dot product of this and the given 3D vector.
 		*
 		* @param {Vector3} v - The given 3D vector.
-		* @return {number} The results of the dor product.
+		* @return {Number} The results of the dor product.
 		*/
 		dot( v ) {
 
@@ -828,7 +828,7 @@
 		* Computes the angle between this and the given vector.
 		*
 		* @param {Vector3} v - A 3D vector.
-		* @return {number} The angle in radians.
+		* @return {Number} The angle in radians.
 		*/
 		angleTo( v ) {
 
@@ -843,7 +843,7 @@
 		/**
 		* Computes the length of this 3D vector.
 		*
-		* @return {number} The length of this 3D vector.
+		* @return {Number} The length of this 3D vector.
 		*/
 		length() {
 
@@ -856,7 +856,7 @@
 		* Calling this method is faster than calling {@link Vector3#length},
 		* since it avoids computing a square root.
 		*
-		* @return {number} The squared length of this 3D vector.
+		* @return {Number} The squared length of this 3D vector.
 		*/
 		squaredLength() {
 
@@ -867,7 +867,7 @@
 		/**
 		* Computes the manhatten length of this 3D vector.
 		*
-		* @return {number} The manhatten length of this 3D vector.
+		* @return {Number} The manhatten length of this 3D vector.
 		*/
 		manhattanLength() {
 
@@ -879,7 +879,7 @@
 		* Computes the euclidean distance between this 3D vector and the given one.
 		*
 		* @param {Vector3} v - A 3D vector.
-		* @return {number} The euclidean distance between two 3D vectors.
+		* @return {Number} The euclidean distance between two 3D vectors.
 		*/
 		distanceTo( v ) {
 
@@ -893,7 +893,7 @@
 		* since it avoids computing a square root.
 		*
 		* @param {Vector3} v - A 3D vector.
-		* @return {number} The squared euclidean distance between two 3D vectors.
+		* @return {Number} The squared euclidean distance between two 3D vectors.
 		*/
 		squaredDistanceTo( v ) {
 
@@ -907,7 +907,7 @@
 		* Computes the manhatten distance between this 3D vector and the given one.
 		*
 		* @param {Vector3} v - A 3D vector.
-		* @return {number} The manhatten distance between two 3D vectors.
+		* @return {Number} The manhatten distance between two 3D vectors.
 		*/
 		manhattanDistanceTo( v ) {
 
@@ -981,7 +981,7 @@
 		* Sets the components of this 3D vector from a column of a 3x3 matrix.
 		*
 		* @param {Matrix3} m - A 3x3 matrix.
-		* @param {number} i - The index of the column.
+		* @param {Number} i - The index of the column.
 		* @return {Vector3} A reference to this vector.
 		*/
 		fromMatrix3Column( m, i ) {
@@ -994,7 +994,7 @@
 		* Sets the components of this 3D vector from a column of a 4x4 matrix.
 		*
 		* @param {Matrix3} m - A 4x4 matrix.
-		* @param {number} i - The index of the column.
+		* @param {Number} i - The index of the column.
 		* @return {Vector3} A reference to this vector.
 		*/
 		fromMatrix4Column( m, i ) {
@@ -1006,9 +1006,9 @@
 		/**
 		* Sets the components of this 3D vector from a spherical coordinate.
 		*
-		* @param {number} radius - The radius.
-		* @param {number} phi - The polar or inclination angle in radians. Should be in the range of (−π/2, +π/2].
-		* @param {number} theta - The azimuthal angle in radians. Should be in the range of (−π, +π].
+		* @param {Number} radius - The radius.
+		* @param {Number} phi - The polar or inclination angle in radians. Should be in the range of (−π/2, +π/2].
+		* @param {Number} theta - The azimuthal angle in radians. Should be in the range of (−π, +π].
 		* @return {Vector3} A reference to this vector.
 		*/
 		fromSpherical( radius, phi, theta ) {
@@ -1027,7 +1027,7 @@
 		* Sets the components of this 3D vector from an array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Vector3} A reference to this vector.
 		*/
 		fromArray( array, offset = 0 ) {
@@ -1044,7 +1044,7 @@
 		* Copies all values of this 3D vector to the given array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Array} The array with the 3D vector components.
 		*/
 		toArray( array, offset = 0 ) {
@@ -1061,7 +1061,7 @@
 		* Returns true if the given 3D vector is deep equal with this 3D vector.
 		*
 		* @param {Vector3} v - The 3D vector to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( v ) {
 
@@ -1108,15 +1108,15 @@
 		/**
 		* Sets the given values to this matrix. The arguments are in row-major order.
 		*
-		* @param {number} n11 - An element of the matrix.
-		* @param {number} n12 - An element of the matrix.
-		* @param {number} n13 - An element of the matrix.
-		* @param {number} n21 - An element of the matrix.
-		* @param {number} n22 - An element of the matrix.
-		* @param {number} n23 - An element of the matrix.
-		* @param {number} n31 - An element of the matrix.
-		* @param {number} n32 - An element of the matrix.
-		* @param {number} n33 - An element of the matrix.
+		* @param {Number} n11 - An element of the matrix.
+		* @param {Number} n12 - An element of the matrix.
+		* @param {Number} n13 - An element of the matrix.
+		* @param {Number} n21 - An element of the matrix.
+		* @param {Number} n22 - An element of the matrix.
+		* @param {Number} n23 - An element of the matrix.
+		* @param {Number} n31 - An element of the matrix.
+		* @param {Number} n32 - An element of the matrix.
+		* @param {Number} n33 - An element of the matrix.
 		* @return {Matrix3} A reference to this matrix.
 		*/
 		set( n11, n12, n13, n21, n22, n23, n31, n32, n33 ) {
@@ -1245,7 +1245,7 @@
 		/**
 		* Multiplies the given scalar with this matrix.
 		*
-		* @param {number} s - The scalar to multiply.
+		* @param {Number} s - The scalar to multiply.
 		* @return {Matrix3} A reference to this matrix.
 		*/
 		multiplyScalar( s ) {
@@ -1393,7 +1393,7 @@
 		* Sets the elements of this matrix from an array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Matrix3} A reference to this matrix.
 		*/
 		fromArray( array, offset = 0 ) {
@@ -1414,7 +1414,7 @@
 		* Copies all elements of this matrix to the given array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Array} The array with the elements of the matrix.
 		*/
 		toArray( array, offset = 0 ) {
@@ -1441,7 +1441,7 @@
 		* Returns true if the given matrix is deep equal with this matrix.
 		*
 		* @param {Matrix3} m - The matrix to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( m ) {
 
@@ -1475,10 +1475,10 @@
 		/**
 		* Constructs a new quaternion with the given values.
 		*
-		* @param {number} x - The x component.
-		* @param {number} y - The y component.
-		* @param {number} z - The z component.
-		* @param {number} w - The w component.
+		* @param {Number} x - The x component.
+		* @param {Number} y - The y component.
+		* @param {Number} z - The z component.
+		* @param {Number} w - The w component.
 		*/
 		constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
@@ -1511,10 +1511,10 @@
 		/**
 		* Sets the given values to this quaternion.
 		*
-		* @param {number} x - The x component.
-		* @param {number} y - The y component.
-		* @param {number} z - The z component.
-		* @param {number} w - The w component.
+		* @param {Number} x - The x component.
+		* @param {Number} y - The y component.
+		* @param {Number} z - The z component.
+		* @param {Number} w - The w component.
 		* @return {Quaternion} A reference to this quaternion.
 		*/
 		set( x, y, z, w ) {
@@ -1597,7 +1597,7 @@
 		/**
 		* Computes the length of this quaternion.
 		*
-		* @return {number} The length of this quaternion.
+		* @return {Number} The length of this quaternion.
 		*/
 		length() {
 
@@ -1608,7 +1608,7 @@
 		/**
 		* Computes the squared length of this quaternion.
 		*
-		* @return {number} The squared length of this quaternion.
+		* @return {Number} The squared length of this quaternion.
 		*/
 		squaredLength() {
 
@@ -1697,7 +1697,7 @@
 		* Computes the shortest angle between two rotation defined by this quaternion and the given one.
 		*
 		* @param {Quaternion} q - The given quaternion.
-		* @return {number} The angle in radians.
+		* @return {Number} The angle in radians.
 		*/
 		angleTo( q ) {
 
@@ -1710,7 +1710,7 @@
 		* defined by the given quaternion by the given angular step. The rotation will not overshoot.
 		*
 		* @param {Quaternion} q - The target rotation.
-		* @param {number} step - The maximum step in radians.
+		* @param {Number} step - The maximum step in radians.
 		* @return {Quaternion} A reference to this quaternion.
 		*/
 		rotateTo( q, step ) {
@@ -1747,7 +1747,7 @@
 		* The parameter t is clamped to the range [0, 1].
 		*
 		* @param {Quaternion} q - The target rotation.
-		* @param {number} t - The interpolation paramter.
+		* @param {Number} t - The interpolation paramter.
 		* @return {Quaternion} A reference to this quaternion.
 		*/
 		slerp( q, t ) {
@@ -1814,9 +1814,9 @@
 		/**
 		* Sets the components of this quaternion from the an euler angle.
 		*
-		* @param {number} x - Rotation around x axis in radians.
-		* @param {number} y - Rotation around y axis in radians.
-		* @param {number} z - Rotation around z axis in radians.
+		* @param {Number} x - Rotation around x axis in radians.
+		* @param {Number} y - Rotation around y axis in radians.
+		* @param {Number} z - Rotation around z axis in radians.
 		* @return {Quaternion} A reference to this quaternion.
 		*/
 		fromEuler( x, y, z ) {
@@ -1900,7 +1900,7 @@
 		* Sets the components of this quaternion from an array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Quaternion} A reference to this quaternion.
 		*/
 		fromArray( array, offset = 0 ) {
@@ -1918,7 +1918,7 @@
 		* Copies all values of this quaternion to the given array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Array} The array with the quaternion components.
 		*/
 		toArray( array, offset = 0 ) {
@@ -1936,7 +1936,7 @@
 		* Returns true if the given quaternion is deep equal with this quaternion.
 		*
 		* @param {Quaternion} q - The quaternion to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( q ) {
 
@@ -1977,22 +1977,22 @@
 		/**
 		* Sets the given values to this matrix. The arguments are in row-major order.
 		*
-		* @param {number} n11 - An element of the matrix.
-		* @param {number} n12 - An element of the matrix.
-		* @param {number} n13 - An element of the matrix.
-		* @param {number} n14 - An element of the matrix.
-		* @param {number} n21 - An element of the matrix.
-		* @param {number} n22 - An element of the matrix.
-		* @param {number} n23 - An element of the matrix.
-		* @param {number} n24 - An element of the matrix.
-		* @param {number} n31 - An element of the matrix.
-		* @param {number} n32 - An element of the matrix.
-		* @param {number} n33 - An element of the matrix.
-		* @param {number} n34 - An element of the matrix.
-		* @param {number} n41 - An element of the matrix.
-		* @param {number} n42 - An element of the matrix.
-		* @param {number} n43 - An element of the matrix.
-		* @param {number} n44 - An element of the matrix.
+		* @param {Number} n11 - An element of the matrix.
+		* @param {Number} n12 - An element of the matrix.
+		* @param {Number} n13 - An element of the matrix.
+		* @param {Number} n14 - An element of the matrix.
+		* @param {Number} n21 - An element of the matrix.
+		* @param {Number} n22 - An element of the matrix.
+		* @param {Number} n23 - An element of the matrix.
+		* @param {Number} n24 - An element of the matrix.
+		* @param {Number} n31 - An element of the matrix.
+		* @param {Number} n32 - An element of the matrix.
+		* @param {Number} n33 - An element of the matrix.
+		* @param {Number} n34 - An element of the matrix.
+		* @param {Number} n41 - An element of the matrix.
+		* @param {Number} n42 - An element of the matrix.
+		* @param {Number} n43 - An element of the matrix.
+		* @param {Number} n44 - An element of the matrix.
 		* @return {Matrix4} A reference to this matrix.
 		*/
 		set( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
@@ -2134,7 +2134,7 @@
 		/**
 		* Multiplies the given scalar with this matrix.
 		*
-		* @param {number} s - The scalar to multiply.
+		* @param {Number} s - The scalar to multiply.
 		* @return {Matrix4} A reference to this matrix.
 		*/
 		multiplyScalar( s ) {
@@ -2370,7 +2370,7 @@
 		* Sets the elements of this matrix from an array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Matrix4} A reference to this matrix.
 		*/
 		fromArray( array, offset = 0 ) {
@@ -2391,7 +2391,7 @@
 		* Copies all elements of this matrix to the given array.
 		*
 		* @param {Array} array - An array.
-		* @param {number} offset - An optional offset.
+		* @param {Number} offset - An optional offset.
 		* @return {Array} The array with the elements of the matrix.
 		*/
 		toArray( array, offset = 0 ) {
@@ -2426,7 +2426,7 @@
 		* Returns true if the given matrix is deep equal with this matrix.
 		*
 		* @param {Matrix4} m - The matrix to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( m ) {
 
@@ -2828,7 +2828,7 @@
 		*
 		* @param {GameEntity} owner - The game entity that represents the execution context of this state.
 		* @param {Telegram} telegram - A data structure containing the actual message.
-		* @return {boolean}  Whether the message was processed or not.
+		* @return {Boolean}  Whether the message was processed or not.
 		*/
 		onMessage( /* owner, telegram */ ) {
 
@@ -2885,7 +2885,7 @@
 		}
 
 		/**
-		* Updates the internal state of the FSM. Usually called by the {@link GameEntity#update}.
+		* Updates the internal state of the FSM. Usually called by {@link GameEntity#update}.
 		*
 		* @return {StateMachine} A reference to this state machine.
 		*/
@@ -4598,7 +4598,7 @@
 		* Returns true if the given point is inside this AABB.
 		*
 		* @param {Vector3} point - A point in 3D space.
-		* @return {boolean} The result of the containments test.
+		* @return {Boolean} The result of the containments test.
 		*/
 		containsPoint( point ) {
 
@@ -4628,7 +4628,7 @@
 		* Returns true if the given ABBB intersects this AABB.
 		*
 		* @param {AABB} aabb - The AABB to test.
-		* @return {boolean} The result of the intersection test.
+		* @return {Boolean} The result of the intersection test.
 		*/
 		intersectsAABB( aabb ) {
 
@@ -4642,7 +4642,7 @@
 		* Returns true if the given bounding sphere intersects this AABB.
 		*
 		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {boolean} The result of the intersection test.
+		* @return {Boolean} The result of the intersection test.
 		*/
 		intersectsBoundingSphere( sphere ) {
 
@@ -4677,7 +4677,7 @@
 		/**
 		* Sets the values of the AABB from the given array of points.
 		*
-		* @param {array} points - An array of 3D vectors representing points in 3D space.
+		* @param {Array} points - An array of 3D vectors representing points in 3D space.
 		* @return {AABB} A reference to this AABB.
 		*/
 		fromPoints( points ) {
@@ -4699,7 +4699,7 @@
 		* Returns true if the given AABB is deep equal with this AABB.
 		*
 		* @param {AABB} aabb - The AABB to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( aabb ) {
 
@@ -4720,7 +4720,7 @@
 		* Constructs a new bounding sphere with the given values.
 		*
 		* @param {Vector3} center - The center position of the bounding sphere.
-		* @param {number} radius - The radius of the bounding sphere.
+		* @param {Number} radius - The radius of the bounding sphere.
 		*/
 		constructor( center = new Vector3(), radius = 0 ) {
 
@@ -4742,7 +4742,7 @@
 		* Sets the given values to this bounding sphere.
 		*
 		* @param {Vector3} center - The center position of the bounding sphere.
-		* @param {number} radius - The radius of the bounding sphere.
+		* @param {Number} radius - The radius of the bounding sphere.
 		* @return {BoundingSphere} A reference to this bounding sphere.
 		*/
 		set( center, radius ) {
@@ -4784,7 +4784,7 @@
 		* Returns true if the given point is inside this bounding sphere.
 		*
 		* @param {Vector3} point - A point in 3D space.
-		* @return {boolean} The result of the containments test.
+		* @return {Boolean} The result of the containments test.
 		*/
 		containsPoint( point ) {
 
@@ -4796,7 +4796,7 @@
 		* Returns true if the given bounding sphere intersects this bounding sphere.
 		*
 		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {boolean} The result of the intersection test.
+		* @return {Boolean} The result of the intersection test.
 		*/
 		intersectsBoundingSphere( sphere ) {
 
@@ -4810,7 +4810,7 @@
 		* Returns true if the given bounding sphere is deep equal with this bounding sphere.
 		*
 		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( sphere ) {
 
@@ -4912,7 +4912,7 @@
 		* and stores the result in the given 3D vector. The t value has usually a range of
 		* [0, 1] where 0 means start position and 1 the end position.
 		*
-		* @param {number} t - A scalar value representing a position on the line segment.
+		* @param {Number} t - A scalar value representing a position on the line segment.
 		* @param {Vector3} result - The result vector.
 		* @return {Vector3} The result vector.
 		*/
@@ -4928,7 +4928,7 @@
 		* end position of the line segment.
 		*
 		* @param {Vector3} point - A point in 3D space.
-		* @param {boolean} clampToLine - Indicates if the results should be clamped.
+		* @param {Boolean} clampToLine - Indicates if the results should be clamped.
 		* @param {Vector3} result - The result vector.
 		* @return {Vector3} The closest point.
 		*/
@@ -4946,8 +4946,8 @@
 		* exceed the start and end position of the line segment.
 		*
 		* @param {Vector3} point - A point in 3D space.
-		* @param {boolean} clampToLine - Indicates if the results should be clamped.
-		* @return {number} A scalar representing the closest point.
+		* @param {Boolean} clampToLine - Indicates if the results should be clamped.
+		* @return {Number} A scalar representing the closest point.
 		*/
 		closestPointToPointParameter( point, clampToLine = true ) {
 
@@ -4969,7 +4969,7 @@
 		* Returns true if the given line segment is deep equal with this line segment.
 		*
 		* @param {LineSegment} lineSegment - The line segment to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( lineSegment ) {
 
@@ -4993,7 +4993,7 @@
 		* Constructs a new plane with the given values. The sign of __Plane#constant__ determines the side of the plane on which the origin is located.
 		*
 		* @param {Vector3} normal - The normal vector of the plane.
-		* @param {number} constant - The distance of the plane from the origin.
+		* @param {Number} constant - The distance of the plane from the origin.
 		*/
 		constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
 
@@ -5015,7 +5015,7 @@
 		* Sets the given values to this plane.
 		*
 		* @param {Vector3} normal - The normal vector of the plane.
-		* @param {number} constant - The distance of the plane from the origin.
+		* @param {Number} constant - The distance of the plane from the origin.
 		* @return {Plane} A reference to this plane.
 		*/
 		set( normal, constant ) {
@@ -5059,7 +5059,7 @@
 		* Zero means the point lies on the plane.
 		*
 		* @param {Vector3} point - A point in 3D space.
-		* @return {number} The signed distance.
+		* @return {Number} The signed distance.
 		*/
 		distanceToPoint( point ) {
 
@@ -5105,7 +5105,7 @@
 		* Returns true if the given plane is deep equal with this plane.
 		*
 		* @param {Plane} plane - The plane to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( plane ) {
 
@@ -5193,7 +5193,7 @@
 		* and stores the result in the given 3D vector. The t value has a range of
 		* [0, Infinity] where 0 means the position is equal with the origin of the ray.
 		*
-		* @param {number} t - A scalar value representing a position on the ray.
+		* @param {Number} t - A scalar value representing a position on the ray.
 		* @param {Vector3} result - The result vector.
 		* @return {Vector3} The result vector.
 		*/
@@ -5251,7 +5251,7 @@
 		* Returns true if the given ray is deep equal with this ray.
 		*
 		* @param {Ray} ray - The ray to test.
-		* @return {boolean} The result of the equality test.
+		* @return {Boolean} The result of the equality test.
 		*/
 		equals( ray ) {
 
@@ -6953,7 +6953,7 @@
 		/**
 		* Returns true if the cell is empty.
 		*
-		* @return {boolean} The result of the test.
+		* @return {Boolean} The result of the test.
 		*/
 		empty() {
 
@@ -6965,7 +6965,7 @@
 		* Returns true if the given AABB intersects the internal bounding volume of this cell.
 		*
 		* @param {AABB} aabb - The AABB to test.
-		* @return {boolean} The result of the intersection test.
+		* @return {Boolean} The result of the intersection test.
 		*/
 		intersects( aabb ) {
 
@@ -6993,12 +6993,12 @@
 		/**
 		* Constructs a new spatial index with the given values.
 		*
-		* @param {number} width - The width of the entire spatial index.
-		* @param {number} height - The height of the entire spatial index.
-		* @param {number} depth - The depth of the entire spatial index.
-		* @param {number} cellsX - The amount of cells in along the width (x-axis).
-		* @param {number} cellsY - The amount of cells in along the height (y-axis).
-		* @param {number} cellsZ - The amount of cells in along the depth (z-axis).
+		* @param {Number} width - The width of the entire spatial index.
+		* @param {Number} height - The height of the entire spatial index.
+		* @param {Number} depth - The depth of the entire spatial index.
+		* @param {Number} cellsX - The amount of cells in along the width (x-axis).
+		* @param {Number} cellsY - The amount of cells in along the height (y-axis).
+		* @param {Number} cellsZ - The amount of cells in along the depth (z-axis).
 		*/
 		constructor( width, height, depth, cellsX, cellsY, cellsZ ) {
 
@@ -7095,8 +7095,8 @@
 		* Updates the partitioning index of a given game entity.
 		*
 		* @param {GameEntity} entity - The entity to update.
-		* @param {number} currentIndex - The current partition index of the entity.
-		* @return {number} The new partitioning index for the given game entity.
+		* @param {Number} currentIndex - The current partition index of the entity.
+		* @return {Number} The new partitioning index for the given game entity.
 		*/
 		updateEntity( entity, currentIndex = - 1 ) {
 
@@ -7122,7 +7122,7 @@
 		* Adds an entity to a specific partition.
 		*
 		* @param {GameEntity} entity - The entity to add.
-		* @param {number} index - The partition index.
+		* @param {Number} index - The partition index.
 		* @return {CellSpacePartitioning} A reference to this spatial index.
 		*/
 		addEntityToPartition( entity, index ) {
@@ -7138,7 +7138,7 @@
 		* Removes an entity from a specific partition.
 		*
 		* @param {GameEntity} entity - The entity to remove.
-		* @param {number} index - The partition index.
+		* @param {Number} index - The partition index.
 		* @return {CellSpacePartitioning} A reference to this spatial index.
 		*/
 		removeEntityFromPartition( entity, index ) {
@@ -7154,7 +7154,7 @@
 		* Computes the parition index for the given position vector.
 		*
 		* @param {Vector3} position - The given position.
-		* @return {number} The partition index.
+		* @return {Number} The partition index.
 		*/
 		getIndexForPosition( position ) {
 
@@ -7183,7 +7183,7 @@
 		* relevant paritions. Stores the result in the given result array.
 		*
 		* @param {Vector3} position - The given query position.
-		* @param {number} radius - The given query radius.
+		* @param {Number} radius - The given query radius.
 		* @param {Array} result - The result array.
 		* @return {Array} The result array.
 		*/
@@ -8348,7 +8348,7 @@
 		* the trigger region. Must be implemented by all concrete trigger regions.
 		*
 		* @param {GameEntity} entity - The entity to test.
-		* @return {boolean} The result of the intersection test.
+		* @return {Boolean} The result of the intersection test.
 		*/
 		touching( /* entity */ ) {
 
@@ -8426,7 +8426,7 @@
 		* the trigger region.
 		*
 		* @param {GameEntity} entity - The entity to test.
-		* @return {boolean} The result of the intersection test.
+		* @return {Boolean} The result of the intersection test.
 		*/
 		touching( entity ) {
 
@@ -8453,7 +8453,7 @@
 		* Constructs a new spherical trigger region with the given values.
 		*
 		* @param {Vector3} position - The center position of the region.
-		* @param {number} radius - The radius of the region.
+		* @param {Number} radius - The radius of the region.
 		*/
 		constructor( position = new Vector3(), radius = 0 ) {
 
@@ -8492,7 +8492,7 @@
 		* the trigger region.
 		*
 		* @param {GameEntity} entity - The entity to test.
-		* @return {boolean} The result of the intersection test.
+		* @return {Boolean} The result of the intersection test.
 		*/
 		touching( entity ) {
 
@@ -8522,7 +8522,7 @@
 
 			/**
 			* Whether this trigger is active or not.
-			* @type boolean
+			* @type Boolean
 			* @default true
 			*/
 			this.active = true;
@@ -8567,7 +8567,7 @@
 		* Triggers can have internal states. This method is called per simulation step
 		* and can be used to update the trigger.
 		*
-		* @param {number} delta - The time delta value.
+		* @param {Number} delta - The time delta value.
 		* @return {Trigger} A reference to this trigger.
 		*/
 		update( /* delta */ ) {}

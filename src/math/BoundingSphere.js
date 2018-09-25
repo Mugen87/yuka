@@ -11,7 +11,7 @@ class BoundingSphere {
 	* Constructs a new bounding sphere with the given values.
 	*
 	* @param {Vector3} center - The center position of the bounding sphere.
-	* @param {number} radius - The radius of the bounding sphere.
+	* @param {Number} radius - The radius of the bounding sphere.
 	*/
 	constructor( center = new Vector3(), radius = 0 ) {
 
@@ -33,7 +33,7 @@ class BoundingSphere {
 	* Sets the given values to this bounding sphere.
 	*
 	* @param {Vector3} center - The center position of the bounding sphere.
-	* @param {number} radius - The radius of the bounding sphere.
+	* @param {Number} radius - The radius of the bounding sphere.
 	* @return {BoundingSphere} A reference to this bounding sphere.
 	*/
 	set( center, radius ) {
@@ -75,7 +75,7 @@ class BoundingSphere {
 	* Returns true if the given point is inside this bounding sphere.
 	*
 	* @param {Vector3} point - A point in 3D space.
-	* @return {boolean} The result of the containments test.
+	* @return {Boolean} The result of the containments test.
 	*/
 	containsPoint( point ) {
 
@@ -87,7 +87,7 @@ class BoundingSphere {
 	* Returns true if the given bounding sphere intersects this bounding sphere.
 	*
 	* @param {BoundingSphere} sphere - The bounding sphere to test.
-	* @return {boolean} The result of the intersection test.
+	* @return {Boolean} The result of the intersection test.
 	*/
 	intersectsBoundingSphere( sphere ) {
 
@@ -101,7 +101,7 @@ class BoundingSphere {
 	* Returns true if the given bounding sphere is deep equal with this bounding sphere.
 	*
 	* @param {BoundingSphere} sphere - The bounding sphere to test.
-	* @return {boolean} The result of the equality test.
+	* @return {Boolean} The result of the equality test.
 	*/
 	equals( sphere ) {
 

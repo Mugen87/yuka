@@ -71,7 +71,7 @@ class RectangularTriggerRegion extends TriggerRegion {
 	* the trigger region.
 	*
 	* @param {GameEntity} entity - The entity to test.
-	* @return {boolean} The result of the intersection test.
+	* @return {Boolean} The result of the intersection test.
 	*/
 	touching( entity ) {
 
