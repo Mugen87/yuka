@@ -1,14 +1,16 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
- *
- */
-
 import { Logger } from '../core/Logger.js';
 
+/**
+* Class representing a 4x4 matrix. The elements of the matrix
+* are stored in column-major order.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class Matrix4 {
 
+	/**
+	* Constructs a new 4x4 identity matrix.
+	*/
 	constructor() {
 
 		this.elements = [
@@ -22,6 +24,27 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Sets the given values to this matrix. The arguments are in row-major order.
+	*
+	* @param {number} n11 - An element of the matrix.
+	* @param {number} n12 - An element of the matrix.
+	* @param {number} n13 - An element of the matrix.
+	* @param {number} n14 - An element of the matrix.
+	* @param {number} n21 - An element of the matrix.
+	* @param {number} n22 - An element of the matrix.
+	* @param {number} n23 - An element of the matrix.
+	* @param {number} n24 - An element of the matrix.
+	* @param {number} n31 - An element of the matrix.
+	* @param {number} n32 - An element of the matrix.
+	* @param {number} n33 - An element of the matrix.
+	* @param {number} n34 - An element of the matrix.
+	* @param {number} n41 - An element of the matrix.
+	* @param {number} n42 - An element of the matrix.
+	* @param {number} n43 - An element of the matrix.
+	* @param {number} n44 - An element of the matrix.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	set( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
 
 		const e = this.elements;
@@ -35,6 +58,12 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Copies all values from the given matrix to this matrix.
+	*
+	* @param {Matrix4} m - The matrix to copy.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	copy( m ) {
 
 		const e = this.elements;
@@ -49,12 +78,22 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Creates a new matrix and copies all values from this matrix.
+	*
+	* @return {Matrix4} A new matrix.
+	*/
 	clone() {
 
 		return new this.constructor().copy( this );
 
 	}
 
+	/**
+	* Transforms this matrix to an indentiy matrix.
+	*
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	identity() {
 
 		this.set(
@@ -70,41 +109,38 @@ class Matrix4 {
 
 	}
 
-	extractBasis( xAxis, yAxis, zAxis ) {
-
-		xAxis.fromMatrix4Column( this, 0 );
-		yAxis.fromMatrix4Column( this, 1 );
-		zAxis.fromMatrix4Column( this, 2 );
-
-		return this;
-
-	}
-
-	makeBasis( xAxis, yAxis, zAxis ) {
-
-		this.set(
-			xAxis.x, yAxis.x, zAxis.x, 0,
-			xAxis.y, yAxis.y, zAxis.y, 0,
-			xAxis.z, yAxis.z, zAxis.z, 0,
-			0, 0, 0, 1
-		);
-
-		return this;
-
-	}
-
+	/**
+	* Multiplies this matrix with the given matrix.
+	*
+	* @param {Matrix4} m - The matrix to multiply.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	multiply( m ) {
 
 		return this.multiplyMatrices( this, m );
 
 	}
 
+	/**
+	* Multiplies this matrix with the given matrix.
+	* So the order of the multiplication is switched compared to {@link Matrix4#multiply}.
+	*
+	* @param {Matrix4} m - The matrix to multiply.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	premultiply( m ) {
 
 		return this.multiplyMatrices( m, this );
 
 	}
 
+	/**
+	* Multiplies two given matrices and stores the result in this matrix.
+	*
+	* @param {Matrix4} a - The first matrix of the operation.
+	* @param {Matrix4} b - The second matrix of the operation.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	multiplyMatrices( a, b ) {
 
 		const ae = a.elements;
@@ -145,6 +181,12 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Multiplies the given scalar with this matrix.
+	*
+	* @param {number} s - The scalar to multiply.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	multiplyScalar( s ) {
 
 		const e = this.elements;
@@ -158,6 +200,53 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Extracts the basis vectors and stores them to the given vectors.
+	*
+	* @param {Vector3} xAxis - The first result vector for the x-axis.
+	* @param {Vector3} yAxis - The second result vector for the y-axis.
+	* @param {Vector3} zAxis - The third result vector for the z-axis.
+	* @return {Matrix4} A reference to this matrix.
+	*/
+	extractBasis( xAxis, yAxis, zAxis ) {
+
+		xAxis.fromMatrix4Column( this, 0 );
+		yAxis.fromMatrix4Column( this, 1 );
+		zAxis.fromMatrix4Column( this, 2 );
+
+		return this;
+
+	}
+
+	/**
+	* Makes a basis from the given vectors.
+	*
+	* @param {Vector3} xAxis - The first basis vector for the x-axis.
+	* @param {Vector3} yAxis - The second basis vector for the y-axis.
+	* @param {Vector3} zAxis - The third basis vector for the z-axis.
+	* @return {Matrix4} A reference to this matrix.
+	*/
+	makeBasis( xAxis, yAxis, zAxis ) {
+
+		this.set(
+			xAxis.x, yAxis.x, zAxis.x, 0,
+			xAxis.y, yAxis.y, zAxis.y, 0,
+			xAxis.z, yAxis.z, zAxis.z, 0,
+			0, 0, 0, 1
+		);
+
+		return this;
+
+	}
+
+	/**
+	* Composes a matrix from the given position, quaternion and scale.
+	*
+	* @param {Vector3} position - A vector representing a position in 3D space.
+	* @param {Quaternion} quaternion - A quaternion representing a rotation.
+	* @param {Vector3} scale - A vector representing a 3D scaling.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	compose( position, quaternion, scale ) {
 
 		this.fromQuaternion( quaternion );
@@ -168,6 +257,12 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Scales this matrix by the given 3D vector.
+	*
+	* @param {Vector3} v - A 3D vector representing a scaling.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	scale( v ) {
 
 		const e = this.elements;
@@ -183,6 +278,12 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Sets the translation part of the 4x4 matrix to the given position vector.
+	*
+	* @param {Vector3} v - A 3D vector representing a position.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	setPosition( v ) {
 
 		const e = this.elements;
@@ -195,6 +296,11 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Transposes this matrix.
+	*
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	transpose() {
 
 		const e = this.elements;
@@ -213,6 +319,12 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Computes the inverse of this matrix and stored the result in the given matrix.
+	*
+	* @param {Matrix4} m - The result matrix.
+	* @return {Matrix4} The result matrix.
+	*/
 	getInverse( m ) {
 
 		const e = this.elements;
@@ -259,10 +371,16 @@ class Matrix4 {
 		e[ 14 ] = ( n14 * n22 * n31 - n12 * n24 * n31 - n14 * n21 * n32 + n11 * n24 * n32 + n12 * n21 * n34 - n11 * n22 * n34 ) * detInv;
 		e[ 15 ] = ( n12 * n23 * n31 - n13 * n22 * n31 + n13 * n21 * n32 - n11 * n23 * n32 - n12 * n21 * n33 + n11 * n22 * n33 ) * detInv;
 
-		return this;
+		return m;
 
 	}
 
+	/**
+	* Uses the given quaternion to transform the upper left 3x3 part to a rotation matrix.
+	*
+	* @param {Quaternion} q - A quaternion representing a rotation.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	fromQuaternion( q ) {
 
 		const e = this.elements;
@@ -298,6 +416,13 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Sets the elements of this matrix from an array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Matrix4} A reference to this matrix.
+	*/
 	fromArray( array, offset = 0 ) {
 
 		const e = this.elements;
@@ -312,6 +437,13 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Copies all elements of this matrix to the given array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Array} The array with the elements of the matrix.
+	*/
 	toArray( array, offset = 0 ) {
 
 		const e = this.elements;
@@ -340,6 +472,12 @@ class Matrix4 {
 
 	}
 
+	/**
+	* Returns true if the given matrix is deep equal with this matrix.
+	*
+	* @param {Matrix4} m - The matrix to test.
+	* @return {boolean} The result of the equality test.
+	*/
 	equals( m ) {
 
 		const e = this.elements;

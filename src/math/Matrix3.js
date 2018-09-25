@@ -1,10 +1,3 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
- *
- */
-
 import { Vector3 } from './Vector3.js';
 import { WorldUp } from '../constants.js';
 
@@ -13,8 +6,17 @@ const worldRight = new Vector3();
 const perpWorldUp = new Vector3();
 const temp = new Vector3();
 
+/**
+* Class representing a 3x3 matrix. The elements of the matrix
+* are stored in column-major order.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class Matrix3 {
 
+	/**
+	* Constructs a new 3x3 identity matrix.
+	*/
 	constructor() {
 
 		this.elements = [
@@ -27,6 +29,20 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Sets the given values to this matrix. The arguments are in row-major order.
+	*
+	* @param {number} n11 - An element of the matrix.
+	* @param {number} n12 - An element of the matrix.
+	* @param {number} n13 - An element of the matrix.
+	* @param {number} n21 - An element of the matrix.
+	* @param {number} n22 - An element of the matrix.
+	* @param {number} n23 - An element of the matrix.
+	* @param {number} n31 - An element of the matrix.
+	* @param {number} n32 - An element of the matrix.
+	* @param {number} n33 - An element of the matrix.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	set( n11, n12, n13, n21, n22, n23, n31, n32, n33 ) {
 
 		const e = this.elements;
@@ -39,6 +55,12 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Copies all values from the given matrix to this matrix.
+	*
+	* @param {Matrix3} m - The matrix to copy.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	copy( m ) {
 
 		const e = this.elements;
@@ -52,12 +74,22 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Creates a new matrix and copies all values from this matrix.
+	*
+	* @return {Matrix3} A new matrix.
+	*/
 	clone() {
 
 		return new this.constructor().copy( this );
 
 	}
 
+	/**
+	* Transforms this matrix to an indentiy matrix.
+	*
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	identity() {
 
 		this.set(
@@ -72,18 +104,38 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Multiplies this matrix with the given matrix.
+	*
+	* @param {Matrix3} m - The matrix to multiply.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	multiply( m ) {
 
 		return this.multiplyMatrices( this, m );
 
 	}
 
+	/**
+	* Multiplies this matrix with the given matrix.
+	* So the order of the multiplication is switched compared to {@link Matrix3#multiply}.
+	*
+	* @param {Matrix3} m - The matrix to multiply.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	premultiply( m ) {
 
 		return this.multiplyMatrices( m, this );
 
 	}
 
+	/**
+	* Multiplies two given matrices and stores the result in this matrix.
+	*
+	* @param {Matrix3} a - The first matrix of the operation.
+	* @param {Matrix3} b - The second matrix of the operation.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	multiplyMatrices( a, b ) {
 
 		const ae = a.elements;
@@ -114,6 +166,12 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Multiplies the given scalar with this matrix.
+	*
+	* @param {number} s - The scalar to multiply.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	multiplyScalar( s ) {
 
 		const e = this.elements;
@@ -126,6 +184,14 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Extracts the basis vectors and stores them to the given vectors.
+	*
+	* @param {Vector3} xAxis - The first result vector for the x-axis.
+	* @param {Vector3} yAxis - The second result vector for the y-axis.
+	* @param {Vector3} zAxis - The third result vector for the z-axis.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	extractBasis( xAxis, yAxis, zAxis ) {
 
 		xAxis.fromMatrix3Column( this, 0 );
@@ -136,6 +202,14 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Makes a basis from the given vectors.
+	*
+	* @param {Vector3} xAxis - The first basis vector for the x-axis.
+	* @param {Vector3} yAxis - The second basis vector for the y-axis.
+	* @param {Vector3} zAxis - The third basis vector for the z-axis.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	makeBasis( xAxis, yAxis, zAxis ) {
 
 		this.set(
@@ -148,6 +222,14 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Creates a rotation matrix that orients an object to face towards a specified target direction.
+	*
+	* @param {Vector3} localForward - Specifies the forward direction in the local space of the object.
+	* @param {Vector3} targetDirection - Specifies the desired world space direction the object should look at.
+	* @param {Vector3} localUp - Specifies the up direction in the local space of the object.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	lookAt( localForward, targetDirection, localUp ) {
 
 		localRight.crossVectors( localUp, localForward ).normalize();
@@ -177,8 +259,15 @@ class Matrix3 {
 
 		this.multiplyMatrices( m1, m2.transpose() );
 
+		return this;
+
 	}
 
+	/**
+	* Transposes this matrix.
+	*
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	transpose() {
 
 		const e = this.elements;
@@ -192,6 +281,12 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Creates a rotation matrix from the given quaternion.
+	*
+	* @param {Quaternion} q - A quaternion representing a rotation.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	fromQuaternion( q ) {
 
 		const e = this.elements;
@@ -218,6 +313,13 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Sets the elements of this matrix from an array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Matrix3} A reference to this matrix.
+	*/
 	fromArray( array, offset = 0 ) {
 
 		const e = this.elements;
@@ -232,6 +334,13 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Copies all elements of this matrix to the given array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Array} The array with the elements of the matrix.
+	*/
 	toArray( array, offset = 0 ) {
 
 		const e = this.elements;
@@ -252,6 +361,12 @@ class Matrix3 {
 
 	}
 
+	/**
+	* Returns true if the given matrix is deep equal with this matrix.
+	*
+	* @param {Matrix3} m - The matrix to test.
+	* @return {boolean} The result of the equality test.
+	*/
 	equals( m ) {
 
 		const e = this.elements;

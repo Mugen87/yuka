@@ -1,18 +1,22 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Line3.js
- *
- */
-
 import { Vector3 } from './Vector3.js';
 import { _Math } from './Math.js';
 
 const p1 = new Vector3();
 const p2 = new Vector3();
 
+/**
+* Class representing a 3D line segment.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class LineSegment {
 
+	/**
+	* Constructs a new line segment with the given values.
+	*
+	* @param {Vector3} from - The start point of the line segment.
+	* @param {Vector3} to - The end point of the line segment.
+	*/
 	constructor( from = new Vector3(), to = new Vector3() ) {
 
 		this.from = from;
@@ -20,6 +24,13 @@ class LineSegment {
 
 	}
 
+	/**
+	* Sets the given values to this line segment.
+	*
+	* @param {Vector3} from - The start point of the line segment.
+	* @param {Vector3} to - The end point of the line segment.
+	* @return {LineSegment} A reference to this line segment.
+	*/
 	set( from, to ) {
 
 		this.from = from;
@@ -29,6 +40,12 @@ class LineSegment {
 
 	}
 
+	/**
+	* Copies all values from the given line segment to this line segment.
+	*
+	* @param {LineSegment} lineSegment - The line segment to copy.
+	* @return {LineSegment} A reference to this line segment.
+	*/
 	copy( lineSegment ) {
 
 		this.from.copy( lineSegment.from );
@@ -38,24 +55,55 @@ class LineSegment {
 
 	}
 
+	/**
+	* Creates a new line segment and copies all values from this line segment.
+	*
+	* @return {LineSegment} A new line segment.
+	*/
 	clone() {
 
 		return new this.constructor().copy( this );
 
 	}
 
+	/**
+	* Computes the difference vector between the end and start point of this
+	* line segment and stores the result in the given vector.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
 	delta( result ) {
 
 		return result.subVectors( this.to, this.from );
 
 	}
 
+	/**
+	* Computes a position on the line segment according to the given t value
+	* and stores the result in the given 3D vector. The t value has usually a range of
+	* [0, 1] where 0 means start position and 1 the end position.
+	*
+	* @param {number} t - A scalar value representing a position on the line segment.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
 	at( t, result ) {
 
 		return this.delta( result ).multiplyScalar( t ).add( this.from );
 
 	}
 
+	/**
+	* Computes the clostest point on an infinite line defined by the line segment.
+	* It's possible to clamp the closest point so it does not exceed the start and
+	* end position of the line segment.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @param {boolean} clampToLine - Indicates if the results should be clamped.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The closest point.
+	*/
 	closestPointToPoint( point, clampToLine, result ) {
 
 		const t = this.closestPointToPointParameter( point, clampToLine );
@@ -64,6 +112,15 @@ class LineSegment {
 
 	}
 
+	/**
+	* Computes a scalar value which represents the closest point on an infinite line
+	* defined by the line segment. It's possible to clamp this value so it does not
+	* exceed the start and end position of the line segment.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @param {boolean} clampToLine - Indicates if the results should be clamped.
+	* @return {number} A scalar representing the closest point.
+	*/
 	closestPointToPointParameter( point, clampToLine = true ) {
 
 		p1.subVectors( point, this.from );
@@ -80,6 +137,12 @@ class LineSegment {
 
 	}
 
+	/**
+	* Returns true if the given line segment is deep equal with this line segment.
+	*
+	* @param {LineSegment} lineSegment - The line segment to test.
+	* @return {boolean} The result of the equality test.
+	*/
 	equals( lineSegment ) {
 
 		return lineSegment.from.equals( this.from ) && lineSegment.to.equals( this.to );

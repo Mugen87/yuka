@@ -1,14 +1,18 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
- *
- */
-
 import { Vector3 } from './Vector3.js';
 
+/**
+* Class representing a bounding sphere.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class BoundingSphere {
 
+	/**
+	* Constructs a new bounding sphere with the given values.
+	*
+	* @param {Vector3} center - The center point of the bounding sphere.
+	* @param {number} radius - The radius of the bounding sphere.
+	*/
 	constructor( center = new Vector3(), radius = 0 ) {
 
 		this.center = center;
@@ -16,6 +20,13 @@ class BoundingSphere {
 
 	}
 
+	/**
+	* Sets the given values to this bounding sphere.
+	*
+	* @param {Vector3} center - The center point of the bounding sphere.
+	* @param {number} radius - The radius of the bounding sphere.
+	* @return {BoundingSphere} A reference to this bounding sphere.
+	*/
 	set( center, radius ) {
 
 		this.center = center;
@@ -25,6 +36,12 @@ class BoundingSphere {
 
 	}
 
+	/**
+	* Copies all values from the given bounding sphere to this bounding sphere.
+	*
+	* @param {BoundingSphere} sphere - The bounding sphere to copy.
+	* @return {BoundingSphere} A reference to this bounding sphere.
+	*/
 	copy( sphere ) {
 
 		this.center.copy( sphere.center );
@@ -34,18 +51,35 @@ class BoundingSphere {
 
 	}
 
+	/**
+	* Creates a new bounding sphere and copies all values from this bounding sphere.
+	*
+	* @return {BoundingSphere} A new bounding sphere.
+	*/
 	clone() {
 
 		return new this.constructor().copy( this );
 
 	}
 
+	/**
+	* Returns true if the given point is inside this bounding sphere.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {boolean} The result of the containments test.
+	*/
 	containsPoint( point ) {
 
 		return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
 
 	}
 
+	/**
+	* Returns true if the given bounding sphere intersects this bounding sphere.
+	*
+	* @param {BoundingSphere} sphere - The bounding sphere to test.
+	* @return {boolean} The result of the intersection test.
+	*/
 	intersectsBoundingSphere( sphere ) {
 
 		const radius = this.radius + sphere.radius;
@@ -54,6 +88,12 @@ class BoundingSphere {
 
 	}
 
+	/**
+	* Returns true if the given bounding sphere is deep equal with this bounding sphere.
+	*
+	* @param {BoundingSphere} sphere - The bounding sphere to test.
+	* @return {boolean} The result of the equality test.
+	*/
 	equals( sphere ) {
 
 		return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );

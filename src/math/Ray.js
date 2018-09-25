@@ -1,16 +1,20 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
- *
- */
-
 import { Vector3 } from './Vector3.js';
 
 const v1 = new Vector3();
 
+/**
+* Class representing a ray in 3D space.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class Ray {
 
+	/**
+	* Constructs a new ray with the given values.
+	*
+	* @param {Vector3} origin - The origin of the ray.
+	* @param {Vector3} direction - The direction of the ray.
+	*/
 	constructor( origin = new Vector3(), direction = new Vector3() ) {
 
 		this.origin = origin;
@@ -18,6 +22,13 @@ class Ray {
 
 	}
 
+	/**
+	* Sets the given values to this ray.
+	*
+	* @param {Vector3} origin - The origin of the ray.
+	* @param {Vector3} direction - The direction of the ray.
+	* @return {Ray} A reference to this ray.
+	*/
 	set( origin, direction ) {
 
 		this.origin = origin;
@@ -27,6 +38,12 @@ class Ray {
 
 	}
 
+	/**
+	* Copies all values from the given ray to this ray.
+	*
+	* @param {Ray} ray - The ray to copy.
+	* @return {Ray} A reference to this ray.
+	*/
 	copy( ray ) {
 
 		this.origin.copy( ray.origin );
@@ -36,19 +53,41 @@ class Ray {
 
 	}
 
+	/**
+	* Creates a new ray and copies all values from this ray.
+	*
+	* @return {Ray} A new ray.
+	*/
 	clone() {
 
 		return new this.constructor().copy( this );
 
 	}
 
+	/**
+	* Computes a position on the ray according to the given t value
+	* and stores the result in the given 3D vector. The t value has a range of
+	* [0, Infinity] where 0 means the position is equal with the origin of the ray.
+	*
+	* @param {number} t - A scalar value representing a position on the ray.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
 	at( t, result ) {
 
-		//t has to be zero or positive
+		// t has to be zero or positive
 		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 	}
 
+	/**
+	* Performs a ray/sphere intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, null is returned.
+	*
+	* @param {BoundingSphere} sphere - A bounding sphere.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
 	intersectSphere( sphere, result ) {
 
 		v1.subVectors( sphere.center, this.origin );
@@ -84,6 +123,12 @@ class Ray {
 
 	}
 
+	/**
+	* Returns true if the given ray is deep equal with this ray.
+	*
+	* @param {Ray} ray - The ray to test.
+	* @return {boolean} The result of the equality test.
+	*/
 	equals( ray ) {
 
 		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );

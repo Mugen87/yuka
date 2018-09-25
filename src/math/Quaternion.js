@@ -10,8 +10,21 @@ import { Matrix3 } from './Matrix3.js';
 
 const matrix = new Matrix3();
 
+/**
+* Class representing a quaternion.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class Quaternion {
 
+	/**
+	* Constructs a new quaternion with the given values.
+	*
+	* @param {number} x - The x component.
+	* @param {number} y - The y component.
+	* @param {number} z - The z component.
+	* @param {number} w - The w component.
+	*/
 	constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
 		this.x = x;
@@ -21,6 +34,15 @@ class Quaternion {
 
 	}
 
+	/**
+	* Sets the given values to this quaternion.
+	*
+	* @param {number} x - The x component.
+	* @param {number} y - The y component.
+	* @param {number} z - The z component.
+	* @param {number} w - The w component.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	set( x, y, z, w ) {
 
 		this.x = x;
@@ -32,6 +54,12 @@ class Quaternion {
 
 	}
 
+	/**
+	* Copies all values from the given quaternion to this quaternion.
+	*
+	* @param {Quaternion} q - The quaternion to copy.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	copy( q ) {
 
 		this.x = q.x;
@@ -43,18 +71,33 @@ class Quaternion {
 
 	}
 
+	/**
+	* Creates a new quaternion and copies all values from this quaternion.
+	*
+	* @return {Quaternion} A new quaternion.
+	*/
 	clone() {
 
 		return new this.constructor().copy( this );
 
 	}
 
+	/**
+	* Computes the inverse of this quaternion.
+	*
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	inverse() {
 
 		return this.conjugate().normalize();
 
 	}
 
+	/**
+	* Computes the conjugate of this quaternion.
+	*
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	conjugate() {
 
 		this.x *= - 1;
@@ -65,24 +108,45 @@ class Quaternion {
 
 	}
 
+	/**
+	* Computes the dot product of this and the given quaternion.
+	*
+	* @param {Quaternion} q - The given quaternion.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	dot( q ) {
 
 		return ( this.x * q.x ) + ( this.y * q.y ) + ( this.z * q.z ) + ( this.w * q.w );
 
 	}
 
+	/**
+	* Computes the length of this quaternion.
+	*
+	* @return {number} The length of this quaternion.
+	*/
 	length() {
 
 		return Math.sqrt( this.squaredLength() );
 
 	}
 
+	/**
+	* Computes the squared length of this quaternion.
+	*
+	* @return {number} The squared length of this quaternion.
+	*/
 	squaredLength() {
 
 		return this.dot( this );
 
 	}
 
+	/**
+	* Normalizes this quaternion.
+	*
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	normalize() {
 
 		let l = this.length();
@@ -109,18 +173,38 @@ class Quaternion {
 
 	}
 
+	/**
+	* Multiplies this quaternion with the given quaternion.
+	*
+	* @param {Quaternion} q - The quaternion to multiply.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	multiply( q ) {
 
 		return this.multiplyQuaternions( this, q );
 
 	}
 
+	/**
+	* Multiplies the given quaternion with this quaternion.
+	* So the order of the multiplication is switched compared to {@link Quaternion#multiply}.
+	*
+	* @param {Quaternion} q - The quaternion to multiply.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	premultiply( q ) {
 
 		return this.multiplyQuaternions( q, this );
 
 	}
 
+	/**
+	* Multiplies two given quaternions and stores the result in this quaternion.
+	*
+	* @param {Quaternion} a - The first quaternion of the operation.
+	* @param {Quaternion} b - The second quaternion of the operation.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	multiplyQuaternions( a, b ) {
 
 		const qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
@@ -135,12 +219,26 @@ class Quaternion {
 
 	}
 
+	/**
+	* Computes the shortest angle between two rotation defined by this quaternion and the given one.
+	*
+	* @param {Quaternion} q - The given quaternion.
+	* @return {number} The angle in radians.
+	*/
 	angleTo( q ) {
 
 		return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
 
 	}
 
+	/**
+	* Transforms this rotation defined by this quaternion towards the target rotation
+	* defined by the given quaternion by the given angular step. The rotation will not overshoot.
+	*
+	* @param {Quaternion} q - The target rotation.
+	* @param {number} step - The maximum step in radians.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	rotateTo( q, step ) {
 
 		const angle = this.angleTo( q );
@@ -155,6 +253,14 @@ class Quaternion {
 
 	}
 
+	/**
+	* Creates a quaternion that orients an object to face towards a specified target direction.
+	*
+	* @param {Vector3} localForward - Specifies the forward direction in the local space of the object.
+	* @param {Vector3} targetDirection - Specifies the desired world space direction the object should look at.
+	* @param {Vector3} localUp - Specifies the up direction in the local space of the object.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	lookAt( localForward, targetDirection, localUp ) {
 
 		matrix.lookAt( localForward, targetDirection, localUp );
@@ -162,6 +268,14 @@ class Quaternion {
 
 	}
 
+	/**
+	* Spherically interpolates between this quaternion and the given quaternion by t.
+	* The parameter t is clamped to the range [0, 1].
+	*
+	* @param {Quaternion} q - The target rotation.
+	* @param {number} t - The interpolation paramter.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	slerp( q, t ) {
 
 		if ( t === 0 ) return this;
@@ -223,6 +337,14 @@ class Quaternion {
 
 	}
 
+	/**
+	* Sets the components of this quaternion from the an euler angle.
+	*
+	* @param {number} x - Rotation around x axis in radians.
+	* @param {number} y - Rotation around y axis in radians.
+	* @param {number} z - Rotation around z axis in radians.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	fromEuler( x, y, z ) {
 
 		const c1 = Math.cos( x / 2 );
@@ -242,6 +364,12 @@ class Quaternion {
 
 	}
 
+	/**
+	* Sets the components of this quaternion from the given 3x3 rotation matrix.
+	*
+	* @param {Matrix3} m - The rotation matrix.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	fromMatrix3( m ) {
 
 		const e = m.elements;
@@ -294,6 +422,13 @@ class Quaternion {
 
 	}
 
+	/**
+	* Sets the components of this quaternion from an array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
 	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
@@ -305,6 +440,13 @@ class Quaternion {
 
 	}
 
+	/**
+	* Copies all values of this quaternion to the given array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Array} The array with the quaternion components.
+	*/
 	toArray( array, offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
@@ -316,6 +458,12 @@ class Quaternion {
 
 	}
 
+	/**
+	* Returns true if the given quaternion is deep equal with this quaternion.
+	*
+	* @param {Quaternion} q - The quaternion to test.
+	* @return {boolean} The result of the equality test.
+	*/
 	equals( q ) {
 
 		return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );

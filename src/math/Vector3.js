@@ -1,14 +1,19 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Vector3.js
- *
- */
-
 import { _Math } from './Math.js';
 
+/**
+* Class representing a 3D vector.
+*
+* @author {@link https://github.com/Mugen87|Mugen87 }
+*/
 class Vector3 {
 
+	/**
+	* Constructs a new 3D vector with the given values.
+	*
+	* @param {number} x - The x component.
+	* @param {number} y - The y component.
+	* @param {number} z - The z component.
+	*/
 	constructor( x = 0, y = 0, z = 0 ) {
 
 		this.x = x;
@@ -17,6 +22,14 @@ class Vector3 {
 
 	}
 
+	/**
+	* Sets the given values to this 3D vector.
+	*
+	* @param {number} x - The x component.
+	* @param {number} y - The y component.
+	* @param {number} z - The z component.
+	* @return {Vector3} A reference to this vector.
+	*/
 	set( x, y, z ) {
 
 		this.x = x;
@@ -27,6 +40,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Copies all values from the given 3D vector to this 3D vector.
+	*
+	* @param {Vector3} v - The vector to copy.
+	* @return {Vector3} A reference to this vector.
+	*/
 	copy( v ) {
 
 		this.x = v.x;
@@ -37,12 +56,23 @@ class Vector3 {
 
 	}
 
+	/**
+	* Creates a new 3D vector and copies all values from this 3D vector.
+	*
+	* @return {Vector3} A new 3D vector.
+	*/
 	clone() {
 
 		return new this.constructor().copy( this );
 
 	}
 
+	/**
+	* Adds the given 3D vector to this 3D vector.
+	*
+	* @param {Vector3} v - The vector to add.
+	* @return {Vector3} A reference to this vector.
+	*/
 	add( v ) {
 
 		this.x += v.x;
@@ -53,6 +83,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Adds the given scalar to this 3D vector.
+	*
+	* @param {number} s - The scalar to add.
+	* @return {Vector3} A reference to this vector.
+	*/
 	addScalar( s ) {
 
 		this.x += s;
@@ -63,6 +99,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Adds two given 3D vectors and stores the result in this 3D vector.
+	*
+	* @param {Vector3} a - The first vector of the operation.
+	* @param {Vector3} b - The second vector of the operation.
+	* @return {Vector3} A reference to this vector.
+	*/
 	addVectors( a, b ) {
 
 		this.x = a.x + b.x;
@@ -73,6 +116,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Substracts the given 3D vector from this 3D vector.
+	*
+	* @param {Vector3} v - The vector to substract.
+	* @return {Vector3} A reference to this vector.
+	*/
 	sub( v ) {
 
 		this.x -= v.x;
@@ -83,6 +132,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Substracts the given scalar from this 3D vector.
+	*
+	* @param {number} s - The scalar to substract.
+	* @return {Vector3} A reference to this vector.
+	*/
 	subScalar( s ) {
 
 		this.x -= s;
@@ -93,6 +148,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Substracts two given 3D vectors and stores the result in this 3D vector.
+	*
+	* @param {Vector3} a - The first vector of the operation.
+	* @param {Vector3} b - The second vector of the operation.
+	* @return {Vector3} A reference to this vector.
+	*/
 	subVectors( a, b ) {
 
 		this.x = a.x - b.x;
@@ -103,6 +165,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Multiplies the given 3D vector with this 3D vector.
+	*
+	* @param {Vector3} v - The vector to multiply.
+	* @return {Vector3} A reference to this vector.
+	*/
 	multiply( v ) {
 
 		this.x *= v.x;
@@ -113,6 +181,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Multiplies the given scalar with this 3D vector.
+	*
+	* @param {number} s - The scalar to multiply.
+	* @return {Vector3} A reference to this vector.
+	*/
 	multiplyScalar( s ) {
 
 		this.x *= s;
@@ -123,6 +197,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Multiplies two given 3D vectors and stores the result in this 3D vector.
+	*
+	* @param {Vector3} a - The first vector of the operation.
+	* @param {Vector3} b - The second vector of the operation.
+	* @return {Vector3} A reference to this vector.
+	*/
 	multiplyVectors( a, b ) {
 
 		this.x = a.x * b.x;
@@ -133,6 +214,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Divides the given 3D vector through this 3D vector.
+	*
+	* @param {Vector3} v - The vector to divide.
+	* @return {Vector3} A reference to this vector.
+	*/
 	divide( v ) {
 
 		this.x /= v.x;
@@ -143,6 +230,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Divides the given scalar through this 3D vector.
+	*
+	* @param {number} s - The scalar to multiply.
+	* @return {Vector3} A reference to this vector.
+	*/
 	divideScalar( s ) {
 
 		this.x /= s;
@@ -153,6 +246,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Divides two given 3D vectors and stores the result in this 3D vector.
+	*
+	* @param {Vector3} a - The first vector of the operation.
+	* @param {Vector3} b - The second vector of the operation.
+	* @return {Vector3} A reference to this vector.
+	*/
 	divideVectors( a, b ) {
 
 		this.x = a.x / b.x;
@@ -163,6 +263,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Ensures this 3D vector lies in the given min/max range.
+	*
+	* @param {Vector3} min - The min range.
+	* @param {Vector3} max - The max range.
+	* @return {Vector3} A reference to this vector.
+	*/
 	clamp( min, max ) {
 
 		this.x = Math.max( min.x, Math.min( max.x, this.x ) );
@@ -173,6 +280,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Compares each vector component of this 3D vector and the
+	* given one and stores the minimum value in this instance.
+	*
+	* @param {Vector3} v - The 3D vector to check.
+	* @return {Vector3} A reference to this vector.
+	*/
 	min( v ) {
 
 		this.x = Math.min( this.x, v.x );
@@ -183,6 +297,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Compares each vector component of this 3D vector and the
+	* given one and stores the maximum value in this instance.
+	*
+	* @param {Vector3} v - The 3D vector to check.
+	* @return {Vector3} A reference to this vector.
+	*/
 	max( v ) {
 
 		this.x = Math.max( this.x, v.x );
@@ -193,12 +314,25 @@ class Vector3 {
 
 	}
 
+	/**
+	* Computes the dot product of this and the given 3D vector.
+	*
+	* @param {Vector3} v - The given 3D vector.
+	* @return {number} The results of the dor product.
+	*/
 	dot( v ) {
 
 		return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
 
 	}
 
+	/**
+	* Computes the cross product of this and the given 3D vector and
+	* stores the result in this 3D vector.
+	*
+	* @param {Vector3} v - A 3D vector.
+	* @return {Vector3} A reference to this vector.
+	*/
 	cross( v ) {
 
 		const x = this.x, y = this.y, z = this.z;
@@ -211,6 +345,14 @@ class Vector3 {
 
 	}
 
+	/**
+	* Computes the cross product of the two given 3D vectors and
+	* stores the result in this 3D vector.
+	*
+	* @param {Vector3} a - The first 3D vector.
+	* @param {Vector3} b - The second 3D vector.
+	* @return {Vector3} A reference to this vector.
+	*/
 	crossVectors( a, b ) {
 
 		const ax = a.x, ay = a.y, az = a.z;
@@ -224,6 +366,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Computes the angle between this and the given vector.
+	*
+	* @param {Vector3} v - A 3D vector.
+	* @return {number} The angle in radians.
+	*/
 	angleTo( v ) {
 
 		const theta = this.dot( v ) / ( Math.sqrt( this.squaredLength() * v.squaredLength() ) );
@@ -234,30 +382,61 @@ class Vector3 {
 
 	}
 
+	/**
+	* Computes the length of this 3D vector.
+	*
+	* @return {number} The length of this 3D vector.
+	*/
 	length() {
 
 		return Math.sqrt( this.squaredLength() );
 
 	}
 
+	/**
+	* Computes the squared length of this 3D vector.
+	* Calling this method is faster than calling {@link Vector3#length},
+	* since it avoids computing a square root.
+	*
+	* @return {number} The squared length of this 3D vector.
+	*/
 	squaredLength() {
 
 		return this.dot( this );
 
 	}
 
+	/**
+	* Computes the manhatten length of this 3D vector.
+	*
+	* @return {number} The manhatten length of this 3D vector.
+	*/
 	manhattanLength() {
 
 		return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
 
 	}
 
+	/**
+	* Computes the euclidean distance between this 3D vector and the given one.
+	*
+	* @param {Vector3} v - A 3D vector.
+	* @return {number} The euclidean distance between two 3D vectors.
+	*/
 	distanceTo( v ) {
 
 		return Math.sqrt( this.squaredDistanceTo( v ) );
 
 	}
 
+	/**
+	* Computes the squared euclidean distance between this 3D vector and the given one.
+	* Calling this method is faster than calling {@link Vector3#distanceTo},
+	* since it avoids computing a square root.
+	*
+	* @param {Vector3} v - A 3D vector.
+	* @return {number} The squared euclidean distance between two 3D vectors.
+	*/
 	squaredDistanceTo( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
@@ -266,6 +445,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Computes the manhatten distance between this 3D vector and the given one.
+	*
+	* @param {Vector3} v - A 3D vector.
+	* @return {number} The manhatten distance between two 3D vectors.
+	*/
 	manhattanDistanceTo( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
@@ -274,12 +459,23 @@ class Vector3 {
 
 	}
 
+	/**
+	* Normalizes this 3D vector.
+	*
+	* @return {Vector3} A reference to this vector.
+	*/
 	normalize() {
 
 		return this.divideScalar( this.length() || 1 );
 
 	}
 
+	/**
+	* Multiplies the given 4x4 matrix with this 3D vector
+	*
+	* @param {Matrix4} m - A 4x4 matrix.
+	* @return {Vector3} A reference to this vector.
+	*/
 	applyMatrix4( m ) {
 
 		const x = this.x, y = this.y, z = this.z;
@@ -295,6 +491,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Multiplies the given quaternion with this 3D vector.
+	*
+	* @param {Quaternion} q - A quaternion.
+	* @return {Vector3} A reference to this vector.
+	*/
 	applyRotation( q ) {
 
 		const x = this.x, y = this.y, z = this.z;
@@ -317,18 +519,40 @@ class Vector3 {
 
 	}
 
+	/**
+	* Sets the components of this 3D vector from a column of a 3x3 matrix.
+	*
+	* @param {Matrix3} m - A 3x3 matrix.
+	* @param {number} i - The index of the column.
+	* @return {Vector3} A reference to this vector.
+	*/
 	fromMatrix3Column( m, i ) {
 
 		return this.fromArray( m.elements, i * 3 );
 
 	}
 
+	/**
+	* Sets the components of this 3D vector from a column of a 4x4 matrix.
+	*
+	* @param {Matrix3} m - A 4x4 matrix.
+	* @param {number} i - The index of the column.
+	* @return {Vector3} A reference to this vector.
+	*/
 	fromMatrix4Column( m, i ) {
 
 		return this.fromArray( m.elements, i * 4 );
 
 	}
 
+	/**
+	* Sets the components of this 3D vector from a spherical coordinate.
+	*
+	* @param {number} radius - The radius.
+	* @param {number} phi - The polar or inclination angle in radians. Should be in the range of (−π/2, +π/2].
+	* @param {number} theta - The azimuthal angle in radians. Should be in the range of (−π, +π].
+	* @return {Vector3} A reference to this vector.
+	*/
 	fromSpherical( radius, phi, theta ) {
 
 		const sinPhiRadius = Math.sin( phi ) * radius;
@@ -341,6 +565,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Sets the components of this 3D vector from an array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Vector3} A reference to this vector.
+	*/
 	fromArray( array, offset = 0 ) {
 
 		this.x = array[ offset + 0 ];
@@ -351,6 +582,13 @@ class Vector3 {
 
 	}
 
+	/**
+	* Copies all values of this 3D vector to the given array.
+	*
+	* @param {Array} array - An array.
+	* @param {number} offset - An optional offset.
+	* @return {Array} The array with the 3D vector components.
+	*/
 	toArray( array, offset = 0 ) {
 
 		array[ offset + 0 ] = this.x;
@@ -361,6 +599,12 @@ class Vector3 {
 
 	}
 
+	/**
+	* Returns true if the given 3D vector is deep equal with this 3D vector.
+	*
+	* @param {Vector3} v - The 3D vector to test.
+	* @return {boolean} The result of the equality test.
+	*/
 	equals( v ) {
 
 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );

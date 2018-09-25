@@ -394,43 +394,70 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Math.js
-	 *
-	 */
+	* Class with various math helper functions.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
+	class _Math {
 
-	const _Math = {
-
-		clamp: ( value, min, max ) => {
+		/**
+		* Ensures the given scalar value is within a given min/max range.
+		*
+		* @param {number} value - The value to clamp.
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {number} The clamped value.
+		*/
+		static clamp( value, min, max ) {
 
 			return Math.max( min, Math.min( max, value ) );
 
-		},
+		}
 
-		randFloat: ( min, max ) => {
+		/**
+		* Computes a random float value within a given min/max range.
+		*
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {number} The random float value.
+		*/
+		static randFloat( min, max ) {
 
 			return min + Math.random() * ( max - min );
 
-		},
+		}
 
-		area( a, b, c ) {
+		/**
+		* Computes the signed area of a rectangle defined by three points.
+		* This method can also be used to calculate the area of a triangle.
+		*
+		* @param {Vector3} a - The first point in 3D space.
+		* @param {Vector3} b - The second point in 3D space.
+		* @param {Vector3} c - The third point in 3D space.
+		* @return {number} The signed area.
+		*/
+		static area( a, b, c ) {
 
 			return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
 
 		}
 
-	};
+	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Vector3.js
-	 *
-	 */
-
+	* Class representing a 3D vector.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class Vector3 {
 
+		/**
+		* Constructs a new 3D vector with the given values.
+		*
+		* @param {number} x - The x component.
+		* @param {number} y - The y component.
+		* @param {number} z - The z component.
+		*/
 		constructor( x = 0, y = 0, z = 0 ) {
 
 			this.x = x;
@@ -439,6 +466,14 @@
 
 		}
 
+		/**
+		* Sets the given values to this 3D vector.
+		*
+		* @param {number} x - The x component.
+		* @param {number} y - The y component.
+		* @param {number} z - The z component.
+		* @return {Vector3} A reference to this vector.
+		*/
 		set( x, y, z ) {
 
 			this.x = x;
@@ -449,6 +484,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given 3D vector to this 3D vector.
+		*
+		* @param {Vector3} v - The vector to copy.
+		* @return {Vector3} A reference to this vector.
+		*/
 		copy( v ) {
 
 			this.x = v.x;
@@ -459,12 +500,23 @@
 
 		}
 
+		/**
+		* Creates a new 3D vector and copies all values from this 3D vector.
+		*
+		* @return {Vector3} A new 3D vector.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Adds the given 3D vector to this 3D vector.
+		*
+		* @param {Vector3} v - The vector to add.
+		* @return {Vector3} A reference to this vector.
+		*/
 		add( v ) {
 
 			this.x += v.x;
@@ -475,6 +527,12 @@
 
 		}
 
+		/**
+		* Adds the given scalar to this 3D vector.
+		*
+		* @param {number} s - The scalar to add.
+		* @return {Vector3} A reference to this vector.
+		*/
 		addScalar( s ) {
 
 			this.x += s;
@@ -485,6 +543,13 @@
 
 		}
 
+		/**
+		* Adds two given 3D vectors and stores the result in this 3D vector.
+		*
+		* @param {Vector3} a - The first vector of the operation.
+		* @param {Vector3} b - The second vector of the operation.
+		* @return {Vector3} A reference to this vector.
+		*/
 		addVectors( a, b ) {
 
 			this.x = a.x + b.x;
@@ -495,6 +560,12 @@
 
 		}
 
+		/**
+		* Substracts the given 3D vector from this 3D vector.
+		*
+		* @param {Vector3} v - The vector to substract.
+		* @return {Vector3} A reference to this vector.
+		*/
 		sub( v ) {
 
 			this.x -= v.x;
@@ -505,6 +576,12 @@
 
 		}
 
+		/**
+		* Substracts the given scalar from this 3D vector.
+		*
+		* @param {number} s - The scalar to substract.
+		* @return {Vector3} A reference to this vector.
+		*/
 		subScalar( s ) {
 
 			this.x -= s;
@@ -515,6 +592,13 @@
 
 		}
 
+		/**
+		* Substracts two given 3D vectors and stores the result in this 3D vector.
+		*
+		* @param {Vector3} a - The first vector of the operation.
+		* @param {Vector3} b - The second vector of the operation.
+		* @return {Vector3} A reference to this vector.
+		*/
 		subVectors( a, b ) {
 
 			this.x = a.x - b.x;
@@ -525,6 +609,12 @@
 
 		}
 
+		/**
+		* Multiplies the given 3D vector with this 3D vector.
+		*
+		* @param {Vector3} v - The vector to multiply.
+		* @return {Vector3} A reference to this vector.
+		*/
 		multiply( v ) {
 
 			this.x *= v.x;
@@ -535,6 +625,12 @@
 
 		}
 
+		/**
+		* Multiplies the given scalar with this 3D vector.
+		*
+		* @param {number} s - The scalar to multiply.
+		* @return {Vector3} A reference to this vector.
+		*/
 		multiplyScalar( s ) {
 
 			this.x *= s;
@@ -545,6 +641,13 @@
 
 		}
 
+		/**
+		* Multiplies two given 3D vectors and stores the result in this 3D vector.
+		*
+		* @param {Vector3} a - The first vector of the operation.
+		* @param {Vector3} b - The second vector of the operation.
+		* @return {Vector3} A reference to this vector.
+		*/
 		multiplyVectors( a, b ) {
 
 			this.x = a.x * b.x;
@@ -555,6 +658,12 @@
 
 		}
 
+		/**
+		* Divides the given 3D vector through this 3D vector.
+		*
+		* @param {Vector3} v - The vector to divide.
+		* @return {Vector3} A reference to this vector.
+		*/
 		divide( v ) {
 
 			this.x /= v.x;
@@ -565,6 +674,12 @@
 
 		}
 
+		/**
+		* Divides the given scalar through this 3D vector.
+		*
+		* @param {number} s - The scalar to multiply.
+		* @return {Vector3} A reference to this vector.
+		*/
 		divideScalar( s ) {
 
 			this.x /= s;
@@ -575,6 +690,13 @@
 
 		}
 
+		/**
+		* Divides two given 3D vectors and stores the result in this 3D vector.
+		*
+		* @param {Vector3} a - The first vector of the operation.
+		* @param {Vector3} b - The second vector of the operation.
+		* @return {Vector3} A reference to this vector.
+		*/
 		divideVectors( a, b ) {
 
 			this.x = a.x / b.x;
@@ -585,6 +707,13 @@
 
 		}
 
+		/**
+		* Ensures this 3D vector lies in the given min/max range.
+		*
+		* @param {Vector3} min - The min range.
+		* @param {Vector3} max - The max range.
+		* @return {Vector3} A reference to this vector.
+		*/
 		clamp( min, max ) {
 
 			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
@@ -595,6 +724,13 @@
 
 		}
 
+		/**
+		* Compares each vector component of this 3D vector and the
+		* given one and stores the minimum value in this instance.
+		*
+		* @param {Vector3} v - The 3D vector to check.
+		* @return {Vector3} A reference to this vector.
+		*/
 		min( v ) {
 
 			this.x = Math.min( this.x, v.x );
@@ -605,6 +741,13 @@
 
 		}
 
+		/**
+		* Compares each vector component of this 3D vector and the
+		* given one and stores the maximum value in this instance.
+		*
+		* @param {Vector3} v - The 3D vector to check.
+		* @return {Vector3} A reference to this vector.
+		*/
 		max( v ) {
 
 			this.x = Math.max( this.x, v.x );
@@ -615,12 +758,25 @@
 
 		}
 
+		/**
+		* Computes the dot product of this and the given 3D vector.
+		*
+		* @param {Vector3} v - The given 3D vector.
+		* @return {number} The results of the dor product.
+		*/
 		dot( v ) {
 
 			return ( this.x * v.x ) + ( this.y * v.y ) + ( this.z * v.z );
 
 		}
 
+		/**
+		* Computes the cross product of this and the given 3D vector and
+		* stores the result in this 3D vector.
+		*
+		* @param {Vector3} v - A 3D vector.
+		* @return {Vector3} A reference to this vector.
+		*/
 		cross( v ) {
 
 			const x = this.x, y = this.y, z = this.z;
@@ -633,6 +789,14 @@
 
 		}
 
+		/**
+		* Computes the cross product of the two given 3D vectors and
+		* stores the result in this 3D vector.
+		*
+		* @param {Vector3} a - The first 3D vector.
+		* @param {Vector3} b - The second 3D vector.
+		* @return {Vector3} A reference to this vector.
+		*/
 		crossVectors( a, b ) {
 
 			const ax = a.x, ay = a.y, az = a.z;
@@ -646,6 +810,12 @@
 
 		}
 
+		/**
+		* Computes the angle between this and the given vector.
+		*
+		* @param {Vector3} v - A 3D vector.
+		* @return {number} The angle in radians.
+		*/
 		angleTo( v ) {
 
 			const theta = this.dot( v ) / ( Math.sqrt( this.squaredLength() * v.squaredLength() ) );
@@ -656,30 +826,61 @@
 
 		}
 
+		/**
+		* Computes the length of this 3D vector.
+		*
+		* @return {number} The length of this 3D vector.
+		*/
 		length() {
 
 			return Math.sqrt( this.squaredLength() );
 
 		}
 
+		/**
+		* Computes the squared length of this 3D vector.
+		* Calling this method is faster than calling {@link Vector3#length},
+		* since it avoids computing a square root.
+		*
+		* @return {number} The squared length of this 3D vector.
+		*/
 		squaredLength() {
 
 			return this.dot( this );
 
 		}
 
+		/**
+		* Computes the manhatten length of this 3D vector.
+		*
+		* @return {number} The manhatten length of this 3D vector.
+		*/
 		manhattanLength() {
 
 			return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
 
 		}
 
+		/**
+		* Computes the euclidean distance between this 3D vector and the given one.
+		*
+		* @param {Vector3} v - A 3D vector.
+		* @return {number} The euclidean distance between two 3D vectors.
+		*/
 		distanceTo( v ) {
 
 			return Math.sqrt( this.squaredDistanceTo( v ) );
 
 		}
 
+		/**
+		* Computes the squared euclidean distance between this 3D vector and the given one.
+		* Calling this method is faster than calling {@link Vector3#distanceTo},
+		* since it avoids computing a square root.
+		*
+		* @param {Vector3} v - A 3D vector.
+		* @return {number} The squared euclidean distance between two 3D vectors.
+		*/
 		squaredDistanceTo( v ) {
 
 			const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
@@ -688,6 +889,12 @@
 
 		}
 
+		/**
+		* Computes the manhatten distance between this 3D vector and the given one.
+		*
+		* @param {Vector3} v - A 3D vector.
+		* @return {number} The manhatten distance between two 3D vectors.
+		*/
 		manhattanDistanceTo( v ) {
 
 			const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
@@ -696,12 +903,23 @@
 
 		}
 
+		/**
+		* Normalizes this 3D vector.
+		*
+		* @return {Vector3} A reference to this vector.
+		*/
 		normalize() {
 
 			return this.divideScalar( this.length() || 1 );
 
 		}
 
+		/**
+		* Multiplies the given 4x4 matrix with this 3D vector
+		*
+		* @param {Matrix4} m - A 4x4 matrix.
+		* @return {Vector3} A reference to this vector.
+		*/
 		applyMatrix4( m ) {
 
 			const x = this.x, y = this.y, z = this.z;
@@ -717,6 +935,12 @@
 
 		}
 
+		/**
+		* Multiplies the given quaternion with this 3D vector.
+		*
+		* @param {Quaternion} q - A quaternion.
+		* @return {Vector3} A reference to this vector.
+		*/
 		applyRotation( q ) {
 
 			const x = this.x, y = this.y, z = this.z;
@@ -739,18 +963,40 @@
 
 		}
 
+		/**
+		* Sets the components of this 3D vector from a column of a 3x3 matrix.
+		*
+		* @param {Matrix3} m - A 3x3 matrix.
+		* @param {number} i - The index of the column.
+		* @return {Vector3} A reference to this vector.
+		*/
 		fromMatrix3Column( m, i ) {
 
 			return this.fromArray( m.elements, i * 3 );
 
 		}
 
+		/**
+		* Sets the components of this 3D vector from a column of a 4x4 matrix.
+		*
+		* @param {Matrix3} m - A 4x4 matrix.
+		* @param {number} i - The index of the column.
+		* @return {Vector3} A reference to this vector.
+		*/
 		fromMatrix4Column( m, i ) {
 
 			return this.fromArray( m.elements, i * 4 );
 
 		}
 
+		/**
+		* Sets the components of this 3D vector from a spherical coordinate.
+		*
+		* @param {number} radius - The radius.
+		* @param {number} phi - The polar or inclination angle in radians. Should be in the range of (−π/2, +π/2].
+		* @param {number} theta - The azimuthal angle in radians. Should be in the range of (−π, +π].
+		* @return {Vector3} A reference to this vector.
+		*/
 		fromSpherical( radius, phi, theta ) {
 
 			const sinPhiRadius = Math.sin( phi ) * radius;
@@ -763,6 +1009,13 @@
 
 		}
 
+		/**
+		* Sets the components of this 3D vector from an array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Vector3} A reference to this vector.
+		*/
 		fromArray( array, offset = 0 ) {
 
 			this.x = array[ offset + 0 ];
@@ -773,6 +1026,13 @@
 
 		}
 
+		/**
+		* Copies all values of this 3D vector to the given array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Array} The array with the 3D vector components.
+		*/
 		toArray( array, offset = 0 ) {
 
 			array[ offset + 0 ] = this.x;
@@ -783,6 +1043,12 @@
 
 		}
 
+		/**
+		* Returns true if the given 3D vector is deep equal with this 3D vector.
+		*
+		* @param {Vector3} v - The 3D vector to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( v ) {
 
 			return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
@@ -793,20 +1059,22 @@
 
 	const WorldUp = new Vector3( 0, 1, 0 );
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
-	 *
-	 */
-
 	const localRight = new Vector3();
 	const worldRight = new Vector3();
 	const perpWorldUp = new Vector3();
 	const temp = new Vector3();
 
+	/**
+	* Class representing a 3x3 matrix. The elements of the matrix
+	* are stored in column-major order.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class Matrix3 {
 
+		/**
+		* Constructs a new 3x3 identity matrix.
+		*/
 		constructor() {
 
 			this.elements = [
@@ -819,6 +1087,20 @@
 
 		}
 
+		/**
+		* Sets the given values to this matrix. The arguments are in row-major order.
+		*
+		* @param {number} n11 - An element of the matrix.
+		* @param {number} n12 - An element of the matrix.
+		* @param {number} n13 - An element of the matrix.
+		* @param {number} n21 - An element of the matrix.
+		* @param {number} n22 - An element of the matrix.
+		* @param {number} n23 - An element of the matrix.
+		* @param {number} n31 - An element of the matrix.
+		* @param {number} n32 - An element of the matrix.
+		* @param {number} n33 - An element of the matrix.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		set( n11, n12, n13, n21, n22, n23, n31, n32, n33 ) {
 
 			const e = this.elements;
@@ -831,6 +1113,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given matrix to this matrix.
+		*
+		* @param {Matrix3} m - The matrix to copy.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		copy( m ) {
 
 			const e = this.elements;
@@ -844,12 +1132,22 @@
 
 		}
 
+		/**
+		* Creates a new matrix and copies all values from this matrix.
+		*
+		* @return {Matrix3} A new matrix.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Transforms this matrix to an indentiy matrix.
+		*
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		identity() {
 
 			this.set(
@@ -864,18 +1162,38 @@
 
 		}
 
+		/**
+		* Multiplies this matrix with the given matrix.
+		*
+		* @param {Matrix3} m - The matrix to multiply.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		multiply( m ) {
 
 			return this.multiplyMatrices( this, m );
 
 		}
 
+		/**
+		* Multiplies this matrix with the given matrix.
+		* So the order of the multiplication is switched compared to {@link Matrix3#multiply}.
+		*
+		* @param {Matrix3} m - The matrix to multiply.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		premultiply( m ) {
 
 			return this.multiplyMatrices( m, this );
 
 		}
 
+		/**
+		* Multiplies two given matrices and stores the result in this matrix.
+		*
+		* @param {Matrix3} a - The first matrix of the operation.
+		* @param {Matrix3} b - The second matrix of the operation.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		multiplyMatrices( a, b ) {
 
 			const ae = a.elements;
@@ -906,6 +1224,12 @@
 
 		}
 
+		/**
+		* Multiplies the given scalar with this matrix.
+		*
+		* @param {number} s - The scalar to multiply.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		multiplyScalar( s ) {
 
 			const e = this.elements;
@@ -918,6 +1242,14 @@
 
 		}
 
+		/**
+		* Extracts the basis vectors and stores them to the given vectors.
+		*
+		* @param {Vector3} xAxis - The first result vector for the x-axis.
+		* @param {Vector3} yAxis - The second result vector for the y-axis.
+		* @param {Vector3} zAxis - The third result vector for the z-axis.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		extractBasis( xAxis, yAxis, zAxis ) {
 
 			xAxis.fromMatrix3Column( this, 0 );
@@ -928,6 +1260,14 @@
 
 		}
 
+		/**
+		* Makes a basis from the given vectors.
+		*
+		* @param {Vector3} xAxis - The first basis vector for the x-axis.
+		* @param {Vector3} yAxis - The second basis vector for the y-axis.
+		* @param {Vector3} zAxis - The third basis vector for the z-axis.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		makeBasis( xAxis, yAxis, zAxis ) {
 
 			this.set(
@@ -940,6 +1280,14 @@
 
 		}
 
+		/**
+		* Creates a rotation matrix that orients an object to face towards a specified target direction.
+		*
+		* @param {Vector3} localForward - Specifies the forward direction in the local space of the object.
+		* @param {Vector3} targetDirection - Specifies the desired world space direction the object should look at.
+		* @param {Vector3} localUp - Specifies the up direction in the local space of the object.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		lookAt( localForward, targetDirection, localUp ) {
 
 			localRight.crossVectors( localUp, localForward ).normalize();
@@ -969,8 +1317,15 @@
 
 			this.multiplyMatrices( m1, m2.transpose() );
 
+			return this;
+
 		}
 
+		/**
+		* Transposes this matrix.
+		*
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		transpose() {
 
 			const e = this.elements;
@@ -984,6 +1339,12 @@
 
 		}
 
+		/**
+		* Creates a rotation matrix from the given quaternion.
+		*
+		* @param {Quaternion} q - A quaternion representing a rotation.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		fromQuaternion( q ) {
 
 			const e = this.elements;
@@ -1010,6 +1371,13 @@
 
 		}
 
+		/**
+		* Sets the elements of this matrix from an array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Matrix3} A reference to this matrix.
+		*/
 		fromArray( array, offset = 0 ) {
 
 			const e = this.elements;
@@ -1024,6 +1392,13 @@
 
 		}
 
+		/**
+		* Copies all elements of this matrix to the given array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Array} The array with the elements of the matrix.
+		*/
 		toArray( array, offset = 0 ) {
 
 			const e = this.elements;
@@ -1044,6 +1419,12 @@
 
 		}
 
+		/**
+		* Returns true if the given matrix is deep equal with this matrix.
+		*
+		* @param {Matrix3} m - The matrix to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( m ) {
 
 			const e = this.elements;
@@ -1073,8 +1454,21 @@
 
 	const matrix = new Matrix3();
 
+	/**
+	* Class representing a quaternion.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class Quaternion {
 
+		/**
+		* Constructs a new quaternion with the given values.
+		*
+		* @param {number} x - The x component.
+		* @param {number} y - The y component.
+		* @param {number} z - The z component.
+		* @param {number} w - The w component.
+		*/
 		constructor( x = 0, y = 0, z = 0, w = 1 ) {
 
 			this.x = x;
@@ -1084,6 +1478,15 @@
 
 		}
 
+		/**
+		* Sets the given values to this quaternion.
+		*
+		* @param {number} x - The x component.
+		* @param {number} y - The y component.
+		* @param {number} z - The z component.
+		* @param {number} w - The w component.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		set( x, y, z, w ) {
 
 			this.x = x;
@@ -1095,6 +1498,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given quaternion to this quaternion.
+		*
+		* @param {Quaternion} q - The quaternion to copy.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		copy( q ) {
 
 			this.x = q.x;
@@ -1106,18 +1515,33 @@
 
 		}
 
+		/**
+		* Creates a new quaternion and copies all values from this quaternion.
+		*
+		* @return {Quaternion} A new quaternion.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Computes the inverse of this quaternion.
+		*
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		inverse() {
 
 			return this.conjugate().normalize();
 
 		}
 
+		/**
+		* Computes the conjugate of this quaternion.
+		*
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		conjugate() {
 
 			this.x *= - 1;
@@ -1128,24 +1552,45 @@
 
 		}
 
+		/**
+		* Computes the dot product of this and the given quaternion.
+		*
+		* @param {Quaternion} q - The given quaternion.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		dot( q ) {
 
 			return ( this.x * q.x ) + ( this.y * q.y ) + ( this.z * q.z ) + ( this.w * q.w );
 
 		}
 
+		/**
+		* Computes the length of this quaternion.
+		*
+		* @return {number} The length of this quaternion.
+		*/
 		length() {
 
 			return Math.sqrt( this.squaredLength() );
 
 		}
 
+		/**
+		* Computes the squared length of this quaternion.
+		*
+		* @return {number} The squared length of this quaternion.
+		*/
 		squaredLength() {
 
 			return this.dot( this );
 
 		}
 
+		/**
+		* Normalizes this quaternion.
+		*
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		normalize() {
 
 			let l = this.length();
@@ -1172,18 +1617,38 @@
 
 		}
 
+		/**
+		* Multiplies this quaternion with the given quaternion.
+		*
+		* @param {Quaternion} q - The quaternion to multiply.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		multiply( q ) {
 
 			return this.multiplyQuaternions( this, q );
 
 		}
 
+		/**
+		* Multiplies the given quaternion with this quaternion.
+		* So the order of the multiplication is switched compared to {@link Quaternion#multiply}.
+		*
+		* @param {Quaternion} q - The quaternion to multiply.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		premultiply( q ) {
 
 			return this.multiplyQuaternions( q, this );
 
 		}
 
+		/**
+		* Multiplies two given quaternions and stores the result in this quaternion.
+		*
+		* @param {Quaternion} a - The first quaternion of the operation.
+		* @param {Quaternion} b - The second quaternion of the operation.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		multiplyQuaternions( a, b ) {
 
 			const qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
@@ -1198,12 +1663,26 @@
 
 		}
 
+		/**
+		* Computes the shortest angle between two rotation defined by this quaternion and the given one.
+		*
+		* @param {Quaternion} q - The given quaternion.
+		* @return {number} The angle in radians.
+		*/
 		angleTo( q ) {
 
 			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
 
 		}
 
+		/**
+		* Transforms this rotation defined by this quaternion towards the target rotation
+		* defined by the given quaternion by the given angular step. The rotation will not overshoot.
+		*
+		* @param {Quaternion} q - The target rotation.
+		* @param {number} step - The maximum step in radians.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		rotateTo( q, step ) {
 
 			const angle = this.angleTo( q );
@@ -1218,6 +1697,14 @@
 
 		}
 
+		/**
+		* Creates a quaternion that orients an object to face towards a specified target direction.
+		*
+		* @param {Vector3} localForward - Specifies the forward direction in the local space of the object.
+		* @param {Vector3} targetDirection - Specifies the desired world space direction the object should look at.
+		* @param {Vector3} localUp - Specifies the up direction in the local space of the object.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		lookAt( localForward, targetDirection, localUp ) {
 
 			matrix.lookAt( localForward, targetDirection, localUp );
@@ -1225,6 +1712,14 @@
 
 		}
 
+		/**
+		* Spherically interpolates between this quaternion and the given quaternion by t.
+		* The parameter t is clamped to the range [0, 1].
+		*
+		* @param {Quaternion} q - The target rotation.
+		* @param {number} t - The interpolation paramter.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		slerp( q, t ) {
 
 			if ( t === 0 ) return this;
@@ -1286,6 +1781,14 @@
 
 		}
 
+		/**
+		* Sets the components of this quaternion from the an euler angle.
+		*
+		* @param {number} x - Rotation around x axis in radians.
+		* @param {number} y - Rotation around y axis in radians.
+		* @param {number} z - Rotation around z axis in radians.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		fromEuler( x, y, z ) {
 
 			const c1 = Math.cos( x / 2 );
@@ -1305,6 +1808,12 @@
 
 		}
 
+		/**
+		* Sets the components of this quaternion from the given 3x3 rotation matrix.
+		*
+		* @param {Matrix3} m - The rotation matrix.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		fromMatrix3( m ) {
 
 			const e = m.elements;
@@ -1357,6 +1866,13 @@
 
 		}
 
+		/**
+		* Sets the components of this quaternion from an array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Quaternion} A reference to this quaternion.
+		*/
 		fromArray( array, offset = 0 ) {
 
 			this.x = array[ offset + 0 ];
@@ -1368,6 +1884,13 @@
 
 		}
 
+		/**
+		* Copies all values of this quaternion to the given array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Array} The array with the quaternion components.
+		*/
 		toArray( array, offset = 0 ) {
 
 			array[ offset + 0 ] = this.x;
@@ -1379,6 +1902,12 @@
 
 		}
 
+		/**
+		* Returns true if the given quaternion is deep equal with this quaternion.
+		*
+		* @param {Quaternion} q - The quaternion to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( q ) {
 
 			return ( ( q.x === this.x ) && ( q.y === this.y ) && ( q.z === this.z ) && ( q.w === this.w ) );
@@ -1388,14 +1917,16 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
-	 *
-	 */
-
+	* Class representing a 4x4 matrix. The elements of the matrix
+	* are stored in column-major order.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class Matrix4 {
 
+		/**
+		* Constructs a new 4x4 identity matrix.
+		*/
 		constructor() {
 
 			this.elements = [
@@ -1409,6 +1940,27 @@
 
 		}
 
+		/**
+		* Sets the given values to this matrix. The arguments are in row-major order.
+		*
+		* @param {number} n11 - An element of the matrix.
+		* @param {number} n12 - An element of the matrix.
+		* @param {number} n13 - An element of the matrix.
+		* @param {number} n14 - An element of the matrix.
+		* @param {number} n21 - An element of the matrix.
+		* @param {number} n22 - An element of the matrix.
+		* @param {number} n23 - An element of the matrix.
+		* @param {number} n24 - An element of the matrix.
+		* @param {number} n31 - An element of the matrix.
+		* @param {number} n32 - An element of the matrix.
+		* @param {number} n33 - An element of the matrix.
+		* @param {number} n34 - An element of the matrix.
+		* @param {number} n41 - An element of the matrix.
+		* @param {number} n42 - An element of the matrix.
+		* @param {number} n43 - An element of the matrix.
+		* @param {number} n44 - An element of the matrix.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		set( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
 
 			const e = this.elements;
@@ -1422,6 +1974,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given matrix to this matrix.
+		*
+		* @param {Matrix4} m - The matrix to copy.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		copy( m ) {
 
 			const e = this.elements;
@@ -1436,12 +1994,22 @@
 
 		}
 
+		/**
+		* Creates a new matrix and copies all values from this matrix.
+		*
+		* @return {Matrix4} A new matrix.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Transforms this matrix to an indentiy matrix.
+		*
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		identity() {
 
 			this.set(
@@ -1457,41 +2025,38 @@
 
 		}
 
-		extractBasis( xAxis, yAxis, zAxis ) {
-
-			xAxis.fromMatrix4Column( this, 0 );
-			yAxis.fromMatrix4Column( this, 1 );
-			zAxis.fromMatrix4Column( this, 2 );
-
-			return this;
-
-		}
-
-		makeBasis( xAxis, yAxis, zAxis ) {
-
-			this.set(
-				xAxis.x, yAxis.x, zAxis.x, 0,
-				xAxis.y, yAxis.y, zAxis.y, 0,
-				xAxis.z, yAxis.z, zAxis.z, 0,
-				0, 0, 0, 1
-			);
-
-			return this;
-
-		}
-
+		/**
+		* Multiplies this matrix with the given matrix.
+		*
+		* @param {Matrix4} m - The matrix to multiply.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		multiply( m ) {
 
 			return this.multiplyMatrices( this, m );
 
 		}
 
+		/**
+		* Multiplies this matrix with the given matrix.
+		* So the order of the multiplication is switched compared to {@link Matrix4#multiply}.
+		*
+		* @param {Matrix4} m - The matrix to multiply.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		premultiply( m ) {
 
 			return this.multiplyMatrices( m, this );
 
 		}
 
+		/**
+		* Multiplies two given matrices and stores the result in this matrix.
+		*
+		* @param {Matrix4} a - The first matrix of the operation.
+		* @param {Matrix4} b - The second matrix of the operation.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		multiplyMatrices( a, b ) {
 
 			const ae = a.elements;
@@ -1532,6 +2097,12 @@
 
 		}
 
+		/**
+		* Multiplies the given scalar with this matrix.
+		*
+		* @param {number} s - The scalar to multiply.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		multiplyScalar( s ) {
 
 			const e = this.elements;
@@ -1545,6 +2116,53 @@
 
 		}
 
+		/**
+		* Extracts the basis vectors and stores them to the given vectors.
+		*
+		* @param {Vector3} xAxis - The first result vector for the x-axis.
+		* @param {Vector3} yAxis - The second result vector for the y-axis.
+		* @param {Vector3} zAxis - The third result vector for the z-axis.
+		* @return {Matrix4} A reference to this matrix.
+		*/
+		extractBasis( xAxis, yAxis, zAxis ) {
+
+			xAxis.fromMatrix4Column( this, 0 );
+			yAxis.fromMatrix4Column( this, 1 );
+			zAxis.fromMatrix4Column( this, 2 );
+
+			return this;
+
+		}
+
+		/**
+		* Makes a basis from the given vectors.
+		*
+		* @param {Vector3} xAxis - The first basis vector for the x-axis.
+		* @param {Vector3} yAxis - The second basis vector for the y-axis.
+		* @param {Vector3} zAxis - The third basis vector for the z-axis.
+		* @return {Matrix4} A reference to this matrix.
+		*/
+		makeBasis( xAxis, yAxis, zAxis ) {
+
+			this.set(
+				xAxis.x, yAxis.x, zAxis.x, 0,
+				xAxis.y, yAxis.y, zAxis.y, 0,
+				xAxis.z, yAxis.z, zAxis.z, 0,
+				0, 0, 0, 1
+			);
+
+			return this;
+
+		}
+
+		/**
+		* Composes a matrix from the given position, quaternion and scale.
+		*
+		* @param {Vector3} position - A vector representing a position in 3D space.
+		* @param {Quaternion} quaternion - A quaternion representing a rotation.
+		* @param {Vector3} scale - A vector representing a 3D scaling.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		compose( position, quaternion, scale ) {
 
 			this.fromQuaternion( quaternion );
@@ -1555,6 +2173,12 @@
 
 		}
 
+		/**
+		* Scales this matrix by the given 3D vector.
+		*
+		* @param {Vector3} v - A 3D vector representing a scaling.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		scale( v ) {
 
 			const e = this.elements;
@@ -1570,6 +2194,12 @@
 
 		}
 
+		/**
+		* Sets the translation part of the 4x4 matrix to the given position vector.
+		*
+		* @param {Vector3} v - A 3D vector representing a position.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		setPosition( v ) {
 
 			const e = this.elements;
@@ -1582,6 +2212,11 @@
 
 		}
 
+		/**
+		* Transposes this matrix.
+		*
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		transpose() {
 
 			const e = this.elements;
@@ -1600,6 +2235,12 @@
 
 		}
 
+		/**
+		* Computes the inverse of this matrix and stored the result in the given matrix.
+		*
+		* @param {Matrix4} m - The result matrix.
+		* @return {Matrix4} The result matrix.
+		*/
 		getInverse( m ) {
 
 			const e = this.elements;
@@ -1646,10 +2287,16 @@
 			e[ 14 ] = ( n14 * n22 * n31 - n12 * n24 * n31 - n14 * n21 * n32 + n11 * n24 * n32 + n12 * n21 * n34 - n11 * n22 * n34 ) * detInv;
 			e[ 15 ] = ( n12 * n23 * n31 - n13 * n22 * n31 + n13 * n21 * n32 - n11 * n23 * n32 - n12 * n21 * n33 + n11 * n22 * n33 ) * detInv;
 
-			return this;
+			return m;
 
 		}
 
+		/**
+		* Uses the given quaternion to transform the upper left 3x3 part to a rotation matrix.
+		*
+		* @param {Quaternion} q - A quaternion representing a rotation.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		fromQuaternion( q ) {
 
 			const e = this.elements;
@@ -1685,6 +2332,13 @@
 
 		}
 
+		/**
+		* Sets the elements of this matrix from an array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Matrix4} A reference to this matrix.
+		*/
 		fromArray( array, offset = 0 ) {
 
 			const e = this.elements;
@@ -1699,6 +2353,13 @@
 
 		}
 
+		/**
+		* Copies all elements of this matrix to the given array.
+		*
+		* @param {Array} array - An array.
+		* @param {number} offset - An optional offset.
+		* @return {Array} The array with the elements of the matrix.
+		*/
 		toArray( array, offset = 0 ) {
 
 			const e = this.elements;
@@ -1727,6 +2388,12 @@
 
 		}
 
+		/**
+		* Returns true if the given matrix is deep equal with this matrix.
+		*
+		* @param {Matrix4} m - The matrix to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( m ) {
 
 			const e = this.elements;
@@ -3694,17 +4361,21 @@
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Box3.js
-	 *
-	 */
-
 	const vector = new Vector3();
 
+	/**
+	* Class representing an axis-aligned bounding box (AABB).
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class AABB {
 
+		/**
+		* Constructs a new AABB with the given values.
+		*
+		* @param {Vector3} min - The minimum bounds of the AABB.
+		* @param {Vector3} max - The maximum bounds of the AABB.
+		*/
 		constructor( min = new Vector3( Infinity, Infinity, Infinity ), max = new Vector3( - Infinity, - Infinity, - Infinity ) ) {
 
 			this.min = min;
@@ -3712,6 +4383,13 @@
 
 		}
 
+		/**
+		* Sets the given values to this AABB.
+		*
+		* @param {Vector3} min - The minimum bounds of the AABB.
+		* @param {Vector3} max - The maximum bounds of the AABB.
+		* @return {AABB} A reference to this AABB.
+		*/
 		set( min, max ) {
 
 			this.min = min;
@@ -3721,6 +4399,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given AABB to this AABB.
+		*
+		* @param {AABB} aabb - The AABB to copy.
+		* @return {AABB} A reference to this AABB.
+		*/
 		copy( aabb ) {
 
 			this.min.copy( aabb.min );
@@ -3730,20 +4414,39 @@
 
 		}
 
+		/**
+		* Creates a new AABB and copies all values from this AABB.
+		*
+		* @return {AABB} A new AABB.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Ensures the given point is inside this AABB and stores
+		* the result in the given vector.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
 		clampPoint( point, result ) {
 
 			result.copy( point ).clamp( this.min, this.max );
 
-			return this;
+			return result;
 
 		}
 
+		/**
+		* Returns true if the given point is inside this AABB.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {boolean} The result of the containments test.
+		*/
 		containsPoint( point ) {
 
 			return point.x < this.min.x || point.x > this.max.x ||
@@ -3752,6 +4455,13 @@
 
 		}
 
+		/**
+		* Expands this AABB by the given point. So after this method call,
+		* the given point lies inside the AABB.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {AABB} A reference to this AABB.
+		*/
 		expand( point ) {
 
 			this.min.min( point );
@@ -3761,6 +4471,12 @@
 
 		}
 
+		/**
+		* Returns true if the given ABBB intersects this AABB.
+		*
+		* @param {AABB} aabb - The AABB to test.
+		* @return {boolean} The result of the intersection test.
+		*/
 		intersectsAABB( aabb ) {
 
 			return aabb.max.x < this.min.x || aabb.min.x > this.max.x ||
@@ -3769,6 +4485,12 @@
 
 		}
 
+		/**
+		* Returns true if the given bounding sphere intersects this AABB.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {boolean} The result of the intersection test.
+		*/
 		intersectsBoundingSphere( sphere ) {
 
 			// find the point on the AABB closest to the sphere center
@@ -3781,6 +4503,13 @@
 
 		}
 
+		/**
+		* Sets the values of the AABB from the given center and size vector.
+		*
+		* @param {Vector3} center - The center point of the AABB.
+		* @param {Vector3} size - The size of the AABB per axis.
+		* @return {AABB} A reference to this AABB.
+		*/
 		fromCenterAndSize( center, size ) {
 
 			vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
@@ -3792,6 +4521,12 @@
 
 		}
 
+		/**
+		* Sets the values of the AABB from the given array of points.
+		*
+		* @param {array} points - An array of 3D vectors representing points in 3D space.
+		* @return {AABB} A reference to this AABB.
+		*/
 		fromPoints( points ) {
 
 			this.min.set( Infinity, Infinity, Infinity );
@@ -3807,6 +4542,12 @@
 
 		}
 
+		/**
+		* Returns true if the given AABB is deep equal with this AABB.
+		*
+		* @param {AABB} aabb - The AABB to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( aabb ) {
 
 			return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
@@ -3816,14 +4557,18 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Sphere.js
-	 *
-	 */
-
+	* Class representing a bounding sphere.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class BoundingSphere {
 
+		/**
+		* Constructs a new bounding sphere with the given values.
+		*
+		* @param {Vector3} center - The center point of the bounding sphere.
+		* @param {number} radius - The radius of the bounding sphere.
+		*/
 		constructor( center = new Vector3(), radius = 0 ) {
 
 			this.center = center;
@@ -3831,6 +4576,13 @@
 
 		}
 
+		/**
+		* Sets the given values to this bounding sphere.
+		*
+		* @param {Vector3} center - The center point of the bounding sphere.
+		* @param {number} radius - The radius of the bounding sphere.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
 		set( center, radius ) {
 
 			this.center = center;
@@ -3840,6 +4592,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given bounding sphere to this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to copy.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
 		copy( sphere ) {
 
 			this.center.copy( sphere.center );
@@ -3849,18 +4607,35 @@
 
 		}
 
+		/**
+		* Creates a new bounding sphere and copies all values from this bounding sphere.
+		*
+		* @return {BoundingSphere} A new bounding sphere.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Returns true if the given point is inside this bounding sphere.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {boolean} The result of the containments test.
+		*/
 		containsPoint( point ) {
 
 			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
 
 		}
 
+		/**
+		* Returns true if the given bounding sphere intersects this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {boolean} The result of the intersection test.
+		*/
 		intersectsBoundingSphere( sphere ) {
 
 			const radius = this.radius + sphere.radius;
@@ -3869,6 +4644,12 @@
 
 		}
 
+		/**
+		* Returns true if the given bounding sphere is deep equal with this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( sphere ) {
 
 			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
@@ -3877,18 +4658,22 @@
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Line3.js
-	 *
-	 */
-
 	const p1 = new Vector3();
 	const p2 = new Vector3();
 
+	/**
+	* Class representing a 3D line segment.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class LineSegment {
 
+		/**
+		* Constructs a new line segment with the given values.
+		*
+		* @param {Vector3} from - The start point of the line segment.
+		* @param {Vector3} to - The end point of the line segment.
+		*/
 		constructor( from = new Vector3(), to = new Vector3() ) {
 
 			this.from = from;
@@ -3896,6 +4681,13 @@
 
 		}
 
+		/**
+		* Sets the given values to this line segment.
+		*
+		* @param {Vector3} from - The start point of the line segment.
+		* @param {Vector3} to - The end point of the line segment.
+		* @return {LineSegment} A reference to this line segment.
+		*/
 		set( from, to ) {
 
 			this.from = from;
@@ -3905,6 +4697,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given line segment to this line segment.
+		*
+		* @param {LineSegment} lineSegment - The line segment to copy.
+		* @return {LineSegment} A reference to this line segment.
+		*/
 		copy( lineSegment ) {
 
 			this.from.copy( lineSegment.from );
@@ -3914,24 +4712,55 @@
 
 		}
 
+		/**
+		* Creates a new line segment and copies all values from this line segment.
+		*
+		* @return {LineSegment} A new line segment.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Computes the difference vector between the end and start point of this
+		* line segment and stores the result in the given vector.
+		*
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
 		delta( result ) {
 
 			return result.subVectors( this.to, this.from );
 
 		}
 
+		/**
+		* Computes a position on the line segment according to the given t value
+		* and stores the result in the given 3D vector. The t value has usually a range of
+		* [0, 1] where 0 means start position and 1 the end position.
+		*
+		* @param {number} t - A scalar value representing a position on the line segment.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
 		at( t, result ) {
 
 			return this.delta( result ).multiplyScalar( t ).add( this.from );
 
 		}
 
+		/**
+		* Computes the clostest point on an infinite line defined by the line segment.
+		* It's possible to clamp the closest point so it does not exceed the start and
+		* end position of the line segment.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {boolean} clampToLine - Indicates if the results should be clamped.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The closest point.
+		*/
 		closestPointToPoint( point, clampToLine, result ) {
 
 			const t = this.closestPointToPointParameter( point, clampToLine );
@@ -3940,6 +4769,15 @@
 
 		}
 
+		/**
+		* Computes a scalar value which represents the closest point on an infinite line
+		* defined by the line segment. It's possible to clamp this value so it does not
+		* exceed the start and end position of the line segment.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {boolean} clampToLine - Indicates if the results should be clamped.
+		* @return {number} A scalar representing the closest point.
+		*/
 		closestPointToPointParameter( point, clampToLine = true ) {
 
 			p1.subVectors( point, this.from );
@@ -3956,6 +4794,12 @@
 
 		}
 
+		/**
+		* Returns true if the given line segment is deep equal with this line segment.
+		*
+		* @param {LineSegment} lineSegment - The line segment to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( lineSegment ) {
 
 			return lineSegment.from.equals( this.from ) && lineSegment.to.equals( this.to );
@@ -3964,18 +4808,22 @@
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Plane.js
-	 *
-	 */
-
 	const v1 = new Vector3();
 	const v2 = new Vector3();
 
+	/**
+	* Class representing a plane in 3D space. The plane is specified in Hessian normal form.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class Plane {
 
+		/**
+		* Constructs a new plane with the given values. The sign of __Plane#constant__ determines the side of the plane on which the origin is located.
+		*
+		* @param {Vector3} normal - The normal vector of the plane.
+		* @param {number} constant - The distance of the plane from the origin.
+		*/
 		constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
 
 			this.normal = normal;
@@ -3983,6 +4831,13 @@
 
 		}
 
+		/**
+		* Sets the given values to this plane.
+		*
+		* @param {Vector3} normal - The normal vector of the plane.
+		* @param {number} constant - The distance of the plane from the origin.
+		* @return {Plane} A reference to this plane.
+		*/
 		set( normal, constant ) {
 
 			this.normal = normal;
@@ -3992,6 +4847,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given plane to this plane.
+		*
+		* @param {Plane} plane - The plane to copy.
+		* @return {Plane} A reference to this plane.
+		*/
 		copy( plane ) {
 
 			this.normal.copy( plane.normal );
@@ -4001,18 +4862,38 @@
 
 		}
 
+		/**
+		* Creates a new plane and copies all values from this plane.
+		*
+		* @return {Plane} A new plane.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Computes the signed distance from the given 3D vector to this plane.
+		* The sign of the distance indicates the half-space in which the points lies.
+		* Zero means the point lies on the plane.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {number} The signed distance.
+		*/
 		distanceToPoint( point ) {
 
 			return this.normal.dot( point ) + this.constant;
 
 		}
 
+		/**
+		* Sets the values of the plane from the given normal vector and a coplanar point.
+		*
+		* @param {Vector3} normal - A normalized vector.
+		* @param {Vector3} point - A coplanar point.
+		* @return {Plane} A reference to this plane.
+		*/
 		fromNormalAndCoplanarPoint( normal, point ) {
 
 			this.normal.copy( normal );
@@ -4022,6 +4903,14 @@
 
 		}
 
+		/**
+		* Sets the values of the plane from three given coplanar points.
+		*
+		* @param {Vector3} a - A coplanar point.
+		* @param {Vector3} b - A coplanar point.
+		* @param {Vector3} c - A coplanar point.
+		* @return {Plane} A reference to this plane.
+		*/
 		fromCoplanarPoints( a, b, c ) {
 
 			v1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
@@ -4032,6 +4921,12 @@
 
 		}
 
+		/**
+		* Returns true if the given plane is deep equal with this plane.
+		*
+		* @param {Plane} plane - The plane to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( plane ) {
 
 			return plane.normal.equals( this.normal ) && plane.constant === this.constant;
@@ -4040,17 +4935,21 @@
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Reference: https://github.com/mrdoob/three.js/blob/master/src/math/Ray.js
-	 *
-	 */
-
 	const v1$1 = new Vector3();
 
+	/**
+	* Class representing a ray in 3D space.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87 }
+	*/
 	class Ray {
 
+		/**
+		* Constructs a new ray with the given values.
+		*
+		* @param {Vector3} origin - The origin of the ray.
+		* @param {Vector3} direction - The direction of the ray.
+		*/
 		constructor( origin = new Vector3(), direction = new Vector3() ) {
 
 			this.origin = origin;
@@ -4058,6 +4957,13 @@
 
 		}
 
+		/**
+		* Sets the given values to this ray.
+		*
+		* @param {Vector3} origin - The origin of the ray.
+		* @param {Vector3} direction - The direction of the ray.
+		* @return {Ray} A reference to this ray.
+		*/
 		set( origin, direction ) {
 
 			this.origin = origin;
@@ -4067,6 +4973,12 @@
 
 		}
 
+		/**
+		* Copies all values from the given ray to this ray.
+		*
+		* @param {Ray} ray - The ray to copy.
+		* @return {Ray} A reference to this ray.
+		*/
 		copy( ray ) {
 
 			this.origin.copy( ray.origin );
@@ -4076,19 +4988,41 @@
 
 		}
 
+		/**
+		* Creates a new ray and copies all values from this ray.
+		*
+		* @return {Ray} A new ray.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
 
 		}
 
+		/**
+		* Computes a position on the ray according to the given t value
+		* and stores the result in the given 3D vector. The t value has a range of
+		* [0, Infinity] where 0 means the position is equal with the origin of the ray.
+		*
+		* @param {number} t - A scalar value representing a position on the ray.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
 		at( t, result ) {
 
-			//t has to be zero or positive
+			// t has to be zero or positive
 			return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 		}
 
+		/**
+		* Performs a ray/sphere intersection test and stores the intersection point
+		* to the given 3D vector. If no intersection is detected, null is returned.
+		*
+		* @param {BoundingSphere} sphere - A bounding sphere.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
 		intersectSphere( sphere, result ) {
 
 			v1$1.subVectors( sphere.center, this.origin );
@@ -4124,6 +5058,12 @@
 
 		}
 
+		/**
+		* Returns true if the given ray is deep equal with this ray.
+		*
+		* @param {Ray} ray - The ray to test.
+		* @return {boolean} The result of the equality test.
+		*/
 		equals( ray ) {
 
 			return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
