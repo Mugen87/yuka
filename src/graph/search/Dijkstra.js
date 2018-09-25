@@ -1,16 +1,44 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { PriorityQueue } from '../extra/PriorityQueue.js';
 
+/**
+* Implementation of Dijkstra's algorithm.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class Dijkstra {
 
+	/**
+	* Constructs a Dijkstra algorithm object.
+	*
+	* @param {Graph} graph - The graph.
+	* @param {Number} source - The node index of the source node.
+	* @param {Number} target - The node index of the target node.
+	*/
 	constructor( graph = null, source = - 1, target = - 1 ) {
 
+		/**
+		* The graph.
+		* @type Graph
+		*/
 		this.graph = graph;
+
+		/**
+		* The node index of the source node.
+		* @type Number
+		*/
 		this.source = source;
+
+		/**
+		* The node index of the target node.
+		* @type Number
+		*/
 		this.target = target;
+
+		/**
+		* Whether the search was successful or not.
+		* @type Boolean
+		* @default false
+		*/
 		this.found = false;
 
 		this._cost = new Map(); // total cost of the bast path so far for a given node
@@ -19,6 +47,12 @@ class Dijkstra {
 
 	}
 
+	/**
+	* Executes the graph search. If the search was successful, {@link Dijkstra#found}
+	* is set to true.
+	*
+	* @return {Dijkstra} A reference to this Dijkstra object.
+	*/
 	search() {
 
 		const outgoingEdges = new Array();
@@ -99,6 +133,11 @@ class Dijkstra {
 
 	}
 
+	/**
+	* Returns the shortest path from the source to the target node as an array of node indices.
+	*
+	* @return {Array} The shortest path.
+	*/
 	getPath() {
 
 		// array of node indices that comprise the shortest path from the source to the target
@@ -133,12 +172,22 @@ class Dijkstra {
 
 	}
 
+	/**
+	* Returns the search tree of the algorithm as an array of edges.
+	*
+	* @return {Array} The search tree.
+	*/
 	getSearchTree() {
 
 		return [ ...this._shortestPathTree.values() ];
 
 	}
 
+	/**
+	* Clears the internal state of the object. A new search is now possible.
+	*
+	* @return {Dijkstra} A reference to this Dijkstra object.
+	*/
 	clear() {
 
 		this.found = false;
@@ -146,6 +195,8 @@ class Dijkstra {
 		this._cost.clear();
 		this._shortestPathTree.clear();
 		this._searchFrontier.clear();
+
+		return this;
 
 	}
 

@@ -1,19 +1,53 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { PriorityQueue } from '../extra/PriorityQueue.js';
 import { HeuristicPolicyEuclid } from '../extra/HeuristicPolicy.js';
 
+/**
+* Implementation of the AStar algorithm.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class AStar {
 
+	/**
+	* Constructs an AStar algorithm object.
+	*
+	* @param {Graph} graph - The graph.
+	* @param {Number} source - The node index of the source node.
+	* @param {Number} target - The node index of the target node.
+	*/
 	constructor( graph = null, source = - 1, target = - 1 ) {
 
+		/**
+		* The graph.
+		* @type Graph
+		*/
 		this.graph = graph;
+
+		/**
+		* The node index of the source node.
+		* @type Number
+		*/
 		this.source = source;
+
+		/**
+		* The node index of the target node.
+		* @type Number
+		*/
 		this.target = target;
-		this.heuristic = HeuristicPolicyEuclid;
+
+		/**
+		* Whether the search was successful or not.
+		* @type Boolean
+		* @default false
+		*/
 		this.found = false;
+
+		/**
+		* The heuristic of the search.
+		* @type Object
+		* @default HeuristicPolicyEuclid
+		*/
+		this.heuristic = HeuristicPolicyEuclid;
 
 		this._cost = new Map(); // contains the "real" accumulative cost to a node
 		this._shortestPathTree = new Map();
@@ -21,6 +55,12 @@ class AStar {
 
 	}
 
+	/**
+	* Executes the graph search. If the search was successful, {@link AStar#found}
+	* is set to true.
+	*
+	* @return {AStar} A reference to this AStar object.
+	*/
 	search() {
 
 		const outgoingEdges = new Array();
@@ -110,6 +150,11 @@ class AStar {
 
 	}
 
+	/**
+	* Returns the shortest path from the source to the target node as an array of node indices.
+	*
+	* @return {Array} The shortest path.
+	*/
 	getPath() {
 
 		// array of node indices that comprise the shortest path from the source to the target
@@ -144,12 +189,22 @@ class AStar {
 
 	}
 
+	/**
+	* Returns the search tree of the algorithm as an array of edges.
+	*
+	* @return {Array} The search tree.
+	*/
 	getSearchTree() {
 
 		return [ ...this._shortestPathTree.values() ];
 
 	}
 
+	/**
+	* Clears the internal state of the object. A new search is now possible.
+	*
+	* @return {AStar} A reference to this AStar object.
+	*/
 	clear() {
 
 		this.found = false;
@@ -157,6 +212,8 @@ class AStar {
 		this._cost.clear();
 		this._shortestPathTree.clear();
 		this._searchFrontier.clear();
+
+		return this;
 
 	}
 

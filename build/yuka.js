@@ -3402,29 +3402,65 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Base class for graph edges.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Edge {
 
+		/**
+		* Constructs a new edge.
+		*
+		* @param {Number} from - The index of the from node.
+		* @param {Number} to - The index of the to node.
+		* @param {Number} cost - The cost of this edge.
+		*/
 		constructor( from = - 1, to = - 1, cost = 0 ) {
 
+			/**
+			* The index of the *from* node.
+			* @type Number
+			* @default -1
+			*/
 			this.from = from;
+
+			/**
+			* The index of the *to* node.
+			* @type Number
+			* @default -1
+			*/
 			this.to = to;
+
+			/**
+			* The cost of this edge. This could be for example a distance or time value.
+			* @type Number
+			* @default 0
+			*/
 			this.cost = cost;
 
 		}
 
-		copy( source ) {
+		/**
+		* Copies all values from the given edge to this edge.
+		*
+		* @param {Edge} edge - The edge to copy.
+		* @return {Edge} A reference to this edge.
+		*/
+		copy( edge ) {
 
-			this.from = source.from;
-			this.to = source.to;
-			this.cost = source.cost;
+			this.from = edge.from;
+			this.to = edge.to;
+			this.cost = edge.cost;
 
 			return this;
 
 		}
 
+		/**
+		* Creates a new edge and copies all values from this edge.
+		*
+		* @return {Edge} A new edge.
+		*/
 		clone() {
 
 			return new this.constructor().copy( this );
@@ -3434,20 +3470,38 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class representing a sparse graph implementation based on adjacency lists.
+	* A sparse graph can be used to model many different types of graphs like navigation
+	* graphs (pathfinding), dependency graphs (e.g. technology trees) or a state graphs
+	* (a representation of every possible state in a game).
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Graph {
 
+		/**
+		* Constructs a new graph.
+		*/
 		constructor() {
 
+			/**
+			* Whether this graph is directed or not.
+			* @type Boolean
+			* @default false
+			*/
 			this.digraph = false;
 
-			this._nodes = new Map();
-			this._edges = new Map(); // adjacency list for each node
+			this._nodes = new Map(); // contains all nodes in a map: (nodeIndex => node)
+			this._edges = new Map(); // adjacency list for each node: (nodeIndex => edges)
 
 		}
 
+		/**
+		* Adds a node to the graph.
+		*
+		* @param {Node} node - The node to add.
+		* @return {Graph} A reference to this graph.
+		*/
 		addNode( node ) {
 
 			const index = node.index;
@@ -3459,6 +3513,13 @@
 
 		}
 
+		/**
+		* Adds an edge to the graph. If the graph is undirected, the method
+		* automatically creates the opponent edge.
+		*
+		* @param {Edge} edge - The edge to add.
+		* @return {Graph} A reference to this graph.
+		*/
 		addEdge( edge ) {
 
 			let edges;
@@ -3482,12 +3543,27 @@
 
 		}
 
+		/**
+		* Returns a node for the given node index. If no node is found,
+		* *null* is returned.
+		*
+		* @param {Number} index - The index of the node.
+		* @return {Node} The requested node.
+		*/
 		getNode( index ) {
 
 			return this._nodes.get( index ) || null;
 
 		}
 
+		/**
+		* Returns an edge for the given *from* and *to* node indices.
+		* If no node is found, *null* is returned.
+		*
+		* @param {Number} from - The index of the from node.
+		* @param {Number} to - The index of the to node.
+		* @return {Edge} The requested edge.
+		*/
 		getEdge( from, to ) {
 
 			if ( this.hasNode( from ) && this.hasNode( to ) ) {
@@ -3512,15 +3588,29 @@
 
 		}
 
+		/**
+		* Gathers all nodes of the graph and stores them into the given array.
+		*
+		* @param {Array} result - The result array.
+		* @return {Array} The result array.
+		*/
 		getNodes( result ) {
 
 			result.length = 0;
 			result.push( ...this._nodes.values() );
 
-			return this;
+			return result;
 
 		}
 
+		/**
+		* Gathers all edges leading from the given node index and stores them
+		* into the given array.
+		*
+		* @param {Number} index - The node index.
+		* @param {Array} result - The result array.
+		* @return {Array} The result array.
+		*/
 		getEdgesOfNode( index, result ) {
 
 			const edges = this._edges.get( index );
@@ -3532,16 +3622,26 @@
 
 			}
 
-			return this;
+			return result;
 
 		}
 
+		/**
+		* Returns the node count of the graph.
+		*
+		* @return {number} The amount of nodes.
+		*/
 		getNodeCount() {
 
 			return this._nodes.size;
 
 		}
 
+		/**
+		* Returns the edge count of the graph.
+		*
+		* @return {number} The amount of edges.
+		*/
 		getEdgeCount() {
 
 			let count = 0;
@@ -3556,6 +3656,13 @@
 
 		}
 
+		/**
+		* Removes the given node from the graph and all edges which are connected
+		* with this node.
+		*
+		*	@param {Node} node - The node to remove.
+		* @return {Graph} A reference to this graph.
+		*/
 		removeNode( node ) {
 
 			this._nodes.delete( node.index );
@@ -3618,6 +3725,13 @@
 
 		}
 
+		/**
+		* Removes the given edge from the graph. If the graph is undirected, the
+		* method also removes the opponent edge.
+		*
+		*	@param {Edge} edge - The edge to remove.
+		* @return {Graph} A reference to this graph.
+		*/
 		removeEdge( edge ) {
 
 			// delete the edge from the node's edge list
@@ -3657,12 +3771,26 @@
 
 		}
 
+		/**
+		* Return true if the graph has the given node index.
+		*
+		*	@param {Number} index - The node index to test.
+		* @return {Boolean} Whether this graph has the node or not.
+		*/
 		hasNode( index ) {
 
 			return this._nodes.has( index );
 
 		}
 
+		/**
+		* Return true if the graph has an edge connecting the given
+		* *from* and *to* node indices.
+		*
+		* @param {Number} from - The index of the from node.
+		* @param {Number} to - The index of the to node.
+		* @return {Boolean} Whether this graph has the edge or not.
+		*/
 		hasEdge( from, to ) {
 
 			if ( this.hasNode( from ) && this.hasNode( to ) ) {
@@ -3691,6 +3819,11 @@
 
 		}
 
+		/**
+		* Removes all nodes and edges from this graph.
+		*
+		* @return {Graph} A reference to this graph.
+		*/
 		clear() {
 
 			this._nodes.clear();
@@ -3703,13 +3836,24 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Base class for graph nodes.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Node {
 
+		/**
+		* Constructs a new node.
+		*
+		* @param {Number} index - The unique index of this node.
+		*/
 		constructor( index = - 1 ) {
 
+			/**
+			* The unique index of this node. The default value *-1* means invalid index.
+			* @type Number
+			* @default -1
+			*/
 			this.index = index;
 
 		}
@@ -3717,11 +3861,22 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class for representing a heuristic for graph search algorithms based
+	* on the euclidian distance. The heuristic assumes that the node have
+	* a *position* property of type {@link Vector3}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class HeuristicPolicyEuclid {
 
+		/**
+		* Calculates the euclidian distance between two nodes.
+		*
+		* @param {Graph} grapj - The graph.
+		* @param {Number} source - The index of the source node.
+		* @param {Number} target - The index of the target node.
+		* @return {Number} The euclidian distance between both nodes.
+		*/
 		static calculate( graph, source, target ) {
 
 			const sourceNode = graph.getNode( source );
@@ -3733,8 +3888,23 @@
 
 	}
 
+	/**
+	* Class for representing a heuristic for graph search algorithms based
+	* on the squared euclidian distance. The heuristic assumes that the node
+	* have a *position* property of type {@link Vector3}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class HeuristicPolicyEuclidSquared {
 
+		/**
+		* Calculates the squared euclidian distance between two nodes.
+		*
+		* @param {Graph} grapj - The graph.
+		* @param {Number} source - The index of the source node.
+		* @param {Number} target - The index of the target node.
+		* @return {Number} The squared euclidian distance between both nodes.
+		*/
 		static calculate( graph, source, target ) {
 
 			const sourceNode = graph.getNode( source );
@@ -3746,8 +3916,23 @@
 
 	}
 
+	/**
+	* Class for representing a heuristic for graph search algorithms based
+	* on the manhatten distance. The heuristic assumes that the node
+	* have a *position* property of type {@link Vector3}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class HeuristicPolicyManhatten {
 
+		/**
+		* Calculates the manhatten distance between two nodes.
+		*
+		* @param {Graph} grapj - The graph.
+		* @param {Number} source - The index of the source node.
+		* @param {Number} target - The index of the target node.
+		* @return {Number} The manhatten distance between both nodes.
+		*/
 		static calculate( graph, source, target ) {
 
 			const sourceNode = graph.getNode( source );
@@ -3759,8 +3944,23 @@
 
 	}
 
+	/**
+	* Class for representing a heuristic for graph search algorithms based
+	* on Dijkstra's algorithm.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class HeuristicPolicyDijkstra {
 
+		/**
+		* This heuristic always returns *0*. The {@link AStar} algorithm
+		* behaves with this heuristic exactly like {@link Dijkstra}
+		*
+		* @param {Graph} grapj - The graph.
+		* @param {Number} source - The index of the source node.
+		* @param {Number} target - The index of the target node.
+		* @return {Number} The manhatten distance between both nodes.
+		*/
 		static calculate( /* graph, source, target */ ) {
 
 			return 0;
@@ -3770,21 +3970,48 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
+	 * Class for representing a binary heap priority queue that enables
+	 * more efficient sorting of arrays. The implementation is based on
+	 * {@link https://github.com/mourner/tinyqueue tinyqueue}.
 	 *
-	 * binary heap priority queue (see https://github.com/mourner/tinyqueue)
+	 * @author {@link https://github.com/Mugen87|Mugen87}
 	 */
-
 	class PriorityQueue {
 
+		/**
+		* Constructs a new priority queue.
+		*
+		* @param {Function} compare - The compare function used for sorting.
+		*/
 		constructor( compare = defaultCompare ) {
 
+			/**
+			* The data items of the priority queue.
+			* @type Array
+			*/
 			this.data = new Array();
+
+			/**
+			* The length of the priority queue.
+			* @type Number
+			* @default 0
+			*/
 			this.length = 0;
+
+			/**
+			* The compare function used for sorting.
+			* @type Function
+			* @default defaultCompare
+			*/
 			this.compare = compare;
 
 		}
 
+		/**
+		* Pushes an item to the priority queue.
+		*
+		* @param {Object} item - The item to add.
+		*/
 		push( item ) {
 
 			this.data.push( item );
@@ -3793,6 +4020,12 @@
 
 		}
 
+		/**
+		* Returns the item with the highest priority and removes
+		* it from the priority queue.
+		*
+		* @return {Object} The item with the highest priority.
+		*/
 		pop() {
 
 			if ( this.length === 0 ) return null;
@@ -3813,6 +4046,11 @@
 
 		}
 
+		/**
+		* Returns the item with the highest priority without removal.
+		*
+		* @return {Object} The item with the highest priority.
+		*/
 		peek() {
 
 			return this.data[ 0 ] || null;
@@ -3882,18 +4120,52 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Implementation of the AStar algorithm.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class AStar {
 
+		/**
+		* Constructs an AStar algorithm object.
+		*
+		* @param {Graph} graph - The graph.
+		* @param {Number} source - The node index of the source node.
+		* @param {Number} target - The node index of the target node.
+		*/
 		constructor( graph = null, source = - 1, target = - 1 ) {
 
+			/**
+			* The graph.
+			* @type Graph
+			*/
 			this.graph = graph;
+
+			/**
+			* The node index of the source node.
+			* @type Number
+			*/
 			this.source = source;
+
+			/**
+			* The node index of the target node.
+			* @type Number
+			*/
 			this.target = target;
-			this.heuristic = HeuristicPolicyEuclid;
+
+			/**
+			* Whether the search was successful or not.
+			* @type Boolean
+			* @default false
+			*/
 			this.found = false;
+
+			/**
+			* The heuristic of the search.
+			* @type Object
+			* @default HeuristicPolicyEuclid
+			*/
+			this.heuristic = HeuristicPolicyEuclid;
 
 			this._cost = new Map(); // contains the "real" accumulative cost to a node
 			this._shortestPathTree = new Map();
@@ -3901,6 +4173,12 @@
 
 		}
 
+		/**
+		* Executes the graph search. If the search was successful, {@link AStar#found}
+		* is set to true.
+		*
+		* @return {AStar} A reference to this AStar object.
+		*/
 		search() {
 
 			const outgoingEdges = new Array();
@@ -3990,6 +4268,11 @@
 
 		}
 
+		/**
+		* Returns the shortest path from the source to the target node as an array of node indices.
+		*
+		* @return {Array} The shortest path.
+		*/
 		getPath() {
 
 			// array of node indices that comprise the shortest path from the source to the target
@@ -4024,12 +4307,22 @@
 
 		}
 
+		/**
+		* Returns the search tree of the algorithm as an array of edges.
+		*
+		* @return {Array} The search tree.
+		*/
 		getSearchTree() {
 
 			return [ ...this._shortestPathTree.values() ];
 
 		}
 
+		/**
+		* Clears the internal state of the object. A new search is now possible.
+		*
+		* @return {AStar} A reference to this AStar object.
+		*/
 		clear() {
 
 			this.found = false;
@@ -4037,6 +4330,8 @@
 			this._cost.clear();
 			this._shortestPathTree.clear();
 			this._searchFrontier.clear();
+
+			return this;
 
 		}
 
@@ -4050,16 +4345,44 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Implementation of Breadth First Search.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class BFS {
 
+		/**
+		* Constructs a BFS algorithm object.
+		*
+		* @param {Graph} graph - The graph.
+		* @param {Number} source - The node index of the source node.
+		* @param {Number} target - The node index of the target node.
+		*/
 		constructor( graph = null, source = - 1, target = - 1 ) {
 
+			/**
+			* The graph.
+			* @type Graph
+			*/
 			this.graph = graph;
+
+			/**
+			* The node index of the source node.
+			* @type Number
+			*/
 			this.source = source;
+
+			/**
+			* The node index of the target node.
+			* @type Number
+			*/
 			this.target = target;
+
+			/**
+			* Whether the search was successful or not.
+			* @type Boolean
+			* @default false
+			*/
 			this.found = false;
 
 			this._route = new Map(); // this holds the route taken to the target
@@ -4069,6 +4392,12 @@
 
 		}
 
+		/**
+		* Executes the graph search. If the search was successful, {@link BFS#found}
+		* is set to true.
+		*
+		* @return {BFS} A reference to this BFS object.
+		*/
 		search() {
 
 			// create a queue(FIFO) of edges, done via an array
@@ -4149,6 +4478,11 @@
 
 		}
 
+		/**
+		* Returns the shortest path from the source to the target node as an array of node indices.
+		*
+		* @return {Array} The shortest path.
+		*/
 		getPath() {
 
 			// array of node indices that comprise the shortest path from the source to the target
@@ -4183,12 +4517,22 @@
 
 		}
 
+		/**
+		* Returns the search tree of the algorithm as an array of edges.
+		*
+		* @return {Array} The search tree.
+		*/
 		getSearchTree() {
 
 			return [ ...this._spanningTree ];
 
 		}
 
+		/**
+		* Clears the internal state of the object. A new search is now possible.
+		*
+		* @return {BFS} A reference to this BFS object.
+		*/
 		clear() {
 
 			this.found = false;
@@ -4197,21 +4541,51 @@
 			this._visited.clear();
 			this._spanningTree.clear();
 
+			return this;
+
 		}
 
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Implementation of Depth First Search.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class DFS {
 
+		/**
+		* Constructs a DFS algorithm object.
+		*
+		* @param {Graph} graph - The graph.
+		* @param {Number} source - The node index of the source node.
+		* @param {Number} target - The node index of the target node.
+		*/
 		constructor( graph = null, source = - 1, target = - 1 ) {
 
+			/**
+			* The graph.
+			* @type Graph
+			*/
 			this.graph = graph;
+
+			/**
+			* The node index of the source node.
+			* @type Number
+			*/
 			this.source = source;
+
+			/**
+			* The node index of the target node.
+			* @type Number
+			*/
 			this.target = target;
+
+			/**
+			* Whether the search was successful or not.
+			* @type Boolean
+			* @default false
+			*/
 			this.found = false;
 
 			this._route = new Map(); // this holds the route taken to the target
@@ -4221,6 +4595,12 @@
 
 		}
 
+		/**
+		* Executes the graph search. If the search was successful, {@link DFS#found}
+		* is set to true.
+		*
+		* @return {DFS} A reference to this DFS object.
+		*/
 		search() {
 
 			// create a stack(LIFO) of edges, done via an array
@@ -4295,6 +4675,11 @@
 
 		}
 
+		/**
+		* Returns the shortest path from the source to the target node as an array of node indices.
+		*
+		* @return {Array} The shortest path.
+		*/
 		getPath() {
 
 			// array of node indices that comprise the shortest path from the source to the target
@@ -4329,12 +4714,22 @@
 
 		}
 
+		/**
+		* Returns the search tree of the algorithm as an array of edges.
+		*
+		* @return {Array} The search tree.
+		*/
 		getSearchTree() {
 
 			return [ ...this._spanningTree ];
 
 		}
 
+		/**
+		* Clears the internal state of the object. A new search is now possible.
+		*
+		* @return {DFS} A reference to this DFS object.
+		*/
 		clear() {
 
 			this.found = false;
@@ -4343,21 +4738,51 @@
 			this._visited.clear();
 			this._spanningTree.clear();
 
+			return this;
+
 		}
 
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Implementation of Dijkstra's algorithm.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Dijkstra {
 
+		/**
+		* Constructs a Dijkstra algorithm object.
+		*
+		* @param {Graph} graph - The graph.
+		* @param {Number} source - The node index of the source node.
+		* @param {Number} target - The node index of the target node.
+		*/
 		constructor( graph = null, source = - 1, target = - 1 ) {
 
+			/**
+			* The graph.
+			* @type Graph
+			*/
 			this.graph = graph;
+
+			/**
+			* The node index of the source node.
+			* @type Number
+			*/
 			this.source = source;
+
+			/**
+			* The node index of the target node.
+			* @type Number
+			*/
 			this.target = target;
+
+			/**
+			* Whether the search was successful or not.
+			* @type Boolean
+			* @default false
+			*/
 			this.found = false;
 
 			this._cost = new Map(); // total cost of the bast path so far for a given node
@@ -4366,6 +4791,12 @@
 
 		}
 
+		/**
+		* Executes the graph search. If the search was successful, {@link Dijkstra#found}
+		* is set to true.
+		*
+		* @return {Dijkstra} A reference to this Dijkstra object.
+		*/
 		search() {
 
 			const outgoingEdges = new Array();
@@ -4446,6 +4877,11 @@
 
 		}
 
+		/**
+		* Returns the shortest path from the source to the target node as an array of node indices.
+		*
+		* @return {Array} The shortest path.
+		*/
 		getPath() {
 
 			// array of node indices that comprise the shortest path from the source to the target
@@ -4480,12 +4916,22 @@
 
 		}
 
+		/**
+		* Returns the search tree of the algorithm as an array of edges.
+		*
+		* @return {Array} The search tree.
+		*/
 		getSearchTree() {
 
 			return [ ...this._shortestPathTree.values() ];
 
 		}
 
+		/**
+		* Clears the internal state of the object. A new search is now possible.
+		*
+		* @return {Dijkstra} A reference to this Dijkstra object.
+		*/
 		clear() {
 
 			this.found = false;
@@ -4493,6 +4939,8 @@
 			this._cost.clear();
 			this._shortestPathTree.clear();
 			this._searchFrontier.clear();
+
+			return this;
 
 		}
 

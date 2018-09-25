@@ -1,16 +1,44 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Edge } from '../core/Edge.js';
 
+/**
+* Implementation of Depth First Search.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class DFS {
 
+	/**
+	* Constructs a DFS algorithm object.
+	*
+	* @param {Graph} graph - The graph.
+	* @param {Number} source - The node index of the source node.
+	* @param {Number} target - The node index of the target node.
+	*/
 	constructor( graph = null, source = - 1, target = - 1 ) {
 
+		/**
+		* The graph.
+		* @type Graph
+		*/
 		this.graph = graph;
+
+		/**
+		* The node index of the source node.
+		* @type Number
+		*/
 		this.source = source;
+
+		/**
+		* The node index of the target node.
+		* @type Number
+		*/
 		this.target = target;
+
+		/**
+		* Whether the search was successful or not.
+		* @type Boolean
+		* @default false
+		*/
 		this.found = false;
 
 		this._route = new Map(); // this holds the route taken to the target
@@ -20,6 +48,12 @@ class DFS {
 
 	}
 
+	/**
+	* Executes the graph search. If the search was successful, {@link DFS#found}
+	* is set to true.
+	*
+	* @return {DFS} A reference to this DFS object.
+	*/
 	search() {
 
 		// create a stack(LIFO) of edges, done via an array
@@ -94,6 +128,11 @@ class DFS {
 
 	}
 
+	/**
+	* Returns the shortest path from the source to the target node as an array of node indices.
+	*
+	* @return {Array} The shortest path.
+	*/
 	getPath() {
 
 		// array of node indices that comprise the shortest path from the source to the target
@@ -128,12 +167,22 @@ class DFS {
 
 	}
 
+	/**
+	* Returns the search tree of the algorithm as an array of edges.
+	*
+	* @return {Array} The search tree.
+	*/
 	getSearchTree() {
 
 		return [ ...this._spanningTree ];
 
 	}
 
+	/**
+	* Clears the internal state of the object. A new search is now possible.
+	*
+	* @return {DFS} A reference to this DFS object.
+	*/
 	clear() {
 
 		this.found = false;
@@ -141,6 +190,8 @@ class DFS {
 		this._route.clear();
 		this._visited.clear();
 		this._spanningTree.clear();
+
+		return this;
 
 	}
 

@@ -1,16 +1,44 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Edge } from '../core/Edge.js';
 
+/**
+* Implementation of Breadth First Search.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class BFS {
 
+	/**
+	* Constructs a BFS algorithm object.
+	*
+	* @param {Graph} graph - The graph.
+	* @param {Number} source - The node index of the source node.
+	* @param {Number} target - The node index of the target node.
+	*/
 	constructor( graph = null, source = - 1, target = - 1 ) {
 
+		/**
+		* The graph.
+		* @type Graph
+		*/
 		this.graph = graph;
+
+		/**
+		* The node index of the source node.
+		* @type Number
+		*/
 		this.source = source;
+
+		/**
+		* The node index of the target node.
+		* @type Number
+		*/
 		this.target = target;
+
+		/**
+		* Whether the search was successful or not.
+		* @type Boolean
+		* @default false
+		*/
 		this.found = false;
 
 		this._route = new Map(); // this holds the route taken to the target
@@ -20,6 +48,12 @@ class BFS {
 
 	}
 
+	/**
+	* Executes the graph search. If the search was successful, {@link BFS#found}
+	* is set to true.
+	*
+	* @return {BFS} A reference to this BFS object.
+	*/
 	search() {
 
 		// create a queue(FIFO) of edges, done via an array
@@ -100,6 +134,11 @@ class BFS {
 
 	}
 
+	/**
+	* Returns the shortest path from the source to the target node as an array of node indices.
+	*
+	* @return {Array} The shortest path.
+	*/
 	getPath() {
 
 		// array of node indices that comprise the shortest path from the source to the target
@@ -134,12 +173,22 @@ class BFS {
 
 	}
 
+	/**
+	* Returns the search tree of the algorithm as an array of edges.
+	*
+	* @return {Array} The search tree.
+	*/
 	getSearchTree() {
 
 		return [ ...this._spanningTree ];
 
 	}
 
+	/**
+	* Clears the internal state of the object. A new search is now possible.
+	*
+	* @return {BFS} A reference to this BFS object.
+	*/
 	clear() {
 
 		this.found = false;
@@ -147,6 +196,8 @@ class BFS {
 		this._route.clear();
 		this._visited.clear();
 		this._spanningTree.clear();
+
+		return this;
 
 	}
 

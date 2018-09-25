@@ -1,18 +1,36 @@
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Class representing a sparse graph implementation based on adjacency lists.
+* A sparse graph can be used to model many different types of graphs like navigation
+* graphs (pathfinding), dependency graphs (e.g. technology trees) or a state graphs
+* (a representation of every possible state in a game).
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class Graph {
 
+	/**
+	* Constructs a new graph.
+	*/
 	constructor() {
 
+		/**
+		* Whether this graph is directed or not.
+		* @type Boolean
+		* @default false
+		*/
 		this.digraph = false;
 
-		this._nodes = new Map();
-		this._edges = new Map(); // adjacency list for each node
+		this._nodes = new Map(); // contains all nodes in a map: (nodeIndex => node)
+		this._edges = new Map(); // adjacency list for each node: (nodeIndex => edges)
 
 	}
 
+	/**
+	* Adds a node to the graph.
+	*
+	* @param {Node} node - The node to add.
+	* @return {Graph} A reference to this graph.
+	*/
 	addNode( node ) {
 
 		const index = node.index;
@@ -24,6 +42,13 @@ class Graph {
 
 	}
 
+	/**
+	* Adds an edge to the graph. If the graph is undirected, the method
+	* automatically creates the opponent edge.
+	*
+	* @param {Edge} edge - The edge to add.
+	* @return {Graph} A reference to this graph.
+	*/
 	addEdge( edge ) {
 
 		let edges;
@@ -47,12 +72,27 @@ class Graph {
 
 	}
 
+	/**
+	* Returns a node for the given node index. If no node is found,
+	* *null* is returned.
+	*
+	* @param {Number} index - The index of the node.
+	* @return {Node} The requested node.
+	*/
 	getNode( index ) {
 
 		return this._nodes.get( index ) || null;
 
 	}
 
+	/**
+	* Returns an edge for the given *from* and *to* node indices.
+	* If no node is found, *null* is returned.
+	*
+	* @param {Number} from - The index of the from node.
+	* @param {Number} to - The index of the to node.
+	* @return {Edge} The requested edge.
+	*/
 	getEdge( from, to ) {
 
 		if ( this.hasNode( from ) && this.hasNode( to ) ) {
@@ -77,15 +117,29 @@ class Graph {
 
 	}
 
+	/**
+	* Gathers all nodes of the graph and stores them into the given array.
+	*
+	* @param {Array} result - The result array.
+	* @return {Array} The result array.
+	*/
 	getNodes( result ) {
 
 		result.length = 0;
 		result.push( ...this._nodes.values() );
 
-		return this;
+		return result;
 
 	}
 
+	/**
+	* Gathers all edges leading from the given node index and stores them
+	* into the given array.
+	*
+	* @param {Number} index - The node index.
+	* @param {Array} result - The result array.
+	* @return {Array} The result array.
+	*/
 	getEdgesOfNode( index, result ) {
 
 		const edges = this._edges.get( index );
@@ -97,16 +151,26 @@ class Graph {
 
 		}
 
-		return this;
+		return result;
 
 	}
 
+	/**
+	* Returns the node count of the graph.
+	*
+	* @return {number} The amount of nodes.
+	*/
 	getNodeCount() {
 
 		return this._nodes.size;
 
 	}
 
+	/**
+	* Returns the edge count of the graph.
+	*
+	* @return {number} The amount of edges.
+	*/
 	getEdgeCount() {
 
 		let count = 0;
@@ -121,6 +185,13 @@ class Graph {
 
 	}
 
+	/**
+	* Removes the given node from the graph and all edges which are connected
+	* with this node.
+	*
+	*	@param {Node} node - The node to remove.
+	* @return {Graph} A reference to this graph.
+	*/
 	removeNode( node ) {
 
 		this._nodes.delete( node.index );
@@ -183,6 +254,13 @@ class Graph {
 
 	}
 
+	/**
+	* Removes the given edge from the graph. If the graph is undirected, the
+	* method also removes the opponent edge.
+	*
+	*	@param {Edge} edge - The edge to remove.
+	* @return {Graph} A reference to this graph.
+	*/
 	removeEdge( edge ) {
 
 		// delete the edge from the node's edge list
@@ -222,12 +300,26 @@ class Graph {
 
 	}
 
+	/**
+	* Return true if the graph has the given node index.
+	*
+	*	@param {Number} index - The node index to test.
+	* @return {Boolean} Whether this graph has the node or not.
+	*/
 	hasNode( index ) {
 
 		return this._nodes.has( index );
 
 	}
 
+	/**
+	* Return true if the graph has an edge connecting the given
+	* *from* and *to* node indices.
+	*
+	* @param {Number} from - The index of the from node.
+	* @param {Number} to - The index of the to node.
+	* @return {Boolean} Whether this graph has the edge or not.
+	*/
 	hasEdge( from, to ) {
 
 		if ( this.hasNode( from ) && this.hasNode( to ) ) {
@@ -256,6 +348,11 @@ class Graph {
 
 	}
 
+	/**
+	* Removes all nodes and edges from this graph.
+	*
+	* @return {Graph} A reference to this graph.
+	*/
 	clear() {
 
 		this._nodes.clear();

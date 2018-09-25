@@ -1,19 +1,46 @@
 /**
- * @author Mugen87 / https://github.com/Mugen87
+ * Class for representing a binary heap priority queue that enables
+ * more efficient sorting of arrays. The implementation is based on
+ * {@link https://github.com/mourner/tinyqueue tinyqueue}.
  *
- * binary heap priority queue (see https://github.com/mourner/tinyqueue)
+ * @author {@link https://github.com/Mugen87|Mugen87}
  */
-
 class PriorityQueue {
 
+	/**
+	* Constructs a new priority queue.
+	*
+	* @param {Function} compare - The compare function used for sorting.
+	*/
 	constructor( compare = defaultCompare ) {
 
+		/**
+		* The data items of the priority queue.
+		* @type Array
+		*/
 		this.data = new Array();
+
+		/**
+		* The length of the priority queue.
+		* @type Number
+		* @default 0
+		*/
 		this.length = 0;
+
+		/**
+		* The compare function used for sorting.
+		* @type Function
+		* @default defaultCompare
+		*/
 		this.compare = compare;
 
 	}
 
+	/**
+	* Pushes an item to the priority queue.
+	*
+	* @param {Object} item - The item to add.
+	*/
 	push( item ) {
 
 		this.data.push( item );
@@ -22,6 +49,12 @@ class PriorityQueue {
 
 	}
 
+	/**
+	* Returns the item with the highest priority and removes
+	* it from the priority queue.
+	*
+	* @return {Object} The item with the highest priority.
+	*/
 	pop() {
 
 		if ( this.length === 0 ) return null;
@@ -42,6 +75,11 @@ class PriorityQueue {
 
 	}
 
+	/**
+	* Returns the item with the highest priority without removal.
+	*
+	* @return {Object} The item with the highest priority.
+	*/
 	peek() {
 
 		return this.data[ 0 ] || null;
