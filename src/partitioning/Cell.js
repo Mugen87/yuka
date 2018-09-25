@@ -31,7 +31,7 @@ class Cell {
 	/**
 	* Adds an entry to this cell.
 	*
-	* @param {any} entry - The entry to add.
+	* @param {Any} entry - The entry to add.
 	* @return {Cell} A reference to this cell.
 	*/
 	add( entry ) {
@@ -45,7 +45,7 @@ class Cell {
 	/**
 	* Removes an entry from this cell.
 	*
-	* @param {any} entry - The entry to remove.
+	* @param {Any} entry - The entry to remove.
 	* @return {Cell} A reference to this cell.
 	*/
 	remove( entry ) {

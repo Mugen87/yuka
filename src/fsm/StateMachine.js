@@ -73,7 +73,7 @@ class StateMachine {
 	/**
 	* Adds a new state with the given ID to the state machine.
 	*
-	* @param {string} id - The ID of the state.
+	* @param {String} id - The ID of the state.
 	* @param {State} state - The state.
 	* @return {StateMachine} A reference to this state machine.
 	*/
@@ -96,7 +96,7 @@ class StateMachine {
 	/**
 	* Removes a state via its ID from the state machine.
 	*
-	* @param {string} id - The ID of the state.
+	* @param {String} id - The ID of the state.
 	* @return {StateMachine} A reference to this state machine.
 	*/
 	remove( id ) {
@@ -110,7 +110,7 @@ class StateMachine {
 	/**
 	* Returns the state for the given ID.
 	*
-	* @param {string} id - The ID of the state.
+	* @param {String} id - The ID of the state.
 	* @return {State} The state for the given ID.
 	*/
 	get( id ) {
@@ -122,7 +122,7 @@ class StateMachine {
 	/**
 	* Performs a state change to the state defined by its ID.
 	*
-	* @param {string} id - The ID of the state.
+	* @param {String} id - The ID of the state.
 	* @return {StateMachine} A reference to this state machine.
 	*/
 	changeTo( id ) {
@@ -165,7 +165,7 @@ class StateMachine {
 	* Tries to dispatch the massage to the current or global state and returns true
 	* if the message was processed successfully.
 	*
-	* @return {Boolean} The result of the message handling.
+	* @return {Boolean} Whether the message was processed or not.
 	*/
 	handleMessage( telegram ) {
 

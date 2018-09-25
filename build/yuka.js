@@ -2828,7 +2828,7 @@
 		*
 		* @param {GameEntity} owner - The game entity that represents the execution context of this state.
 		* @param {Telegram} telegram - A data structure containing the actual message.
-		* @return {Boolean}  Whether the message was processed or not.
+		* @return {Boolean} Whether the message was processed or not.
 		*/
 		onMessage( /* owner, telegram */ ) {
 
@@ -2910,7 +2910,7 @@
 		/**
 		* Adds a new state with the given ID to the state machine.
 		*
-		* @param {string} id - The ID of the state.
+		* @param {String} id - The ID of the state.
 		* @param {State} state - The state.
 		* @return {StateMachine} A reference to this state machine.
 		*/
@@ -2933,7 +2933,7 @@
 		/**
 		* Removes a state via its ID from the state machine.
 		*
-		* @param {string} id - The ID of the state.
+		* @param {String} id - The ID of the state.
 		* @return {StateMachine} A reference to this state machine.
 		*/
 		remove( id ) {
@@ -2947,7 +2947,7 @@
 		/**
 		* Returns the state for the given ID.
 		*
-		* @param {string} id - The ID of the state.
+		* @param {String} id - The ID of the state.
 		* @return {State} The state for the given ID.
 		*/
 		get( id ) {
@@ -2959,7 +2959,7 @@
 		/**
 		* Performs a state change to the state defined by its ID.
 		*
-		* @param {string} id - The ID of the state.
+		* @param {String} id - The ID of the state.
 		* @return {StateMachine} A reference to this state machine.
 		*/
 		changeTo( id ) {
@@ -3002,7 +3002,7 @@
 		* Tries to dispatch the massage to the current or global state and returns true
 		* if the message was processed successfully.
 		*
-		* @return {Boolean} The result of the message handling.
+		* @return {Boolean} Whether the message was processed or not.
 		*/
 		handleMessage( telegram ) {
 
@@ -6911,7 +6911,7 @@
 		/**
 		* Adds an entry to this cell.
 		*
-		* @param {any} entry - The entry to add.
+		* @param {Any} entry - The entry to add.
 		* @return {Cell} A reference to this cell.
 		*/
 		add( entry ) {
@@ -6925,7 +6925,7 @@
 		/**
 		* Removes an entry from this cell.
 		*
-		* @param {any} entry - The entry to remove.
+		* @param {Any} entry - The entry to remove.
 		* @return {Cell} A reference to this cell.
 		*/
 		remove( entry ) {
