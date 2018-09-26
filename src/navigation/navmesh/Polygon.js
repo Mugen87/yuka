@@ -1,27 +1,51 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- * @author robp94 / https://github.com/robp94
- */
-
 import { HalfEdge } from './HalfEdge.js';
 import { Plane } from '../../math/Plane.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { Logger } from '../../core/Logger.js';
 import { _Math } from '../../math/Math.js';
 
+/**
+* Class for representing a planar polygon with an arbitrary amount of edges.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @author {@link https://github.com/robp94|robp94}
+*/
 class Polygon {
 
+	/**
+	* Constructs a new polygon.
+	*/
 	constructor() {
 
+		/**
+		* The centroid of this polygon.
+		* @type Vector3
+		*/
 		this.centroid = new Vector3();
+
+		/**
+		* A reference to the first half-edge of this polygon.
+		* @type Vector3
+		*/
 		this.edge = null;
+
+		/**
+		* A plane abstraction of this polygon.
+		* @type Plane
+		*/
 		this.plane = new Plane();
 
 	}
 
+	/**
+	* Creates the polygon based on the given array of points in 3D space.
+	* The method assumes the contour (the sequence of points) is defined
+	* in CCW order.
+	*
+	* @param {Array} points - The array of points.
+	* @return {Polygon} A reference to this polygon.
+	*/
 	fromContour( points ) {
-
-		// create edges from points (assuming CCW order)
 
 		const edges = new Array();
 
@@ -83,6 +107,11 @@ class Polygon {
 
 	}
 
+	/**
+	* Computes the centroid for this polygon.
+	*
+	* @return {Polygon} A reference to this polygon.
+	*/
 	computeCentroid() {
 
 		const centroid = this.centroid;
@@ -107,6 +136,13 @@ class Polygon {
 
 	}
 
+	/**
+	* Returns true if the polygon contains the given point.
+	*
+	* @param {Vector3} point - The point to test.
+	* @param {Number} epsilon - A tolerance value.
+	* @return {Boolean} Whether this polygon contain the given point or not.
+	*/
 	contains( point, epsilon = 1e-3 ) {
 
 		const plane = this.plane;
@@ -143,6 +179,11 @@ class Polygon {
 
 	}
 
+	/**
+	* Returns true if the polygon is convex.
+	*
+	* @return {Boolean} Whether this polygon is convex or not.
+	*/
 	convex() {
 
 		let edge = this.edge;
@@ -167,6 +208,12 @@ class Polygon {
 
 	}
 
+	/**
+	* Returns true if the polygon is coplanar.
+	*
+	* @param {Number} epsilon - A tolerance value.
+	* @return {Boolean} Whether this polygon is coplanar or not.
+	*/
 	coplanar( epsilon = 1e-3 ) {
 
 		const plane = this.plane;
@@ -190,6 +237,13 @@ class Polygon {
 
 	}
 
+	/**
+	* Determines the contour (sequence of points) of this polygon and
+	* stores the result in the given array.
+	*
+	* @param {Array} result - The result array.
+	* @return {Array} The result array.
+	*/
 	getContour( result ) {
 
 		let edge = this.edge;
@@ -208,6 +262,15 @@ class Polygon {
 
 	}
 
+	/**
+	* Determines the portal edge that can be used to reach the
+	* given polygon over its twin reference. The result is stored
+	* in the given portal edge data structure.
+	*
+	* @param {Polygon} polygon - The array of points.
+	* @param {Object} portalEdge - The portal edge.
+	* @return {Object} The portal edge.
+	*/
 	getPortalEdgeTo( polygon, portalEdge ) {
 
 		let edge = this.edge;

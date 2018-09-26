@@ -5710,11 +5710,20 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class for representing navigation edges.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments Edge
+	*/
 	class NavEdge extends Edge {
 
+		/**
+		* Constructs a navigation edge.
+		*
+		* @param {Number} from - The index of the from node.
+		* @param {Number} to - The index of the to node.
+		* @param {Number} cost - The cost of this edge.
+		*/
 		constructor( from = - 1, to = - 1, cost = 0 ) {
 
 			super( from, to, cost );
@@ -5724,16 +5733,34 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class for representing navigation nodes.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments Node
+	*/
 	class NavNode extends Node {
 
+		/**
+		* Constructs a new navigation node.
+		*
+		* @param {Number} index - The unique index of this node.
+		* @param {Vector3} position - The position of the node in 3D space.
+		* @param {Object} userData - Custom user data connected to this node.
+		*/
 		constructor( index = - 1, position = new Vector3(), userData = {} ) {
 
 			super( index );
 
+			/**
+			* The position of the node in 3D space.
+			* @type Vector3
+			*/
 			this.position = position;
+
+			/**
+			* Custom user data connected to this node.
+			* @type Object
+			*/
 			this.userData = userData;
 
 		}
@@ -5741,11 +5768,19 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class with graph helpers.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class GraphUtils {
 
+		/**
+		* Generates a navigation graph with a planar grid layout based on the given parameters.
+		*
+		* @param {Number} size - The size (width and depth) in x and z direction
+		* @param {Number} segments - The amount of segments in x and z direction.
+		* @return {Graph} The new graph.
+		*/
 		static createGridLayout( size, segments ) {
 
 			const graph = new Graph();
@@ -5820,21 +5855,35 @@
 	}
 
 	/**
-	 * @author robp94 / https://github.com/robp94
-	 * @author Mugen87 / https://github.com/Mugen8
-	 *
-	 * Reference: https://github.com/donmccurdy/three-pathfinding/blob/master/src/Channel.js
-	 *
-	 */
-
+	* A corridor is a sequence of portal edges representing a walkable way within a navigation mesh. The class is able
+	* to find the shortest path through this corridor as a sequence of waypoints.
+	* Code is based on the following {@link https://github.com/nickjanssen/PatrolJS/blob/master/patrol.js implementation}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	*/
 	class Corridor {
 
+		/**
+		* Creates a new corridor.
+		*/
 		constructor() {
 
+			/**
+			* The portal edges of the corridor.
+			* @type Array
+			*/
 			this.portalEdges = new Array();
 
 		}
 
+		/**
+		* Adds a portal edge defined by its left and right vertex to this corridor.
+		*
+		* @param {Vector3} left - The left point (origin) of the portal edge.
+		* @param {Vector3} right - The right point (destination) of the portal edge.
+		* @return {Corridor} A reference to this corridor.
+		*/
 		push( left, right ) {
 
 			this.portalEdges.push( {
@@ -5842,8 +5891,15 @@
 				right: right
 			} );
 
+			return this;
+
 		}
 
+		/**
+		* Generates the shortest path through the corridor as an array of 3D vectors.
+		*
+		* @return {Array} An array of 3D waypoints.
+		*/
 		generate() {
 
 			const portalEdges = this.portalEdges;
@@ -5962,38 +6018,85 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * https://en.wikipedia.org/wiki/Doubly_connected_edge_list
-	 *
-	 */
-
+	* Implementation of a half-edge data structure, also known as
+	* {@link https://en.wikipedia.org/wiki/Doubly_connected_edge_list Doubly connected edge list}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class HalfEdge {
 
+		/**
+		* Constructs a new half-edge.
+		*
+		* @param {Vector3} vertex - The (origin) vertex of this half-edge.
+		*/
 		constructor( vertex = new Vector3() ) {
 
+			/**
+			* The (origin) vertex of this half-edge.
+			* @type Vector3
+			*/
 			this.vertex = vertex;
+
+			/**
+			* A reference to the next half-edge.
+			* @type HalfEdge
+			*/
 			this.next = null;
+
+			/**
+			* A reference to the previous half-edge.
+			* @type HalfEdge
+			*/
 			this.prev = null;
+
+			/**
+			* A reference to the opponent half-edge.
+			* @type HalfEdge
+			*/
 			this.twin = null;
+
+			/**
+			* A reference to its polygon/face.
+			* @type Polygon
+			*/
 			this.polygon = null;
 
+			/**
+			* The unique index of the vertex.
+			* @type number
+			*/
 			this.nodeIndex = - 1;
 
 		}
 
+		/**
+		* Returns the origin vertex of this half-edge.
+		*
+		* @return {Vector3} The origin vertex.
+		*/
 		from() {
 
 			return this.vertex;
 
 		}
 
+		/**
+		* Returns the destintation vertex of this half-edge.
+		*
+		* @return {Vector3} The destintation vertex.
+		*/
 		to() {
 
 			return this.next ? this.next.vertex : null;
 
 		}
 
+		/**
+		* Computes the length of this half-edge.
+		*
+		* @return {Number} The length of this half-edge.
+		*/
 		length() {
 
 			const from = this.from();
@@ -6009,6 +6112,11 @@
 
 		}
 
+		/**
+		* Computes the squared length of this half-edge.
+		*
+		* @return {Number} The squared length of this half-edge.
+		*/
 		squaredLength() {
 
 			const from = this.from();
@@ -6026,11 +6134,6 @@
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 * @author robp94 / https://github.com/robp94
-	 */
-
 	const pointOnLineSegment = new Vector3();
 	const closestPoint = new Vector3();
 	const edgeDirection = new Vector3();
@@ -6038,21 +6141,70 @@
 	const newPosition = new Vector3();
 	const lineSegment = new LineSegment();
 
+	/**
+	* Implementation of a navigation mesh. A navigation mesh is a network of convex polygons
+	* which define the walkable areas of a game environment. A convex polygon allows unobstructed travel
+	* from any point in the polygon to any other. This is useful because it enables the navigation mesh
+	* to be represented using a graph where each node represents a convex polygon and their respective edges
+	* represent the neighborly relations to other polygons. More compact navigation graphs leads
+	* to faster graph search execution.
+	*
+	* This particular implementation is able to merge convex polygons into bigger ones as long
+	* as they keep their convexity. The performance of the path finding process and convex region tests
+	* for complex navigation meshes can be improved by using a spatial index like {@link CellSpacePartitioning}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	*/
 	class NavMesh {
 
+		/**
+		* Constructs a new navigation mesh.
+		*/
 		constructor() {
 
+			/**
+			* The internal navigation graph of this navigation mesh representing neighboring polygons.
+			* @type Graph
+			*/
 			this.graph = new Graph();
 			this.graph.digraph = true;
 
+			/**
+			* The list of convex regions.
+			* @type Array
+			*/
 			this.regions = new Array();
+
+			/**
+			* A reference to a spatial index.
+			* @type CellSpacePartitioning
+			* @default null
+			*/
 			this.spatialIndex = null;
 
+			/**
+			* The tolerance value for the coplanar test.
+			* @type Number
+			* @default 1e-3
+			*/
 			this.epsilonCoplanarTest = 1e-3;
+
+			/**
+			* The tolerance value for the containment test.
+			* @type Number
+			* @default 1
+			*/
 			this.epsilonContainsTest = 1;
 
 		}
 
+		/**
+		* Creates the navigation mesh from an array of convex polygons.
+		*
+		* @param {Array} polygons - An array of convex polygons.
+		* @return {NavMesh} A reference to this navigation mesh.
+		*/
 		fromPolygons( polygons ) {
 
 			this.clear();
@@ -6140,6 +6292,11 @@
 
 		}
 
+		/**
+		* Clears the internal state of this navigation mesh.
+		*
+		* @return {NavMesh} A reference to this navigation mesh.
+		*/
 		clear() {
 
 			this.graph.clear();
@@ -6150,6 +6307,12 @@
 
 		}
 
+		/**
+		* Returns the closest convex region for the given point in 3D space.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {Polygon} The closest convex region.
+		*/
 		getClosestRegion( point ) {
 
 			const regions = this.regions;
@@ -6176,6 +6339,11 @@
 
 		}
 
+		/**
+		* Returns at random a convex region from the navigation mesh.
+		*
+		* @return {Polygon} The convex region.
+		*/
 		getRandomRegion() {
 
 			const regions = this.regions;
@@ -6188,6 +6356,15 @@
 
 		}
 
+		/**
+		* Returns the region that contains the given point. The computational overhead
+		* of this method for complex navigation meshes can greatly reduced by using a spatial index.
+		* If not convex region contains the point, *null* is returned.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {Number} epsilon - Tolerance value for the containment test.
+		* @return {Polygon} The convex region that contains the point.
+		*/
 		getRegionForPoint( point, epsilon = 1e-3 ) {
 
 			let regions;
@@ -6221,6 +6398,15 @@
 
 		}
 
+		/**
+		* Returns the shortest path that leads from the given start position to the end position.
+		* The computational overhead of this method for complex navigation meshes can greatly
+		* reduced by using a spatial index.
+		*
+		* @param {Vector3} from - The start/source position.
+		* @param {Vector3} to - The end/destination position.
+		* @return {Array} The shortest path as an array of points.
+		*/
 		findPath( from, to ) {
 
 			const graph = this.graph;
@@ -6292,6 +6478,17 @@
 
 		}
 
+		/**
+		* This method can be used to restrict the movement of a game entity on the navigation mesh.
+		* Instead of preventing any form of translation when a game entity hits a border edge, the
+		* movement is clamped along the contour of the navigation mesh.
+		*
+		* @param {Polygon} currentRegion - The current convex region of the game entity.
+		* @param {Vector3} startPosition - The original start position of the entity for the current simulation step.
+		* @param {Vector3} endPosition - The original end position of the entity for the current simulation step.
+		* @param {Vector3} clampPosition - The clamped position of the entity for the current simulation step.
+		* @return {Polygon} The new convex region the game entity is in.
+		*/
 		clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
 
 			let newRegion = this.getRegionForPoint( endPosition, this.epsilonContainsTest );
@@ -6396,6 +6593,12 @@
 
 		}
 
+		/**
+		* Updates the spatial index by assigning all convex regions to the
+		* partitons of the spatial index.
+		*
+		* @return {NavMesh} A reference to this navigation mesh.
+		*/
 		updateSpatialIndex() {
 
 			if ( this.spatialIndex !== null ) {
@@ -6645,23 +6848,47 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 * @author robp94 / https://github.com/robp94
-	 */
-
+	* Class for representing a planar polygon with an arbitrary amount of edges.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	*/
 	class Polygon {
 
+		/**
+		* Constructs a new polygon.
+		*/
 		constructor() {
 
+			/**
+			* The centroid of this polygon.
+			* @type Vector3
+			*/
 			this.centroid = new Vector3();
+
+			/**
+			* A reference to the first half-edge of this polygon.
+			* @type Vector3
+			*/
 			this.edge = null;
+
+			/**
+			* A plane abstraction of this polygon.
+			* @type Plane
+			*/
 			this.plane = new Plane();
 
 		}
 
+		/**
+		* Creates the polygon based on the given array of points in 3D space.
+		* The method assumes the contour (the sequence of points) is defined
+		* in CCW order.
+		*
+		* @param {Array} points - The array of points.
+		* @return {Polygon} A reference to this polygon.
+		*/
 		fromContour( points ) {
-
-			// create edges from points (assuming CCW order)
 
 			const edges = new Array();
 
@@ -6723,6 +6950,11 @@
 
 		}
 
+		/**
+		* Computes the centroid for this polygon.
+		*
+		* @return {Polygon} A reference to this polygon.
+		*/
 		computeCentroid() {
 
 			const centroid = this.centroid;
@@ -6747,6 +6979,13 @@
 
 		}
 
+		/**
+		* Returns true if the polygon contains the given point.
+		*
+		* @param {Vector3} point - The point to test.
+		* @param {Number} epsilon - A tolerance value.
+		* @return {Boolean} Whether this polygon contain the given point or not.
+		*/
 		contains( point, epsilon = 1e-3 ) {
 
 			const plane = this.plane;
@@ -6783,6 +7022,11 @@
 
 		}
 
+		/**
+		* Returns true if the polygon is convex.
+		*
+		* @return {Boolean} Whether this polygon is convex or not.
+		*/
 		convex() {
 
 			let edge = this.edge;
@@ -6807,6 +7051,12 @@
 
 		}
 
+		/**
+		* Returns true if the polygon is coplanar.
+		*
+		* @param {Number} epsilon - A tolerance value.
+		* @return {Boolean} Whether this polygon is coplanar or not.
+		*/
 		coplanar( epsilon = 1e-3 ) {
 
 			const plane = this.plane;
@@ -6830,6 +7080,13 @@
 
 		}
 
+		/**
+		* Determines the contour (sequence of points) of this polygon and
+		* stores the result in the given array.
+		*
+		* @param {Array} result - The result array.
+		* @return {Array} The result array.
+		*/
 		getContour( result ) {
 
 			let edge = this.edge;
@@ -6848,6 +7105,15 @@
 
 		}
 
+		/**
+		* Determines the portal edge that can be used to reach the
+		* given polygon over its twin reference. The result is stored
+		* in the given portal edge data structure.
+		*
+		* @param {Polygon} polygon - The array of points.
+		* @param {Object} portalEdge - The portal edge.
+		* @return {Object} The portal edge.
+		*/
 		getPortalEdgeTo( polygon, portalEdge ) {
 
 			let edge = this.edge;
@@ -6888,11 +7154,22 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class for loading navigation meshes as glTF assets. The loader supports
+	* *glTF* and *glb* files, embedded buffers, index and non-indexed geometries.
+	* Interleaved geometry data are not yet supported.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class NavMeshLoader {
 
+		/**
+		* Loads a {@link NavMesh navigation mesh} from the given URL. The second parameter can be used
+		* to influence the parsing of the navigation mesh.
+		*
+		* @param {String} url - The URL of the glTF asset.
+		* @param {Object} options - The configuration object.
+		* @return {Promise} A promise representing the loading and parsing process.
+		*/
 		load( url, options ) {
 
 			return new Promise( ( resolve, reject ) => {

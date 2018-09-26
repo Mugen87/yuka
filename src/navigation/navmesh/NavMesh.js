@@ -1,8 +1,3 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- * @author robp94 / https://github.com/robp94
- */
-
 import { Graph } from '../../graph/core/Graph.js';
 import { AStar } from '../../graph/search/AStar.js';
 import { NavNode } from '../core/NavNode.js';
@@ -18,21 +13,70 @@ const movementDirection = new Vector3();
 const newPosition = new Vector3();
 const lineSegment = new LineSegment();
 
+/**
+* Implementation of a navigation mesh. A navigation mesh is a network of convex polygons
+* which define the walkable areas of a game environment. A convex polygon allows unobstructed travel
+* from any point in the polygon to any other. This is useful because it enables the navigation mesh
+* to be represented using a graph where each node represents a convex polygon and their respective edges
+* represent the neighborly relations to other polygons. More compact navigation graphs leads
+* to faster graph search execution.
+*
+* This particular implementation is able to merge convex polygons into bigger ones as long
+* as they keep their convexity. The performance of the path finding process and convex region tests
+* for complex navigation meshes can be improved by using a spatial index like {@link CellSpacePartitioning}.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @author {@link https://github.com/robp94|robp94}
+*/
 class NavMesh {
 
+	/**
+	* Constructs a new navigation mesh.
+	*/
 	constructor() {
 
+		/**
+		* The internal navigation graph of this navigation mesh representing neighboring polygons.
+		* @type Graph
+		*/
 		this.graph = new Graph();
 		this.graph.digraph = true;
 
+		/**
+		* The list of convex regions.
+		* @type Array
+		*/
 		this.regions = new Array();
+
+		/**
+		* A reference to a spatial index.
+		* @type CellSpacePartitioning
+		* @default null
+		*/
 		this.spatialIndex = null;
 
+		/**
+		* The tolerance value for the coplanar test.
+		* @type Number
+		* @default 1e-3
+		*/
 		this.epsilonCoplanarTest = 1e-3;
+
+		/**
+		* The tolerance value for the containment test.
+		* @type Number
+		* @default 1
+		*/
 		this.epsilonContainsTest = 1;
 
 	}
 
+	/**
+	* Creates the navigation mesh from an array of convex polygons.
+	*
+	* @param {Array} polygons - An array of convex polygons.
+	* @return {NavMesh} A reference to this navigation mesh.
+	*/
 	fromPolygons( polygons ) {
 
 		this.clear();
@@ -120,6 +164,11 @@ class NavMesh {
 
 	}
 
+	/**
+	* Clears the internal state of this navigation mesh.
+	*
+	* @return {NavMesh} A reference to this navigation mesh.
+	*/
 	clear() {
 
 		this.graph.clear();
@@ -130,6 +179,12 @@ class NavMesh {
 
 	}
 
+	/**
+	* Returns the closest convex region for the given point in 3D space.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Polygon} The closest convex region.
+	*/
 	getClosestRegion( point ) {
 
 		const regions = this.regions;
@@ -156,6 +211,11 @@ class NavMesh {
 
 	}
 
+	/**
+	* Returns at random a convex region from the navigation mesh.
+	*
+	* @return {Polygon} The convex region.
+	*/
 	getRandomRegion() {
 
 		const regions = this.regions;
@@ -168,6 +228,15 @@ class NavMesh {
 
 	}
 
+	/**
+	* Returns the region that contains the given point. The computational overhead
+	* of this method for complex navigation meshes can greatly reduced by using a spatial index.
+	* If not convex region contains the point, *null* is returned.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @param {Number} epsilon - Tolerance value for the containment test.
+	* @return {Polygon} The convex region that contains the point.
+	*/
 	getRegionForPoint( point, epsilon = 1e-3 ) {
 
 		let regions;
@@ -201,6 +270,15 @@ class NavMesh {
 
 	}
 
+	/**
+	* Returns the shortest path that leads from the given start position to the end position.
+	* The computational overhead of this method for complex navigation meshes can greatly
+	* reduced by using a spatial index.
+	*
+	* @param {Vector3} from - The start/source position.
+	* @param {Vector3} to - The end/destination position.
+	* @return {Array} The shortest path as an array of points.
+	*/
 	findPath( from, to ) {
 
 		const graph = this.graph;
@@ -272,6 +350,17 @@ class NavMesh {
 
 	}
 
+	/**
+	* This method can be used to restrict the movement of a game entity on the navigation mesh.
+	* Instead of preventing any form of translation when a game entity hits a border edge, the
+	* movement is clamped along the contour of the navigation mesh.
+	*
+	* @param {Polygon} currentRegion - The current convex region of the game entity.
+	* @param {Vector3} startPosition - The original start position of the entity for the current simulation step.
+	* @param {Vector3} endPosition - The original end position of the entity for the current simulation step.
+	* @param {Vector3} clampPosition - The clamped position of the entity for the current simulation step.
+	* @return {Polygon} The new convex region the game entity is in.
+	*/
 	clampMovement( currentRegion, startPosition, endPosition, clampPosition ) {
 
 		let newRegion = this.getRegionForPoint( endPosition, this.epsilonContainsTest );
@@ -376,6 +465,12 @@ class NavMesh {
 
 	}
 
+	/**
+	* Updates the spatial index by assigning all convex regions to the
+	* partitons of the spatial index.
+	*
+	* @return {NavMesh} A reference to this navigation mesh.
+	*/
 	updateSpatialIndex() {
 
 		if ( this.spatialIndex !== null ) {

@@ -1,14 +1,22 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Graph } from '../../graph/core/Graph.js';
 import { NavNode } from '../core/NavNode.js';
 import { NavEdge } from '../core/NavEdge.js';
 import { Vector3 } from '../../math/Vector3.js';
 
+/**
+* Class with graph helpers.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class GraphUtils {
 
+	/**
+	* Generates a navigation graph with a planar grid layout based on the given parameters.
+	*
+	* @param {Number} size - The size (width and depth) in x and z direction
+	* @param {Number} segments - The amount of segments in x and z direction.
+	* @return {Graph} The new graph.
+	*/
 	static createGridLayout( size, segments ) {
 
 		const graph = new Graph();

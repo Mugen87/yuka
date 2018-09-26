@@ -1,21 +1,35 @@
-/**
- * @author robp94 / https://github.com/robp94
- * @author Mugen87 / https://github.com/Mugen8
- *
- * Reference: https://github.com/donmccurdy/three-pathfinding/blob/master/src/Channel.js
- *
- */
-
 import { _Math } from '../../math/Math.js';
 
+/**
+* A corridor is a sequence of portal edges representing a walkable way within a navigation mesh. The class is able
+* to find the shortest path through this corridor as a sequence of waypoints.
+* Code is based on the following {@link https://github.com/nickjanssen/PatrolJS/blob/master/patrol.js implementation}.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @author {@link https://github.com/robp94|robp94}
+*/
 class Corridor {
 
+	/**
+	* Creates a new corridor.
+	*/
 	constructor() {
 
+		/**
+		* The portal edges of the corridor.
+		* @type Array
+		*/
 		this.portalEdges = new Array();
 
 	}
 
+	/**
+	* Adds a portal edge defined by its left and right vertex to this corridor.
+	*
+	* @param {Vector3} left - The left point (origin) of the portal edge.
+	* @param {Vector3} right - The right point (destination) of the portal edge.
+	* @return {Corridor} A reference to this corridor.
+	*/
 	push( left, right ) {
 
 		this.portalEdges.push( {
@@ -23,8 +37,15 @@ class Corridor {
 			right: right
 		} );
 
+		return this;
+
 	}
 
+	/**
+	* Generates the shortest path through the corridor as an array of 3D vectors.
+	*
+	* @return {Array} An array of 3D waypoints.
+	*/
 	generate() {
 
 		const portalEdges = this.portalEdges;

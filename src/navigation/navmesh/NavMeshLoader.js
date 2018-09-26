@@ -1,14 +1,25 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Logger } from '../../core/Logger.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { Polygon } from './Polygon.js';
 import { NavMesh } from './NavMesh.js';
 
+/**
+* Class for loading navigation meshes as glTF assets. The loader supports
+* *glTF* and *glb* files, embedded buffers, index and non-indexed geometries.
+* Interleaved geometry data are not yet supported.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class NavMeshLoader {
 
+	/**
+	* Loads a {@link NavMesh navigation mesh} from the given URL. The second parameter can be used
+	* to influence the parsing of the navigation mesh.
+	*
+	* @param {String} url - The URL of the glTF asset.
+	* @param {Object} options - The configuration object.
+	* @return {Promise} A promise representing the loading and parsing process.
+	*/
 	load( url, options ) {
 
 		return new Promise( ( resolve, reject ) => {
