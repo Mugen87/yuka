@@ -31,23 +31,23 @@ describe( 'Smoother', function () {
 
 	} );
 
-	describe( '#update()', function () {
+	describe( '#calculate()', function () {
 
 		it( 'should use the given value to compute an average based on the internal history and store the result in the given vector', function () {
 
 			const smoother = new Smoother( 3 );
 			const result = new Vector3();
 
-			smoother.update( new Vector3( 0, 0, 3 ), result );
+			smoother.calculate( new Vector3( 0, 0, 3 ), result );
 			expect( result ).to.deep.equal( new Vector3( 0, 0, 1 ) );
 
-			smoother.update( new Vector3( 0, 0, 3 ), result );
+			smoother.calculate( new Vector3( 0, 0, 3 ), result );
 			expect( result ).to.deep.equal( new Vector3( 0, 0, 2 ) );
 
-			smoother.update( new Vector3( 0, 0, 6 ), result );
+			smoother.calculate( new Vector3( 0, 0, 6 ), result );
 			expect( result ).to.deep.equal( new Vector3( 0, 0, 4 ) );
 
-			smoother.update( new Vector3( 0, 0, 9 ), result ); // the first update (0,0,3) will be overwritten
+			smoother.calculate( new Vector3( 0, 0, 9 ), result ); // the first calculate (0,0,3) will be overwritten
 			expect( result ).to.deep.equal( new Vector3( 0, 0, 6 ) );
 
 		} );

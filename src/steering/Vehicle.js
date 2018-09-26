@@ -1,8 +1,3 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- * @author robp94 / https://github.com/robp94
- */
-
 import { MovingEntity } from '../core/MovingEntity.js';
 import { SteeringManager } from './SteeringManager.js';
 import { Vector3 } from '../math/Vector3.js';
@@ -13,21 +8,60 @@ const acceleration = new Vector3();
 const target = new Vector3();
 const velocitySmooth = new Vector3();
 
+/**
+* This type of game entity implements a special type of locomotion, the so called
+* *Vehicle Model*. The class uses basic physical metrics in order to implement a
+* realisitic movement.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @author {@link https://github.com/robp94|robp94}
+* @augments MovingEntity
+*/
 class Vehicle extends MovingEntity {
 
+	/**
+	* Constructs a new vehicle.
+	*/
 	constructor() {
 
 		super();
 
+		/**
+		* The mass if the vehicle in kilogram.
+		* @type Number
+		* @default 1
+		*/
 		this.mass = 1;
-		this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 
+		/**
+		* The maximum force this entity can produce to power itself.
+		* @type Number
+		* @default 100
+		*/
+		this.maxForce = 100;
+
+		/**
+		* The steering manager of this vehicle.
+		* @type SteeringManager
+		*/
 		this.steering = new SteeringManager( this );
 
-		this.smoother = null; // can be used to avoid shakiness due to conflicting steering behaviors
+		/**
+		* An optional smoother to avoid shakiness due to conflicting steering behaviors.
+		* @type Smoother
+		* @default null
+		*/
+		this.smoother = null;
 
 	}
 
+	/**
+	* This method is responsible for updating the position based on the force produced
+	* by the internal steering manager.
+	*
+	* @param {Number} delta - The time delta.
+	* @return {Vehicle} A reference to this vehicle.
+	*/
 	update( delta ) {
 
 		// calculate steering force
@@ -76,7 +110,7 @@ class Vehicle extends MovingEntity {
 
 		if ( this.updateOrientation === true && this.smoother !== null ) {
 
-			this.smoother.update( this.velocity, velocitySmooth );
+			this.smoother.calculate( this.velocity, velocitySmooth );
 
 			displacement.copy( velocitySmooth ).multiplyScalar( delta );
 			target.copy( this.position ).add( displacement );
@@ -84,6 +118,8 @@ class Vehicle extends MovingEntity {
 			this.lookAt( target );
 
 		}
+
+		return this;
 
 	}
 

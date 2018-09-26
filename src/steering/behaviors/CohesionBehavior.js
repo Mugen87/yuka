@@ -1,15 +1,20 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { SteeringBehavior } from '../SteeringBehavior.js';
 import { SeekBehavior } from './SeekBehavior.js';
 import { Vector3 } from '../../math/Vector3.js';
 
 const centerOfMass = new Vector3();
 
+/**
+* This steering produces a steering force that moves a vehicle toward the center of mass of its neighbors.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments SteeringBehavior
+*/
 class CohesionBehavior extends SteeringBehavior {
 
+	/**
+	* Constructs a new cohesion behavior.
+	*/
 	constructor() {
 
 		super();
@@ -20,6 +25,14 @@ class CohesionBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Calculates the steering force for a single simulation step.
+	*
+	* @param {Vehicle} vehicle - The game entity the force is produced for.
+	* @param {Vector3} force - The force/result vector.
+	* @param {Number} delta - The time delta.
+	* @return {Vector3} The force/result vector.
+	*/
 	calculate( vehicle, force /*, delta */ ) {
 
 		centerOfMass.set( 0, 0, 0 );
@@ -51,6 +64,8 @@ class CohesionBehavior extends SteeringBehavior {
 			force.normalize();
 
 		}
+
+		return force;
 
 	}
 

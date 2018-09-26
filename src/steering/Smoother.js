@@ -1,15 +1,29 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- * @author robp94 / https://github.com/robp94
- */
-
 import { Vector3 } from '../math/Vector3.js';
 
+/**
+* This class can be used to smooth the result of a vector calculation. One use case
+* is the smoothing of the velocity vector of game entites in order to avoid a shaky
+* movements du to conflicting forces.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @author {@link https://github.com/robp94|robp94}
+*/
 class Smoother {
 
+	/**
+	* Constructs a new smoother.
+	*
+	*	@param {Number} count - The amount of samples the smoother will use to average a vector.
+	*/
 	constructor( count = 10 ) {
 
-		this.count = count; // how many samples the smoother will use to average a value
+		/**
+		* The amount of samples the smoother will use to average a vector.
+		* @type Number
+		* @default 10
+		*/
+		this.count = count;
+
 		this._history = []; // this holds the history
 		this._slot = 0; // the current sample slot
 
@@ -23,7 +37,14 @@ class Smoother {
 
 	}
 
-	update( value, average ) {
+	/**
+	* Calculates for the given value a smooth average.
+	*
+	* @param {Vector3} value - The value to smooth.
+	* @param {Vector3} average - The calculated average.
+	* @return {Vector3} The calculated average.
+	*/
+	calculate( value, average ) {
 
 		// ensure, average is a zero vector
 
@@ -54,6 +75,8 @@ class Smoother {
 		}
 
 		average.divideScalar( this.count );
+
+		return average;
 
 	}
 

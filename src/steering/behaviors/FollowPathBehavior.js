@@ -1,20 +1,38 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { SteeringBehavior } from '../SteeringBehavior.js';
 import { Path } from '../Path.js';
 import { SeekBehavior } from './SeekBehavior.js';
 import { ArriveBehavior } from './ArriveBehavior.js';
 
+/**
+* This steering behavior produces a force that moves a vehicle along a series of waypoints forming a path.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments SteeringBehavior
+*/
 class FollowPathBehavior extends SteeringBehavior {
 
+	/**
+	* Constructs a new follow path behavior.
+	*
+	* @param {Path} path - The path to follow.
+	* @param {Number} nextWaypointDistance - The distance the agent seeks for the next waypoint.
+	*/
 	constructor( path = new Path(), nextWaypointDistance = 1 ) {
 
 		super();
 
-		this.path = path; // list of waypoints to follow
-		this.nextWaypointDistance = nextWaypointDistance; // the distance a waypoint is set to the new target
+		/**
+		* The path to follow.
+		* @type MovingEntity
+		*/
+		this.path = path;
+
+		/**
+		* The distance the agent seeks for the next waypoint.
+		* @type Number
+		* @default 1
+		*/
+		this.nextWaypointDistance = nextWaypointDistance;
 
 		// internal behaviors
 
@@ -23,6 +41,14 @@ class FollowPathBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Calculates the steering force for a single simulation step.
+	*
+	* @param {Vehicle} vehicle - The game entity the force is produced for.
+	* @param {Vector3} force - The force/result vector.
+	* @param {Number} delta - The time delta.
+	* @return {Vector3} The force/result vector.
+	*/
 	calculate( vehicle, force /*, delta */ ) {
 
 		const path = this.path;
@@ -52,6 +78,8 @@ class FollowPathBehavior extends SteeringBehavior {
 			this._seek.calculate( vehicle, force );
 
 		}
+
+		return force;
 
 	}
 

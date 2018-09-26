@@ -1,7 +1,3 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { SteeringBehavior } from '../SteeringBehavior.js';
 import { ArriveBehavior } from './ArriveBehavior.js';
 import { Vector3 } from '../../math/Vector3.js';
@@ -11,14 +7,45 @@ const translation = new Vector3();
 const predcitedPosition1 = new Vector3();
 const predcitedPosition2 = new Vector3();
 
+/**
+* This steering behavior produces a force that moves a vehicle to the midpoint
+* of the imaginary line connecting two other agents.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments SteeringBehavior
+*/
 class InterposeBehavior extends SteeringBehavior {
 
+	/**
+	* Constructs a new interpose behavior.
+	*
+	* @param {MovingEntity} entity1 - The first agent.
+	* @param {MovingEntity} entity2 - The second agent.
+	* @param {Number} deceleration - The amount of deceleration.
+	*/
 	constructor( entity1 = null, entity2 = null, deceleration = 3 ) {
 
 		super();
 
+		/**
+		* The first agent.
+		* @type MovingEntity
+		* @default null
+		*/
 		this.entity1 = entity1;
+
+		/**
+		* The second agent.
+		* @type MovingEntity
+		* @default null
+		*/
 		this.entity2 = entity2;
+
+		/**
+		* The amount of deceleration.
+		* @type Number
+		* @default 3
+		*/
 		this.deceleration = deceleration;
 
 		// internal behaviors
@@ -27,6 +54,14 @@ class InterposeBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Calculates the steering force for a single simulation step.
+	*
+	* @param {Vehicle} vehicle - The game entity the force is produced for.
+	* @param {Vector3} force - The force/result vector.
+	* @param {Number} delta - The time delta.
+	* @return {Vector3} The force/result vector.
+	*/
 	calculate( vehicle, force /*, delta */ ) {
 
 		const entity1 = this.entity1;
@@ -57,6 +92,8 @@ class InterposeBehavior extends SteeringBehavior {
 		this._arrive.deceleration = this.deceleration;
 		this._arrive.target = midPoint;
 		this._arrive.calculate( vehicle, force );
+
+		return force;
 
 	}
 

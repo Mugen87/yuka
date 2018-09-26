@@ -7993,19 +7993,34 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class for representing a walkable path.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Path {
 
+		/**
+		* Constructs a new path.
+		*/
 		constructor() {
 
+			/**
+			* Whether this path is looped or not.
+			* @type Boolean
+			*/
 			this.loop = false;
+
 			this._waypoints = new Array();
 			this._index = 0;
 
 		}
 
+		/**
+		* Adds the given waypoint to this path.
+		*
+		* @param {Vector3} waypoint - The waypoint to add.
+		* @return {Path} A reference to this path.
+		*/
 		add( waypoint ) {
 
 			this._waypoints.push( waypoint );
@@ -8014,6 +8029,11 @@
 
 		}
 
+		/**
+		* Clears the internal state of this path.
+		*
+		* @return {Path} A reference to this path.
+		*/
 		clear() {
 
 			this._waypoints.length = 0;
@@ -8023,6 +8043,22 @@
 
 		}
 
+		/**
+		* Returns the current active waypoint of this path.
+		*
+		* @return {Vector3} The current active waypoint.
+		*/
+		current() {
+
+			return this._waypoints[ this._index ];
+
+		}
+
+		/**
+		* Returns true if this path is not looped and the last waypoint is active.
+		*
+		* @return {Boolean} Whether this path is finished or not.
+		*/
 		finished() {
 
 			const lastIndex = this._waypoints.length - 1;
@@ -8031,6 +8067,12 @@
 
 		}
 
+		/**
+		* Makes the next waypoint of this path active. If the path is looped and
+		* {@link Path#finished} returns true, the path starts from the beginning.
+		*
+		* @return {Path} A reference to this path.
+		*/
 		advance() {
 
 			this._index ++;
@@ -8053,24 +8095,32 @@
 
 		}
 
-		current() {
-
-			return this._waypoints[ this._index ];
-
-		}
-
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 * @author robp94 / https://github.com/robp94
-	 */
-
+	* This class can be used to smooth the result of a vector calculation. One use case
+	* is the smoothing of the velocity vector of game entites in order to avoid a shaky
+	* movements du to conflicting forces.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	*/
 	class Smoother {
 
+		/**
+		* Constructs a new smoother.
+		*
+		*	@param {Number} count - The amount of samples the smoother will use to average a vector.
+		*/
 		constructor( count = 10 ) {
 
-			this.count = count; // how many samples the smoother will use to average a value
+			/**
+			* The amount of samples the smoother will use to average a vector.
+			* @type Number
+			* @default 10
+			*/
+			this.count = count;
+
 			this._history = []; // this holds the history
 			this._slot = 0; // the current sample slot
 
@@ -8084,7 +8134,14 @@
 
 		}
 
-		update( value, average ) {
+		/**
+		* Calculates for the given value a smooth average.
+		*
+		* @param {Vector3} value - The value to smooth.
+		* @param {Vector3} average - The calculated average.
+		* @return {Vector3} The calculated average.
+		*/
+		calculate( value, average ) {
 
 			// ensure, average is a zero vector
 
@@ -8116,48 +8173,93 @@
 
 			average.divideScalar( this.count );
 
+			return average;
+
 		}
 
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Base class for all concrete steering behaviors. They produce a force that describes
+	* where an agent should move and how fast it should travel to get there.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class SteeringBehavior {
 
+		/**
+		* Constructs a new steering behavior.
+		*/
 		constructor() {
 
+			/**
+			* Whether this steering behavior is active or not.
+			* @type Boolean
+			* @default true
+			*/
 			this.active = true;
 
-			// use this value to tweak the amount that a steering force
-			// contributes to the total steering force
-
+			/**
+			* Can be used to tweak the amount that a steering force contributes to the total steering force.
+			* @type Number
+			* @default 1
+			*/
 			this.weigth = 1;
 
 		}
 
-		calculate() {}
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( /* vehicle, force, delta */ ) {}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const force = new Vector3();
 
+	/**
+	* This class is responsible for managing the steering of a single vehicle. The steering manager
+	* can manage multiple steering behaviors and combine their produced force into a single one used
+	* by the vehicle.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class SteeringManager {
 
+		/**
+		* Constructs a new steering manager.
+		*
+		*	@param {Vehicle} vehicle - The vehicle that owns this steering manager.
+		*/
 		constructor( vehicle ) {
 
+			/**
+			* The vehicle that owns this steering manager.
+			* @type Vehicle
+			*/
 			this.vehicle = vehicle;
+
+			/**
+			* A list of all steering behaviors.
+			* @type Array
+			*/
 			this.behaviors = new Array();
 
 			this._steeringForce = new Vector3(); // the calculated steering force per simulation step
 
 		}
 
+		/**
+		* Adds the given steering behavior to this steering manager.
+		*
+		* @param {SteeringBehavior} behavior - The steering behavior to add.
+		* @return {SteeringManager} A reference to this steering manager.
+		*/
 		add( behavior ) {
 
 			this.behaviors.push( behavior );
@@ -8166,6 +8268,12 @@
 
 		}
 
+		/**
+		* Removes the given steering behavior from this steering manager.
+		*
+		* @param {SteeringBehavior} behavior - The steering behavior to remove.
+		* @return {SteeringManager} A reference to this steering manager.
+		*/
 		remove( behavior ) {
 
 			const index = this.behaviors.indexOf( behavior );
@@ -8175,6 +8283,15 @@
 
 		}
 
+		/**
+		* Calculates the steering forces for all active steering behaviors and
+		* combines it into a single result force. This method is called in
+		* {@link Vehicle#update}.
+		*
+		* @param {Number} delta - The time delta.
+		* @param {Vector3} result - The force/result vector.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( delta, result ) {
 
 			this._calculateByOrder( delta );
@@ -8252,32 +8369,66 @@
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 * @author robp94 / https://github.com/robp94
-	 */
-
 	const steeringForce = new Vector3();
 	const displacement$1 = new Vector3();
 	const acceleration = new Vector3();
 	const target$1 = new Vector3();
 	const velocitySmooth = new Vector3();
 
+	/**
+	* This type of game entity implements a special type of locomotion, the so called
+	* *Vehicle Model*. The class uses basic physical metrics in order to implement a
+	* realisitic movement.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	* @augments MovingEntity
+	*/
 	class Vehicle extends MovingEntity {
 
+		/**
+		* Constructs a new vehicle.
+		*/
 		constructor() {
 
 			super();
 
+			/**
+			* The mass if the vehicle in kilogram.
+			* @type Number
+			* @default 1
+			*/
 			this.mass = 1;
-			this.maxForce = 100; // the maximum force this entity can produce to power itself (think rockets and thrust)
 
+			/**
+			* The maximum force this entity can produce to power itself.
+			* @type Number
+			* @default 100
+			*/
+			this.maxForce = 100;
+
+			/**
+			* The steering manager of this vehicle.
+			* @type SteeringManager
+			*/
 			this.steering = new SteeringManager( this );
 
-			this.smoother = null; // can be used to avoid shakiness due to conflicting steering behaviors
+			/**
+			* An optional smoother to avoid shakiness due to conflicting steering behaviors.
+			* @type Smoother
+			* @default null
+			*/
+			this.smoother = null;
 
 		}
 
+		/**
+		* This method is responsible for updating the position based on the force produced
+		* by the internal steering manager.
+		*
+		* @param {Number} delta - The time delta.
+		* @return {Vehicle} A reference to this vehicle.
+		*/
 		update( delta ) {
 
 			// calculate steering force
@@ -8326,7 +8477,7 @@
 
 			if ( this.updateOrientation === true && this.smoother !== null ) {
 
-				this.smoother.update( this.velocity, velocitySmooth );
+				this.smoother.calculate( this.velocity, velocitySmooth );
 
 				displacement$1.copy( velocitySmooth ).multiplyScalar( delta );
 				target$1.copy( this.position ).add( displacement$1 );
@@ -8335,25 +8486,40 @@
 
 			}
 
+			return this;
+
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const averageDirection = new Vector3();
 	const direction = new Vector3();
 
+	/**
+	* This steering behavior produces a force that keeps a vehicle’s heading aligned with its neighbors.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class AlignmentBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new alignment behavior.
+		*/
 		constructor() {
 
 			super();
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			averageDirection.set( 0, 0, 0 );
@@ -8383,28 +8549,57 @@
 
 			}
 
+			return force;
+
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const desiredVelocity = new Vector3();
 	const displacement$2 = new Vector3();
 
+	/**
+	* This steering behavior produces a force that directs an agent toward a target position.
+	* Unlike {@link SeekBehavior}, it decelerates so the agent comes to a gentle halt at the target position.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class ArriveBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new arrive behavior.
+		*
+		* @param {Vector3} target - The target vector.
+		* @param {Number} deceleration - The amount of deceleration.
+		*/
 		constructor( target = new Vector3(), deceleration = 3 ) {
 
 			super();
 
+			/**
+			* The target vector.
+			* @type Vector3
+			*/
 			this.target = target;
+
+			/**
+			* The amount of deceleration.
+			* @type Number
+			* @default 3
+			*/
 			this.deceleration = deceleration;
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const target = this.target;
@@ -8434,26 +8629,47 @@
 
 			}
 
+			return force;
+
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const desiredVelocity$1 = new Vector3();
 
+	/**
+	* This steering behavior produces a force that directs an agent toward a target position.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class SeekBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new seek behavior.
+		*
+		* @param {Vector3} target - The target vector.
+		*/
 		constructor( target = new Vector3() ) {
 
 			super();
 
+			/**
+			* The target vector.
+			* @type Vector3
+			*/
 			this.target = target;
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const target = this.target;
@@ -8470,20 +8686,25 @@
 			// which when added to the agent’s current velocity vector gives the desired velocity.
 			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
 
-			force.subVectors( desiredVelocity$1, vehicle.velocity );
+			return force.subVectors( desiredVelocity$1, vehicle.velocity );
 
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const centerOfMass = new Vector3();
 
+	/**
+	* This steering produces a steering force that moves a vehicle toward the center of mass of its neighbors.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class CohesionBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new cohesion behavior.
+		*/
 		constructor() {
 
 			super();
@@ -8494,6 +8715,14 @@
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			centerOfMass.set( 0, 0, 0 );
@@ -8526,27 +8755,56 @@
 
 			}
 
+			return force;
+
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const desiredVelocity$2 = new Vector3();
 
+	/**
+	* This steering behavior produces a force that steers an agent away from a target position.
+	* It's the opposite of {@link SeekBehavior}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class FleeBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new flee behavior.
+		*
+		* @param {Vector3} target - The target vector.
+		* @param {Number} panicDistance - The agent only flees from the target if it is inside this radius.
+		*/
 		constructor( target = new Vector3(), panicDistance = 10 ) {
 
 			super();
 
+			/**
+			* The target vector.
+			* @type Vector3
+			*/
 			this.target = target;
+
+			/**
+			* The agent only flees from the target if it is inside this radius.
+			* @type Number
+			* @default 10
+			*/
 			this.panicDistance = panicDistance;
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const target = this.target;
@@ -8576,26 +8834,55 @@
 
 			}
 
+			return force;
+
 		}
 
 	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
 
 	const displacement$3 = new Vector3();
 	const newPuruserVelocity = new Vector3();
 	const predcitedPosition = new Vector3();
 
+	/**
+	* This steering behavior is is almost the same as {@link PursuitBehavior} except that
+	* the agent flees from the estimated future position of the pursuer.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class EvadeBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new evade behavior.
+		*
+		* @param {MovingEntity} pursuer - The agent to evade from.
+		* @param {Number} panicDistance -  The agent only flees from the pursuer if it is inside this radius.
+		* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the pursuer.
+		*/
 		constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
 
 			super();
 
+			/**
+			* The agent to evade from.
+			* @type MovingEntity
+			* @default null
+			*/
 			this.pursuer = pursuer;
+
+			/**
+			* The agent only flees from the pursuer if it is inside this radius.
+			* @type Number
+			* @default 10
+			*/
 			this.panicDistance = panicDistance;
+
+			/**
+			* This factor determines how far the vehicle predicts the movement of the pursuer.
+			* @type Number
+			* @default 1
+			*/
 			this.predictionFactor = predictionFactor;
 
 			// internal behaviors
@@ -8604,6 +8891,14 @@
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const pursuer = this.pursuer;
@@ -8624,22 +8919,42 @@
 			this._flee.panicDistance = this.panicDistance;
 			this._flee.calculate( vehicle, force );
 
+			return force;
+
 		}
 
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* This steering behavior produces a force that moves a vehicle along a series of waypoints forming a path.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class FollowPathBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new follow path behavior.
+		*
+		* @param {Path} path - The path to follow.
+		* @param {Number} nextWaypointDistance - The distance the agent seeks for the next waypoint.
+		*/
 		constructor( path = new Path(), nextWaypointDistance = 1 ) {
 
 			super();
 
-			this.path = path; // list of waypoints to follow
-			this.nextWaypointDistance = nextWaypointDistance; // the distance a waypoint is set to the new target
+			/**
+			* The path to follow.
+			* @type MovingEntity
+			*/
+			this.path = path;
+
+			/**
+			* The distance the agent seeks for the next waypoint.
+			* @type Number
+			* @default 1
+			*/
+			this.nextWaypointDistance = nextWaypointDistance;
 
 			// internal behaviors
 
@@ -8648,6 +8963,14 @@
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const path = this.path;
@@ -8678,27 +9001,56 @@
 
 			}
 
+			return force;
+
 		}
 
 	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
 
 	const midPoint = new Vector3();
 	const translation = new Vector3();
 	const predcitedPosition1 = new Vector3();
 	const predcitedPosition2 = new Vector3();
 
+	/**
+	* This steering behavior produces a force that moves a vehicle to the midpoint
+	* of the imaginary line connecting two other agents.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class InterposeBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new interpose behavior.
+		*
+		* @param {MovingEntity} entity1 - The first agent.
+		* @param {MovingEntity} entity2 - The second agent.
+		* @param {Number} deceleration - The amount of deceleration.
+		*/
 		constructor( entity1 = null, entity2 = null, deceleration = 3 ) {
 
 			super();
 
+			/**
+			* The first agent.
+			* @type MovingEntity
+			* @default null
+			*/
 			this.entity1 = entity1;
+
+			/**
+			* The second agent.
+			* @type MovingEntity
+			* @default null
+			*/
 			this.entity2 = entity2;
+
+			/**
+			* The amount of deceleration.
+			* @type Number
+			* @default 3
+			*/
 			this.deceleration = deceleration;
 
 			// internal behaviors
@@ -8707,6 +9059,14 @@
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const entity1 = this.entity1;
@@ -8738,14 +9098,11 @@
 			this._arrive.target = midPoint;
 			this._arrive.calculate( vehicle, force );
 
+			return force;
+
 		}
 
 	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 * @author robp94 / https://github.com/robp94
-	 */
 
 	const inverse = new Matrix4();
 	const localPositionOfObstacle = new Vector3();
@@ -8753,22 +9110,56 @@
 	const intersectionPoint = new Vector3();
 	const boundingSphere = new BoundingSphere();
 
-	// this will be later used for a ray/sphere intersection test
-
 	const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
+	/**
+	* This steering behavior produces a force so a vehicle avoids obstacles lying in its path.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	* @augments SteeringBehavior
+	*/
 	class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new obstacle avoidance behavior.
+		*
+		* @param {Array} obstacles - An Array with obstacle of type {@link GameEntity}.
+		*/
 		constructor( obstacles = new Array() ) {
 
 			super();
 
+			/**
+			* An Array with obstacle of type {@link GameEntity}.
+			* @type Array
+			*/
 			this.obstacles = obstacles;
+
+			/**
+			* This factor determines how much the vehicle decelerates if an intersection occurs.
+			* @type Number
+			* @default 0.2
+			*/
 			this.brakingWeight = 0.2;
-			this.dBoxMinLength = 4; // minimum length of the detection box
+
+			/**
+			* Minimum length of the detection box used for intersection tests.
+			* @type Number
+			* @default 4
+			*/
+			this.dBoxMinLength = 4; //
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const obstacles = this.obstacles;
@@ -8862,13 +9253,11 @@
 
 			}
 
+			return force;
+
 		}
 
 	}
-
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
 
 	const displacement$4 = new Vector3();
 	const vehicleDirection = new Vector3();
@@ -8876,13 +9265,36 @@
 	const newEvaderVelocity = new Vector3();
 	const predcitedPosition$1 = new Vector3();
 
+	/**
+	* This steering behavior is useful when an agent is required to intercept a moving agent.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class PursuitBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new pursuit behavior.
+		*
+		* @param {MovingEntity} evader - The agent to pursue.
+		* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the evader.
+		*/
 		constructor( evader = null, predictionFactor = 1 ) {
 
 			super();
 
+			/**
+			* The agent to pursue.
+			* @type MovingEntity
+			* @default null
+			*/
 			this.evader = evader;
+
+			/**
+			* This factor determines how far the vehicle predicts the movement of the evader.
+			* @type Number
+			* @default 1
+			*/
 			this.predictionFactor = predictionFactor;
 
 			// internal behaviors
@@ -8891,6 +9303,14 @@
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const evader = this.evader;
@@ -8914,7 +9334,7 @@
 
 				this._seek.target = evader.position;
 				this._seek.calculate( vehicle, force );
-				return;
+				return force;
 
 			}
 
@@ -8937,24 +9357,39 @@
 			this._seek.target = predcitedPosition$1;
 			this._seek.calculate( vehicle, force );
 
+			return force;
+
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const toAgent = new Vector3();
 
+	/**
+	* This steering produces a force that steers a vehicle away from those in its neighborhood region.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class SeparationBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new separation behavior.
+		*/
 		constructor() {
 
 			super();
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force /*, delta */ ) {
 
 			const neighbors = vehicle.neighbors;
@@ -8979,28 +9414,56 @@
 
 			}
 
+			return force;
+
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	const targetWorld = new Vector3();
 	const randomDisplacement = new Vector3();
 
-	// this behavior only produces a 2D force (XZ)
-
+	/**
+	* This steering behavior produces a steering force that will give the
+	* impression of a random walk through the agent’s environment. The behavior only
+	* produces a 2D force (XZ).
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
 	class WanderBehavior extends SteeringBehavior {
 
+		/**
+		* Constructs a new wander behavior.
+		*
+		* @param {Numer} radius - The radius of the wander circle for the wander behavior.
+		* @param {Numer} distance - The distance the wander circle is projected in front of the agent.
+		* @param {Numer} jitter - The maximum amount of displacement along the sphere each frame.
+		*/
 		constructor( radius = 1, distance = 5, jitter = 5 ) {
 
 			super();
 
-			this.radius = radius; // the radius of the constraining circle for the wander behavior
-			this.distance = distance; // the distance the wander sphere is projected in front of the agent
-			this.jitter = jitter; // the maximum amount of displacement along the sphere each frame
+			/**
+			* The radius of the constraining circle for the wander behavior.
+			* @type Number
+			* @default 1
+			*/
+			this.radius = radius;
+
+			/**
+			* The distance the wander sphere is projected in front of the agent.
+			* @type Number
+			* @default 5
+			*/
+			this.distance = distance;
+
+			/**
+			* The maximum amount of displacement along the sphere each frame.
+			* @type Number
+			* @default 5
+			*/
+			this.jitter = jitter;
 
 			this._targetLocal = new Vector3();
 
@@ -9008,6 +9471,14 @@
 
 		}
 
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
 		calculate( vehicle, force, delta ) {
 
 			// this behavior is dependent on the update rate, so this line must be
@@ -9044,6 +9515,8 @@
 			// and steer towards it
 
 			force.subVectors( targetWorld, vehicle.position );
+
+			return force;
 
 		}
 

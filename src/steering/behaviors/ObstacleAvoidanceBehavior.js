@@ -1,8 +1,3 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- * @author robp94 / https://github.com/robp94
- */
-
 import { SteeringBehavior } from '../SteeringBehavior.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { BoundingSphere } from '../../math/BoundingSphere.js';
@@ -15,22 +10,56 @@ const localPositionOfClosestObstacle = new Vector3();
 const intersectionPoint = new Vector3();
 const boundingSphere = new BoundingSphere();
 
-// this will be later used for a ray/sphere intersection test
-
 const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
+/**
+* This steering behavior produces a force so a vehicle avoids obstacles lying in its path.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @author {@link https://github.com/robp94|robp94}
+* @augments SteeringBehavior
+*/
 class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
+	/**
+	* Constructs a new obstacle avoidance behavior.
+	*
+	* @param {Array} obstacles - An Array with obstacle of type {@link GameEntity}.
+	*/
 	constructor( obstacles = new Array() ) {
 
 		super();
 
+		/**
+		* An Array with obstacle of type {@link GameEntity}.
+		* @type Array
+		*/
 		this.obstacles = obstacles;
+
+		/**
+		* This factor determines how much the vehicle decelerates if an intersection occurs.
+		* @type Number
+		* @default 0.2
+		*/
 		this.brakingWeight = 0.2;
-		this.dBoxMinLength = 4; // minimum length of the detection box
+
+		/**
+		* Minimum length of the detection box used for intersection tests.
+		* @type Number
+		* @default 4
+		*/
+		this.dBoxMinLength = 4; //
 
 	}
 
+	/**
+	* Calculates the steering force for a single simulation step.
+	*
+	* @param {Vehicle} vehicle - The game entity the force is produced for.
+	* @param {Vector3} force - The force/result vector.
+	* @param {Number} delta - The time delta.
+	* @return {Vector3} The force/result vector.
+	*/
 	calculate( vehicle, force /*, delta */ ) {
 
 		const obstacles = this.obstacles;
@@ -123,6 +152,8 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 			force.applyRotation( vehicle.rotation );
 
 		}
+
+		return force;
 
 	}
 
