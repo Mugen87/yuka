@@ -5,49 +5,109 @@
 }(this, (function (exports) { 'use strict';
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class for representing a telegram, an envelope which contains a message
+	* and certain metadata like sender and receiver. Part of the messaging system
+	* for game entities.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Telegram {
 
+		/**
+		* Constructs a new telegram object.
+		*
+		* @param {GameEntity} sender - The sender.
+		* @param {GameEntity} receiver - The receiver.
+		* @param {String} message - The actual message.
+		* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
+		* @param {Object} data - An object for custom data.
+		*/
 		constructor( sender, receiver, message, delay, data ) {
 
+			/**
+			* The sender.
+			* @type GameEntity
+			*/
 			this.sender = sender;
+
+			/**
+			* The receiver.
+			* @type GameEntity
+			*/
 			this.receiver = receiver;
+
+			/**
+			* The actual message.
+			* @type String
+			*/
 			this.message = message;
+
+			/**
+			* A time value in millisecond used to delay the message dispatching.
+			* @type Number
+			*/
 			this.delay = delay;
+
+			/**
+			* An object for custom data.
+			* @type Object
+			*/
 			this.data = data;
 
 		}
 
 	}
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
 	/* istanbul ignore next */
 
+	/**
+	* Class with a logger interface. Messages are only logged to console if
+	* their log level is smaller or equal than the current log level.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Logger {
 
+		/**
+		* Sets the log level for the logger. Allow values are: *LOG*,
+		* *WARN*, *ERROR*, *SILENT*. The default level is *WARN*. The constants
+		* are accessible over the *Logger.LEVEL* namespace.
+		*
+		* @param {Number} level - The log level.
+		*/
 		static setLevel( level ) {
 
 			currentLevel = level;
 
 		}
 
+		/**
+		* Logs a message with the level *LOG*.
+		*
+		* @param {...Any} args - The arguments to log.
+		*/
 		static log( ...args ) {
 
 			if ( currentLevel <= Logger.LEVEL.LOG ) console.log( ...args );
 
 		}
 
+		/**
+		* Logs a message with the level *WARN*.
+		*
+		* @param {...Any} args - The arguments to log.
+		*/
 		static warn( ...args ) {
 
 			if ( currentLevel <= Logger.LEVEL.WARN ) console.warn( ...args );
 
 		}
 
+		/**
+		* Logs a message with the level *ERROR*.
+		*
+		* @param {...Any} args - The arguments to log.
+		*/
 		static error( ...args ) {
 
 			if ( currentLevel <= Logger.LEVEL.ERROR ) console.error( ...args );
@@ -66,17 +126,34 @@
 	let currentLevel = Logger.LEVEL.WARN;
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* This class is the core of the messaging system for game entites and used by the
+	* {@link EntityManager}. The implementation can directly dispatch messages or use a
+	* delayed delivery for deferred communication. This can be useful if a game entity
+	* wants to inform itself about a particular event in the future.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class MessageDispatcher {
 
+		/**
+		* Constructs a new message dispatcher.
+		*/
 		constructor() {
 
+			/**
+			* A list of delayed telegrams.
+			* @type Array
+			*/
 			this.delayedTelegrams = new Array();
 
 		}
 
+		/**
+		* Delivers the message to the receiver.
+		*
+		*	@param {Telegram} telegram - The telegram to deliver.
+		* @return {MessageDispatcher} A reference to this message dispatcher.
+		*/
 		deliver( telegram ) {
 
 			const receiver = telegram.receiver;
@@ -87,10 +164,20 @@
 
 			}
 
+			return this;
+
 		}
 
-		// send a message to another agent
-
+		/**
+		* Receives the raw telegram data and decides how to dispatch the telegram (with or without delay).
+		*
+		* @param {GameEntity} sender - The sender.
+		* @param {GameEntity} receiver - The receiver.
+		* @param {String} message - The actual message.
+		* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
+		* @param {Object} data - An object for custom data.
+		* @return {MessageDispatcher} A reference to this message dispatcher.
+		*/
 		dispatch( sender, receiver, message, delay, data ) {
 
 			const telegram = new Telegram( sender, receiver, message, delay, data );
@@ -105,10 +192,16 @@
 
 			}
 
+			return this;
+
 		}
 
-		// process delayed messages
-
+		/**
+		* Used to process delayed messages.
+		*
+		*	@param {Number} delta - The time delta.
+		* @return {MessageDispatcher} A reference to this message dispatcher.
+		*/
 		dispatchDelayedMessages( delta ) {
 
 			let i = this.delayedTelegrams.length;
@@ -129,11 +222,20 @@
 
 			}
 
+			return this;
+
 		}
 
+		/**
+		* Clears the internal state of this message dispatcher.
+		*
+		* @return {MessageDispatcher} A reference to this message dispatcher.
+		*/
 		clear() {
 
 			this.delayedTelegrams.length = 0;
+
+			return this;
 
 		}
 
@@ -2716,32 +2818,67 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Class for representing a timer.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Time {
 
+		/**
+		* Constructs a new time object.
+		*/
 		constructor() {
 
+			/**
+			* The start time of this timer.
+			* @type Number
+			* @default 0
+			*/
 			this.startTime = 0;
 
+			/**
+			* The time stamp of the last simulation step.
+			* @type Number
+			* @default 0
+			*/
 			this.previousTime = 0;
+
+			/**
+			* The time stamp of the current simulation step.
+			* @type Number
+			* @default 0
+			*/
 			this.currentTime = 0;
 
 		}
 
+		/**
+		* Returns the delta time for the current simulation step.
+		*
+		* @return {Number} The delta time.
+		*/
 		getDelta() {
 
 			return ( this.currentTime - this.previousTime ) / 1000;
 
 		}
 
+		/**
+		* Returns the elapsed time of this timer.
+		*
+		* @return {Number} The elapsed time.
+		*/
 		getElapsed() {
 
 			return ( this.currentTime - this.startTime ) / 1000;
 
 		}
 
+		/**
+		* Updates the internal state of this timer.
+		*
+		* @return {Time} A reference to this timer.
+		*/
 		update() {
 
 			this.previousTime = this.currentTime;
@@ -2751,6 +2888,11 @@
 
 		}
 
+		/**
+		* Returns a timestamp.
+		*
+		* @return {Number} A time stamp.
+		*/
 		now() {
 
 			return ( typeof performance === 'undefined' ? Date : performance ).now();
@@ -2760,21 +2902,38 @@
 	}
 
 	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
-
+	* Not all components of an AI system need to be updated in each simulation step.
+	* This class can be used to control the update process by defining how many updates
+	* should be executed per second.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class Regulator {
 
+		/**
+		* Constructs a new regulator.
+		*
+		*	@param {Number} updateFrequency - The amount of updates per second.
+		*/
 		constructor( updateFrequency = 0 ) {
 
-			this.updateFrequency = updateFrequency; // updates per second
+			/**
+			* The amount of updates per second.
+			* @type Number
+			* @default 0
+			*/
+			this.updateFrequency = updateFrequency;
 
 			this._time = new Time();
-
 			this._nextUpdateTime = 0;
 
 		}
 
+		/**
+		* Returns true if it is time to allow the next update.
+		*
+		* @return {Boolean} Whether an update is allowed or not.
+		*/
 		ready() {
 
 			this._time.update();

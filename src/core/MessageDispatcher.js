@@ -1,18 +1,35 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Telegram } from './Telegram.js';
 import { Logger } from './Logger.js';
 
+/**
+* This class is the core of the messaging system for game entites and used by the
+* {@link EntityManager}. The implementation can directly dispatch messages or use a
+* delayed delivery for deferred communication. This can be useful if a game entity
+* wants to inform itself about a particular event in the future.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class MessageDispatcher {
 
+	/**
+	* Constructs a new message dispatcher.
+	*/
 	constructor() {
 
+		/**
+		* A list of delayed telegrams.
+		* @type Array
+		*/
 		this.delayedTelegrams = new Array();
 
 	}
 
+	/**
+	* Delivers the message to the receiver.
+	*
+	*	@param {Telegram} telegram - The telegram to deliver.
+	* @return {MessageDispatcher} A reference to this message dispatcher.
+	*/
 	deliver( telegram ) {
 
 		const receiver = telegram.receiver;
@@ -23,10 +40,20 @@ class MessageDispatcher {
 
 		}
 
+		return this;
+
 	}
 
-	// send a message to another agent
-
+	/**
+	* Receives the raw telegram data and decides how to dispatch the telegram (with or without delay).
+	*
+	* @param {GameEntity} sender - The sender.
+	* @param {GameEntity} receiver - The receiver.
+	* @param {String} message - The actual message.
+	* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
+	* @param {Object} data - An object for custom data.
+	* @return {MessageDispatcher} A reference to this message dispatcher.
+	*/
 	dispatch( sender, receiver, message, delay, data ) {
 
 		const telegram = new Telegram( sender, receiver, message, delay, data );
@@ -41,10 +68,16 @@ class MessageDispatcher {
 
 		}
 
+		return this;
+
 	}
 
-	// process delayed messages
-
+	/**
+	* Used to process delayed messages.
+	*
+	*	@param {Number} delta - The time delta.
+	* @return {MessageDispatcher} A reference to this message dispatcher.
+	*/
 	dispatchDelayedMessages( delta ) {
 
 		let i = this.delayedTelegrams.length;
@@ -65,11 +98,20 @@ class MessageDispatcher {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Clears the internal state of this message dispatcher.
+	*
+	* @return {MessageDispatcher} A reference to this message dispatcher.
+	*/
 	clear() {
 
 		this.delayedTelegrams.length = 0;
+
+		return this;
 
 	}
 
