@@ -12,7 +12,7 @@ class Regulator {
 	/**
 	* Constructs a new regulator.
 	*
-	*	@param {Number} updateFrequency - The amount of updates per second.
+	* @param  {Number} updateFrequency - The amount of updates per second.
 	*/
 	constructor( updateFrequency = 0 ) {
 

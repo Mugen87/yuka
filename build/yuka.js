@@ -151,7 +151,7 @@
 		/**
 		* Delivers the message to the receiver.
 		*
-		*	@param {Telegram} telegram - The telegram to deliver.
+		* @param {Telegram} telegram - The telegram to deliver.
 		* @return {MessageDispatcher} A reference to this message dispatcher.
 		*/
 		deliver( telegram ) {
@@ -199,7 +199,7 @@
 		/**
 		* Used to process delayed messages.
 		*
-		*	@param {Number} delta - The time delta.
+		* @param  {Number} delta - The time delta.
 		* @return {MessageDispatcher} A reference to this message dispatcher.
 		*/
 		dispatchDelayedMessages( delta ) {
@@ -3255,7 +3255,7 @@
 		/**
 		* Constructs a new regulator.
 		*
-		*	@param {Number} updateFrequency - The amount of updates per second.
+		* @param  {Number} updateFrequency - The amount of updates per second.
 		*/
 		constructor( updateFrequency = 0 ) {
 
@@ -8758,7 +8758,7 @@
 		/**
 		* Constructs a new smoother.
 		*
-		*	@param {Number} count - The amount of samples the smoother will use to average a vector.
+		* @param  {Number} count - The amount of samples the smoother will use to average a vector.
 		*/
 		constructor( count = 10 ) {
 
@@ -8882,7 +8882,7 @@
 		/**
 		* Constructs a new steering manager.
 		*
-		*	@param {Vehicle} vehicle - The vehicle that owns this steering manager.
+		* @param  {Vehicle} vehicle - The vehicle that owns this steering manager.
 		*/
 		constructor( vehicle ) {
 

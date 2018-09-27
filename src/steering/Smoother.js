@@ -13,7 +13,7 @@ class Smoother {
 	/**
 	* Constructs a new smoother.
 	*
-	*	@param {Number} count - The amount of samples the smoother will use to average a vector.
+	* @param  {Number} count - The amount of samples the smoother will use to average a vector.
 	*/
 	constructor( count = 10 ) {
 

@@ -14,7 +14,7 @@ class SteeringManager {
 	/**
 	* Constructs a new steering manager.
 	*
-	*	@param {Vehicle} vehicle - The vehicle that owns this steering manager.
+	* @param  {Vehicle} vehicle - The vehicle that owns this steering manager.
 	*/
 	constructor( vehicle ) {
 

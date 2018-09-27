@@ -27,7 +27,7 @@ class MessageDispatcher {
 	/**
 	* Delivers the message to the receiver.
 	*
-	*	@param {Telegram} telegram - The telegram to deliver.
+	* @param {Telegram} telegram - The telegram to deliver.
 	* @return {MessageDispatcher} A reference to this message dispatcher.
 	*/
 	deliver( telegram ) {
@@ -75,7 +75,7 @@ class MessageDispatcher {
 	/**
 	* Used to process delayed messages.
 	*
-	*	@param {Number} delta - The time delta.
+	* @param  {Number} delta - The time delta.
 	* @return {MessageDispatcher} A reference to this message dispatcher.
 	*/
 	dispatchDelayedMessages( delta ) {
