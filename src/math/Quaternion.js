@@ -1,4 +1,4 @@
-import { _Math } from './Math.js';
+import { MathUtils } from './MathUtils.js';
 import { Matrix3 } from './Matrix3.js';
 
 const matrix = new Matrix3();
@@ -239,7 +239,7 @@ class Quaternion {
 	*/
 	angleTo( q ) {
 
-		return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+		return 2 * Math.acos( Math.abs( MathUtils.clamp( this.dot( q ), - 1, 1 ) ) );
 
 	}
 

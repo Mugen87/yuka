@@ -1,4 +1,4 @@
-import { _Math } from './Math.js';
+import { MathUtils } from './MathUtils.js';
 
 /**
 * Class representing a 3D vector.
@@ -392,7 +392,7 @@ class Vector3 {
 
 		// clamp, to handle numerical problems
 
-		return Math.acos( _Math.clamp( theta, - 1, 1 ) );
+		return Math.acos( MathUtils.clamp( theta, - 1, 1 ) );
 
 	}
 

@@ -3,7 +3,7 @@
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
-class _Math {
+class MathUtils {
 
 	/**
 	* Ensures the given scalar value is within a given min/max range.
@@ -49,4 +49,4 @@ class _Math {
 
 }
 
-export { _Math };
+export { MathUtils };

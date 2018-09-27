@@ -1,4 +1,4 @@
-import { _Math } from '../../math/Math.js';
+import { MathUtils } from '../../math/MathUtils.js';
 
 /**
 * A corridor is a sequence of portal edges representing a walkable way within a navigation mesh. The class is able
@@ -71,9 +71,9 @@ class Corridor {
 
 			// update right vertex
 
-			if ( _Math.area( portalApex, portalRight, right ) <= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalRight, right ) <= 0.0 ) {
 
-				if ( portalApex === portalRight || _Math.area( portalApex, portalLeft, right ) > 0.0 ) {
+				if ( portalApex === portalRight || MathUtils.area( portalApex, portalLeft, right ) > 0.0 ) {
 
 					// tighten the funnel
 
@@ -110,9 +110,9 @@ class Corridor {
 
 			// update left vertex
 
-			if ( _Math.area( portalApex, portalLeft, left ) >= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalLeft, left ) >= 0.0 ) {
 
-				if ( portalApex === portalLeft || _Math.area( portalApex, portalRight, left ) < 0.0 ) {
+				if ( portalApex === portalLeft || MathUtils.area( portalApex, portalRight, left ) < 0.0 ) {
 
 					// tighten the funnel
 

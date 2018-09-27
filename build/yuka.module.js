@@ -607,7 +607,7 @@ class EntityManager {
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
-class _Math {
+class MathUtils {
 
 	/**
 	* Ensures the given scalar value is within a given min/max range.
@@ -1045,7 +1045,7 @@ class Vector3 {
 
 		// clamp, to handle numerical problems
 
-		return Math.acos( _Math.clamp( theta, - 1, 1 ) );
+		return Math.acos( MathUtils.clamp( theta, - 1, 1 ) );
 
 	}
 
@@ -1910,7 +1910,7 @@ class Quaternion {
 	*/
 	angleTo( q ) {
 
-		return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+		return 2 * Math.acos( Math.abs( MathUtils.clamp( this.dot( q ), - 1, 1 ) ) );
 
 	}
 
@@ -6019,7 +6019,7 @@ class LineSegment {
 
 		let t = dotP2P1 / dotP2P2;
 
-		if ( clampToLine ) t = _Math.clamp( t, 0, 1 );
+		if ( clampToLine ) t = MathUtils.clamp( t, 0, 1 );
 
 		return t;
 
@@ -6537,9 +6537,9 @@ class Corridor {
 
 			// update right vertex
 
-			if ( _Math.area( portalApex, portalRight, right ) <= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalRight, right ) <= 0.0 ) {
 
-				if ( portalApex === portalRight || _Math.area( portalApex, portalLeft, right ) > 0.0 ) {
+				if ( portalApex === portalRight || MathUtils.area( portalApex, portalLeft, right ) > 0.0 ) {
 
 					// tighten the funnel
 
@@ -6576,9 +6576,9 @@ class Corridor {
 
 			// update left vertex
 
-			if ( _Math.area( portalApex, portalLeft, left ) >= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalLeft, left ) >= 0.0 ) {
 
-				if ( portalApex === portalLeft || _Math.area( portalApex, portalRight, left ) < 0.0 ) {
+				if ( portalApex === portalLeft || MathUtils.area( portalApex, portalRight, left ) < 0.0 ) {
 
 					// tighten the funnel
 
@@ -7761,7 +7761,7 @@ class Polygon {
 
 function leftOn( a, b, c ) {
 
-	return _Math.area( a, b, c ) >= 0;
+	return MathUtils.area( a, b, c ) >= 0;
 
 }
 
@@ -10100,8 +10100,8 @@ class WanderBehavior extends SteeringBehavior {
 
 		// prepare random vector
 
-		randomDisplacement.x = _Math.randFloat( - 1, 1 ) * jitterThisTimeSlice;
-		randomDisplacement.z = _Math.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+		randomDisplacement.x = MathUtils.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+		randomDisplacement.z = MathUtils.randFloat( - 1, 1 ) * jitterThisTimeSlice;
 
 		// add random vector to the target's position
 
@@ -10384,4 +10384,4 @@ class Trigger {
 
 }
 
-export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, _Math as Math, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, GameEntity, Logger, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };

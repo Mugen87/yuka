@@ -1,5 +1,5 @@
 import { Vector3 } from './Vector3.js';
-import { _Math } from './Math.js';
+import { MathUtils } from './MathUtils.js';
 
 const p1 = new Vector3();
 const p2 = new Vector3();
@@ -140,7 +140,7 @@ class LineSegment {
 
 		let t = dotP2P1 / dotP2P2;
 
-		if ( clampToLine ) t = _Math.clamp( t, 0, 1 );
+		if ( clampToLine ) t = MathUtils.clamp( t, 0, 1 );
 
 		return t;
 

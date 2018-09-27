@@ -5,7 +5,7 @@
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
-const _Math = YUKA.Math;
+const MathUtils = YUKA.MathUtils;
 const Vector3 = YUKA.Vector3;
 
 describe( 'Math', function () {
@@ -14,9 +14,9 @@ describe( 'Math', function () {
 
 		it( 'should clamp a number between two values', function () {
 
-			expect( _Math.clamp( 4, 6, 8 ) ).to.deep.equal( 6 );
-			expect( _Math.clamp( 7, 6, 8 ) ).to.deep.equal( 7 );
-			expect( _Math.clamp( 10, 6, 8 ) ).to.deep.equal( 8 );
+			expect( MathUtils.clamp( 4, 6, 8 ) ).to.deep.equal( 6 );
+			expect( MathUtils.clamp( 7, 6, 8 ) ).to.deep.equal( 7 );
+			expect( MathUtils.clamp( 10, 6, 8 ) ).to.deep.equal( 8 );
 
 		} );
 
@@ -26,8 +26,8 @@ describe( 'Math', function () {
 
 		it( 'should return a random number between two float values', function () {
 
-			expect( _Math.randFloat( 4, 6 ) ).to.be.within( 4, 6 );
-			expect( _Math.randFloat( - 2, - 1 ) ).to.be.within( - 2, - 1 );
+			expect( MathUtils.randFloat( 4, 6 ) ).to.be.within( 4, 6 );
+			expect( MathUtils.randFloat( - 2, - 1 ) ).to.be.within( - 2, - 1 );
 
 		} );
 
@@ -41,7 +41,7 @@ describe( 'Math', function () {
 			const v2 = new Vector3( 2, 0, 0 );
 			const v3 = new Vector3( 2, 0, - 2 );
 
-			expect( _Math.area( v1, v2, v3 ) ).to.equal( 4 );
+			expect( MathUtils.area( v1, v2, v3 ) ).to.equal( 4 );
 
 		} );
 

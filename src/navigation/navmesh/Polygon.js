@@ -2,7 +2,7 @@ import { HalfEdge } from './HalfEdge.js';
 import { Plane } from '../../math/Plane.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { Logger } from '../../core/Logger.js';
-import { _Math } from '../../math/Math.js';
+import { MathUtils } from '../../math/MathUtils.js';
 
 /**
 * Class for representing a planar polygon with an arbitrary amount of edges.
@@ -306,7 +306,7 @@ class Polygon {
 
 function leftOn( a, b, c ) {
 
-	return _Math.area( a, b, c ) >= 0;
+	return MathUtils.area( a, b, c ) >= 0;
 
 }
 

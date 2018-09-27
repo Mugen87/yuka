@@ -24,7 +24,7 @@ export { Dijkstra } from './graph/search/Dijkstra.js';
 export { AABB } from './math/AABB.js';
 export { BoundingSphere } from './math/BoundingSphere.js';
 export { LineSegment } from './math/LineSegment.js';
-export { _Math as Math } from './math/Math.js';
+export { MathUtils } from './math/MathUtils.js';
 export { Matrix3 } from './math/Matrix3.js';
 export { Matrix4 } from './math/Matrix4.js';
 export { Plane } from './math/Plane.js';
