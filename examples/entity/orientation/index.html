@@ -17,7 +17,7 @@
 	import * as YUKA from '../../../build/yuka.module.js';
 	import * as THREE from '../../lib/three.module.js';
 
-	let renderer, scene, camera, entityMesh, targetMesh;
+	let renderer, scene, camera;
 
 	let entityManager, time, entity, target;
 
@@ -38,25 +38,15 @@
 		entityGeometry.rotateX( Math.PI * 0.5 );
 		const entityMaterial = new THREE.MeshNormalMaterial();
 
-		entityMesh = new THREE.Mesh( entityGeometry, entityMaterial );
+		const entityMesh = new THREE.Mesh( entityGeometry, entityMaterial );
 		entityMesh.matrixAutoUpdate = false;
 		scene.add( entityMesh );
 
-		// game entity setup
-
-		entityManager = new YUKA.EntityManager();
-		time = new YUKA.Time();
-		entity = new YUKA.GameEntity();
-		entity.maxTurnRate = Math.PI * 0.5;
-		entityManager.add( entity );
-
-		target = new YUKA.Vector3();
-
-		//
-
 		const targetGeometry = new THREE.SphereBufferGeometry( 0.05 );
 		const targetMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-		targetMesh = new THREE.Mesh( targetGeometry, targetMaterial );
+
+		const targetMesh = new THREE.Mesh( targetGeometry, targetMaterial );
+		targetMesh.matrixAutoUpdate = false;
 		scene.add( targetMesh );
 
 		//
@@ -76,6 +66,21 @@
 		//
 
 		window.addEventListener( 'resize', onWindowResize, false );
+
+		// game entity setup
+
+		entityManager = new YUKA.EntityManager();
+		time = new YUKA.Time();
+
+		target = new YUKA.GameEntity();
+		target.setRenderComponent( targetMesh, sync );
+
+		entity = new YUKA.GameEntity();
+		entity.maxTurnRate = Math.PI * 0.5;
+		entity.setRenderComponent( entityMesh, sync );
+
+		entityManager.add( entity );
+		entityManager.add( target );
 
 		//
 
@@ -98,14 +103,17 @@
 
 		const delta = time.update().getDelta();
 
-		entity.rotateTo( target, delta );
+		entity.rotateTo( target.position, delta );
 
 		entityManager.update();
 
-		entityMesh.matrix.copy( entity.matrix );
-		targetMesh.position.copy( target );
-
 		renderer.render( scene, camera );
+
+	}
+
+	function sync( entity, renderComponent ) {
+
+		renderComponent.matrix.copy( entity.matrix );
 
 	}
 
@@ -117,7 +125,7 @@
 		const phi = Math.acos( ( 2 * Math.random() ) - 1 );
 		const theta = Math.random() * Math.PI * 2;
 
-		target.fromSpherical( radius, phi, theta );
+		target.position.fromSpherical( radius, phi, theta );
 
 		setTimeout( generateTarget, 2000 );
 

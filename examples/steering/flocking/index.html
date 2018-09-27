@@ -72,11 +72,12 @@
 				vehicle.maxSpeed = 1.5;
 				vehicle.updateNeighborhood = true;
 				vehicle.neighborhoodRadius = 10;
-				vehicle.mesh = vehicleMesh;
 				vehicle.rotation.fromEuler( 0, 2 * Math.PI * Math.random(), 0 );
 				vehicle.position.x = 10 - Math.random() * 20;
 				vehicle.position.z = 10 - Math.random() * 20;
 				vehicle.updateWorldMatrix();
+
+				vehicle.setRenderComponent( vehicleMesh, sync );
 
 				vehicle.steering.add( alignmentBehavior );
 				vehicle.steering.add( cohesionBehavior );
@@ -134,16 +135,15 @@
 
 			entityManager.update( delta );
 
-			for ( let entity of entityManager.entities.values() ) {
-
-				entity.mesh.matrix.copy( entity.matrix );
-
-			}
-
 			renderer.render( scene, camera );
 
 		}
 
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
+
+		}
 
 	</script>
 

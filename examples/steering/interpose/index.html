@@ -17,11 +17,9 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, pursuerMesh, targetMesh1, targetMesh2, line;
+		let renderer, scene, camera, line;
 
 		let entityManager, time, pursuer, entity1, entity2, target1, target2;
-
-		const position = new THREE.Vector3();
 
 		init();
 		animate();
@@ -40,20 +38,20 @@
 			pursuerGeometry.rotateX( Math.PI * 0.5 );
 			const pursuerMaterial = new THREE.MeshNormalMaterial();
 
-			pursuerMesh = new THREE.Mesh( pursuerGeometry, pursuerMaterial );
+			const pursuerMesh = new THREE.Mesh( pursuerGeometry, pursuerMaterial );
 			pursuerMesh.matrixAutoUpdate = false;
 			scene.add( pursuerMesh );
 
 			const targetGeometry = new THREE.BoxBufferGeometry( 0.2, 0.2, 0.2 );
 			const targetMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 
-			targetMesh1 = new THREE.Mesh( targetGeometry, targetMaterial );
-			targetMesh1.matrixAutoUpdate = false;
-			scene.add( targetMesh1 );
+			const entityMesh1 = new THREE.Mesh( targetGeometry, targetMaterial );
+			entityMesh1.matrixAutoUpdate = false;
+			scene.add( entityMesh1 );
 
-			targetMesh2 = new THREE.Mesh( targetGeometry, targetMaterial );
-			targetMesh2.matrixAutoUpdate = false;
-			scene.add( targetMesh2 );
+			const entityMesh2 = new THREE.Mesh( targetGeometry, targetMaterial );
+			entityMesh2.matrixAutoUpdate = false;
+			scene.add( entityMesh2 );
 
 			// helper
 
@@ -86,16 +84,22 @@
 
 			entity1 = new YUKA.Vehicle();
 			entity1.maxSpeed = 2;
+			entity1.setRenderComponent( entityMesh1, sync );
+
 			const seekBehavior1 = new YUKA.SeekBehavior( target1 );
 			entity1.steering.add( seekBehavior1 );
 
 			entity2 = new YUKA.Vehicle();
 			entity2.maxSpeed = 2;
+			entity2.setRenderComponent( entityMesh2, sync );
+
 			const seekBehavior2 = new YUKA.SeekBehavior( target2 );
 			entity2.steering.add( seekBehavior2 );
 
 			pursuer = new YUKA.Vehicle();
 			pursuer.maxSpeed = 3;
+			pursuer.setRenderComponent( pursuerMesh, sync );
+
 			const interposeBehavior = new YUKA.InterposeBehavior( entity1, entity2, 1 );
 			pursuer.steering.add( interposeBehavior );
 
@@ -129,18 +133,14 @@
 
 			entityManager.update( delta );
 
-			targetMesh1.matrix.copy( entity1.matrix );
-			targetMesh2.matrix.copy( entity2.matrix );
-			pursuerMesh.matrix.copy( pursuer.matrix );
-
 			// update line helper
 
 			const positionAttribute = line.geometry.attributes.position;
 
-			position.setFromMatrixPosition( targetMesh1.matrix );
+			let position = entity1.position;
 			positionAttribute.setXYZ( 0, position.x, position.y, position.z );
 
-			position.setFromMatrixPosition( targetMesh2.matrix );
+			position = entity2.position;
 			positionAttribute.setXYZ( 1, position.x, position.y, position.z );
 
 			positionAttribute.needsUpdate = true;
@@ -149,6 +149,11 @@
 
 		}
 
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
+
+		}
 
 	</script>
 

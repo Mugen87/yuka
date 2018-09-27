@@ -196,7 +196,7 @@ describe( 'EntityManager', function () {
 
 	describe( '#update()', function () {
 
-		it( 'should call the update method of game entites and triggers', function () {
+		it( 'should call the update method of game entities and triggers', function () {
 
 			const manager = new EntityManager();
 			const delta = 1;
@@ -214,7 +214,7 @@ describe( 'EntityManager', function () {
 
 		} );
 
-		it( 'should call the start method of game entites only once', function () {
+		it( 'should call the start method of game entities only once', function () {
 
 			const manager = new EntityManager();
 
@@ -228,7 +228,7 @@ describe( 'EntityManager', function () {
 
 		} );
 
-		it( 'should update the matrix and worldMatrix property of game entites', function () {
+		it( 'should update the matrix and worldMatrix property of game entities', function () {
 
 			const manager = new EntityManager();
 
@@ -333,7 +333,7 @@ describe( 'EntityManager', function () {
 			manager.add( entity2 );
 			manager.add( entity3 );
 
-			// the entites needs to be updated once in order to have a valid assignment to a partition
+			// the entities needs to be updated once in order to have a valid assignment to a partition
 
 			manager.updateEntity( entity1, delta );
 			manager.updateEntity( entity2, delta );
@@ -424,6 +424,27 @@ describe( 'EntityManager', function () {
 			manager.updateEntity( entity, delta );
 
 			expect( manager._indexMap.get( entity ) ).to.equal( 0 );
+
+		} );
+
+		it( 'should call the callback function for a render component if set', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const gameEntity = new GameEntity();
+			const mesh = {};
+
+			function callback( entity, renderComponent ) {
+
+				expect( entity ).to.equals( gameEntity );
+				expect( renderComponent ).to.equals( mesh );
+
+			}
+
+			gameEntity.setRenderComponent( mesh, callback );
+
+			manager.updateEntity( gameEntity, delta );
 
 		} );
 

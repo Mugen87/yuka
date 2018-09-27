@@ -17,7 +17,7 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, vehicleMesh;
+		let renderer, scene, camera;
 		let pointer, raycaster, plane;
 
 		let entityManager, time, vehicle, target;
@@ -42,7 +42,7 @@
 			vehicleGeometry.rotateX( Math.PI * 0.5 );
 			const vehicleMaterial = new THREE.MeshNormalMaterial();
 
-			vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+			const vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
 			vehicleMesh.matrixAutoUpdate = false;
 			scene.add( vehicleMesh );
 
@@ -76,6 +76,7 @@
 			entityManager = new YUKA.EntityManager();
 			time = new YUKA.Time();
 			vehicle = new YUKA.Vehicle();
+			vehicle.setRenderComponent( vehicleMesh, sync );
 
 			const fleeBehavior = new YUKA.FleeBehavior( target, 5 );
 			vehicle.steering.add( fleeBehavior );
@@ -114,9 +115,13 @@
 
 			entityManager.update( delta );
 
-			vehicleMesh.matrix.copy( vehicle.matrix );
-
 			renderer.render( scene, camera );
+
+		}
+
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
 
 		}
 

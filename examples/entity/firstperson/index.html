@@ -163,6 +163,7 @@
 			player.lookSpeed = 2;
 			player.height = 2;
 			player.maxSpeed = 40;
+			player.head.setRenderComponent( camera, sync );
 
 			player.onActive = () => { intro.classList.add( 'hidden' ) };
 			player.onInactive = () => { intro.classList.remove( 'hidden' ) };
@@ -194,9 +195,13 @@
 
 			entityManager.update( delta );
 
-			camera.matrixWorld.copy( player.head.worldMatrix );
-
 			renderer.render( scene, camera );
+
+		}
+
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrixWorld.copy( entity.worldMatrix );
 
 		}
 

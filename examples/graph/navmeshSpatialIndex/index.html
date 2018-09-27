@@ -46,7 +46,6 @@
 		let entityManager, time;
 
 		const vehicleCount = 100;
-		const vehicleMeshes = [];
 		const vehicles = []
 		const pathHelpers = [];
 
@@ -79,22 +78,6 @@
 			vehicleGeometry.rotateX( Math.PI * 0.5 );
 			vehicleGeometry.translate( 0, 0.1, 0 );
 			const vehicleMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-
-			for ( let i = 0; i < vehicleCount; i ++ ) {
-
-				const vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
-				vehicleMesh.matrixAutoUpdate = false;
-				scene.add( vehicleMesh );
-				vehicleMeshes.push( vehicleMesh );
-
-				const pathHelper = new THREE.Line( new THREE.BufferGeometry(), pathMaterial );
-				pathHelper.visible = false;
-				scene.add( pathHelper );
-				pathHelpers.push( pathHelper );
-
-			}
-
-			//
 
 			const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.6 );
 			hemiLight.position.set( 0, 100, 0 );
@@ -189,10 +172,26 @@
 
 				for ( let i = 0; i < vehicleCount; i ++ ) {
 
+					// mesh
+
+					const vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+					vehicleMesh.matrixAutoUpdate = false;
+					scene.add( vehicleMesh );
+
+					// path helper
+
+					const pathHelper = new THREE.Line( new THREE.BufferGeometry(), pathMaterial );
+					pathHelper.visible = false;
+					scene.add( pathHelper );
+					pathHelpers.push( pathHelper );
+
+					// vehicle
+
 					const vehicle = new CustomVehicle();
 					vehicle.navMesh = navigationMesh;
 					vehicle.maxSpeed = 1.5;
 					vehicle.maxForce = 10;
+					vehicle.setRenderComponent( vehicleMesh, sync );
 
 					const toRegion = vehicle.navMesh.getRandomRegion();
 					vehicle.position.copy( toRegion.centroid );
@@ -290,20 +289,13 @@
 
 				entityManager.update( delta );
 
-				//
-
-				for ( let i = 0, l = vehicles.length; i < l; i ++ ) {
-
-					const vehicle = vehicles[ i ];
-					const vehicleMesh = vehicleMeshes[ i ];
-
-					vehicleMesh.matrix.copy( vehicle.matrix );
-
-				}
-
-				//
-
 				renderer.render( scene, camera );
+
+		}
+
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
 
 		}
 

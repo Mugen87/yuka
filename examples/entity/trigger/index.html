@@ -21,7 +21,7 @@
 
 	import { CustomTrigger } from './src/CustomTrigger.js';
 
-	let renderer, scene, camera, entityMesh;
+	let renderer, scene, camera;
 
 	let entityManager, time, entity;
 
@@ -41,7 +41,7 @@
 		const entityGeometry = new THREE.BoxBufferGeometry( 0.5, 0.5, 0.5 );
 		const entityMaterial = new THREE.MeshNormalMaterial();
 
-		entityMesh = new THREE.Mesh( entityGeometry, entityMaterial );
+		const entityMesh = new THREE.Mesh( entityGeometry, entityMaterial );
 		entityMesh.matrixAutoUpdate = false;
 		scene.add( entityMesh );
 
@@ -55,6 +55,8 @@
 
 		entity = new YUKA.GameEntity();
 		entity.boundingRadius = 0.5;
+		entity.setRenderComponent( entityMesh, sync );
+
 		entityManager.add( entity );
 
 		const sphericalTriggerRegion = new YUKA.SphericalTriggerRegion();
@@ -125,9 +127,13 @@
 
 		entityManager.update( delta );
 
-		entityMesh.matrix.copy( entity.matrix );
-
 		renderer.render( scene, camera );
+
+	}
+
+	function sync( entity, renderComponent ) {
+
+		renderComponent.matrix.copy( entity.matrix );
 
 	}
 

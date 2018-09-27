@@ -495,6 +495,17 @@
 
 				}
 
+				//
+
+				const renderComponent = entity._renderComponent;
+				const renderComponentCallback = entity._renderComponentCallback;
+
+				if ( renderComponent !== null && renderComponentCallback !== null ) {
+
+					renderComponentCallback( entity, renderComponent );
+
+				}
+
 			}
 
 			return this;
@@ -2804,6 +2815,9 @@
 				scale: new Vector3()
 			};
 
+			this._renderComponent = null;
+			this._renderComponentCallback = null;
+
 		}
 
 		/**
@@ -2983,6 +2997,22 @@
 				}
 
 			}
+
+			return this;
+
+		}
+
+		/**
+		* Sets a renderable component of a 3D engine with a sync callback for this game entity.
+		*
+		* @param {Object} renderComponent - A renderable component of a 3D engine.
+		* @param {Function} callback - A callback that can be used to sync this game entity with the renderable component.
+		* @return {GameEntity} A reference to this game entity.
+		*/
+		setRenderComponent( renderComponent, callback ) {
+
+			this._renderComponent = renderComponent;
+			this._renderComponentCallback = callback;
 
 			return this;
 

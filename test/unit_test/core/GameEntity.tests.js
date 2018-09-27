@@ -233,6 +233,23 @@ describe( 'GameEntity', function () {
 
 	} );
 
+	describe( '#setRenderComponent()', function () {
+
+		it( 'should set the given parameters to the internal private properties', function () {
+
+			const entity = new GameEntity();
+
+			const mesh = {};
+			const sync = function () {};
+
+			entity.setRenderComponent( mesh, sync );
+
+			expect( entity._renderComponent ).to.equal( mesh );
+			expect( entity._renderComponentCallback ).to.equal( sync );
+
+		} );
+
+	} );
 	describe( '#handleMessage()', function () {
 
 		it( 'should exist', function () {

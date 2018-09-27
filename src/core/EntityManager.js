@@ -254,6 +254,17 @@ class EntityManager {
 
 			}
 
+			//
+
+			const renderComponent = entity._renderComponent;
+			const renderComponentCallback = entity._renderComponentCallback;
+
+			if ( renderComponent !== null && renderComponentCallback !== null ) {
+
+				renderComponentCallback( entity, renderComponent );
+
+			}
+
 		}
 
 		return this;

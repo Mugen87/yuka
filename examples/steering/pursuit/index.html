@@ -17,7 +17,7 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, pursuerMesh, evaderMesh;
+		let renderer, scene, camera;
 
 		let entityManager, time, pursuer, evader, target;
 
@@ -38,14 +38,14 @@
 			pursuerGeometry.rotateX( Math.PI * 0.5 );
 			const pursuerMaterial = new THREE.MeshNormalMaterial();
 
-			pursuerMesh = new THREE.Mesh( pursuerGeometry, pursuerMaterial );
+			const pursuerMesh = new THREE.Mesh( pursuerGeometry, pursuerMaterial );
 			pursuerMesh.matrixAutoUpdate = false;
 			scene.add( pursuerMesh );
 
 			const evaderGeometry = new THREE.BoxBufferGeometry( 0.2, 0.2, 0.2 );
 			const evaderMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 
-			evaderMesh = new THREE.Mesh( evaderGeometry, evaderMaterial );
+			const evaderMesh = new THREE.Mesh( evaderGeometry, evaderMaterial );
 			evaderMesh.matrixAutoUpdate = false;
 			scene.add( evaderMesh );
 
@@ -69,11 +69,15 @@
 			time = new YUKA.Time();
 
 			target = new YUKA.Vector3();
+
 			evader = new YUKA.Vehicle();
 			evader.maxSpeed = 3;
+			evader.setRenderComponent( evaderMesh, sync );
+
 			pursuer = new YUKA.Vehicle();
 			pursuer.maxSpeed = 3;
 			pursuer.position.z = - 5;
+			pursuer.setRenderComponent( pursuerMesh, sync );
 
 			const pursuitBehavior = new YUKA.PursuitBehavior( evader, 2 );
 			pursuer.steering.add( pursuitBehavior );
@@ -108,10 +112,13 @@
 
 			entityManager.update( deltaTime );
 
-			pursuerMesh.matrix.copy( pursuer.matrix );
-			evaderMesh.matrix.copy( evader.matrix );
-
 			renderer.render( scene, camera );
+
+		}
+
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
 
 		}
 

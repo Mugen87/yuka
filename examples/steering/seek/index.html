@@ -17,7 +17,7 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		let renderer, scene, camera, vehicleMesh, targetMesh;
+		let renderer, scene, camera;
 
 		let entityManager, time, vehicle, target;
 
@@ -38,13 +38,15 @@
 			vehicleGeometry.rotateX( Math.PI * 0.5 );
 			const vehicleMaterial = new THREE.MeshNormalMaterial();
 
-			vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+			const vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
 			vehicleMesh.matrixAutoUpdate = false;
 			scene.add( vehicleMesh );
 
 			const targetGeometry = new THREE.SphereBufferGeometry( 0.05 );
 			const targetMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-			targetMesh = new THREE.Mesh( targetGeometry, targetMaterial );
+
+			const targetMesh = new THREE.Mesh( targetGeometry, targetMaterial );
+			targetMesh.matrixAutoUpdate = false;
 			scene.add( targetMesh );
 
 			//
@@ -67,15 +69,19 @@
 
 			// game setup
 
-			target = new YUKA.Vector3();
-
 			entityManager = new YUKA.EntityManager();
 			time = new YUKA.Time();
-			vehicle = new YUKA.Vehicle();
 
-			const seekBehavior = new YUKA.SeekBehavior( target );
+			target = new YUKA.GameEntity();
+			target.setRenderComponent( targetMesh, sync );
+
+			vehicle = new YUKA.Vehicle();
+			vehicle.setRenderComponent( vehicleMesh, sync );
+
+			const seekBehavior = new YUKA.SeekBehavior( target.position );
 			vehicle.steering.add( seekBehavior );
 
+			entityManager.add( target );
 			entityManager.add( vehicle );
 
 			generateTarget();
@@ -99,10 +105,13 @@
 
 			entityManager.update( delta );
 
-			vehicleMesh.matrix.copy( vehicle.matrix );
-			targetMesh.position.copy( target );
-
 			renderer.render( scene, camera );
+
+		}
+
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
 
 		}
 
@@ -114,7 +123,7 @@
 			const phi = Math.acos( ( 2 * Math.random() ) - 1 );
 			const theta = Math.random() * Math.PI * 2;
 
-			target.fromSpherical( radius, phi, theta );
+			target.position.fromSpherical( radius, phi, theta );
 
 			setTimeout( generateTarget, 3000 );
 
