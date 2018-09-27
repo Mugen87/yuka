@@ -8,7 +8,14 @@
 		},
 		"plugins": [ "plugins/markdown" ],
 		"templates": {
-			"name": "YUKA",
-			"footerText": "_"
+			"default": {
+				"staticFiles": {
+						"include": ["config/jsdoc/styles"]
+					}
+			},
+			"css": [
+					"custom.css"
+			],
+			"name": "YUKA"
 		}
 }

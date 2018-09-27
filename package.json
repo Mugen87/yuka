@@ -9,7 +9,7 @@
     "build": "rollup -c",
     "build-prod": "rollup -c && google-closure-compiler-js build/yuka.js > build/yuka.min.js",
     "dev": "concurrently \"rollup -c -w\" \"http-server -c-1\"",
-    "doc": "jsdoc src -c \"jsdoc.config.json\"",
+    "doc": "jsdoc src -c \"config/jsdoc/jsdoc.config.json\"",
     "lint": "eslint src examples --ext .js",
     "start": "npm run dev",
     "test": "nyc mocha \"test/unit_test/**/*.js\"",
