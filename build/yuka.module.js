@@ -235,18 +235,38 @@ class MessageDispatcher {
 
 }
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 const candidates = [];
 
+/**
+* This class is used for managing all central objects of a game like
+* game entites and triggers.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class EntityManager {
 
+	/**
+	* Constructs a new entity manager.
+	*/
 	constructor() {
 
+		/**
+		* A list of {@link GameEntity game entities }.
+		* @type Array
+		*/
 		this.entities = new Array();
+
+		/**
+		* A list of {@link Trigger triggers }.
+		* @type Array
+		*/
 		this.triggers = new Array();
+
+		/**
+		* A reference to a spatial index.
+		* @type CellSpacePartitioning
+		* @default null
+		*/
 		this.spatialIndex = null;
 
 		this._entityMap = new Map(); // for fast ID access
@@ -256,6 +276,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Adds a game entity to this entity manager.
+	*
+	* @param {GameEntity} entity - The game entity to add.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	add( entity ) {
 
 		this.entities.push( entity );
@@ -267,6 +293,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Removes a game entity from this entity manager.
+	*
+	* @param {GameEntity} entity - The game entity to remove.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	remove( entity ) {
 
 		const index = this.entities.indexOf( entity );
@@ -281,6 +313,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Adds a trigger to this entity manager.
+	*
+	* @param {Trigger} trigger - The trigger to add.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	addTrigger( trigger ) {
 
 		this.triggers.push( trigger );
@@ -289,6 +327,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Removes a trigger to this entity manager.
+	*
+	* @param {Trigger} trigger - The trigger to remove.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	removeTrigger( trigger ) {
 
 		const index = this.triggers.indexOf( trigger );
@@ -298,6 +342,11 @@ class EntityManager {
 
 	}
 
+	/**
+	* Clears the internal state of this entity manager.
+	*
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	clear() {
 
 		this.entities.length = 0;
@@ -308,14 +357,32 @@ class EntityManager {
 
 		this._messageDispatcher.clear();
 
+		return this;
+
 	}
 
+	/**
+	* Returns an entity by the given ID. If no game entity is found, *null*
+	* is returned.
+	*
+	* @param {Number} id - The id of the game entity.
+	* @return {GameEntity} The found game entity.
+	*/
 	getEntityById( id ) {
 
 		return this._entityMap.get( id ) || null;
 
 	}
 
+	/**
+	* Returns an entity by the given name. If no game entity is found, *null*
+	* is returned. This method is more expensive than {@link GameEntity#getEntityById}
+	* and should not be used in each simlation step. Instead, it should be used once
+	* and the result should be cached for later use.
+	*
+	* @param {String} name - The name of the game entity.
+	* @return {GameEntity} The found game entity.
+	*/
 	getEntityByName( name ) {
 
 		const entities = this.entities;
@@ -332,6 +399,13 @@ class EntityManager {
 
 	}
 
+	/**
+	* The central update method of this entity manager. Updates all
+	* game entites, triggers and delayed messages.
+	*
+	* @param {Number} delta - The time delta.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	update( delta ) {
 
 		const entities = this.entities;
@@ -361,8 +435,17 @@ class EntityManager {
 
 		this._messageDispatcher.dispatchDelayedMessages( delta );
 
+		return this;
+
 	}
 
+	/**
+	* Updates a single entity.
+	*
+	* @param {GameEntity} entity - The game entity to update.
+	* @param {Number} delta - The time delta.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	updateEntity( entity, delta ) {
 
 		if ( entity.active === true ) {
@@ -408,8 +491,16 @@ class EntityManager {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Updates the neighborhood of a single game entity.
+	*
+	* @param {GameEntity} entity - The game entity to update.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	updateNeighborhood( entity ) {
 
 		if ( entity.updateNeighborhood === true ) {
@@ -455,8 +546,16 @@ class EntityManager {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Updates a single trigger.
+	*
+	* @param {Trigger} trigger - The trigger to update.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	updateTrigger( trigger, delta ) {
 
 		if ( trigger.active === true ) {
@@ -479,11 +578,25 @@ class EntityManager {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Interface for game entites so they can send messages to other game entites.
+	*
+	* @param {GameEntity} sender - The sender.
+	* @param {GameEntity} receiver - The receiver.
+	* @param {String} message - The actual message.
+	* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
+	* @param {Object} data - An object for custom data.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	sendMessage( sender, receiver, message, delay, data ) {
 
 		this._messageDispatcher.dispatch( sender, receiver, message, delay, data );
+
+		return this;
 
 	}
 
@@ -2541,62 +2654,175 @@ class Matrix4 {
 
 }
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 let nextId = 0;
 
 const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
 
+/**
+* Base class for all game entites.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class GameEntity {
 
+	/**
+	* Constructs a new game entity.
+	*/
 	constructor() {
 
+		/**
+		* The unique ID of this game entity.
+		* @type Number
+		*/
 		this.id = nextId ++;
+
+		/**
+		* The name of this game entity.
+		* @type String
+		*/
 		this.name = '';
 
+		/**
+		* Whether this game entity is active or not.
+		* @type Boolean
+		* @default true
+		*/
 		this.active = true;
 
-		this.cache = {
+		/**
+		* The child entities of this game entity.
+		* @type Array
+		*/
+		this.children = new Array();
+
+		/**
+		* A reference to the parent entity of this game entity.
+		* Automatically set when added to a {@link GameEntity}.
+		* @type GameEntity
+		* @default null
+		*/
+		this.parent = null;
+
+		/**
+		* A list of neighbors of this game entity.
+		* @type Array
+		*/
+		this.neighbors = new Array();
+
+		/**
+		* Game entities within this radius are considered as neighbors of this entity.
+		* @type Number
+		* @default 1
+		*/
+		this.neighborhoodRadius = 1;
+
+		/**
+		* Whether the neighborhood of this game entity is updated or not.
+		* @type Boolean
+		* @default false
+		*/
+		this.updateNeighborhood = false;
+
+		/**
+		* The position of this game entity.
+		* @type Vector3
+		*/
+		this.position = new Vector3();
+
+		/**
+		* The rotation of this game entity.
+		* @type Quaternion
+		*/
+		this.rotation = new Quaternion();
+
+		/**
+		* The scaling of this game entity.
+		* @type Vector3
+		*/
+		this.scale = new Vector3( 1, 1, 1 );
+
+		/**
+		* The default forward vector of this game entity.
+		* @type Vector3
+		* @default (0,0,1)
+		*/
+		this.forward = new Vector3( 0, 0, 1 );
+
+		/**
+		* The default up vector of this game entity.
+		* @type Vector3
+		* @default (0,1,0)
+		*/
+		this.up = new Vector3( 0, 1, 0 );
+
+		/**
+		* The bounding radius of this game entity in world units.
+		* @type Number
+		* @default 0
+		*/
+		this.boundingRadius = 0;
+
+		/**
+		* The maximum turn rate of this game entity in radians per seconds.
+		* @type Number
+		* @default 2π
+		*/
+		this.maxTurnRate = Math.PI;
+
+		/**
+		* A transformation matrix representing the local space of this game entity.
+		* @type Matrix4
+		*/
+		this.matrix = new Matrix4();
+
+		/**
+		* A transformation matrix representing the world space of this game entity.
+		* @type Matrix4
+		*/
+		this.worldMatrix = new Matrix4();
+
+		/**
+		* A reference to the entity manager of this game entity.
+		* Automatically set when added to an {@link EntityManager}.
+		* @type EntityManager
+		* @default null
+		*/
+		this.manager = null;
+
+		//
+
+		this._cache = {
 			position: new Vector3(),
 			rotation: new Quaternion(),
 			scale: new Vector3()
 		};
 
-		this.children = new Array();
-		this.parent = null;
-
-		this.neighbors = new Array();
-		this.neighborhoodRadius = 1;
-		this.updateNeighborhood = false;
-
-		this.position = new Vector3();
-		this.rotation = new Quaternion();
-		this.scale = new Vector3( 1, 1, 1 );
-
-		this.forward = new Vector3( 0, 0, 1 );
-		this.up = new Vector3( 0, 1, 0 );
-
-		this.boundingRadius = 0;
-		this.maxTurnRate = Math.PI;
-
-		this.matrix = new Matrix4();
-		this.worldMatrix = new Matrix4();
-
-		this.manager = null;
-
 	}
 
-	// lifecycle callbacks
-
+	/**
+	* Executed when this game entity is updated for the first time by its {@link EntityManager}.
+	*
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	start() {}
 
+	/**
+	* Updates the internal state of this game entity. Normally called by {@link EntityManager#update}
+	* in each simulation step.
+	*
+	* @param {Number} delta - The time delta.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	update( /* delta */ ) {}
 
-	//
 
+	/**
+	* Adds a game entity as a child to this game entity.
+	*
+	* @param {GameEntity} entity - The game entity to add.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	add( entity ) {
 
 		if ( entity.parent !== null ) {
@@ -2612,6 +2838,12 @@ class GameEntity {
 
 	}
 
+	/**
+	* Removes a game entity as a child from this game entity.
+	*
+	* @param {GameEntity} entity - The game entity to remove.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	remove( entity ) {
 
 		const index = this.children.indexOf( entity );
@@ -2623,14 +2855,25 @@ class GameEntity {
 
 	}
 
+	/**
+	* Computes the current direction (forward) vector of this game entity
+	* and stores the result in the given vector.
+	*
+	* @param {Vector3} result - The direction vector of this game entity.
+	* @return {Vector3} The direction vector of this game entity.
+	*/
 	getDirection( result ) {
 
 		return result.copy( this.forward ).applyRotation( this.rotation ).normalize();
 
 	}
 
-	// directly rotates the entity so it faces the target
-
+	/**
+	* Directly rotates the entity so it faces the given target position.
+	*
+	* @param {Vector3} target - The target position.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	lookAt( target ) {
 
 		targetDirection.subVectors( target, this.position ).normalize();
@@ -2641,31 +2884,39 @@ class GameEntity {
 
 	}
 
-	// given a target position, this method rotates the entity by an amount not
-	// greater than maxTurnRate until it directly faces the target
-
-	rotateTo( target, deltaTime ) {
+	/**
+	* Given a target position, this method rotates the entity by an amount not
+	* greater than {@link GameEntity#maxTurnRate} until it directly faces the target.
+	*
+	* @param {Vector3} target - The target position.
+	* @param {Number} delta - The time delta.
+	* @return {GameEntity} A reference to this game entity.
+	*/
+	rotateTo( target, delta ) {
 
 		targetDirection.subVectors( target, this.position ).normalize();
 		targetRotation.lookAt( this.forward, targetDirection, this.up );
 
-		this.rotation.rotateTo( targetRotation, this.maxTurnRate * deltaTime );
+		this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta );
 
 		return this;
 
 	}
 
-	// updates the internal transformation matrix if necessary
-
+	/**
+	* Updates the transformation matrix representing the local space.
+	*
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	updateMatrix() {
 
-		const cache = this.cache;
+		const cache = this._cache;
 
 		if ( cache.position.equals( this.position ) &&
 				cache.rotation.equals( this.rotation ) &&
 				cache.scale.equals( this.scale ) ) {
 
-			return;
+			return this;
 
 		}
 
@@ -2675,8 +2926,17 @@ class GameEntity {
 		cache.rotation.copy( this.rotation );
 		cache.scale.copy( this.scale );
 
+		return this;
+
 	}
 
+	/**
+	* Updates the world matrix representing the world space.
+	*
+	* @param {Boolean} up - Whether to update the world matrices of the parents or not.
+	* @param {Boolean} down - Whether to update the world matrices of the childs or not.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	updateWorldMatrix( up = false, down = false ) {
 
 		const parent = this.parent;
@@ -2718,16 +2978,31 @@ class GameEntity {
 
 		}
 
+		return this;
+
 	}
 
-	// messaging
-
+	/**
+	* Holds the implementation for the message handling of this game entity.
+	*
+	* @param {Telegram} telegram - The telegram with the message data.
+	* @return {Boolean} Whether the message was processed or not.
+	*/
 	handleMessage() {
 
 		return false;
 
 	}
 
+	/**
+	* Sends a message with the given data to the specified receiver.
+	*
+	* @param {GameEntity} receiver - The receiver.
+	* @param {String} message - The actual message.
+	* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
+	* @param {Object} data - An object for custom data.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	sendMessage( receiver, message, delay = 0, data = null ) {
 
 		if ( this.manager !== null ) {
@@ -2740,30 +3015,57 @@ class GameEntity {
 
 		}
 
+		return this;
+
 	}
 
 }
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 const displacement = new Vector3();
 const target = new Vector3();
 
+/**
+* Class representing moving game entites.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments GameEntity
+*/
 class MovingEntity extends GameEntity {
 
+	/**
+	* Constructs a new moving entity.
+	*/
 	constructor() {
 
 		super();
 
+		/**
+		* The velocity of this game entity.
+		* @type Vector3
+		*/
 		this.velocity = new Vector3();
-		this.maxSpeed = 1; // the maximum speed at which this entity may travel
 
+		/**
+		* The maximum speed at which this game entity may travel.
+		* @type Number
+		*/
+		this.maxSpeed = 1;
+
+		/**
+		* Whether the orientation of this game entity will be updated based on the velocity or not.
+		* @type Boolean
+		* @default true
+		*/
 		this.updateOrientation = true;
 
 	}
 
+	/**
+	* Updates the internal state of this game entity.
+	*
+	* @param {Number} delta - The time delta.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	update( delta ) {
 
 		// make sure vehicle does not exceed maximum speed
@@ -2797,12 +3099,22 @@ class MovingEntity extends GameEntity {
 
 	}
 
+	/**
+	* Returns the current speed of this game entity.
+	*
+	* @return {Number} The current speed.
+	*/
 	getSpeed() {
 
 		return this.velocity.length();
 
 	}
 
+	/**
+	* Returns the current speed in squared space of this game entity.
+	*
+	* @return {Number} The current speed in squared space.
+	*/
 	getSpeedSquared() {
 
 		return this.velocity.squaredLength();
@@ -3155,6 +3467,7 @@ class StateMachine {
 	* Tries to dispatch the massage to the current or global state and returns true
 	* if the message was processed successfully.
 	*
+	* @param {Telegram} telegram - The telegram with the message data.
 	* @return {Boolean} Whether the message was processed or not.
 	*/
 	handleMessage( telegram ) {
@@ -3194,68 +3507,110 @@ class StateMachine {
 }
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Base class for represeting a goal in context of Goal-driven agent design.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class Goal {
 
+	/**
+	* Constructs a new goal.
+	*
+	* @param {GameEntity} owner - The owner of this goal.
+	*/
 	constructor( owner = null ) {
 
-		this.owner = owner; // a reference to the agent that owns this instance
+		/**
+		* The owner of this goal.
+		* @type GameEntity
+		*/
+		this.owner = owner;
+
+		/**
+		* The status of this goal.
+		* @type Status
+		* @default INACTIVE
+		*/
 		this.status = Goal.STATUS.INACTIVE;
 
 	}
 
-	addSubgoal( /* goal */ ) {
+	/**
+	* Executed when this goal is activated.
+	*/
+	activate() {}
 
-		Logger.warn( 'YUKA.Goal: Unable to add goal to atomic goals.' );
+	/**
+	* Executed in each simulation step.
+	*/
+	execute() {}
 
-	}
+	/**
+	* Executed when this goal is satisfied.
+	*/
+	terminate() {}
 
-	//
-
-	activate() {} // logic to run when the goal is activated
-
-	execute() {} // logic to run each update step
-
-	terminate() {} // logic to run when the goal is satisfied
-
-	// goals can handle messages. Many don't though, so this defines a default behavior
-
+	/**
+	* Goals can handle messages. Many don't though, so this defines a default behavior
+	*
+	* @param {Telegram} telegram - The telegram with the message data.
+	* @return {Boolean} Whether the message was processed or not.
+	*/
 	handleMessage( /* telegram */ ) {
 
 		return false;
 
 	}
 
-	//
-
+	/**
+	* Returns true if the status of this goal is *ACTIVE*.
+	*
+	* @return {Boolean} Whether the goal is active or not.
+	*/
 	active() {
 
 		return this.status === Goal.STATUS.ACTIVE;
 
 	}
 
+	/**
+	* Returns true if the status of this goal is *INACTIVE*.
+	*
+	* @return {Boolean} Whether the goal is inactive or not.
+	*/
 	inactive() {
 
 		return this.status === Goal.STATUS.INACTIVE;
 
 	}
 
+	/**
+	* Returns true if the status of this goal is *COMPLETED*.
+	*
+	* @return {Boolean} Whether the goal is completed or not.
+	*/
 	completed() {
 
 		return this.status === Goal.STATUS.COMPLETED;
 
 	}
 
+	/**
+	* Returns true if the status of this goal is *FAILED*.
+	*
+	* @return {Boolean} Whether the goal is failed or not.
+	*/
 	failed() {
 
 		return this.status === Goal.STATUS.FAILED;
 
 	}
 
-	//
-
+	/**
+	* Ensures the goal is replanned if it has failed.
+	*
+	* @return {Goal} A reference to this goal.
+	*/
 	replanIfFailed() {
 
 		if ( this.failed() === true ) {
@@ -3268,6 +3623,11 @@ class Goal {
 
 	}
 
+	/**
+	* Ensures the goal is activated if it is inactive.
+	*
+	* @return {Goal} A reference to this goal.
+	*/
 	activateIfInactive() {
 
 		if ( this.inactive() === true ) {
@@ -3292,21 +3652,36 @@ Goal.STATUS = Object.freeze( {
 } );
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Class represeting a composite goal. Essentially it's a goal which consists of subgoals.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments Goal
+*/
 class CompositeGoal extends Goal {
 
+	/**
+	* Constructs a new composite goal.
+	*
+	* @param {GameEntity} owner - The owner of this composite goal.
+	*/
 	constructor( owner = null ) {
 
 		super( owner );
 
+		/**
+		* A list of subgoals.
+		* @type Array
+		*/
 		this.subgoals = new Array(); // used as a stack (LIFO)
 
 	}
 
-	// subgoal related methods
-
+	/**
+	* Adds a goal as a subgoal to this instance.
+	*
+	* @param {Goal} goal - The subgoal to add
+	* @return {Goal} A reference to this goal.
+	*/
 	addSubgoal( goal ) {
 
 		this.subgoals.push( goal );
@@ -3315,6 +3690,12 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Removes all subgoals and ensures {@link Goal#terminate} is called
+	* for each subgoal.
+	*
+	* @return {Goal} A reference to this goal.
+	*/
 	clearSubgoals() {
 
 		const subgoals = this.subgoals;
@@ -3333,6 +3714,11 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Returns the current subgoal. If no subgoals are defined, *null* is returned.
+	*
+	* @return {Goal} The current subgoal.
+	*/
 	currentSubgoal() {
 
 		const length = this.subgoals.length;
@@ -3349,6 +3735,11 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Executes the current subgoal of this composite goal.
+	*
+	* @return {Status} The status of this composite subgoal.
+	*/
 	executeSubgoals() {
 
 		const subgoals = this.subgoals;
@@ -3382,7 +3773,7 @@ class CompositeGoal extends Goal {
 
 			subgoal.execute();
 
-			// if subgoal is completed but more subgoals are in the list, return 'active'
+			// if subgoal is completed but more subgoals are in the list, return 'ACTIVE'
 			// status in order to keep processing the list of subgoals
 
 			if ( ( subgoal.completed() === true ) && ( subgoals.length > 1 ) ) {
@@ -3403,14 +3794,22 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Returns true if this composite goal has subgoals.
+	*
+	* @return {Boolean} Whether the composite goal has subgoals or not.
+	*/
 	hasSubgoals() {
 
 		return this.subgoals.length > 0;
 
 	}
 
-	// messaging
-
+	/**
+	* Returns true if the given message was processed by the current subgoal.
+	*
+	* @return {Boolean} Whether the message was processed or not.
+	*/
 	handleMessage( telegram ) {
 
 		const subgoal = this.currentSubgoal();
@@ -3428,52 +3827,90 @@ class CompositeGoal extends Goal {
 }
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Base class for represeting a goal evaluator in context of Goal-driven agent design.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class GoalEvaluator {
 
+	/**
+	* Constructs a new goal evaluator.
+	*
+	* @param {Number} characterBias - Can be used to adjust the preferences of agents.
+	*/
 	constructor( characterBias = 1 ) {
 
-		// when the desirability score for a goal has been evaluated, it is multiplied
-		// by this value. It can be used to create bots with preferences based upon
-		// their personality
+		/**
+		* Can be used to adjust the preferences of agents. When the desirability score
+		* for a goal has been evaluated, it is multiplied by this value.
+		* @type Number
+		* @default 1
+		*/
 		this.characterBias = characterBias;
 
 	}
 
-	calculateDesirability( /* entity */ ) {
-
-		// returns a score between 0 and 1 representing the desirability of a goal
+	/**
+	* Calculates the desirability. It's a score between 0 and 1 representing the desirability
+	* of a goal. This goal is considered as a top level strategy of the agent like *Explore* or
+	* *AttackTarget*. Must be implemented by all concrete goal evaluators.
+	*
+	* @param {GameEntity} owner - The owner of this goal evaluator.
+	* @return {Number} The desirability.
+	*/
+	calculateDesirability( /* owner */ ) {
 
 		return 0;
 
 	}
 
-	setGoal( /* entity */ ) {}
+	/**
+	* Executed if this goal evaluator produces the highest desirability. Must be implemented
+	* by all concrete goal evaluators.
+	*
+	* @param {GameEntity} owner - The owner of this goal evaluator.
+	*/
+	setGoal( /* owner */ ) {}
 
 }
 
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
+* Class for represeting the brain of a game entity.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments CompositeGoal
+*/
 class Think extends CompositeGoal {
 
+	/**
+	* Constructs a new *Think* object.
+	*
+	* @param {GameEntity} owner - The owner of this instance.
+	*/
 	constructor( owner = null ) {
 
 		super( owner );
 
+		/**
+		* A list of goal evaluators.
+		* @type Array
+		*/
 		this.evaluators = new Array();
 
 	}
 
+	/**
+	* Executed when this goal is activated.
+	*/
 	activate() {
 
 		this.arbitrate();
 
 	}
 
+	/**
+	* Executed in each simulation step.
+	*/
 	execute() {
 
 		this.activateIfInactive();
@@ -3488,12 +3925,21 @@ class Think extends CompositeGoal {
 
 	}
 
+	/**
+	* Executed when this goal is satisfied.
+	*/
 	terminate() {
 
 		this.clearSubgoals();
 
 	}
 
+	/**
+	* Adds the given goal evaluator to this instance.
+	*
+	* @param {GoalEvaluator} evaluator - The goal evaluator to add.
+	* @return {Think} A reference to this instance.
+	*/
 	addEvaluator( evaluator ) {
 
 		this.evaluators.push( evaluator );
@@ -3502,6 +3948,12 @@ class Think extends CompositeGoal {
 
 	}
 
+	/**
+	* Removes the given goal evaluator from this instance.
+	*
+	* @param {GoalEvaluator} evaluator - The goal evaluator to remove.
+	* @return {Think} A reference to this instance.
+	*/
 	removeEvaluator( evaluator ) {
 
 		const index = this.evaluators.indexOf( evaluator );
@@ -3511,6 +3963,13 @@ class Think extends CompositeGoal {
 
 	}
 
+	/**
+	* This method represents the top level decision process of an agent.
+	* It iterates through each goal evaluator and selects the one that
+	* has the highest score as the current goal.
+	*
+	* @return {Think} A reference to this instance.
+	*/
 	arbitrate() {
 
 		const evaluators = this.evaluators;

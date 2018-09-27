@@ -1,26 +1,51 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { GameEntity } from './GameEntity.js';
 import { Vector3 } from '../math/Vector3.js';
 
 const displacement = new Vector3();
 const target = new Vector3();
 
+/**
+* Class representing moving game entites.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments GameEntity
+*/
 class MovingEntity extends GameEntity {
 
+	/**
+	* Constructs a new moving entity.
+	*/
 	constructor() {
 
 		super();
 
+		/**
+		* The velocity of this game entity.
+		* @type Vector3
+		*/
 		this.velocity = new Vector3();
-		this.maxSpeed = 1; // the maximum speed at which this entity may travel
 
+		/**
+		* The maximum speed at which this game entity may travel.
+		* @type Number
+		*/
+		this.maxSpeed = 1;
+
+		/**
+		* Whether the orientation of this game entity will be updated based on the velocity or not.
+		* @type Boolean
+		* @default true
+		*/
 		this.updateOrientation = true;
 
 	}
 
+	/**
+	* Updates the internal state of this game entity.
+	*
+	* @param {Number} delta - The time delta.
+	* @return {GameEntity} A reference to this game entity.
+	*/
 	update( delta ) {
 
 		// make sure vehicle does not exceed maximum speed
@@ -54,12 +79,22 @@ class MovingEntity extends GameEntity {
 
 	}
 
+	/**
+	* Returns the current speed of this game entity.
+	*
+	* @return {Number} The current speed.
+	*/
 	getSpeed() {
 
 		return this.velocity.length();
 
 	}
 
+	/**
+	* Returns the current speed in squared space of this game entity.
+	*
+	* @return {Number} The current speed in squared space.
+	*/
 	getSpeedSquared() {
 
 		return this.velocity.squaredLength();

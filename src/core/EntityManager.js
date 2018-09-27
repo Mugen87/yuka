@@ -1,17 +1,37 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { MessageDispatcher } from './MessageDispatcher.js';
 
 const candidates = [];
 
+/**
+* This class is used for managing all central objects of a game like
+* game entites and triggers.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class EntityManager {
 
+	/**
+	* Constructs a new entity manager.
+	*/
 	constructor() {
 
+		/**
+		* A list of {@link GameEntity game entities }.
+		* @type Array
+		*/
 		this.entities = new Array();
+
+		/**
+		* A list of {@link Trigger triggers }.
+		* @type Array
+		*/
 		this.triggers = new Array();
+
+		/**
+		* A reference to a spatial index.
+		* @type CellSpacePartitioning
+		* @default null
+		*/
 		this.spatialIndex = null;
 
 		this._entityMap = new Map(); // for fast ID access
@@ -21,6 +41,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Adds a game entity to this entity manager.
+	*
+	* @param {GameEntity} entity - The game entity to add.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	add( entity ) {
 
 		this.entities.push( entity );
@@ -32,6 +58,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Removes a game entity from this entity manager.
+	*
+	* @param {GameEntity} entity - The game entity to remove.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	remove( entity ) {
 
 		const index = this.entities.indexOf( entity );
@@ -46,6 +78,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Adds a trigger to this entity manager.
+	*
+	* @param {Trigger} trigger - The trigger to add.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	addTrigger( trigger ) {
 
 		this.triggers.push( trigger );
@@ -54,6 +92,12 @@ class EntityManager {
 
 	}
 
+	/**
+	* Removes a trigger to this entity manager.
+	*
+	* @param {Trigger} trigger - The trigger to remove.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	removeTrigger( trigger ) {
 
 		const index = this.triggers.indexOf( trigger );
@@ -63,6 +107,11 @@ class EntityManager {
 
 	}
 
+	/**
+	* Clears the internal state of this entity manager.
+	*
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	clear() {
 
 		this.entities.length = 0;
@@ -73,14 +122,32 @@ class EntityManager {
 
 		this._messageDispatcher.clear();
 
+		return this;
+
 	}
 
+	/**
+	* Returns an entity by the given ID. If no game entity is found, *null*
+	* is returned.
+	*
+	* @param {Number} id - The id of the game entity.
+	* @return {GameEntity} The found game entity.
+	*/
 	getEntityById( id ) {
 
 		return this._entityMap.get( id ) || null;
 
 	}
 
+	/**
+	* Returns an entity by the given name. If no game entity is found, *null*
+	* is returned. This method is more expensive than {@link GameEntity#getEntityById}
+	* and should not be used in each simlation step. Instead, it should be used once
+	* and the result should be cached for later use.
+	*
+	* @param {String} name - The name of the game entity.
+	* @return {GameEntity} The found game entity.
+	*/
 	getEntityByName( name ) {
 
 		const entities = this.entities;
@@ -97,6 +164,13 @@ class EntityManager {
 
 	}
 
+	/**
+	* The central update method of this entity manager. Updates all
+	* game entites, triggers and delayed messages.
+	*
+	* @param {Number} delta - The time delta.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	update( delta ) {
 
 		const entities = this.entities;
@@ -126,8 +200,17 @@ class EntityManager {
 
 		this._messageDispatcher.dispatchDelayedMessages( delta );
 
+		return this;
+
 	}
 
+	/**
+	* Updates a single entity.
+	*
+	* @param {GameEntity} entity - The game entity to update.
+	* @param {Number} delta - The time delta.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	updateEntity( entity, delta ) {
 
 		if ( entity.active === true ) {
@@ -173,8 +256,16 @@ class EntityManager {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Updates the neighborhood of a single game entity.
+	*
+	* @param {GameEntity} entity - The game entity to update.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	updateNeighborhood( entity ) {
 
 		if ( entity.updateNeighborhood === true ) {
@@ -220,8 +311,16 @@ class EntityManager {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Updates a single trigger.
+	*
+	* @param {Trigger} trigger - The trigger to update.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	updateTrigger( trigger, delta ) {
 
 		if ( trigger.active === true ) {
@@ -244,11 +343,25 @@ class EntityManager {
 
 		}
 
+		return this;
+
 	}
 
+	/**
+	* Interface for game entites so they can send messages to other game entites.
+	*
+	* @param {GameEntity} sender - The sender.
+	* @param {GameEntity} receiver - The receiver.
+	* @param {String} message - The actual message.
+	* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
+	* @param {Object} data - An object for custom data.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
 	sendMessage( sender, receiver, message, delay, data ) {
 
 		this._messageDispatcher.dispatch( sender, receiver, message, delay, data );
+
+		return this;
 
 	}
 

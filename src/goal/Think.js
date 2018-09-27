@@ -1,27 +1,44 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Goal } from './Goal.js';
 import { CompositeGoal } from './CompositeGoal.js';
 import { Logger } from '../core/Logger.js';
 
+/**
+* Class for represeting the brain of a game entity.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments CompositeGoal
+*/
 class Think extends CompositeGoal {
 
+	/**
+	* Constructs a new *Think* object.
+	*
+	* @param {GameEntity} owner - The owner of this instance.
+	*/
 	constructor( owner = null ) {
 
 		super( owner );
 
+		/**
+		* A list of goal evaluators.
+		* @type Array
+		*/
 		this.evaluators = new Array();
 
 	}
 
+	/**
+	* Executed when this goal is activated.
+	*/
 	activate() {
 
 		this.arbitrate();
 
 	}
 
+	/**
+	* Executed in each simulation step.
+	*/
 	execute() {
 
 		this.activateIfInactive();
@@ -36,12 +53,21 @@ class Think extends CompositeGoal {
 
 	}
 
+	/**
+	* Executed when this goal is satisfied.
+	*/
 	terminate() {
 
 		this.clearSubgoals();
 
 	}
 
+	/**
+	* Adds the given goal evaluator to this instance.
+	*
+	* @param {GoalEvaluator} evaluator - The goal evaluator to add.
+	* @return {Think} A reference to this instance.
+	*/
 	addEvaluator( evaluator ) {
 
 		this.evaluators.push( evaluator );
@@ -50,6 +76,12 @@ class Think extends CompositeGoal {
 
 	}
 
+	/**
+	* Removes the given goal evaluator from this instance.
+	*
+	* @param {GoalEvaluator} evaluator - The goal evaluator to remove.
+	* @return {Think} A reference to this instance.
+	*/
 	removeEvaluator( evaluator ) {
 
 		const index = this.evaluators.indexOf( evaluator );
@@ -59,6 +91,13 @@ class Think extends CompositeGoal {
 
 	}
 
+	/**
+	* This method represents the top level decision process of an agent.
+	* It iterates through each goal evaluator and selects the one that
+	* has the highest score as the current goal.
+	*
+	* @return {Think} A reference to this instance.
+	*/
 	arbitrate() {
 
 		const evaluators = this.evaluators;

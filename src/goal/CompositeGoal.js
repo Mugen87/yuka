@@ -1,21 +1,36 @@
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
 import { Goal } from './Goal.js';
 
+/**
+* Class represeting a composite goal. Essentially it's a goal which consists of subgoals.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments Goal
+*/
 class CompositeGoal extends Goal {
 
+	/**
+	* Constructs a new composite goal.
+	*
+	* @param {GameEntity} owner - The owner of this composite goal.
+	*/
 	constructor( owner = null ) {
 
 		super( owner );
 
+		/**
+		* A list of subgoals.
+		* @type Array
+		*/
 		this.subgoals = new Array(); // used as a stack (LIFO)
 
 	}
 
-	// subgoal related methods
-
+	/**
+	* Adds a goal as a subgoal to this instance.
+	*
+	* @param {Goal} goal - The subgoal to add
+	* @return {Goal} A reference to this goal.
+	*/
 	addSubgoal( goal ) {
 
 		this.subgoals.push( goal );
@@ -24,6 +39,12 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Removes all subgoals and ensures {@link Goal#terminate} is called
+	* for each subgoal.
+	*
+	* @return {Goal} A reference to this goal.
+	*/
 	clearSubgoals() {
 
 		const subgoals = this.subgoals;
@@ -42,6 +63,11 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Returns the current subgoal. If no subgoals are defined, *null* is returned.
+	*
+	* @return {Goal} The current subgoal.
+	*/
 	currentSubgoal() {
 
 		const length = this.subgoals.length;
@@ -58,6 +84,11 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Executes the current subgoal of this composite goal.
+	*
+	* @return {Status} The status of this composite subgoal.
+	*/
 	executeSubgoals() {
 
 		const subgoals = this.subgoals;
@@ -91,7 +122,7 @@ class CompositeGoal extends Goal {
 
 			subgoal.execute();
 
-			// if subgoal is completed but more subgoals are in the list, return 'active'
+			// if subgoal is completed but more subgoals are in the list, return 'ACTIVE'
 			// status in order to keep processing the list of subgoals
 
 			if ( ( subgoal.completed() === true ) && ( subgoals.length > 1 ) ) {
@@ -112,14 +143,22 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Returns true if this composite goal has subgoals.
+	*
+	* @return {Boolean} Whether the composite goal has subgoals or not.
+	*/
 	hasSubgoals() {
 
 		return this.subgoals.length > 0;
 
 	}
 
-	// messaging
-
+	/**
+	* Returns true if the given message was processed by the current subgoal.
+	*
+	* @return {Boolean} Whether the message was processed or not.
+	*/
 	handleMessage( telegram ) {
 
 		const subgoal = this.currentSubgoal();

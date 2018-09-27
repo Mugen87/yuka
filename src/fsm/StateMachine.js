@@ -165,6 +165,7 @@ class StateMachine {
 	* Tries to dispatch the massage to the current or global state and returns true
 	* if the message was processed successfully.
 	*
+	* @param {Telegram} telegram - The telegram with the message data.
 	* @return {Boolean} Whether the message was processed or not.
 	*/
 	handleMessage( telegram ) {

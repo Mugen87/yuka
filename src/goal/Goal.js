@@ -1,68 +1,108 @@
 /**
- * @author Mugen87 / https://github.com/Mugen87
- */
-
-import { Logger } from '../core/Logger.js';
-
+* Base class for represeting a goal in context of Goal-driven agent design.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
 class Goal {
 
+	/**
+	* Constructs a new goal.
+	*
+	* @param {GameEntity} owner - The owner of this goal.
+	*/
 	constructor( owner = null ) {
 
-		this.owner = owner; // a reference to the agent that owns this instance
+		/**
+		* The owner of this goal.
+		* @type GameEntity
+		*/
+		this.owner = owner;
+
+		/**
+		* The status of this goal.
+		* @type Status
+		* @default INACTIVE
+		*/
 		this.status = Goal.STATUS.INACTIVE;
 
 	}
 
-	addSubgoal( /* goal */ ) {
+	/**
+	* Executed when this goal is activated.
+	*/
+	activate() {}
 
-		Logger.warn( 'YUKA.Goal: Unable to add goal to atomic goals.' );
+	/**
+	* Executed in each simulation step.
+	*/
+	execute() {}
 
-	}
+	/**
+	* Executed when this goal is satisfied.
+	*/
+	terminate() {}
 
-	//
-
-	activate() {} // logic to run when the goal is activated
-
-	execute() {} // logic to run each update step
-
-	terminate() {} // logic to run when the goal is satisfied
-
-	// goals can handle messages. Many don't though, so this defines a default behavior
-
+	/**
+	* Goals can handle messages. Many don't though, so this defines a default behavior
+	*
+	* @param {Telegram} telegram - The telegram with the message data.
+	* @return {Boolean} Whether the message was processed or not.
+	*/
 	handleMessage( /* telegram */ ) {
 
 		return false;
 
 	}
 
-	//
-
+	/**
+	* Returns true if the status of this goal is *ACTIVE*.
+	*
+	* @return {Boolean} Whether the goal is active or not.
+	*/
 	active() {
 
 		return this.status === Goal.STATUS.ACTIVE;
 
 	}
 
+	/**
+	* Returns true if the status of this goal is *INACTIVE*.
+	*
+	* @return {Boolean} Whether the goal is inactive or not.
+	*/
 	inactive() {
 
 		return this.status === Goal.STATUS.INACTIVE;
 
 	}
 
+	/**
+	* Returns true if the status of this goal is *COMPLETED*.
+	*
+	* @return {Boolean} Whether the goal is completed or not.
+	*/
 	completed() {
 
 		return this.status === Goal.STATUS.COMPLETED;
 
 	}
 
+	/**
+	* Returns true if the status of this goal is *FAILED*.
+	*
+	* @return {Boolean} Whether the goal is failed or not.
+	*/
 	failed() {
 
 		return this.status === Goal.STATUS.FAILED;
 
 	}
 
-	//
-
+	/**
+	* Ensures the goal is replanned if it has failed.
+	*
+	* @return {Goal} A reference to this goal.
+	*/
 	replanIfFailed() {
 
 		if ( this.failed() === true ) {
@@ -75,6 +115,11 @@ class Goal {
 
 	}
 
+	/**
+	* Ensures the goal is activated if it is inactive.
+	*
+	* @return {Goal} A reference to this goal.
+	*/
 	activateIfInactive() {
 
 		if ( this.inactive() === true ) {
