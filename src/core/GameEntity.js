@@ -115,7 +115,7 @@ class GameEntity {
 		/**
 		* The maximum turn rate of this game entity in radians per seconds.
 		* @type Number
-		* @default 2π
+		* @default π
 		*/
 		this.maxTurnRate = Math.PI;
 
