@@ -1,7 +1,7 @@
 /**
 * Class representing a sparse graph implementation based on adjacency lists.
 * A sparse graph can be used to model many different types of graphs like navigation
-* graphs (pathfinding), dependency graphs (e.g. technology trees) or a state graphs
+* graphs (pathfinding), dependency graphs (e.g. technology trees) or state graphs
 * (a representation of every possible state in a game).
 *
 * @author {@link https://github.com/Mugen87|Mugen87}

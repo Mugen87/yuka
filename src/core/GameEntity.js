@@ -9,7 +9,7 @@ const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
 
 /**
-* Base class for all game entites.
+* Base class for all game entities.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

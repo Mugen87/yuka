@@ -120,7 +120,7 @@ Logger.LEVEL = Object.freeze( {
 let currentLevel = Logger.LEVEL.WARN;
 
 /**
-* This class is the core of the messaging system for game entites and used by the
+* This class is the core of the messaging system for game entities and used by the
 * {@link EntityManager}. The implementation can directly dispatch messages or use a
 * delayed delivery for deferred communication. This can be useful if a game entity
 * wants to inform itself about a particular event in the future.
@@ -239,7 +239,7 @@ const candidates = [];
 
 /**
 * This class is used for managing all central objects of a game like
-* game entites and triggers.
+* game entities and triggers.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -401,7 +401,7 @@ class EntityManager {
 
 	/**
 	* The central update method of this entity manager. Updates all
-	* game entites, triggers and delayed messages.
+	* game entities, triggers and delayed messages.
 	*
 	* @param {Number} delta - The time delta.
 	* @return {EntityManager} A reference to this entity manager.
@@ -594,7 +594,7 @@ class EntityManager {
 	}
 
 	/**
-	* Interface for game entites so they can send messages to other game entites.
+	* Interface for game entities so they can send messages to other game entities.
 	*
 	* @param {GameEntity} sender - The sender.
 	* @param {GameEntity} receiver - The receiver.
@@ -2671,7 +2671,7 @@ const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
 
 /**
-* Base class for all game entites.
+* Base class for all game entities.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -3055,7 +3055,7 @@ const displacement = new Vector3();
 const target = new Vector3();
 
 /**
-* Class representing moving game entites.
+* Class representing moving game entities.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments GameEntity
@@ -4114,7 +4114,7 @@ class Edge {
 /**
 * Class representing a sparse graph implementation based on adjacency lists.
 * A sparse graph can be used to model many different types of graphs like navigation
-* graphs (pathfinding), dependency graphs (e.g. technology trees) or a state graphs
+* graphs (pathfinding), dependency graphs (e.g. technology trees) or state graphs
 * (a representation of every possible state in a game).
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -6792,7 +6792,7 @@ const lineSegment = new LineSegment();
 * to faster graph search execution.
 *
 * This particular implementation is able to merge convex polygons into bigger ones as long
-* as they keep their convexity. The performance of the path finding process and convex region tests
+* as they keep their convexity and coplanarity. The performance of the path finding process and convex region tests
 * for complex navigation meshes can be improved by using a spatial index like {@link CellSpacePartitioning}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -8350,8 +8350,8 @@ const contour = new Array();
 * This class is used for cell-space partitioning, a basic approach for implementing
 * a spatial index. The 3D space is divided up into a number of cells. A cell contains a
 * list of references to all the entities it contains. Compared to other spatial indices like
-* Octrees, the division of the 3D space is coarse and often not balanced but the
-* computational overhead for calculating the index of a specifc cell based on a position is very fast.
+* octrees, the division of the 3D space is coarse and often not balanced but the computational
+* overhead for calculating the index of a specifc cell based on a position vector is very fast.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -8741,7 +8741,7 @@ class Path {
 
 /**
 * This class can be used to smooth the result of a vector calculation. One use case
-* is the smoothing of the velocity vector of game entites in order to avoid a shaky
+* is the smoothing of the velocity vector of game entities in order to avoid a shaky
 * movements du to conflicting forces.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}

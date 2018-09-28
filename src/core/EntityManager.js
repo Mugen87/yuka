@@ -4,7 +4,7 @@ const candidates = [];
 
 /**
 * This class is used for managing all central objects of a game like
-* game entites and triggers.
+* game entities and triggers.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -166,7 +166,7 @@ class EntityManager {
 
 	/**
 	* The central update method of this entity manager. Updates all
-	* game entites, triggers and delayed messages.
+	* game entities, triggers and delayed messages.
 	*
 	* @param {Number} delta - The time delta.
 	* @return {EntityManager} A reference to this entity manager.
@@ -359,7 +359,7 @@ class EntityManager {
 	}
 
 	/**
-	* Interface for game entites so they can send messages to other game entites.
+	* Interface for game entities so they can send messages to other game entities.
 	*
 	* @param {GameEntity} sender - The sender.
 	* @param {GameEntity} receiver - The receiver.

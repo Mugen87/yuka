@@ -2,7 +2,7 @@ import { Vector3 } from '../math/Vector3.js';
 
 /**
 * This class can be used to smooth the result of a vector calculation. One use case
-* is the smoothing of the velocity vector of game entites in order to avoid a shaky
+* is the smoothing of the velocity vector of game entities in order to avoid a shaky
 * movements du to conflicting forces.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}

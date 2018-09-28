@@ -10,8 +10,8 @@ const contour = new Array();
 * This class is used for cell-space partitioning, a basic approach for implementing
 * a spatial index. The 3D space is divided up into a number of cells. A cell contains a
 * list of references to all the entities it contains. Compared to other spatial indices like
-* Octrees, the division of the 3D space is coarse and often not balanced but the
-* computational overhead for calculating the index of a specifc cell based on a position is very fast.
+* octrees, the division of the 3D space is coarse and often not balanced but the computational
+* overhead for calculating the index of a specifc cell based on a position vector is very fast.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

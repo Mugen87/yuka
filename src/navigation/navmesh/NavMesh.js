@@ -22,7 +22,7 @@ const lineSegment = new LineSegment();
 * to faster graph search execution.
 *
 * This particular implementation is able to merge convex polygons into bigger ones as long
-* as they keep their convexity. The performance of the path finding process and convex region tests
+* as they keep their convexity and coplanarity. The performance of the path finding process and convex region tests
 * for complex navigation meshes can be improved by using a spatial index like {@link CellSpacePartitioning}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}

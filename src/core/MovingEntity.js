@@ -5,7 +5,7 @@ const displacement = new Vector3();
 const target = new Vector3();
 
 /**
-* Class representing moving game entites.
+* Class representing moving game entities.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments GameEntity

@@ -2,7 +2,7 @@ import { Telegram } from './Telegram.js';
 import { Logger } from './Logger.js';
 
 /**
-* This class is the core of the messaging system for game entites and used by the
+* This class is the core of the messaging system for game entities and used by the
 * {@link EntityManager}. The implementation can directly dispatch messages or use a
 * delayed delivery for deferred communication. This can be useful if a game entity
 * wants to inform itself about a particular event in the future.
