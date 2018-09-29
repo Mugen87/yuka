@@ -6350,13 +6350,13 @@ class Ray {
 	*/
 	intersectAABB( aabb, target ) {
 
-		var tmin, tmax, tymin, tymax, tzmin, tzmax;
+		let tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-		var invdirx = 1 / this.direction.x,
+		const invdirx = 1 / this.direction.x,
 			invdiry = 1 / this.direction.y,
 			invdirz = 1 / this.direction.z;
 
-		var origin = this.origin;
+		const origin = this.origin;
 
 		if ( invdirx >= 0 ) {
 
