@@ -15,7 +15,7 @@ class AABB {
 	* @param {Vector3} min - The minimum bounds of the AABB.
 	* @param {Vector3} max - The maximum bounds of the AABB.
 	*/
-	constructor( min = new Vector3( Infinity, Infinity, Infinity ), max = new Vector3( - Infinity, - Infinity, - Infinity ) ) {
+	constructor( min = new Vector3(), max = new Vector3() ) {
 
 		/**
 		* The minimum bounds of the AABB.

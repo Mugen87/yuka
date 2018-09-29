@@ -105,7 +105,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 					boundingSphere.center.copy( localPositionOfObstacle );
 					boundingSphere.radius = expandedRadius;
 
-					ray.intersectSphere( boundingSphere, intersectionPoint );
+					ray.intersectBoundingSphere( boundingSphere, intersectionPoint );
 
 					// compare distances
 

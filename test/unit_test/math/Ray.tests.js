@@ -7,6 +7,7 @@ const YUKA = require( '../../../build/yuka.js' );
 
 const Ray = YUKA.Ray;
 const Vector3 = YUKA.Vector3;
+const AABB = YUKA.AABB;
 const BoundingSphere = YUKA.BoundingSphere;
 
 const v1 = new Vector3( 2, 2, 2 );
@@ -94,7 +95,7 @@ describe( 'Ray', function () {
 
 	} );
 
-	describe( '#intersectSphere()', function () {
+	describe( '#intersectBoundingSphere()', function () {
 
 		it( 'should fill the given result vector with the intersection point of a ray/sphere intersection test', function () {
 
@@ -102,7 +103,7 @@ describe( 'Ray', function () {
 			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
 			const result = new Vector3();
 
-			ray.intersectSphere( sphere, result );
+			ray.intersectBoundingSphere( sphere, result );
 
 			expect( result ).to.deep.equal( { x: 0, y: 0, z: 9 } );
 
@@ -114,7 +115,7 @@ describe( 'Ray', function () {
 			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
 			const result = new Vector3();
 
-			ray.intersectSphere( sphere, result );
+			ray.intersectBoundingSphere( sphere, result );
 
 			expect( result ).to.deep.equal( { x: 0, y: 1, z: 10 } );
 
@@ -126,7 +127,7 @@ describe( 'Ray', function () {
 			const sphere = new BoundingSphere( new Vector3(), 1 );
 			const result = new Vector3();
 
-			ray.intersectSphere( sphere, result );
+			ray.intersectBoundingSphere( sphere, result );
 
 			expect( result ).to.deep.equal( { x: 0, y: 0, z: 1 } );
 
@@ -138,7 +139,7 @@ describe( 'Ray', function () {
 			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
 			const result = new Vector3();
 
-			expect( ray.intersectSphere( sphere, result ) ).to.be.null;
+			expect( ray.intersectBoundingSphere( sphere, result ) ).to.be.null;
 
 		} );
 
@@ -148,7 +149,147 @@ describe( 'Ray', function () {
 			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
 			const result = new Vector3();
 
-			expect( ray.intersectSphere( sphere, result ) ).to.be.null;
+			expect( ray.intersectBoundingSphere( sphere, result ) ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#intersectBoundingAABB()', function () {
+
+		it( 'should fill the given result vector with the intersection point of a ray/AABB intersection test', function () {
+
+			const ray = new Ray( new Vector3(), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result = new Vector3();
+			ray.intersectAABB( aabb, result );
+
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 9 } );
+
+		} );
+
+		it( 'should fill the given result vector with the intersection point if the ray touches the AABB', function () {
+
+			const ray = new Ray( new Vector3( 1, 0, 0 ), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result = new Vector3();
+			ray.intersectAABB( aabb, result );
+
+			expect( result ).to.deep.equal( { x: 1, y: 0, z: 9 } );
+
+		} );
+
+		it( 'should fill the given result vector with the intersection point if the ray starts inside the AABB', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 10 ), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result = new Vector3();
+			ray.intersectAABB( aabb, result );
+
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 11 } );
+
+		} );
+
+		it( 'should return null to indicate no intersection', function () {
+
+			const ray1 = new Ray( new Vector3( 0, 0, 15 ), v2 );
+			const ray2 = new Ray( new Vector3( 0, - 15, 10 ), v2 );
+			const ray3 = new Ray( new Vector3( - 10, 10, 0 ), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result = new Vector3();
+
+			expect( ray1.intersectAABB( aabb, result ) ).to.be.null;
+			expect( ray2.intersectAABB( aabb, result ) ).to.be.null;
+			expect( ray3.intersectAABB( aabb, result ) ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#intersectTriangle()', function () {
+
+		it( 'should fill the given result vector with the intersection point of a ray/triangle intersection test', function () {
+
+			const ray = new Ray( new Vector3(), v2 );
+			const triangle = {
+				a: new Vector3( 1, - 1, 1 ),
+				b: new Vector3( - 1, - 1, 1 ),
+				c: new Vector3( 0, 1, 1 ),
+			};
+
+			const result = new Vector3();
+			 ray.intersectTriangle( triangle, true, result );
+
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 1 } );
+
+		} );
+
+		it( 'should not detect an intersection and return null if the ray hits the back side of the triangle', function () {
+
+			const ray = new Ray( new Vector3(), v2 );
+			const triangle = {
+				a: new Vector3( - 1, - 1, 1 ),
+				b: new Vector3( 1, - 1, 1 ),
+				c: new Vector3( 0, 1, 1 ),
+			};
+
+			const result = new Vector3();
+
+			expect( ray.intersectTriangle( triangle, true, result ) ).to.be.null;
+
+		} );
+
+		it( 'should detect an intersection if the ray hits the back side of the triangle and backface culling is set to false', function () {
+
+			const ray = new Ray( new Vector3(), v2 );
+			const triangle = {
+				a: new Vector3( - 1, - 1, 1 ),
+				b: new Vector3( 1, - 1, 1 ),
+				c: new Vector3( 0, 1, 1 ),
+			};
+
+			const result = new Vector3();
+			ray.intersectTriangle( triangle, false, result );
+
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 1 } );
+
+		} );
+
+		it( 'should detect an intersection if the ray touchs the triangle', function () {
+
+			const ray = new Ray( new Vector3( 1, - 1, 1 ), v2 );
+			const triangle = {
+				a: new Vector3( 1, - 1, 1 ),
+				b: new Vector3( - 1, - 1, 1 ),
+				c: new Vector3( 0, 1, 1 ),
+			};
+
+			const result = new Vector3();
+			ray.intersectTriangle( triangle, true, result );
+
+			expect( result ).to.deep.equal( { x: 1, y: - 1, z: 1 } );
+
+		} );
+
+		it( 'should not detect an intersection and return null if the ray misses the triangle', function () {
+
+			const ray1 = new Ray( new Vector3( - 2, 0, 0 ), v2 );
+			const ray2 = new Ray( new Vector3( 2, 0, 0 ), v2 );
+
+			const triangle = {
+				a: new Vector3( 1, - 1, 1 ),
+				b: new Vector3( - 1, - 1, 1 ),
+				c: new Vector3( 0, 1, 1 ),
+			};
+
+			const result = new Vector3();
+
+			expect( ray1.intersectTriangle( triangle, true, result ) ).to.be.null;
+			expect( ray2.intersectTriangle( triangle, true, result ) ).to.be.null;
 
 		} );
 

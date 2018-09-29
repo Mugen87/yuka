@@ -20,8 +20,8 @@ describe( 'AABB', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const aabb = new AABB();
-			expect( aabb.min ).to.deep.equal( new Vector3( Infinity, Infinity, Infinity ) );
-			expect( aabb.max ).to.deep.equal( new Vector3( - Infinity, - Infinity, - Infinity ) );
+			expect( aabb.min ).to.deep.equal( new Vector3() );
+			expect( aabb.max ).to.deep.equal( new Vector3() );
 
 		} );
 
@@ -141,6 +141,9 @@ describe( 'AABB', function () {
 			const aabb = new AABB();
 			const point1 = new Vector3( 1, 1, 1 );
 			const point2 = new Vector3( - 2, 2, - 2 );
+
+			aabb.min.set( Infinity, Infinity, Infinity );
+			aabb.max.set( - Infinity, - Infinity, - Infinity );
 
 			aabb.expand( point1 );
 			expect( aabb.min ).to.deep.equal( new Vector3( 1, 1, 1 ) );
