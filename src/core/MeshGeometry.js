@@ -9,7 +9,7 @@ import { Vector3 } from '../math/Vector3.js';
 class MeshGeometry {
 
 	/**
-	* Constructs a new geometry.
+	* Constructs a new mesh geometry.
 	*
 	* @param {TypedArray} vertices - The vertex buffer (Float32Array).
 	* @param {TypedArray} indices - The index buffer (Uint16Array/Uint32Array).
@@ -27,6 +27,11 @@ class MeshGeometry {
 
 	}
 
+	/**
+	* Computes an AABB for this geometry.
+	*
+	* @return {MeshGeometry} A reference to this mesh geometry.
+	*/
 	computeBoundingVolume() {
 
 		const vertices = this.vertices;
