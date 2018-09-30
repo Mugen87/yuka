@@ -2552,6 +2552,23 @@
 		}
 
 		/**
+		* Computes the maximum scale value for all three axis.
+		*
+		* @return {Number} The maximum scale value.
+		*/
+		getMaxScale() {
+
+			const e = this.elements;
+
+			const scaleXSq = e[ 0 ] * e[ 0 ] + e[ 1 ] * e[ 1 ] + e[ 2 ] * e[ 2 ];
+			const scaleYSq = e[ 4 ] * e[ 4 ] + e[ 5 ] * e[ 5 ] + e[ 6 ] * e[ 6 ];
+			const scaleZSq = e[ 8 ] * e[ 8 ] + e[ 9 ] * e[ 9 ] + e[ 10 ] * e[ 10 ];
+
+			return Math.sqrt( Math.max( scaleXSq, scaleYSq, scaleZSq ) );
+
+		}
+
+		/**
 		* Uses the given quaternion to transform the upper left 3x3 part to a rotation matrix.
 		*
 		* @param {Quaternion} q - A quaternion representing a rotation.
@@ -2786,6 +2803,20 @@
 			* @default π
 			*/
 			this.maxTurnRate = Math.PI;
+
+			/**
+			* The field of view of this game entity in radians.
+			* @type Number
+			* @default π/2
+			*/
+			this.fieldOfView = Math.PI;
+
+			/**
+			* The visual range of this game entity in world units.
+			* @type Number
+			* @default Infinity
+			*/
+			this.visualRange = Infinity;
 
 			/**
 			* A transformation matrix representing the local space of this game entity.
@@ -3048,6 +3079,301 @@
 			} else {
 
 				Logger.error( 'YUKA.GameEntity: The game entity must be added to a manager in order to send a message.' );
+
+			}
+
+			return this;
+
+		}
+
+	}
+
+	const vector = new Vector3();
+
+	const points = [
+		new Vector3(),
+		new Vector3(),
+		new Vector3(),
+		new Vector3(),
+		new Vector3(),
+		new Vector3(),
+		new Vector3(),
+		new Vector3()
+	];
+
+	/**
+	* Class representing an axis-aligned bounding box (AABB).
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class AABB {
+
+		/**
+		* Constructs a new AABB with the given values.
+		*
+		* @param {Vector3} min - The minimum bounds of the AABB.
+		* @param {Vector3} max - The maximum bounds of the AABB.
+		*/
+		constructor( min = new Vector3(), max = new Vector3() ) {
+
+			/**
+			* The minimum bounds of the AABB.
+			* @type Vector3
+			*/
+			this.min = min;
+
+			/**
+			* The maximum bounds of the AABB.
+			* @type Vector3
+			*/
+			this.max = max;
+
+		}
+
+		/**
+		* Sets the given values to this AABB.
+		*
+		* @param {Vector3} min - The minimum bounds of the AABB.
+		* @param {Vector3} max - The maximum bounds of the AABB.
+		* @return {AABB} A reference to this AABB.
+		*/
+		set( min, max ) {
+
+			this.min = min;
+			this.max = max;
+
+			return this;
+
+		}
+
+		/**
+		* Copies all values from the given AABB to this AABB.
+		*
+		* @param {AABB} aabb - The AABB to copy.
+		* @return {AABB} A reference to this AABB.
+		*/
+		copy( aabb ) {
+
+			this.min.copy( aabb.min );
+			this.max.copy( aabb.max );
+
+			return this;
+
+		}
+
+		/**
+		* Creates a new AABB and copies all values from this AABB.
+		*
+		* @return {AABB} A new AABB.
+		*/
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		/**
+		* Ensures the given point is inside this AABB and stores
+		* the result in the given vector.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		clampPoint( point, result ) {
+
+			result.copy( point ).clamp( this.min, this.max );
+
+			return result;
+
+		}
+
+		/**
+		* Returns true if the given point is inside this AABB.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {Boolean} The result of the containments test.
+		*/
+		containsPoint( point ) {
+
+			return point.x < this.min.x || point.x > this.max.x ||
+				point.y < this.min.y || point.y > this.max.y ||
+				point.z < this.min.z || point.z > this.max.z ? false : true;
+
+		}
+
+		/**
+		* Expands this AABB by the given point. So after this method call,
+		* the given point lies inside the AABB.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {AABB} A reference to this AABB.
+		*/
+		expand( point ) {
+
+			this.min.min( point );
+			this.max.max( point );
+
+			return this;
+
+		}
+
+		/**
+		* Returns true if the given ABBB intersects this AABB.
+		*
+		* @param {AABB} aabb - The AABB to test.
+		* @return {Boolean} The result of the intersection test.
+		*/
+		intersectsAABB( aabb ) {
+
+			return aabb.max.x < this.min.x || aabb.min.x > this.max.x ||
+				aabb.max.y < this.min.y || aabb.min.y > this.max.y ||
+				aabb.max.z < this.min.z || aabb.min.z > this.max.z ? false : true;
+
+		}
+
+		/**
+		* Returns true if the given bounding sphere intersects this AABB.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {Boolean} The result of the intersection test.
+		*/
+		intersectsBoundingSphere( sphere ) {
+
+			// find the point on the AABB closest to the sphere center
+
+			this.clampPoint( sphere.center, vector );
+
+			// if that point is inside the sphere, the AABB and sphere intersect.
+
+			return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+		}
+
+		/**
+		* Sets the values of the AABB from the given center and size vector.
+		*
+		* @param {Vector3} center - The center point of the AABB.
+		* @param {Vector3} size - The size of the AABB per axis.
+		* @return {AABB} A reference to this AABB.
+		*/
+		fromCenterAndSize( center, size ) {
+
+			vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
+
+			this.min.copy( center ).sub( vector );
+			this.max.copy( center ).add( vector );
+
+			return this;
+
+		}
+
+		/**
+		* Sets the values of the AABB from the given array of points.
+		*
+		* @param {Array} points - An array of 3D vectors representing points in 3D space.
+		* @return {AABB} A reference to this AABB.
+		*/
+		fromPoints( points ) {
+
+			this.min.set( Infinity, Infinity, Infinity );
+			this.max.set( - Infinity, - Infinity, - Infinity );
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				this.expand( points[ i ] );
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this AABB with the given 4x4 transformation matrix.
+		*
+		* @param {Matrix4} matrix - The 4x4 transformation matrix.
+		* @return {AABB} A reference to this AABB.
+		*/
+		applyMatrix4( matrix ) {
+
+			const min = this.min;
+			const max = this.max;
+
+			points[ 0 ].set( min.x, min.y, min.z ).applyMatrix4( matrix );
+			points[ 1 ].set( min.x, min.y, max.z ).applyMatrix4( matrix );
+			points[ 2 ].set( min.x, max.y, min.z ).applyMatrix4( matrix );
+			points[ 3 ].set( min.x, max.y, max.z ).applyMatrix4( matrix );
+			points[ 4 ].set( max.x, min.y, min.z ).applyMatrix4( matrix );
+			points[ 5 ].set( max.x, min.y, max.z ).applyMatrix4( matrix );
+			points[ 6 ].set( max.x, max.y, min.z ).applyMatrix4( matrix );
+			points[ 7 ].set( max.x, max.y, max.z ).applyMatrix4( matrix );
+
+			return this.fromPoints( points );
+
+		}
+
+		/**
+		* Returns true if the given AABB is deep equal with this AABB.
+		*
+		* @param {AABB} aabb - The AABB to test.
+		* @return {Boolean} The result of the equality test.
+		*/
+		equals( aabb ) {
+
+			return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
+
+		}
+
+	}
+
+	/**
+	* Class for representing a polygon mesh. The faces consist of triangles.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class MeshGeometry {
+
+		/**
+		* Constructs a new geometry.
+		*
+		* @param {TypedArray} vertices - The vertex buffer (Float32Array).
+		* @param {TypedArray} indices - The index buffer (Uint16Array/Uint32Array).
+		*/
+		constructor( vertices = new Float32Array(), indices = null ) {
+
+			this.vertices = vertices;
+			this.indices = indices;
+
+			this.backfaceCulling = true;
+
+			this.aabb = new AABB();
+
+			this.computeBoundingVolume();
+
+		}
+
+		computeBoundingVolume() {
+
+			const vertices = this.vertices;
+			const vertex = new Vector3();
+
+			const aabb = this.aabb;
+
+			// prepare AABB for "expand" operations
+
+			aabb.min.set( Infinity, Infinity, Infinity );
+			aabb.max.set( - Infinity, - Infinity, - Infinity );
+
+			//
+
+			for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
+
+				vertex.x = vertices[ i ];
+				vertex.y = vertices[ i + 1 ];
+				vertex.z = vertices[ i + 2 ];
+
+				aabb.expand( vertex );
 
 			}
 
@@ -5601,210 +5927,6 @@
 
 	}
 
-	const vector = new Vector3();
-
-	/**
-	* Class representing an axis-aligned bounding box (AABB).
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class AABB {
-
-		/**
-		* Constructs a new AABB with the given values.
-		*
-		* @param {Vector3} min - The minimum bounds of the AABB.
-		* @param {Vector3} max - The maximum bounds of the AABB.
-		*/
-		constructor( min = new Vector3(), max = new Vector3() ) {
-
-			/**
-			* The minimum bounds of the AABB.
-			* @type Vector3
-			*/
-			this.min = min;
-
-			/**
-			* The maximum bounds of the AABB.
-			* @type Vector3
-			*/
-			this.max = max;
-
-		}
-
-		/**
-		* Sets the given values to this AABB.
-		*
-		* @param {Vector3} min - The minimum bounds of the AABB.
-		* @param {Vector3} max - The maximum bounds of the AABB.
-		* @return {AABB} A reference to this AABB.
-		*/
-		set( min, max ) {
-
-			this.min = min;
-			this.max = max;
-
-			return this;
-
-		}
-
-		/**
-		* Copies all values from the given AABB to this AABB.
-		*
-		* @param {AABB} aabb - The AABB to copy.
-		* @return {AABB} A reference to this AABB.
-		*/
-		copy( aabb ) {
-
-			this.min.copy( aabb.min );
-			this.max.copy( aabb.max );
-
-			return this;
-
-		}
-
-		/**
-		* Creates a new AABB and copies all values from this AABB.
-		*
-		* @return {AABB} A new AABB.
-		*/
-		clone() {
-
-			return new this.constructor().copy( this );
-
-		}
-
-		/**
-		* Ensures the given point is inside this AABB and stores
-		* the result in the given vector.
-		*
-		* @param {Vector3} point - A point in 3D space.
-		* @param {Vector3} result - The result vector.
-		* @return {Vector3} The result vector.
-		*/
-		clampPoint( point, result ) {
-
-			result.copy( point ).clamp( this.min, this.max );
-
-			return result;
-
-		}
-
-		/**
-		* Returns true if the given point is inside this AABB.
-		*
-		* @param {Vector3} point - A point in 3D space.
-		* @return {Boolean} The result of the containments test.
-		*/
-		containsPoint( point ) {
-
-			return point.x < this.min.x || point.x > this.max.x ||
-				point.y < this.min.y || point.y > this.max.y ||
-				point.z < this.min.z || point.z > this.max.z ? false : true;
-
-		}
-
-		/**
-		* Expands this AABB by the given point. So after this method call,
-		* the given point lies inside the AABB.
-		*
-		* @param {Vector3} point - A point in 3D space.
-		* @return {AABB} A reference to this AABB.
-		*/
-		expand( point ) {
-
-			this.min.min( point );
-			this.max.max( point );
-
-			return this;
-
-		}
-
-		/**
-		* Returns true if the given ABBB intersects this AABB.
-		*
-		* @param {AABB} aabb - The AABB to test.
-		* @return {Boolean} The result of the intersection test.
-		*/
-		intersectsAABB( aabb ) {
-
-			return aabb.max.x < this.min.x || aabb.min.x > this.max.x ||
-				aabb.max.y < this.min.y || aabb.min.y > this.max.y ||
-				aabb.max.z < this.min.z || aabb.min.z > this.max.z ? false : true;
-
-		}
-
-		/**
-		* Returns true if the given bounding sphere intersects this AABB.
-		*
-		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {Boolean} The result of the intersection test.
-		*/
-		intersectsBoundingSphere( sphere ) {
-
-			// find the point on the AABB closest to the sphere center
-
-			this.clampPoint( sphere.center, vector );
-
-			// if that point is inside the sphere, the AABB and sphere intersect.
-
-			return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
-
-		}
-
-		/**
-		* Sets the values of the AABB from the given center and size vector.
-		*
-		* @param {Vector3} center - The center point of the AABB.
-		* @param {Vector3} size - The size of the AABB per axis.
-		* @return {AABB} A reference to this AABB.
-		*/
-		fromCenterAndSize( center, size ) {
-
-			vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
-
-			this.min.copy( center ).sub( vector );
-			this.max.copy( center ).add( vector );
-
-			return this;
-
-		}
-
-		/**
-		* Sets the values of the AABB from the given array of points.
-		*
-		* @param {Array} points - An array of 3D vectors representing points in 3D space.
-		* @return {AABB} A reference to this AABB.
-		*/
-		fromPoints( points ) {
-
-			this.min.set( Infinity, Infinity, Infinity );
-			this.max.set( - Infinity, - Infinity, - Infinity );
-
-			for ( let i = 0, l = points.length; i < l; i ++ ) {
-
-				this.expand( points[ i ] );
-
-			}
-
-			return this;
-
-		}
-
-		/**
-		* Returns true if the given AABB is deep equal with this AABB.
-		*
-		* @param {AABB} aabb - The AABB to test.
-		* @return {Boolean} The result of the equality test.
-		*/
-		equals( aabb ) {
-
-			return ( aabb.min.equals( this.min ) ) && ( aabb.max.equals( this.max ) );
-
-		}
-
-	}
-
 	/**
 	* Class representing a bounding sphere.
 	*
@@ -5899,6 +6021,21 @@
 			const radius = this.radius + sphere.radius;
 
 			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+		}
+
+		/**
+		* Transforms this bounding sphere with the given 4x4 transformation matrix.
+		*
+		* @param {Matrix4} matrix - The 4x4 transformation matrix.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		applyMatrix4( matrix ) {
+
+			this.center.applyMatrix4( matrix );
+			this.radius = this.radius * matrix.getMaxScale();
+
+			return this;
 
 		}
 
@@ -6305,7 +6442,7 @@
 
 		/**
 		* Performs a ray/sphere intersection test and stores the intersection point
-		* to the given 3D vector. If no intersection is detected, null is returned.
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		*
 		* @param {BoundingSphere} sphere - A bounding sphere.
 		* @param {Vector3} result - The result vector.
@@ -6348,13 +6485,13 @@
 
 		/**
 		* Performs a ray/AABB intersection test and stores the intersection point
-		* to the given 3D vector. If no intersection is detected, null is returned.
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		*
 		* @param {BoundingSphere} sphere - A bounding sphere.
 		* @param {Vector3} result - The result vector.
 		* @return {Vector3} The result vector.
 		*/
-		intersectAABB( aabb, target ) {
+		intersectAABB( aabb, result ) {
 
 			let tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -6419,13 +6556,13 @@
 
 			if ( tmax < 0 ) return null;
 
-			return this.at( tmin >= 0 ? tmin : tmax, target );
+			return this.at( tmin >= 0 ? tmin : tmax, result );
 
 		}
 
 		/**
 		* Performs a ray/triangle intersection test and stores the intersection point
-		* to the given 3D vector. If no intersection is detected, null is returned.
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		*
 		* @param {Triangle} triangle - A triangle.
 		* @param {Vector3} result - The result vector.
@@ -8806,6 +8943,227 @@
 
 	}
 
+	const aabb$1 = new AABB();
+	const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
+	const intersectionPointAABB = new Vector3();
+
+	/**
+	* Class for representing an obstacle in 3D space.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments GameEntity
+	*/
+	class Obstacle extends GameEntity {
+
+		/**
+		* Constructs a new obstacle.
+		*
+		* @param {MeshGeometry} geometry - A geometry representing a mesh.
+		*/
+		constructor( geometry = new MeshGeometry() ) {
+
+			super();
+
+			this.geometry = geometry;
+
+		}
+
+		/**
+		* Performs a ray intersection test with the geometry of the obstacle and stores
+		* the intersection point in the given result vector. If no intersection is detected,
+		* *null* is returned.
+		*
+		* @param {Ray} ray - The ray to test.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		intersectRay( ray, result ) {
+
+			const geometry = this.geometry;
+
+			// check bounding volume first
+
+			aabb$1.copy( geometry.aabb ).applyMatrix4( this.worldMatrix );
+
+			if ( ray.intersectAABB( aabb$1, intersectionPointAABB ) !== null ) {
+
+				// now perform more expensive test with all triangles of the geometry
+
+				const vertices = geometry.vertices;
+				const indices = geometry.indices;
+
+				if ( indices === null ) {
+
+					// non-indexed geometry
+
+					for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
+
+						triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
+						triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
+						triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
+
+						triangle.a.applyMatrix4( this.worldMatrix );
+						triangle.b.applyMatrix4( this.worldMatrix );
+						triangle.c.applyMatrix4( this.worldMatrix );
+
+						if ( ray.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+
+							return result;
+
+						}
+
+					}
+
+				} else {
+
+					// indexed geometry
+
+					for ( let i = 0, l = indices.length; i < l; i += 3 ) {
+
+						const a = indices[ i ];
+						const b = indices[ i + 1 ];
+						const c = indices[ i + 2 ];
+
+						const stride = 3;
+
+						triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
+						triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
+						triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
+
+						triangle.a.applyMatrix4( this.worldMatrix );
+						triangle.b.applyMatrix4( this.worldMatrix );
+						triangle.c.applyMatrix4( this.worldMatrix );
+
+						if ( ray.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+
+							return result;
+
+						}
+
+					}
+
+				}
+
+			}
+
+			return null;
+
+		}
+
+	}
+
+	const toPoint = new Vector3();
+	const direction = new Vector3();
+	const ray = new Ray();
+	const intersectionPoint = new Vector3();
+
+	/**
+	* Class for representing the vision component of a game entity.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class Vision {
+
+		/**
+		* Constructs a new vision object.
+		*
+		* @param {GameEntity} owner - The owner of this vision instance.
+		*/
+		constructor( owner = null ) {
+
+			this.owner = owner;
+
+			this.obstacles = new Array();
+
+		}
+
+		/**
+		* Adds an obstacle to this vision instance.
+		*
+		* @param {Obstacle} obstacle - The obstacle to add.
+		* @return {Vision} A reference to this vision instance.
+		*/
+		addObstacle( obstacle ) {
+
+			this.obstacles.push( obstacle );
+
+			return this;
+
+		}
+
+		/**
+		* Removes an obstacle from this vision instance.
+		*
+		* @param {Obstacle} obstacle - The obstacle to remove.
+		* @return {Vision} A reference to this vision instance.
+		*/
+		removeObstacle( obstacle ) {
+
+			const index = this.obstacles.indexOf( obstacle );
+			this.obstacles.splice( index, 1 );
+
+			return this;
+
+		}
+
+		/**
+		* Performs a line of sight test in order to determine if the given point
+		* in 3D space is visible for the game entity.
+		*
+		* @param {Vector3} point - The point to test.
+		* @return {Boolean} Whether the given point is visible or not.
+		*/
+		visible( point ) {
+
+			const owner = this.owner;
+			const obstacles = this.obstacles;
+
+			// check if point lies within the game entity's visual range
+
+			toPoint.subVectors( point, owner.position );
+			const distanceToPoint = toPoint.length();
+
+			if ( distanceToPoint > owner.visualRange ) return false;
+
+			// next, check if the point lies within the game entity's field of view
+
+			owner.getDirection( direction );
+
+			const angle = direction.angleTo( toPoint );
+
+			if ( angle > ( owner.fieldOfView * 0.5 ) ) return false;
+
+			// the point lies within the game entity's visual range and field
+			// of view. now check if obstacles block the game entity's view to the given point.
+
+			ray.origin.copy( owner.position );
+			ray.direction.copy( toPoint ).divideScalar( distanceToPoint || 1 ); // normalize
+
+			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
+
+				const obstacle = obstacles[ i ];
+
+				const intersection = obstacle.intersectRay( ray, intersectionPoint );
+
+				if ( intersection !== null ) {
+
+					// if an intersection point is closer to the game entity than the given point,
+					// something is blocking the game entity's view
+
+					const squaredDistanceToIntersectionPoint = intersectionPoint.squaredDistanceTo( owner.position );
+
+					if ( squaredDistanceToIntersectionPoint <= ( distanceToPoint * distanceToPoint ) ) return false;
+
+				}
+
+			}
+
+			return true;
+
+		}
+
+	}
+
 	/**
 	* Class for representing a walkable path.
 	*
@@ -9307,7 +9665,7 @@
 	}
 
 	const averageDirection = new Vector3();
-	const direction = new Vector3();
+	const direction$1 = new Vector3();
 
 	/**
 	* This steering behavior produces a force that keeps a vehicle’s heading aligned with its neighbors.
@@ -9346,9 +9704,9 @@
 
 				const neighbor = neighbors[ i ];
 
-				neighbor.getDirection( direction );
+				neighbor.getDirection( direction$1 );
 
-				averageDirection.add( direction );
+				averageDirection.add( direction$1 );
 
 			}
 
@@ -9358,8 +9716,8 @@
 
 				// produce a force to align the vehicle's heading
 
-				vehicle.getDirection( direction );
-				force.subVectors( averageDirection, direction );
+				vehicle.getDirection( direction$1 );
+				force.subVectors( averageDirection, direction$1 );
 
 			}
 
@@ -9921,10 +10279,10 @@
 	const inverse = new Matrix4();
 	const localPositionOfObstacle = new Vector3();
 	const localPositionOfClosestObstacle = new Vector3();
-	const intersectionPoint = new Vector3();
+	const intersectionPoint$1 = new Vector3();
 	const boundingSphere = new BoundingSphere();
 
-	const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
+	const ray$1 = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
 	/**
 	* This steering behavior produces a force so a vehicle avoids obstacles lying in its path.
@@ -10019,15 +10377,15 @@
 						boundingSphere.center.copy( localPositionOfObstacle );
 						boundingSphere.radius = expandedRadius;
 
-						ray.intersectBoundingSphere( boundingSphere, intersectionPoint );
+						ray$1.intersectBoundingSphere( boundingSphere, intersectionPoint$1 );
 
 						// compare distances
 
-						if ( intersectionPoint.z < distanceToClosestObstacle ) {
+						if ( intersectionPoint$1.z < distanceToClosestObstacle ) {
 
 							// save new minimum distance
 
-							distanceToClosestObstacle = intersectionPoint.z;
+							distanceToClosestObstacle = intersectionPoint$1.z;
 
 							// save closest obstacle
 
@@ -10589,6 +10947,7 @@
 	exports.EntityManager = EntityManager;
 	exports.GameEntity = GameEntity;
 	exports.Logger = Logger;
+	exports.MeshGeometry = MeshGeometry;
 	exports.MessageDispatcher = MessageDispatcher;
 	exports.MovingEntity = MovingEntity;
 	exports.Regulator = Regulator;
@@ -10628,6 +10987,8 @@
 	exports.Polygon = Polygon;
 	exports.Cell = Cell;
 	exports.CellSpacePartitioning = CellSpacePartitioning;
+	exports.Obstacle = Obstacle;
+	exports.Vision = Vision;
 	exports.Path = Path;
 	exports.Smoother = Smoother;
 	exports.SteeringBehavior = SteeringBehavior;

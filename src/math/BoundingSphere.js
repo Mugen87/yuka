@@ -98,6 +98,21 @@ class BoundingSphere {
 	}
 
 	/**
+	* Transforms this bounding sphere with the given 4x4 transformation matrix.
+	*
+	* @param {Matrix4} matrix - The 4x4 transformation matrix.
+	* @return {BoundingSphere} A reference to this bounding sphere.
+	*/
+	applyMatrix4( matrix ) {
+
+		this.center.applyMatrix4( matrix );
+		this.radius = this.radius * matrix.getMaxScale();
+
+		return this;
+
+	}
+
+	/**
 	* Returns true if the given bounding sphere is deep equal with this bounding sphere.
 	*
 	* @param {BoundingSphere} sphere - The bounding sphere to test.

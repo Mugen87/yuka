@@ -7,6 +7,7 @@ const YUKA = require( '../../../build/yuka.js' );
 
 const AABB = YUKA.AABB;
 const BoundingSphere = YUKA.BoundingSphere;
+const Matrix4 = YUKA.Matrix4;
 const Vector3 = YUKA.Vector3;
 
 const zero3 = new Vector3( 0, 0, 0 );
@@ -243,6 +244,24 @@ describe( 'AABB', function () {
 
 			expect( aabb.min ).to.deep.equal( new Vector3( - 2, 1, - 2 ) );
 			expect( aabb.max ).to.deep.equal( new Vector3( 1, 2, 1 ) );
+
+		} );
+
+	} );
+
+	describe( '#applyMatrix4()', function () {
+
+		it( 'should transform this AABB by the given 4x4 transformation matrix', function () {
+
+			const aabb = new AABB().fromCenterAndSize( zero3, two3 );
+			const position = new Vector3( 0, 0, 1 );
+
+			const m = new Matrix4().setPosition( position ).scale( two3 );
+
+			aabb.applyMatrix4( m );
+
+			expect( aabb.min ).to.deep.equal( new Vector3( - 2, - 2, - 1 ) );
+			expect( aabb.max ).to.deep.equal( new Vector3( 2, 2, 3 ) );
 
 		} );
 

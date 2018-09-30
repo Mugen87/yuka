@@ -2,6 +2,17 @@ import { Vector3 } from './Vector3.js';
 
 const vector = new Vector3();
 
+const points = [
+	new Vector3(),
+	new Vector3(),
+	new Vector3(),
+	new Vector3(),
+	new Vector3(),
+	new Vector3(),
+	new Vector3(),
+	new Vector3()
+];
+
 /**
 * Class representing an axis-aligned bounding box (AABB).
 *
@@ -187,6 +198,30 @@ class AABB {
 		}
 
 		return this;
+
+	}
+
+	/**
+	* Transforms this AABB with the given 4x4 transformation matrix.
+	*
+	* @param {Matrix4} matrix - The 4x4 transformation matrix.
+	* @return {AABB} A reference to this AABB.
+	*/
+	applyMatrix4( matrix ) {
+
+		const min = this.min;
+		const max = this.max;
+
+		points[ 0 ].set( min.x, min.y, min.z ).applyMatrix4( matrix );
+		points[ 1 ].set( min.x, min.y, max.z ).applyMatrix4( matrix );
+		points[ 2 ].set( min.x, max.y, min.z ).applyMatrix4( matrix );
+		points[ 3 ].set( min.x, max.y, max.z ).applyMatrix4( matrix );
+		points[ 4 ].set( max.x, min.y, min.z ).applyMatrix4( matrix );
+		points[ 5 ].set( max.x, min.y, max.z ).applyMatrix4( matrix );
+		points[ 6 ].set( max.x, max.y, min.z ).applyMatrix4( matrix );
+		points[ 7 ].set( max.x, max.y, max.z ).applyMatrix4( matrix );
+
+		return this.fromPoints( points );
 
 	}
 

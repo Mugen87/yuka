@@ -1,6 +1,7 @@
 export { EntityManager } from './core/EntityManager.js';
 export { GameEntity } from './core/GameEntity.js';
 export { Logger } from './core/Logger.js';
+export { MeshGeometry } from './core/MeshGeometry.js';
 export { MessageDispatcher } from './core/MessageDispatcher.js';
 export { MovingEntity } from './core/MovingEntity.js';
 export { Regulator } from './core/Regulator.js';
@@ -41,6 +42,8 @@ export { NavMeshLoader } from './navigation/navmesh/NavMeshLoader.js';
 export { Polygon } from './navigation/navmesh/Polygon.js';
 export { Cell } from './partitioning/Cell.js';
 export { CellSpacePartitioning } from './partitioning/CellSpacePartitioning.js';
+export { Obstacle } from './perception/Obstacle.js';
+export { Vision } from './perception/Vision.js';
 export { Path } from './steering/Path.js';
 export { Smoother } from './steering/Smoother.js';
 export { SteeringBehavior } from './steering/SteeringBehavior.js';

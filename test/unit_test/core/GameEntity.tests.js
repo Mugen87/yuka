@@ -39,6 +39,9 @@ describe( 'GameEntity', function () {
 			expect( entity ).to.have.a.property( 'boundingRadius' ).that.is.equal( 0 );
 			expect( entity ).to.have.a.property( 'maxTurnRate' ).that.is.equal( Math.PI );
 
+			expect( entity ).to.have.a.property( 'fieldOfView' ).that.is.equal( Math.PI );
+			expect( entity ).to.have.a.property( 'visualRange' ).that.is.equal( Infinity );
+
 			expect( entity ).to.have.a.property( 'matrix' ).that.is.an.instanceof( Matrix4 );
 			expect( entity ).to.have.a.property( 'worldMatrix' ).that.is.an.instanceof( Matrix4 );
 

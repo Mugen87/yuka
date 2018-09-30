@@ -94,7 +94,7 @@ class Ray {
 
 	/**
 	* Performs a ray/sphere intersection test and stores the intersection point
-	* to the given 3D vector. If no intersection is detected, null is returned.
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
 	* @param {BoundingSphere} sphere - A bounding sphere.
 	* @param {Vector3} result - The result vector.
@@ -137,13 +137,13 @@ class Ray {
 
 	/**
 	* Performs a ray/AABB intersection test and stores the intersection point
-	* to the given 3D vector. If no intersection is detected, null is returned.
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
 	* @param {BoundingSphere} sphere - A bounding sphere.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
-	intersectAABB( aabb, target ) {
+	intersectAABB( aabb, result ) {
 
 		let tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -208,13 +208,13 @@ class Ray {
 
 		if ( tmax < 0 ) return null;
 
-		return this.at( tmin >= 0 ? tmin : tmax, target );
+		return this.at( tmin >= 0 ? tmin : tmax, result );
 
 	}
 
 	/**
 	* Performs a ray/triangle intersection test and stores the intersection point
-	* to the given 3D vector. If no intersection is detected, null is returned.
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
 	* @param {Triangle} triangle - A triangle.
 	* @param {Vector3} result - The result vector.

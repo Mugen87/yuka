@@ -380,6 +380,23 @@ class Matrix4 {
 	}
 
 	/**
+	* Computes the maximum scale value for all three axis.
+	*
+	* @return {Number} The maximum scale value.
+	*/
+	getMaxScale() {
+
+		const e = this.elements;
+
+		const scaleXSq = e[ 0 ] * e[ 0 ] + e[ 1 ] * e[ 1 ] + e[ 2 ] * e[ 2 ];
+		const scaleYSq = e[ 4 ] * e[ 4 ] + e[ 5 ] * e[ 5 ] + e[ 6 ] * e[ 6 ];
+		const scaleZSq = e[ 8 ] * e[ 8 ] + e[ 9 ] * e[ 9 ] + e[ 10 ] * e[ 10 ];
+
+		return Math.sqrt( Math.max( scaleXSq, scaleYSq, scaleZSq ) );
+
+	}
+
+	/**
 	* Uses the given quaternion to transform the upper left 3x3 part to a rotation matrix.
 	*
 	* @param {Quaternion} q - A quaternion representing a rotation.

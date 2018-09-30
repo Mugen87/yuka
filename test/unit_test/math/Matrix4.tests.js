@@ -187,6 +187,18 @@ describe( 'Matrix4', function () {
 
 	} );
 
+	describe( '#getMaxScale()', function () {
+
+		it( 'should compute the maximum scale value for all three axis', function () {
+
+			const m = new Matrix4().set( 2, 3, 4, 0, 2, 3, 4, 0, 2, 3, 4, 0, 0, 0, 0, 1 );
+
+			expect( m.getMaxScale() ).to.closeTo( 6.928203230275509, Number.EPSILON );
+
+		} );
+
+	} );
+
 	describe( '#fromQuaternion()', function () {
 
 		it( 'should create a matrix from a given quaternion', function () {

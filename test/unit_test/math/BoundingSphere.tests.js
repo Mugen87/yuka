@@ -6,6 +6,7 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const BoundingSphere = YUKA.BoundingSphere;
+const Matrix4 = YUKA.Matrix4;
 const Vector3 = YUKA.Vector3;
 
 const zero3 = new Vector3( 0, 0, 0 );
@@ -143,6 +144,24 @@ describe( 'BoundingSphere', function () {
 			const sphere2 = new BoundingSphere( two3, 1 );
 
 			expect( sphere1.intersectsBoundingSphere( sphere2 ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#applyMatrix4()', function () {
+
+		it( 'should transform this bounding sphere by the given 4x4 transformation matrix', function () {
+
+			const boundingSphere = new BoundingSphere( zero3, 1 );
+			const position = new Vector3( 0, 0, 1 );
+
+			const m = new Matrix4().setPosition( position ).scale( two3 );
+
+			boundingSphere.applyMatrix4( m );
+
+			expect( boundingSphere.center ).to.deep.equal( new Vector3( 0, 0, 1 ) );
+			expect( boundingSphere.radius ).to.equal( 2 );
 
 		} );
 
