@@ -55,14 +55,13 @@ class SphericalTriggerRegion extends TriggerRegion {
 	* the trigger region.
 	*
 	* @param {GameEntity} entity - The entity to test.
-	* @return {Boolean} The result of the intersection test.
+	* @return {Boolean} Whether this trigger touches the given game entity or not.
 	*/
 	touching( entity ) {
 
 		boundingSphereEntity.set( entity.position, entity.boundingRadius );
 
 		return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity );
-
 
 	}
 
