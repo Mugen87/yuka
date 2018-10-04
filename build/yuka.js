@@ -3526,9 +3526,9 @@
 		}
 
 		/**
-		* Returns the delta time for the current simulation step.
+		* Returns the delta time in seconds for the current simulation step.
 		*
-		* @return {Number} The delta time.
+		* @return {Number} The delta time in seconds.
 		*/
 		getDelta() {
 
@@ -3537,9 +3537,9 @@
 		}
 
 		/**
-		* Returns the elapsed time of this timer.
+		* Returns the elapsed time in seconds of this timer.
 		*
-		* @return {Number} The elapsed time.
+		* @return {Number} The elapsed time in seconds.
 		*/
 		getElapsed() {
 
@@ -3562,9 +3562,9 @@
 		}
 
 		/**
-		* Returns a timestamp.
+		* Returns a current time value in milliseconds.
 		*
-		* @return {Number} A time stamp.
+		* @return {Number} A current time value in milliseconds.
 		*/
 		now() {
 
