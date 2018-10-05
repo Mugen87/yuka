@@ -37,12 +37,13 @@
 	import * as THREE from '../../lib/three.module.js';
 	import { GLTFLoader } from '../../lib/GLTFLoader.module.js';
 
+	import { FirstPersonControls } from './src/FirstPersonControls.js';
 	import { Player } from './src/Player.js';
 	import { createConvexRegionHelper } from '../../graph/common/js/NavMeshHelper.js';
 
 	let camera, scene, renderer;
 
-	let entityManager, time, player;
+	let entityManager, time, controls;
 
 	init();
 
@@ -146,9 +147,9 @@
 
 			const intro = document.getElementById( 'intro' );
 
-			intro.addEventListener( 'click', function ( event ) {
+			intro.addEventListener( 'click', ( event ) => {
 
-				player.connect();
+				controls.connect();
 
 			}, false );
 
@@ -157,22 +158,20 @@
 			entityManager = new YUKA.EntityManager();
 			time = new YUKA.Time();
 
-			player = new Player();
-			player.position.set( - 13, - 0.75, - 9 );
-			player.setRotation( - 2.2, 0.2 );
-			player.lookSpeed = 2;
-			player.height = 2;
-			player.maxSpeed = 40;
+			const player = new Player();
 			player.head.setRenderComponent( camera, sync );
+			player.position.set( - 13, - 0.75, - 9 );
+			player.maxSpeed = 40;
 
-			player.onActive = () => { intro.classList.add( 'hidden' ) };
-			player.onInactive = () => { intro.classList.remove( 'hidden' ) };
-			player.onAudio = ( id ) => {
+			controls = new FirstPersonControls( player );
+			controls.lookSpeed = 2;
+			controls.setRotation( - 2.2, 0.2 );
 
-				if ( id === 'rightStep' ) step1.play();
-				if ( id === 'leftStep' ) step2.play();
+			controls.sounds.set( 'rightStep', step1 );
+			controls.sounds.set( 'leftStep', step2 );
 
-			};
+			controls.addEventListener( 'lock', ( event ) => { intro.classList.add( 'hidden' ) } );
+			controls.addEventListener( 'unlock', ( event ) => { intro.classList.remove( 'hidden' ) } );
 
 			entityManager.add( player );
 
@@ -192,6 +191,8 @@
 			requestAnimationFrame( animate );
 
 			const delta = time.update().getDelta();
+
+			controls.update( delta );
 
 			entityManager.update( delta );
 

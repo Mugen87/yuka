@@ -240,7 +240,7 @@ class EntityManager {
 
 				const child = children[ i ];
 
-				this.updateEntity( child );
+				this.updateEntity( child, delta );
 
 			}
 

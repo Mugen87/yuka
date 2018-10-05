@@ -1,4 +1,5 @@
 export { EntityManager } from './core/EntityManager.js';
+export { EventDispatcher } from './core/EventDispatcher.js';
 export { GameEntity } from './core/GameEntity.js';
 export { Logger } from './core/Logger.js';
 export { MeshGeometry } from './core/MeshGeometry.js';
