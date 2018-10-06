@@ -90,7 +90,7 @@ describe( 'Obstacle', function () {
 
 			const geometry = new MeshGeometry( vertices );
 			const obstacle = new Obstacle( geometry );
-			obstacle.position.set( 0, 1, 0 );
+			obstacle.position.set( 0, 0, - 0.1 );
 			obstacle.updateWorldMatrix();
 
 			const ray = new Ray( new Vector3( 0.5, 5, 0.5 ), new Vector3( 0, - 1, 0 ) );
@@ -99,7 +99,7 @@ describe( 'Obstacle', function () {
 			const result = obstacle.intersectRay( ray, intersectionPoint );
 
 			expect( result ).not.to.be.null;
-			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 1, z: 0.5 } );
+			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
 
 		} );
 

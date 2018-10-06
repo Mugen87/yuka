@@ -2,10 +2,14 @@ import { GameEntity } from '../core/GameEntity.js';
 import { MeshGeometry } from '../core/MeshGeometry.js';
 import { AABB } from '../math/AABB.js';
 import { Vector3 } from '../math/Vector3.js';
+import { Matrix4 } from '../math/Matrix4.js';
+import { Ray } from '../math/Ray.js';
 
 const aabb = new AABB();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 const intersectionPointAABB = new Vector3();
+const rayLocal = new Ray();
+const inverseMatrix = new Matrix4();
 
 /**
 * Class for representing an obstacle in 3D space.
@@ -52,6 +56,11 @@ class Obstacle extends GameEntity {
 			const vertices = geometry.vertices;
 			const indices = geometry.indices;
 
+			// transform the ray into the local space of the obstacle
+
+			inverseMatrix.getInverse( this.worldMatrix );
+			rayLocal.copy( ray ).applyMatrix4( inverseMatrix );
+
 			if ( indices === null ) {
 
 				// non-indexed geometry
@@ -62,11 +71,11 @@ class Obstacle extends GameEntity {
 					triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
 					triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
 
-					triangle.a.applyMatrix4( this.worldMatrix );
-					triangle.b.applyMatrix4( this.worldMatrix );
-					triangle.c.applyMatrix4( this.worldMatrix );
+					if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
 
-					if ( ray.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+						// transform intersection point back to world space
+
+						result.applyMatrix4( this.worldMatrix );
 
 						return result;
 
@@ -90,11 +99,11 @@ class Obstacle extends GameEntity {
 					triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
 					triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
 
-					triangle.a.applyMatrix4( this.worldMatrix );
-					triangle.b.applyMatrix4( this.worldMatrix );
-					triangle.c.applyMatrix4( this.worldMatrix );
+					if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
 
-					if ( ray.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+						// transform intersection point back to world space
+
+						result.applyMatrix4( this.worldMatrix );
 
 						return result;
 

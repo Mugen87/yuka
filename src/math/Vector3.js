@@ -534,6 +534,25 @@ class Vector3 {
 	}
 
 	/**
+	* Transform this direction vector by the given 4x4 matrix.
+	*
+	* @param {Matrix4} m - A 4x4 matrix.
+	* @return {Vector3} A reference to this vector.
+	*/
+	transformDirection( m ) {
+
+		const x = this.x, y = this.y, z = this.z;
+		const e = m.elements;
+
+		this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z;
+		this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z;
+		this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
+
+		return this.normalize();
+
+	}
+
+	/**
 	* Sets the components of this 3D vector from a column of a 3x3 matrix.
 	*
 	* @param {Matrix3} m - A 3x3 matrix.

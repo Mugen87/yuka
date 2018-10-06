@@ -6,6 +6,8 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const Ray = YUKA.Ray;
+const Matrix4 = YUKA.Matrix4;
+const Quaternion = YUKA.Quaternion;
 const Vector3 = YUKA.Vector3;
 const AABB = YUKA.AABB;
 const BoundingSphere = YUKA.BoundingSphere;
@@ -290,6 +292,32 @@ describe( 'Ray', function () {
 
 			expect( ray1.intersectTriangle( triangle, true, result ) ).to.be.null;
 			expect( ray2.intersectTriangle( triangle, true, result ) ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#applyMatrix4()', function () {
+
+		it( 'should transform this ray by the given 4x4 matrix', function () {
+
+			const r1 = new Ray( new Vector3( 1, 1, 1 ), new Vector3( 1, 1, 1 ).normalize() );
+			const m1 = new Matrix4();
+
+			const position = new Vector3( 1, 2, 3 );
+			const rotation = new Quaternion().fromEuler( Math.PI / 2, 0, 0 );
+
+			m1.setPosition( position ).fromQuaternion( rotation );
+
+			r1.applyMatrix4( m1 );
+
+			expect( r1.origin.x ).to.closeTo( 1, Number.EPSILON );
+			expect( r1.origin.y ).to.closeTo( - 0.9999999999999998, Number.EPSILON );
+			expect( r1.origin.z ).to.closeTo( 1.0000000000000002, Number.EPSILON );
+
+			expect( r1.direction.x ).to.closeTo( 0.5773502691896258, Number.EPSILON );
+			expect( r1.direction.y ).to.closeTo( - 0.5773502691896257, Number.EPSILON );
+			expect( r1.direction.z ).to.closeTo( 0.577350269189626, Number.EPSILON );
 
 		} );
 

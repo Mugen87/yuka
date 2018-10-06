@@ -495,6 +495,24 @@ describe( 'Vector3', function () {
 
 	} );
 
+	describe( '#transformDirection()', function () {
+
+		it( 'should transform this direction vector by the given 4x4 matrix', function () {
+
+			const v1 = new Vector3( 2, 2, 1 ).normalize();
+			const q1 = new Quaternion().fromEuler( Math.PI / 2, 0, 0 );
+			const m1 = new Matrix4().fromQuaternion( q1 );
+
+			v1.transformDirection( m1 );
+
+			expect( v1.x ).to.closeTo( 0.6666666666666667, Number.EPSILON );
+			expect( v1.y ).to.closeTo( - 0.3333333333333332, Number.EPSILON );
+			expect( v1.z ).to.closeTo( 0.6666666666666667, Number.EPSILON );
+
+		} );
+
+	} );
+
 	describe( '#fromMatrix3Column()', function () {
 
 		it( 'should set the values of a vector from the given 3x3 matrix column', function () {

@@ -299,6 +299,21 @@ class Ray {
 	}
 
 	/**
+	* Transforms this ray by the given 4x4 matrix.
+	*
+	* @param {Matrix4} m - The 4x4 matrix.
+	* @return {Ray} A reference to this ray.
+	*/
+	applyMatrix4( m ) {
+
+		this.origin.applyMatrix4( m );
+		this.direction.transformDirection( m );
+
+		return this;
+
+	}
+
+	/**
 	* Returns true if the given ray is deep equal with this ray.
 	*
 	* @param {Ray} ray - The ray to test.

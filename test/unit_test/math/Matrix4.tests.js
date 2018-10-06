@@ -155,6 +155,68 @@ describe( 'Matrix4', function () {
 
 	} );
 
+	describe( '#compose()', function () {
+
+		it( 'should compose a 4x4 transformation matrix from the given position, scale and rotation', function () {
+
+			const position = new Vector3( 0, 0, 1 );
+			const rotation = new Quaternion().fromEuler( Math.PI / 2, 0, 0 );
+			const scale = new Vector3( 2, 2, 2 );
+
+			const m1 = new Matrix4();
+
+			m1.compose( position, rotation, scale );
+			const e = m1.elements;
+
+			expect( e[ 0 ] ).to.closeTo( 2, Number.EPSILON );
+			expect( e[ 1 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 2 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 3 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 4 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 5 ] ).to.closeTo( 4.440892098500626e-16, Number.EPSILON );
+			expect( e[ 6 ] ).to.closeTo( 2, Number.EPSILON );
+			expect( e[ 7 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 8 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 9 ] ).to.closeTo( - 2, Number.EPSILON );
+			expect( e[ 10 ] ).to.closeTo( 4.440892098500626e-16, Number.EPSILON );
+			expect( e[ 11 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 12 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 13 ] ).to.closeTo( 0, Number.EPSILON );
+			expect( e[ 14 ] ).to.closeTo( 1, Number.EPSILON );
+			expect( e[ 15 ] ).to.closeTo( 1, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#scale()', function () {
+
+		it( 'should scale the given 4x4 transformation matrix', function () {
+
+			const m1 = new Matrix4().scale( new Vector3( 1, 2, 3 ) );
+
+			expect( m1.elements[ 0 ] ).to.deep.equal( 1 );
+			expect( m1.elements[ 5 ] ).to.deep.equal( 2 );
+			expect( m1.elements[ 10 ] ).to.deep.equal( 3 );
+
+		} );
+
+	} );
+
+	describe( '#setPosition()', function () {
+
+		it( 'should set the position portion of a 4x4 transformation matrix', function () {
+
+			const m1 = new Matrix4().setPosition( new Vector3( 1, 2, 3 ) );
+
+			expect( m1.elements[ 12 ] ).to.deep.equal( 1 );
+			expect( m1.elements[ 13 ] ).to.deep.equal( 2 );
+			expect( m1.elements[ 14 ] ).to.deep.equal( 3 );
+
+		} );
+
+	} );
+
 	describe( '#transpose()', function () {
 
 		it( 'should transpose the matrix', function () {

@@ -1311,6 +1311,25 @@
 		}
 
 		/**
+		* Transform this direction vector by the given 4x4 matrix.
+		*
+		* @param {Matrix4} m - A 4x4 matrix.
+		* @return {Vector3} A reference to this vector.
+		*/
+		transformDirection( m ) {
+
+			const x = this.x, y = this.y, z = this.z;
+			const e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z;
+			this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z;
+			this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
+
+			return this.normalize();
+
+		}
+
+		/**
 		* Sets the components of this 3D vector from a column of a 3x3 matrix.
 		*
 		* @param {Matrix3} m - A 3x3 matrix.
@@ -2526,13 +2545,13 @@
 		* Composes a matrix from the given position, quaternion and scale.
 		*
 		* @param {Vector3} position - A vector representing a position in 3D space.
-		* @param {Quaternion} quaternion - A quaternion representing a rotation.
+		* @param {Quaternion} rotation - A quaternion representing a rotation.
 		* @param {Vector3} scale - A vector representing a 3D scaling.
 		* @return {Matrix4} A reference to this matrix.
 		*/
-		compose( position, quaternion, scale ) {
+		compose( position, rotation, scale ) {
 
-			this.fromQuaternion( quaternion );
+			this.fromQuaternion( rotation );
 			this.scale( scale );
 			this.setPosition( position );
 
@@ -6759,6 +6778,21 @@
 		}
 
 		/**
+		* Transforms this ray by the given 4x4 matrix.
+		*
+		* @param {Matrix4} m - The 4x4 matrix.
+		* @return {Ray} A reference to this ray.
+		*/
+		applyMatrix4( m ) {
+
+			this.origin.applyMatrix4( m );
+			this.direction.transformDirection( m );
+
+			return this;
+
+		}
+
+		/**
 		* Returns true if the given ray is deep equal with this ray.
 		*
 		* @param {Ray} ray - The ray to test.
@@ -9058,6 +9092,8 @@
 	const aabb$1 = new AABB();
 	const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 	const intersectionPointAABB = new Vector3();
+	const rayLocal = new Ray();
+	const inverseMatrix = new Matrix4();
 
 	/**
 	* Class for representing an obstacle in 3D space.
@@ -9104,6 +9140,11 @@
 				const vertices = geometry.vertices;
 				const indices = geometry.indices;
 
+				// transform the ray into the local space of the obstacle
+
+				inverseMatrix.getInverse( this.worldMatrix );
+				rayLocal.copy( ray ).applyMatrix4( inverseMatrix );
+
 				if ( indices === null ) {
 
 					// non-indexed geometry
@@ -9114,11 +9155,11 @@
 						triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
 						triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
 
-						triangle.a.applyMatrix4( this.worldMatrix );
-						triangle.b.applyMatrix4( this.worldMatrix );
-						triangle.c.applyMatrix4( this.worldMatrix );
+						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
 
-						if ( ray.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+							// transform intersection point back to world space
+
+							result.applyMatrix4( this.worldMatrix );
 
 							return result;
 
@@ -9142,11 +9183,11 @@
 						triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
 						triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
 
-						triangle.a.applyMatrix4( this.worldMatrix );
-						triangle.b.applyMatrix4( this.worldMatrix );
-						triangle.c.applyMatrix4( this.worldMatrix );
+						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
 
-						if ( ray.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+							// transform intersection point back to world space
+
+							result.applyMatrix4( this.worldMatrix );
 
 							return result;
 

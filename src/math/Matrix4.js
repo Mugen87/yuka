@@ -247,13 +247,13 @@ class Matrix4 {
 	* Composes a matrix from the given position, quaternion and scale.
 	*
 	* @param {Vector3} position - A vector representing a position in 3D space.
-	* @param {Quaternion} quaternion - A quaternion representing a rotation.
+	* @param {Quaternion} rotation - A quaternion representing a rotation.
 	* @param {Vector3} scale - A vector representing a 3D scaling.
 	* @return {Matrix4} A reference to this matrix.
 	*/
-	compose( position, quaternion, scale ) {
+	compose( position, rotation, scale ) {
 
-		this.fromQuaternion( quaternion );
+		this.fromQuaternion( rotation );
 		this.scale( scale );
 		this.setPosition( position );
 
