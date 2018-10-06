@@ -1,4 +1,5 @@
 import { AABB } from '../math/AABB.js';
+import { BoundingSphere } from '../math/BoundingSphere.js';
 import { Vector3 } from '../math/Vector3.js';
 
 /**
@@ -22,6 +23,7 @@ class MeshGeometry {
 		this.backfaceCulling = true;
 
 		this.aabb = new AABB();
+		this.boundingSphere = new BoundingSphere();
 
 		this.computeBoundingVolume();
 
@@ -38,13 +40,12 @@ class MeshGeometry {
 		const vertex = new Vector3();
 
 		const aabb = this.aabb;
+		const boundingSphere = this.boundingSphere;
 
-		// prepare AABB for "expand" operations
+		// compute AABB
 
 		aabb.min.set( Infinity, Infinity, Infinity );
 		aabb.max.set( - Infinity, - Infinity, - Infinity );
-
-		//
 
 		for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
 
@@ -55,6 +56,11 @@ class MeshGeometry {
 			aabb.expand( vertex );
 
 		}
+
+		// compute bounding sphere
+
+		aabb.getCenter( boundingSphere.center );
+		boundingSphere.radius = boundingSphere.center.distanceTo( aabb.max );
 
 		return this;
 

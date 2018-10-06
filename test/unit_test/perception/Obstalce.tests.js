@@ -70,7 +70,7 @@ describe( 'Obstacle', function () {
 
 		} );
 
-		it( 'should perform an early out if the ray does not intersect the AABB of the obstacle', function () {
+		it( 'should perform an early out if the ray does not intersect the bounding volumes of the obstacle', function () {
 
 			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
 

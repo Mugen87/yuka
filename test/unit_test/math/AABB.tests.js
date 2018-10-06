@@ -158,6 +158,21 @@ describe( 'AABB', function () {
 
 	} );
 
+	describe( '#getCenter()', function () {
+
+		it( 'should compute the center point of this AABB and store it into the given vector', function () {
+
+			const aabb = new AABB( zero3, one3 );
+			const center = new Vector3();
+
+			aabb.getCenter( center );
+
+			expect( center ).to.deep.equal( new Vector3( 0.5, 0.5, 0.5 ) );
+
+		} );
+
+	} );
+
 	describe( '#intersectsAABB()', function () {
 
 		it( 'should return true if the given AABB intersects this AABB', function () {

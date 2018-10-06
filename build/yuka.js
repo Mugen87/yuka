@@ -3345,6 +3345,18 @@
 		}
 
 		/**
+		* Computes the center point of this AABB and stores it into the given vector.
+		*
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		getCenter( result ) {
+
+			return result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+
+		}
+
+		/**
 		* Returns true if the given ABBB intersects this AABB.
 		*
 		* @param {AABB} aabb - The AABB to test.
@@ -3454,6 +3466,132 @@
 	}
 
 	/**
+	* Class representing a bounding sphere.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class BoundingSphere {
+
+		/**
+		* Constructs a new bounding sphere with the given values.
+		*
+		* @param {Vector3} center - The center position of the bounding sphere.
+		* @param {Number} radius - The radius of the bounding sphere.
+		*/
+		constructor( center = new Vector3(), radius = 0 ) {
+
+			/**
+			* The center position of the bounding sphere.
+			* @type Vector3
+			*/
+			this.center = center;
+
+			/**
+			*  The radius of the bounding sphere.
+			* @type Number
+			*/
+			this.radius = radius;
+
+		}
+
+		/**
+		* Sets the given values to this bounding sphere.
+		*
+		* @param {Vector3} center - The center position of the bounding sphere.
+		* @param {Number} radius - The radius of the bounding sphere.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		set( center, radius ) {
+
+			this.center = center;
+			this.radius = radius;
+
+			return this;
+
+		}
+
+		/**
+		* Copies all values from the given bounding sphere to this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to copy.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		copy( sphere ) {
+
+			this.center.copy( sphere.center );
+			this.radius = sphere.radius;
+
+			return this;
+
+		}
+
+		/**
+		* Creates a new bounding sphere and copies all values from this bounding sphere.
+		*
+		* @return {BoundingSphere} A new bounding sphere.
+		*/
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		/**
+		* Returns true if the given point is inside this bounding sphere.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {Boolean} The result of the containments test.
+		*/
+		containsPoint( point ) {
+
+			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
+
+		}
+
+		/**
+		* Returns true if the given bounding sphere intersects this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {Boolean} The result of the intersection test.
+		*/
+		intersectsBoundingSphere( sphere ) {
+
+			const radius = this.radius + sphere.radius;
+
+			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+		}
+
+		/**
+		* Transforms this bounding sphere with the given 4x4 transformation matrix.
+		*
+		* @param {Matrix4} matrix - The 4x4 transformation matrix.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		applyMatrix4( matrix ) {
+
+			this.center.applyMatrix4( matrix );
+			this.radius = this.radius * matrix.getMaxScale();
+
+			return this;
+
+		}
+
+		/**
+		* Returns true if the given bounding sphere is deep equal with this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {Boolean} The result of the equality test.
+		*/
+		equals( sphere ) {
+
+			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
+
+		}
+
+	}
+
+	/**
 	* Class for representing a polygon mesh. The faces consist of triangles.
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
@@ -3474,6 +3612,7 @@
 			this.backfaceCulling = true;
 
 			this.aabb = new AABB();
+			this.boundingSphere = new BoundingSphere();
 
 			this.computeBoundingVolume();
 
@@ -3490,13 +3629,12 @@
 			const vertex = new Vector3();
 
 			const aabb = this.aabb;
+			const boundingSphere = this.boundingSphere;
 
-			// prepare AABB for "expand" operations
+			// compute AABB
 
 			aabb.min.set( Infinity, Infinity, Infinity );
 			aabb.max.set( - Infinity, - Infinity, - Infinity );
-
-			//
 
 			for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
 
@@ -3507,6 +3645,11 @@
 				aabb.expand( vertex );
 
 			}
+
+			// compute bounding sphere
+
+			aabb.getCenter( boundingSphere.center );
+			boundingSphere.radius = boundingSphere.center.distanceTo( aabb.max );
 
 			return this;
 
@@ -6055,132 +6198,6 @@
 	function compare$1( a, b ) {
 
 		return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
-
-	}
-
-	/**
-	* Class representing a bounding sphere.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class BoundingSphere {
-
-		/**
-		* Constructs a new bounding sphere with the given values.
-		*
-		* @param {Vector3} center - The center position of the bounding sphere.
-		* @param {Number} radius - The radius of the bounding sphere.
-		*/
-		constructor( center = new Vector3(), radius = 0 ) {
-
-			/**
-			* The center position of the bounding sphere.
-			* @type Vector3
-			*/
-			this.center = center;
-
-			/**
-			*  The radius of the bounding sphere.
-			* @type Number
-			*/
-			this.radius = radius;
-
-		}
-
-		/**
-		* Sets the given values to this bounding sphere.
-		*
-		* @param {Vector3} center - The center position of the bounding sphere.
-		* @param {Number} radius - The radius of the bounding sphere.
-		* @return {BoundingSphere} A reference to this bounding sphere.
-		*/
-		set( center, radius ) {
-
-			this.center = center;
-			this.radius = radius;
-
-			return this;
-
-		}
-
-		/**
-		* Copies all values from the given bounding sphere to this bounding sphere.
-		*
-		* @param {BoundingSphere} sphere - The bounding sphere to copy.
-		* @return {BoundingSphere} A reference to this bounding sphere.
-		*/
-		copy( sphere ) {
-
-			this.center.copy( sphere.center );
-			this.radius = sphere.radius;
-
-			return this;
-
-		}
-
-		/**
-		* Creates a new bounding sphere and copies all values from this bounding sphere.
-		*
-		* @return {BoundingSphere} A new bounding sphere.
-		*/
-		clone() {
-
-			return new this.constructor().copy( this );
-
-		}
-
-		/**
-		* Returns true if the given point is inside this bounding sphere.
-		*
-		* @param {Vector3} point - A point in 3D space.
-		* @return {Boolean} The result of the containments test.
-		*/
-		containsPoint( point ) {
-
-			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
-
-		}
-
-		/**
-		* Returns true if the given bounding sphere intersects this bounding sphere.
-		*
-		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {Boolean} The result of the intersection test.
-		*/
-		intersectsBoundingSphere( sphere ) {
-
-			const radius = this.radius + sphere.radius;
-
-			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
-
-		}
-
-		/**
-		* Transforms this bounding sphere with the given 4x4 transformation matrix.
-		*
-		* @param {Matrix4} matrix - The 4x4 transformation matrix.
-		* @return {BoundingSphere} A reference to this bounding sphere.
-		*/
-		applyMatrix4( matrix ) {
-
-			this.center.applyMatrix4( matrix );
-			this.radius = this.radius * matrix.getMaxScale();
-
-			return this;
-
-		}
-
-		/**
-		* Returns true if the given bounding sphere is deep equal with this bounding sphere.
-		*
-		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {Boolean} The result of the equality test.
-		*/
-		equals( sphere ) {
-
-			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
-
-		}
 
 	}
 
@@ -9089,9 +9106,9 @@
 
 	}
 
-	const aabb$1 = new AABB();
+	const boundingSphere = new BoundingSphere();
 	const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
-	const intersectionPointAABB = new Vector3();
+	const intersectionPointBoundingVolume = new Vector3();
 	const rayLocal = new Ray();
 	const inverseMatrix = new Matrix4();
 
@@ -9129,67 +9146,75 @@
 
 			const geometry = this.geometry;
 
-			// check bounding volume first
+			const aabb = geometry.aabb;
 
-			aabb$1.copy( geometry.aabb ).applyMatrix4( this.worldMatrix );
+			// check bounding sphere first in world space
 
-			if ( ray.intersectAABB( aabb$1, intersectionPointAABB ) !== null ) {
+			boundingSphere.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
 
-				// now perform more expensive test with all triangles of the geometry
-
-				const vertices = geometry.vertices;
-				const indices = geometry.indices;
+			if ( ray.intersectBoundingSphere( boundingSphere, intersectionPointBoundingVolume ) !== null ) {
 
 				// transform the ray into the local space of the obstacle
 
 				inverseMatrix.getInverse( this.worldMatrix );
 				rayLocal.copy( ray ).applyMatrix4( inverseMatrix );
 
-				if ( indices === null ) {
+				// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
 
-					// non-indexed geometry
+				if ( rayLocal.intersectAABB( aabb, intersectionPointBoundingVolume ) !== null ) {
 
-					for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
+					// now perform more expensive test with all triangles of the geometry
 
-						triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
-						triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
-						triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
+					const vertices = geometry.vertices;
+					const indices = geometry.indices;
 
-						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+					if ( indices === null ) {
 
-							// transform intersection point back to world space
+						// non-indexed geometry
 
-							result.applyMatrix4( this.worldMatrix );
+						for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
 
-							return result;
+							triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
+							triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
+							triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
+
+							if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+
+								// transform intersection point back to world space
+
+								result.applyMatrix4( this.worldMatrix );
+
+								return result;
+
+							}
 
 						}
 
-					}
+					} else {
 
-				} else {
+						// indexed geometry
 
-					// indexed geometry
+						for ( let i = 0, l = indices.length; i < l; i += 3 ) {
 
-					for ( let i = 0, l = indices.length; i < l; i += 3 ) {
+							const a = indices[ i ];
+							const b = indices[ i + 1 ];
+							const c = indices[ i + 2 ];
 
-						const a = indices[ i ];
-						const b = indices[ i + 1 ];
-						const c = indices[ i + 2 ];
+							const stride = 3;
 
-						const stride = 3;
+							triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
+							triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
+							triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
 
-						triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
-						triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
-						triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
+							if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
 
-						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+								// transform intersection point back to world space
 
-							// transform intersection point back to world space
+								result.applyMatrix4( this.worldMatrix );
 
-							result.applyMatrix4( this.worldMatrix );
+								return result;
 
-							return result;
+							}
 
 						}
 
@@ -10433,7 +10458,7 @@
 	const localPositionOfObstacle = new Vector3();
 	const localPositionOfClosestObstacle = new Vector3();
 	const intersectionPoint$1 = new Vector3();
-	const boundingSphere = new BoundingSphere();
+	const boundingSphere$1 = new BoundingSphere();
 
 	const ray$1 = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
@@ -10527,10 +10552,10 @@
 
 						// do intersection test in local space of the vehicle
 
-						boundingSphere.center.copy( localPositionOfObstacle );
-						boundingSphere.radius = expandedRadius;
+						boundingSphere$1.center.copy( localPositionOfObstacle );
+						boundingSphere$1.radius = expandedRadius;
 
-						ray$1.intersectBoundingSphere( boundingSphere, intersectionPoint$1 );
+						ray$1.intersectBoundingSphere( boundingSphere$1, intersectionPoint$1 );
 
 						// compare distances
 

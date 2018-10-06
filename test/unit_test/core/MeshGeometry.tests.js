@@ -7,6 +7,7 @@ const YUKA = require( '../../../build/yuka.js' );
 
 const MeshGeometry = YUKA.MeshGeometry;
 const AABB = YUKA.AABB;
+const BoundingSphere = YUKA.BoundingSphere;
 
 describe( 'MeshGeometry', function () {
 
@@ -20,6 +21,7 @@ describe( 'MeshGeometry', function () {
 			expect( geometry ).to.have.a.property( 'indices' ).that.is.null;
 			expect( geometry ).to.have.a.property( 'backfaceCulling' ).that.be.true;
 			expect( geometry ).to.have.a.property( 'aabb' ).that.is.an.instanceof( AABB );
+			expect( geometry ).to.have.a.property( 'boundingSphere' ).that.is.an.instanceof( BoundingSphere );
 
 		} );
 
@@ -48,6 +50,10 @@ describe( 'MeshGeometry', function () {
 
 			expect( geometry.aabb.min ).to.deep.equal( { x: 0, y: 0, z: 0 } );
 			expect( geometry.aabb.max ).to.deep.equal( { x: 1, y: 0, z: 1 } );
+
+			expect( geometry.boundingSphere.center ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
+			expect( geometry.boundingSphere.radius ).to.closeTo( 0.7071067811865476, Number.EPSILON );
+
 
 		} );
 

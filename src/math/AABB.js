@@ -131,6 +131,18 @@ class AABB {
 	}
 
 	/**
+	* Computes the center point of this AABB and stores it into the given vector.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getCenter( result ) {
+
+		return result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+
+	}
+
+	/**
 	* Returns true if the given ABBB intersects this AABB.
 	*
 	* @param {AABB} aabb - The AABB to test.

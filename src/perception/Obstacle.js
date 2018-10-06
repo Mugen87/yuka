@@ -1,13 +1,13 @@
 import { GameEntity } from '../core/GameEntity.js';
 import { MeshGeometry } from '../core/MeshGeometry.js';
-import { AABB } from '../math/AABB.js';
+import { BoundingSphere } from '../math/BoundingSphere.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Ray } from '../math/Ray.js';
 
-const aabb = new AABB();
+const boundingSphere = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
-const intersectionPointAABB = new Vector3();
+const intersectionPointBoundingVolume = new Vector3();
 const rayLocal = new Ray();
 const inverseMatrix = new Matrix4();
 
@@ -45,67 +45,75 @@ class Obstacle extends GameEntity {
 
 		const geometry = this.geometry;
 
-		// check bounding volume first
+		const aabb = geometry.aabb;
 
-		aabb.copy( geometry.aabb ).applyMatrix4( this.worldMatrix );
+		// check bounding sphere first in world space
 
-		if ( ray.intersectAABB( aabb, intersectionPointAABB ) !== null ) {
+		boundingSphere.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
 
-			// now perform more expensive test with all triangles of the geometry
-
-			const vertices = geometry.vertices;
-			const indices = geometry.indices;
+		if ( ray.intersectBoundingSphere( boundingSphere, intersectionPointBoundingVolume ) !== null ) {
 
 			// transform the ray into the local space of the obstacle
 
 			inverseMatrix.getInverse( this.worldMatrix );
 			rayLocal.copy( ray ).applyMatrix4( inverseMatrix );
 
-			if ( indices === null ) {
+			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
 
-				// non-indexed geometry
+			if ( rayLocal.intersectAABB( aabb, intersectionPointBoundingVolume ) !== null ) {
 
-				for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
+				// now perform more expensive test with all triangles of the geometry
 
-					triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
-					triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
-					triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
+				const vertices = geometry.vertices;
+				const indices = geometry.indices;
 
-					if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+				if ( indices === null ) {
 
-						// transform intersection point back to world space
+					// non-indexed geometry
 
-						result.applyMatrix4( this.worldMatrix );
+					for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
 
-						return result;
+						triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
+						triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
+						triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
+
+						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+
+							// transform intersection point back to world space
+
+							result.applyMatrix4( this.worldMatrix );
+
+							return result;
+
+						}
 
 					}
 
-				}
+				} else {
 
-			} else {
+					// indexed geometry
 
-				// indexed geometry
+					for ( let i = 0, l = indices.length; i < l; i += 3 ) {
 
-				for ( let i = 0, l = indices.length; i < l; i += 3 ) {
+						const a = indices[ i ];
+						const b = indices[ i + 1 ];
+						const c = indices[ i + 2 ];
 
-					const a = indices[ i ];
-					const b = indices[ i + 1 ];
-					const c = indices[ i + 2 ];
+						const stride = 3;
 
-					const stride = 3;
+						triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
+						triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
+						triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
 
-					triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
-					triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
-					triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
+						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
 
-					if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+							// transform intersection point back to world space
 
-						// transform intersection point back to world space
+							result.applyMatrix4( this.worldMatrix );
 
-						result.applyMatrix4( this.worldMatrix );
+							return result;
 
-						return result;
+						}
 
 					}
 
