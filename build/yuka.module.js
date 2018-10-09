@@ -9140,8 +9140,6 @@ class Obstacle extends GameEntity {
 
 		const geometry = this.geometry;
 
-		const aabb = geometry.aabb;
-
 		// check bounding sphere first in world space
 
 		boundingSphere.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
@@ -9155,7 +9153,7 @@ class Obstacle extends GameEntity {
 
 			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
 
-			if ( rayLocal.intersectAABB( aabb, intersectionPointBoundingVolume ) !== null ) {
+			if ( rayLocal.intersectAABB( geometry.aabb, intersectionPointBoundingVolume ) !== null ) {
 
 				// now perform more expensive test with all triangles of the geometry
 
