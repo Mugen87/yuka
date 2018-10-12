@@ -419,7 +419,7 @@
 
 			// update entities
 
-			for ( let i = 0, l = entities.length; i < l; i ++ ) {
+			for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
 
 				const entity = entities[ i ];
 
@@ -429,7 +429,7 @@
 
 			// update triggers
 
-			for ( let i = 0, l = triggers.length; i < l; i ++ ) {
+			for ( let i = ( triggers.length - 1 ); i >= 0; i -- ) {
 
 				const trigger = triggers[ i ];
 
@@ -477,7 +477,7 @@
 
 				const children = entity.children;
 
-				for ( let i = 0, l = children.length; i < l; i ++ ) {
+				for ( let i = ( children.length - 1 ); i >= 0; i -- ) {
 
 					const child = children[ i ];
 
@@ -581,7 +581,7 @@
 
 				const entities = this.entities;
 
-				for ( let i = 0, l = entities.length; i < l; i ++ ) {
+				for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
 
 					const entity = entities[ i ];
 
@@ -744,6 +744,19 @@
 		static clamp( value, min, max ) {
 
 			return Math.max( min, Math.min( max, value ) );
+
+		}
+
+		/**
+		* Computes a random integer value within a given min/max range.
+		*
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {Number} The random integer value.
+		*/
+		static randInt( min, max ) {
+
+			return min + Math.floor( Math.random() * ( max - min + 1 ) );
 
 		}
 
@@ -1305,6 +1318,24 @@
 			this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
 			this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
 			this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+
+			return this;
+
+		}
+
+		/**
+		* Extracts the position portion of the given 4x4 matrix and stores it in this 3D vector.
+		*
+		* @param {Matrix4} m - A 4x4 matrix.
+		* @return {Vector3} A reference to this vector.
+		*/
+		extractPositionFromMatrix( m ) {
+
+			const e = m.elements;
+
+			this.x = e[ 12 ];
+			this.y = e[ 13 ];
+			this.z = e[ 14 ];
 
 			return this;
 
@@ -9110,6 +9141,7 @@
 	const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 	const intersectionPointBoundingVolume = new Vector3();
 	const rayLocal = new Ray();
+	const plane = new Plane();
 	const inverseMatrix = new Matrix4();
 
 	/**
@@ -9139,10 +9171,11 @@
 		* *null* is returned.
 		*
 		* @param {Ray} ray - The ray to test.
-		* @param {Vector3} result - The result vector.
+		* @param {Vector3} intersectionPoint - The intersection point.
+		* @param {Vector3} normal - The normal vector of the respective triangle.
 		* @return {Vector3} The result vector.
 		*/
-		intersectRay( ray, result ) {
+		intersectRay( ray, intersectionPoint, normal = null ) {
 
 			const geometry = this.geometry;
 
@@ -9176,13 +9209,23 @@
 							triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
 							triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
 
-							if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+							if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, intersectionPoint ) !== null ) {
 
 								// transform intersection point back to world space
 
-								result.applyMatrix4( this.worldMatrix );
+								intersectionPoint.applyMatrix4( this.worldMatrix );
 
-								return result;
+								// compute normal of triangle in world space if necessary
+
+								if ( normal !== null ) {
+
+									plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+									normal.copy( plane.normal );
+									normal.transformDirection( this.worldMatrix );
+
+								}
+
+								return intersectionPoint;
 
 							}
 
@@ -9204,13 +9247,23 @@
 							triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
 							triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
 
-							if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+							if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, intersectionPoint ) !== null ) {
 
 								// transform intersection point back to world space
 
-								result.applyMatrix4( this.worldMatrix );
+								intersectionPoint.applyMatrix4( this.worldMatrix );
 
-								return result;
+								// compute normal of triangle in world space if necessary
+
+								if ( normal !== null ) {
+
+									plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+									normal.copy( plane.normal );
+									normal.transformDirection( this.worldMatrix );
+
+								}
+
+								return intersectionPoint;
 
 							}
 

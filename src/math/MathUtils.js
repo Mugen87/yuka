@@ -20,6 +20,19 @@ class MathUtils {
 	}
 
 	/**
+	* Computes a random integer value within a given min/max range.
+	*
+	* @param {min} value - The min value.
+	* @param {max} value - The max value.
+	* @return {Number} The random integer value.
+	*/
+	static randInt( min, max ) {
+
+		return min + Math.floor( Math.random() * ( max - min + 1 ) );
+
+	}
+
+	/**
 	* Computes a random float value within a given min/max range.
 	*
 	* @param {min} value - The min value.

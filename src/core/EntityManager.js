@@ -178,7 +178,7 @@ class EntityManager {
 
 		// update entities
 
-		for ( let i = 0, l = entities.length; i < l; i ++ ) {
+		for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
 
 			const entity = entities[ i ];
 
@@ -188,7 +188,7 @@ class EntityManager {
 
 		// update triggers
 
-		for ( let i = 0, l = triggers.length; i < l; i ++ ) {
+		for ( let i = ( triggers.length - 1 ); i >= 0; i -- ) {
 
 			const trigger = triggers[ i ];
 
@@ -236,7 +236,7 @@ class EntityManager {
 
 			const children = entity.children;
 
-			for ( let i = 0, l = children.length; i < l; i ++ ) {
+			for ( let i = ( children.length - 1 ); i >= 0; i -- ) {
 
 				const child = children[ i ];
 
@@ -340,7 +340,7 @@ class EntityManager {
 
 			const entities = this.entities;
 
-			for ( let i = 0, l = entities.length; i < l; i ++ ) {
+			for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
 
 				const entity = entities[ i ];
 

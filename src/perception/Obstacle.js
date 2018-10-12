@@ -1,6 +1,7 @@
 import { GameEntity } from '../core/GameEntity.js';
 import { MeshGeometry } from '../core/MeshGeometry.js';
 import { BoundingSphere } from '../math/BoundingSphere.js';
+import { Plane } from '../math/Plane.js';
 import { Vector3 } from '../math/Vector3.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Ray } from '../math/Ray.js';
@@ -9,6 +10,7 @@ const boundingSphere = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 const intersectionPointBoundingVolume = new Vector3();
 const rayLocal = new Ray();
+const plane = new Plane();
 const inverseMatrix = new Matrix4();
 
 /**
@@ -38,10 +40,11 @@ class Obstacle extends GameEntity {
 	* *null* is returned.
 	*
 	* @param {Ray} ray - The ray to test.
-	* @param {Vector3} result - The result vector.
+	* @param {Vector3} intersectionPoint - The intersection point.
+	* @param {Vector3} normal - The normal vector of the respective triangle.
 	* @return {Vector3} The result vector.
 	*/
-	intersectRay( ray, result ) {
+	intersectRay( ray, intersectionPoint, normal = null ) {
 
 		const geometry = this.geometry;
 
@@ -75,13 +78,23 @@ class Obstacle extends GameEntity {
 						triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
 						triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
 
-						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, intersectionPoint ) !== null ) {
 
 							// transform intersection point back to world space
 
-							result.applyMatrix4( this.worldMatrix );
+							intersectionPoint.applyMatrix4( this.worldMatrix );
 
-							return result;
+							// compute normal of triangle in world space if necessary
+
+							if ( normal !== null ) {
+
+								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+								normal.copy( plane.normal );
+								normal.transformDirection( this.worldMatrix );
+
+							}
+
+							return intersectionPoint;
 
 						}
 
@@ -103,13 +116,23 @@ class Obstacle extends GameEntity {
 						triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
 						triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
 
-						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, result ) !== null ) {
+						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, intersectionPoint ) !== null ) {
 
 							// transform intersection point back to world space
 
-							result.applyMatrix4( this.worldMatrix );
+							intersectionPoint.applyMatrix4( this.worldMatrix );
 
-							return result;
+							// compute normal of triangle in world space if necessary
+
+							if ( normal !== null ) {
+
+								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+								normal.copy( plane.normal );
+								normal.transformDirection( this.worldMatrix );
+
+							}
+
+							return intersectionPoint;
 
 						}
 

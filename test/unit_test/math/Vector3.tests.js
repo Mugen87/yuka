@@ -495,6 +495,23 @@ describe( 'Vector3', function () {
 
 	} );
 
+	describe( '#extractPositionFromMatrix()', function () {
+
+		it( 'should extract the position portion of the given 4x4 matrix and store it in this 3D vector', function () {
+
+			const m1 = new Matrix4();
+			m1.elements[ 12 ] = 1;
+			m1.elements[ 13 ] = 2;
+			m1.elements[ 14 ] = 3;
+
+			const v1 = new Vector3().extractPositionFromMatrix( m1 );
+
+			expect( v1 ).to.deep.equal( { x: 1, y: 2, z: 3 } );
+
+		} );
+
+	} );
+
 	describe( '#transformDirection()', function () {
 
 		it( 'should transform this direction vector by the given 4x4 matrix', function () {

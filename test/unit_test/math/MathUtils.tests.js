@@ -22,9 +22,27 @@ describe( 'Math', function () {
 
 	} );
 
+	describe( '#randInt()', function () {
+
+		it( 'should return a random integer between two integer values', function () {
+
+			let int = MathUtils.randInt( 4, 6 );
+
+			expect( int ).to.be.within( 4, 6 );
+			expect( int % 1 ).to.equal( 0 );
+
+			int = MathUtils.randInt( - 2, 0 );
+
+			expect( int ).to.be.within( - 2, 0 );
+			expect( int % 1 ).to.equal( 0 );
+
+		} );
+
+	} );
+
 	describe( '#randFloat()', function () {
 
-		it( 'should return a random number between two float values', function () {
+		it( 'should return a random float between two float values', function () {
 
 			expect( MathUtils.randFloat( 4, 6 ) ).to.be.within( 4, 6 );
 			expect( MathUtils.randFloat( - 2, - 1 ) ).to.be.within( - 2, - 1 );

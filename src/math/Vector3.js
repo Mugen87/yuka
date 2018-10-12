@@ -534,6 +534,24 @@ class Vector3 {
 	}
 
 	/**
+	* Extracts the position portion of the given 4x4 matrix and stores it in this 3D vector.
+	*
+	* @param {Matrix4} m - A 4x4 matrix.
+	* @return {Vector3} A reference to this vector.
+	*/
+	extractPositionFromMatrix( m ) {
+
+		const e = m.elements;
+
+		this.x = e[ 12 ];
+		this.y = e[ 13 ];
+		this.z = e[ 14 ];
+
+		return this;
+
+	}
+
+	/**
 	* Transform this direction vector by the given 4x4 matrix.
 	*
 	* @param {Matrix4} m - A 4x4 matrix.
