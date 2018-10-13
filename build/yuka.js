@@ -3731,7 +3731,7 @@
 		* Updates the internal state of this game entity.
 		*
 		* @param {Number} delta - The time delta.
-		* @return {GameEntity} A reference to this game entity.
+		* @return {MovingEntity} A reference to this moving entity.
 		*/
 		update( delta ) {
 
@@ -3763,6 +3763,8 @@
 			// update position
 
 			this.position.copy( target );
+
+			return this;
 
 		}
 
