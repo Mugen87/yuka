@@ -46,7 +46,7 @@
 		let entityManager, time;
 
 		const vehicleCount = 100;
-		const vehicles = []
+		const vehicles = [];
 		const pathHelpers = [];
 
 		const params = {
@@ -263,33 +263,33 @@
 
 		function animate() {
 
-				requestAnimationFrame( animate );
+			requestAnimationFrame( animate );
 
-				//
+			//
 
-				for ( let i = 0, l = vehicles.length; i < l; i ++ ) {
+			for ( let i = 0, l = vehicles.length; i < l; i ++ ) {
 
-					const vehicle = vehicles[ i ];
+				const vehicle = vehicles[ i ];
 
-					if ( vehicle.currentRegion === vehicle.toRegion ) {
+				if ( vehicle.currentRegion === vehicle.toRegion ) {
 
-						const pathHelper = pathHelpers[ i ];
+					const pathHelper = pathHelpers[ i ];
 
-						vehicle.fromRegion = vehicle.toRegion;
+					vehicle.fromRegion = vehicle.toRegion;
 
-						getRandomPath( vehicle, pathHelper );
-
-					}
+					getRandomPath( vehicle, pathHelper );
 
 				}
 
-				//
+			}
 
-				const delta = time.update().getDelta();
+			//
 
-				entityManager.update( delta );
+			const delta = time.update().getDelta();
 
-				renderer.render( scene, camera );
+			entityManager.update( delta );
+
+			renderer.render( scene, camera );
 
 		}
 

@@ -22,8 +22,6 @@
 
 	let renderer, scene, camera;
 
-	const direction = new THREE.Vector3();
-
 	init();
 	animate();
 
@@ -85,8 +83,8 @@
 
 	function animate() {
 
-			requestAnimationFrame( animate );
-			renderer.render( scene, camera );
+		requestAnimationFrame( animate );
+		renderer.render( scene, camera );
 
 	}
 

@@ -39,7 +39,7 @@
 
 	import { FirstPersonControls } from './src/FirstPersonControls.js';
 	import { Player } from './src/Player.js';
-	import { createConvexRegionHelper } from '../../graph/common/js/NavMeshHelper.js';
+	// import { createConvexRegionHelper } from '../../graph/common/js/NavMeshHelper.js';
 
 	let camera, scene, renderer;
 
@@ -51,160 +51,178 @@
 
 	function init() {
 
-			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
-			camera.matrixAutoUpdate = false;
+		camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
+		camera.matrixAutoUpdate = false;
 
-			scene = new THREE.Scene();
-			scene.background = new THREE.Color( 0xa0a0a0 );
-			scene.fog = new THREE.Fog( 0xa0a0a0, 20, 40 );
+		scene = new THREE.Scene();
+		scene.background = new THREE.Color( 0xa0a0a0 );
+		scene.fog = new THREE.Fog( 0xa0a0a0, 20, 40 );
 
-			//
+		//
 
-			const geometry = new THREE.PlaneBufferGeometry( 150, 150 );
-			const material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
+		const geometry = new THREE.PlaneBufferGeometry( 150, 150 );
+		const material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
 
-			const ground = new THREE.Mesh( geometry, material );
-			ground.rotation.x = - Math.PI / 2;
-			ground.matrixAutoUpdate = false;
-			ground.updateMatrix();
-			scene.add( ground );
+		const ground = new THREE.Mesh( geometry, material );
+		ground.rotation.x = - Math.PI / 2;
+		ground.matrixAutoUpdate = false;
+		ground.updateMatrix();
+		scene.add( ground );
 
-			//
+		//
 
-			const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.6 );
-			hemiLight.position.set( 0, 100, 0 );
-			scene.add( hemiLight );
+		const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.6 );
+		hemiLight.position.set( 0, 100, 0 );
+		scene.add( hemiLight );
 
-			const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
-			dirLight.position.set( 0, 20, 10 );
-			scene.add( dirLight );
+		const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+		dirLight.position.set( 0, 20, 10 );
+		scene.add( dirLight );
 
-			//
+		//
 
-			const audioLoader = new THREE.AudioLoader();
-			const listener = new THREE.AudioListener();
-			camera.add( listener );
+		const audioLoader = new THREE.AudioLoader();
+		const listener = new THREE.AudioListener();
+		camera.add( listener );
 
-			const step1 = new THREE.Audio( listener );
-			const step2 = new THREE.Audio( listener );
+		const step1 = new THREE.Audio( listener );
+		const step2 = new THREE.Audio( listener );
 
-			audioLoader.load( 'audio/step1.ogg', ( buffer ) => { step1.setBuffer( buffer ) } );
-			audioLoader.load( 'audio/step2.ogg', ( buffer ) => { step2.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/step1.ogg', ( buffer ) => {
 
-			//
+			step1.setBuffer( buffer );
 
-			const glTFLoader = new GLTFLoader();
-			glTFLoader.load( 'model/house.glb', ( gltf ) => {
+		} );
 
-				// add object to scene
+		audioLoader.load( 'audio/step2.ogg', ( buffer ) => {
 
-				scene.add( gltf.scene );
+			step2.setBuffer( buffer );
 
-				gltf.scene.traverse( ( object ) => {
+		} );
 
-					object.matrixAutoUpdate = false;
-					object.updateMatrix();
+		//
 
-					if ( object.isMesh ) {
+		const glTFLoader = new GLTFLoader();
+		glTFLoader.load( 'model/house.glb', ( gltf ) => {
 
-						for ( const material of object.material ) {
+			// add object to scene
 
-							if ( material.transparent === true ) material.depthWrite = false;
+			scene.add( gltf.scene );
 
-						}
+			gltf.scene.traverse( ( object ) => {
+
+				object.matrixAutoUpdate = false;
+				object.updateMatrix();
+
+				if ( object.isMesh ) {
+
+					for ( const material of object.material ) {
+
+						if ( material.transparent === true ) material.depthWrite = false;
 
 					}
 
-				} );
-
-				// load respective navmesh
-
-				const loader = new YUKA.NavMeshLoader();
-
-				loader.load( './navmesh/navmesh.glb', { epsilonCoplanarTest: 0.25 } ).then( ( navMesh ) => {
-
-					// visualize convex regions
-
-					const navMeshGroup = createConvexRegionHelper( navMesh );
-					//scene.add( navMeshGroup );
-
-					player.navMesh = navMesh;
-
-					animate();
-
-				} );
+				}
 
 			} );
 
-			//
+			// load respective navmesh
 
-			renderer = new THREE.WebGLRenderer( { antialias: true } );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.gammaOutput = true;
-			document.body.appendChild( renderer.domElement );
+			const loader = new YUKA.NavMeshLoader();
 
-			window.addEventListener( 'resize', onWindowResize, false );
+			loader.load( './navmesh/navmesh.glb', { epsilonCoplanarTest: 0.25 } ).then( ( navMesh ) => {
 
-			const intro = document.getElementById( 'intro' );
+				// visualize convex regions
 
-			intro.addEventListener( 'click', ( event ) => {
+				// const navMeshGroup = createConvexRegionHelper( navMesh );
+				// scene.add( navMeshGroup );
 
-				controls.connect();
+				player.navMesh = navMesh;
 
-			}, false );
+				animate();
 
-			// game setup
+			} );
 
-			entityManager = new YUKA.EntityManager();
-			time = new YUKA.Time();
+		} );
 
-			const player = new Player();
-			player.head.setRenderComponent( camera, sync );
-			player.position.set( - 13, - 0.75, - 9 );
-			player.maxSpeed = 40;
+		//
 
-			controls = new FirstPersonControls( player );
-			controls.lookSpeed = 2;
-			controls.setRotation( - 2.2, 0.2 );
+		renderer = new THREE.WebGLRenderer( { antialias: true } );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.gammaOutput = true;
+		document.body.appendChild( renderer.domElement );
 
-			controls.sounds.set( 'rightStep', step1 );
-			controls.sounds.set( 'leftStep', step2 );
+		window.addEventListener( 'resize', onWindowResize, false );
 
-			controls.addEventListener( 'lock', ( event ) => { intro.classList.add( 'hidden' ) } );
-			controls.addEventListener( 'unlock', ( event ) => { intro.classList.remove( 'hidden' ) } );
+		const intro = document.getElementById( 'intro' );
 
-			entityManager.add( player );
+		intro.addEventListener( 'click', () => {
 
-		}
+			controls.connect();
 
-		function onWindowResize() {
+		}, false );
 
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
+		// game setup
 
-			renderer.setSize( window.innerWidth, window.innerHeight );
+		entityManager = new YUKA.EntityManager();
+		time = new YUKA.Time();
 
-		}
+		const player = new Player();
+		player.head.setRenderComponent( camera, sync );
+		player.position.set( - 13, - 0.75, - 9 );
+		player.maxSpeed = 40;
 
-		function animate() {
+		controls = new FirstPersonControls( player );
+		controls.lookSpeed = 2;
+		controls.setRotation( - 2.2, 0.2 );
 
-			requestAnimationFrame( animate );
+		controls.sounds.set( 'rightStep', step1 );
+		controls.sounds.set( 'leftStep', step2 );
 
-			const delta = time.update().getDelta();
+		controls.addEventListener( 'lock', ( ) => {
 
-			controls.update( delta );
+			intro.classList.add( 'hidden' );
 
-			entityManager.update( delta );
+		} );
 
-			renderer.render( scene, camera );
+		controls.addEventListener( 'unlock', () => {
 
-		}
+			intro.classList.remove( 'hidden' );
 
-		function sync( entity, renderComponent ) {
+		} );
 
-			renderComponent.matrixWorld.copy( entity.worldMatrix );
+		entityManager.add( player );
 
-		}
+	}
+
+	function onWindowResize() {
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+	}
+
+	function animate() {
+
+		requestAnimationFrame( animate );
+
+		const delta = time.update().getDelta();
+
+		controls.update( delta );
+
+		entityManager.update( delta );
+
+		renderer.render( scene, camera );
+
+	}
+
+	function sync( entity, renderComponent ) {
+
+		renderComponent.matrixWorld.copy( entity.worldMatrix );
+
+	}
 
 	</script>
 

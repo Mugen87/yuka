@@ -58,7 +58,7 @@
 			const grid = new THREE.GridHelper( 10, 25 );
 			scene.add( grid );
 
-			const lineGeometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3(), new THREE.Vector3() ] )
+			const lineGeometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3(), new THREE.Vector3() ] );
 			const lineMaterial = new THREE.LineBasicMaterial( { color: 0xff0000 } );
 			line = new THREE.Line( lineGeometry, lineMaterial );
 			scene.add( line );

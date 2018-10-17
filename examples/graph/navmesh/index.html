@@ -187,13 +187,13 @@
 
 		function animate() {
 
-				requestAnimationFrame( animate );
+			requestAnimationFrame( animate );
 
-				const delta = time.update().getDelta();
+			const delta = time.update().getDelta();
 
-				entityManager.update( delta );
+			entityManager.update( delta );
 
-				renderer.render( scene, camera );
+			renderer.render( scene, camera );
 
 		}
 

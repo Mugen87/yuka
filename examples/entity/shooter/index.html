@@ -128,288 +128,288 @@
 
 	function init() {
 
-			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
-			camera.matrixAutoUpdate = false;
+		camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
+		camera.matrixAutoUpdate = false;
 
-			scene = new THREE.Scene();
-			scene.background = new THREE.Color( 0xa0a0a0 );
-			scene.fog = new THREE.Fog( 0xa0a0a0, 10, 50 );
+		scene = new THREE.Scene();
+		scene.background = new THREE.Color( 0xa0a0a0 );
+		scene.fog = new THREE.Fog( 0xa0a0a0, 10, 50 );
 
-			//
+		//
 
-			const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.8 );
-			hemiLight.position.set( 0, 100, 0 );
-			scene.add( hemiLight );
+		const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.8 );
+		hemiLight.position.set( 0, 100, 0 );
+		scene.add( hemiLight );
 
-			const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
-			dirLight.castShadow = true;
-			dirLight.shadow.camera.top = 20;
-			dirLight.shadow.camera.bottom = 10;
-			dirLight.shadow.camera.left = - 5;
-			dirLight.shadow.camera.right = 5;
-			dirLight.position.set( 0, 30, 30 );
-			scene.add( dirLight );
+		const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+		dirLight.castShadow = true;
+		dirLight.shadow.camera.top = 20;
+		dirLight.shadow.camera.bottom = 10;
+		dirLight.shadow.camera.left = - 5;
+		dirLight.shadow.camera.right = 5;
+		dirLight.position.set( 0, 30, 30 );
+		scene.add( dirLight );
 
-			//
+		//
 
-			const gltfLoader = new GLTFLoader();
-			gltfLoader.load( 'model/gun.glb', ( gltf ) => {
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load( 'model/gun.glb', ( gltf ) => {
 
-				const weaponMesh = gltf.scene.getObjectByName( 'BaseMesh' ).children[ 0 ];
-				weaponMesh.geometry.scale( 0.1, 0.1, 0.1 );
-				weaponMesh.geometry.rotateX( Math.PI * - 0.5 );
-				weaponMesh.geometry.rotateY( Math.PI * 0.5 );
-				weaponMesh.matrixAutoUpdate = false;
-				player.weapon.setRenderComponent( weaponMesh, sync );
-				scene.add( weaponMesh );
-				weaponMesh.add( shot );
-				weaponMesh.add( reload );
+			const weaponMesh = gltf.scene.getObjectByName( 'BaseMesh' ).children[ 0 ];
+			weaponMesh.geometry.scale( 0.1, 0.1, 0.1 );
+			weaponMesh.geometry.rotateX( Math.PI * - 0.5 );
+			weaponMesh.geometry.rotateY( Math.PI * 0.5 );
+			weaponMesh.matrixAutoUpdate = false;
+			player.weapon.setRenderComponent( weaponMesh, sync );
+			scene.add( weaponMesh );
+			weaponMesh.add( shot );
+			weaponMesh.add( reload );
 
-				mixer = new THREE.AnimationMixer( player.weapon );
+			mixer = new THREE.AnimationMixer( player.weapon );
 
-				buildMuzzleEffect( player.weapon, weaponMesh );
-				buildAnimations( player.weapon );
+			buildMuzzleEffect( player.weapon, weaponMesh );
+			buildAnimations( player.weapon );
 
-			} );
+		} );
 
-			gltfLoader.load( 'model/target.glb', ( gltf ) => {
+		gltfLoader.load( 'model/target.glb', ( gltf ) => {
 
-				const targetMesh = gltf.scene.getObjectByName( 'target' );
-				targetMesh.matrixAutoUpdate = false;
-				targetMesh.castShadow = true;
+			const targetMesh = gltf.scene.getObjectByName( 'target' );
+			targetMesh.matrixAutoUpdate = false;
+			targetMesh.castShadow = true;
 
-				const vertices = targetMesh.geometry.attributes.position.array;
-				const indices = targetMesh.geometry.index.array;
-
-				const geometry = new YUKA.MeshGeometry( vertices, indices );
-				const target = new Target( geometry );
-
-				target.setRenderComponent( targetMesh, sync );
-				target.position.set( 0, 1, - 20 );
-				target.rotation.fromEuler( Math.PI, Math.PI * 0.5, 0 );
-
-				world.add( target );
-
-			} );
-
-			//
-
-			const audioLoader = new THREE.AudioLoader();
-			const listener = new THREE.AudioListener();
-			camera.add( listener );
-
-			const step1 = new THREE.Audio( listener );
-			const step2 = new THREE.Audio( listener );
-			const shot = new THREE.PositionalAudio( listener );
-			const reload = new THREE.PositionalAudio( listener );
-			const impact1 = new THREE.PositionalAudio( listener );
-			const impact2 = new THREE.PositionalAudio( listener );
-			const impact3 = new THREE.PositionalAudio( listener );
-
-			shot.setVolume( 0.3 );
-			reload.setVolume( 0.1 );
-
-			audioLoader.load( 'audio/step1.ogg', ( buffer ) => { step1.setBuffer( buffer ) } );
-			audioLoader.load( 'audio/step2.ogg', ( buffer ) => { step2.setBuffer( buffer ) } );
-			audioLoader.load( 'audio/shot.ogg', ( buffer ) => { shot.setBuffer( buffer ) } );
-			audioLoader.load( 'audio/reload.ogg', ( buffer ) => { reload.setBuffer( buffer ) } );
-			audioLoader.load( 'audio/impact1.ogg', ( buffer ) => { impact1.setBuffer( buffer ) } );
-			audioLoader.load( 'audio/impact2.ogg', ( buffer ) => { impact2.setBuffer( buffer ) } );
-			audioLoader.load( 'audio/impact3.ogg', ( buffer ) => { impact3.setBuffer( buffer ) } );
-
-			//
-
-			renderer = new THREE.WebGLRenderer( { antialias: true } );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.shadowMap.enabled = true;
-			renderer.gammaOutput = true;
-			document.body.appendChild( renderer.domElement );
-
-			window.addEventListener( 'resize', onWindowResize, false );
-
-			const intro = document.getElementById( 'intro' );
-			const crosshairs = document.getElementById( 'crosshairs' );
-
-			intro.addEventListener( 'click', function ( event ) {
-
-				controls.connect();
-
-			}, false );
-
-			// game setup
-
-			entityManager = new YUKA.EntityManager();
-			time = new YUKA.Time();
-
-			// using a world class since AI and rendering are more tightly
-			// coupled in this demo
-
-			world.entityManager = entityManager;
-			world.scene = scene;
-
-			const player = new Player();
-			player.head.setRenderComponent( camera, syncCamera );
-			player.weapon.sounds.set( 'shot', shot );
-			player.weapon.sounds.set( 'reload', reload );
-			player.weapon.sounds.set( 'impact1', impact1 );
-			player.weapon.sounds.set( 'impact2', impact2 );
-			player.weapon.sounds.set( 'impact3', impact3 );
-
-			controls = new FirstPersonControls( player );
-			controls.lookSpeed = 2;
-
-			controls.sounds.set( 'rightStep', step1 );
-			controls.sounds.set( 'leftStep', step2 );
-
-			controls.addEventListener( 'lock', ( event ) => {
-
-				intro.classList.add( 'hidden' ) ;
-				crosshairs.classList.remove( 'hidden' );
-
-			} );
-			controls.addEventListener( 'unlock', ( event ) => {
-
-				intro.classList.remove( 'hidden' );
-				crosshairs.classList.add( 'hidden' );
-
-			} );
-
-			world.add( player );
-
-			//
-
-			const groundGeometry = new THREE.PlaneBufferGeometry( 200, 200 );
-			groundGeometry.rotateX( - Math.PI / 2 );
-			const groundMaterial = new THREE.MeshPhongMaterial( { color: 0x999999 } );
-
-			const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
-			groundMesh.matrixAutoUpdate = false;
-			groundMesh.receiveShadow = true;
-
-			const vertices = groundGeometry.attributes.position.array;
-			const indices = groundGeometry.index.array;
+			const vertices = targetMesh.geometry.attributes.position.array;
+			const indices = targetMesh.geometry.index.array;
 
 			const geometry = new YUKA.MeshGeometry( vertices, indices );
-			const ground = new Ground( geometry );
-			ground.setRenderComponent( groundMesh, sync );
+			const target = new Target( geometry );
 
-			world.add( ground );
+			target.setRenderComponent( targetMesh, sync );
+			target.position.set( 0, 1, - 20 );
+			target.rotation.fromEuler( Math.PI, Math.PI * 0.5, 0 );
 
-		}
+			world.add( target );
 
-		function onWindowResize() {
+		} );
 
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
+		//
 
-			renderer.setSize( window.innerWidth, window.innerHeight );
+		const audioLoader = new THREE.AudioLoader();
+		const listener = new THREE.AudioListener();
+		camera.add( listener );
 
-		}
+		const step1 = new THREE.Audio( listener );
+		const step2 = new THREE.Audio( listener );
+		const shot = new THREE.PositionalAudio( listener );
+		const reload = new THREE.PositionalAudio( listener );
+		const impact1 = new THREE.PositionalAudio( listener );
+		const impact2 = new THREE.PositionalAudio( listener );
+		const impact3 = new THREE.PositionalAudio( listener );
 
-		function animate() {
+		shot.setVolume( 0.3 );
+		reload.setVolume( 0.1 );
 
-			requestAnimationFrame( animate );
+		audioLoader.load( 'audio/step1.ogg', ( buffer ) => { step1.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/step2.ogg', ( buffer ) => { step2.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/shot.ogg', ( buffer ) => { shot.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/reload.ogg', ( buffer ) => { reload.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/impact1.ogg', ( buffer ) => { impact1.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/impact2.ogg', ( buffer ) => { impact2.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/impact3.ogg', ( buffer ) => { impact3.setBuffer( buffer ) } );
 
-			const delta = time.update().getDelta();
+		//
 
-			controls.update( delta );
+		renderer = new THREE.WebGLRenderer( { antialias: true } );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.shadowMap.enabled = true;
+		renderer.gammaOutput = true;
+		document.body.appendChild( renderer.domElement );
 
-			entityManager.update( delta );
+		window.addEventListener( 'resize', onWindowResize, false );
 
-			if ( mixer ) mixer.update( delta );
+		const intro = document.getElementById( 'intro' );
+		const crosshairs = document.getElementById( 'crosshairs' );
 
-			renderer.render( scene, camera );
+		intro.addEventListener( 'click', function () {
 
-		}
+			controls.connect();
 
-		function sync( entity, renderComponent ) {
+		}, false );
 
-			renderComponent.matrix.copy( entity.worldMatrix );
+		// game setup
 
-		}
+		entityManager = new YUKA.EntityManager();
+		time = new YUKA.Time();
 
-		function syncCamera( entity, renderComponent ) {
+		// using a world class since AI and rendering are more tightly
+		// coupled in this demo
 
-			renderComponent.matrixWorld.copy( entity.worldMatrix );
+		world.entityManager = entityManager;
+		world.scene = scene;
 
-		}
+		const player = new Player();
+		player.head.setRenderComponent( camera, syncCamera );
+		player.weapon.sounds.set( 'shot', shot );
+		player.weapon.sounds.set( 'reload', reload );
+		player.weapon.sounds.set( 'impact1', impact1 );
+		player.weapon.sounds.set( 'impact2', impact2 );
+		player.weapon.sounds.set( 'impact3', impact3 );
 
-		function buildMuzzleEffect( weapon, weaponMesh ) {
+		controls = new FirstPersonControls( player );
+		controls.lookSpeed = 2;
 
-			const loader = new THREE.TextureLoader();
-			const texture = loader.load( 'model/muzzle.png' );
+		controls.sounds.set( 'rightStep', step1 );
+		controls.sounds.set( 'leftStep', step2 );
 
-			const material = new THREE.SpriteMaterial( { map: texture } );
-			const sprite = new THREE.Sprite( material );
+		controls.addEventListener( 'lock', () => {
 
-			sprite.position.set( 0, 0.13, - 0.4 );
-			sprite.scale.set( 0.3, 0.3, 0.3 );
-			sprite.visible = false;
+			intro.classList.add( 'hidden' );
+			crosshairs.classList.remove( 'hidden' );
 
-			weaponMesh.add( sprite );
-			weapon.muzzleSprite = sprite;
+		} );
+		controls.addEventListener( 'unlock', () => {
 
-		}
+			intro.classList.remove( 'hidden' );
+			crosshairs.classList.add( 'hidden' );
 
-		function buildAnimations( weapon ) {
+		} );
 
-			// manually create some keyframes for testing
+		world.add( player );
 
-			let positionKeyframes, rotationKeyframes;
-			let q0, q1, q2;
+		//
 
-			// shot
+		const groundGeometry = new THREE.PlaneBufferGeometry( 200, 200 );
+		groundGeometry.rotateX( - Math.PI / 2 );
+		const groundMaterial = new THREE.MeshPhongMaterial( { color: 0x999999 } );
 
-			positionKeyframes = new THREE.VectorKeyframeTrack( '.position', [ 0, 0.05, 0.15, 0.3 ], [
-				0.3, - 0.3, - 1,
-				0.3, - 0.2, - 0.7,
-				0.3, - 0.305, - 1,
-			 	0.3, - 0.3, - 1 ]
-			);
+		const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
+		groundMesh.matrixAutoUpdate = false;
+		groundMesh.receiveShadow = true;
 
-			q0 = new THREE.Quaternion();
-			q1 = new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0.2 );
-			q2 = new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), - 0.02 );
+		const vertices = groundGeometry.attributes.position.array;
+		const indices = groundGeometry.index.array;
 
-			rotationKeyframes = new THREE.QuaternionKeyframeTrack( '.rotation', [ 0, 0.05, 0.15, 0.3 ], [
-				q0.x, q0.y, q0.z, q0.w,
-				q1.x, q1.y, q1.z, q1.w,
-				q2.x, q2.y, q2.z, q2.w,
-				q0.x, q0.y, q0.z, q0.w ]
-			);
+		const geometry = new YUKA.MeshGeometry( vertices, indices );
+		const ground = new Ground( geometry );
+		ground.setRenderComponent( groundMesh, sync );
 
-			const shotClip = new THREE.AnimationClip( 'Shot', weapon.shotTime, [ positionKeyframes, rotationKeyframes ] );
-			const shotAction = mixer.clipAction( shotClip );
-			shotAction.loop = THREE.LoopOnce;
+		world.add( ground );
 
-			weapon.animations.set( 'shot', shotAction );
+	}
 
-			// reload
+	function onWindowResize() {
 
-			positionKeyframes = new THREE.VectorKeyframeTrack( '.position', [ 0, 0.2, 1.3, 1.5 ], [
-				0.3, - 0.3, - 1,
-				0.3, - 0.6, - 1,
-				0.3, - 0.6, - 1,
-				0.3, - 0.3, - 1 ]
-			);
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
 
-			q1 = new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), - 0.4 );
+		renderer.setSize( window.innerWidth, window.innerHeight );
 
-			rotationKeyframes = new THREE.QuaternionKeyframeTrack( '.rotation', [ 0, 0.2, 1.3, 1.5 ], [
-				q0.x, q0.y, q0.z, q0.w,
-				q1.x, q1.y, q1.z, q1.w,
-				q1.x, q1.y, q1.z, q1.w,
-				q0.x, q0.y, q0.z, q0.w ]
-			);
+	}
 
-			const reloadClip = new THREE.AnimationClip( 'Shot', weapon.reloadTime, [ positionKeyframes, rotationKeyframes ] );
-			const reloadAction = mixer.clipAction( reloadClip );
-			reloadAction.loop = THREE.LoopOnce;
+	function animate() {
 
-			weapon.animations.set( 'reload', reloadAction );
+		requestAnimationFrame( animate );
+
+		const delta = time.update().getDelta();
+
+		controls.update( delta );
+
+		entityManager.update( delta );
+
+		if ( mixer ) mixer.update( delta );
+
+		renderer.render( scene, camera );
+
+	}
+
+	function sync( entity, renderComponent ) {
+
+		renderComponent.matrix.copy( entity.worldMatrix );
+
+	}
+
+	function syncCamera( entity, renderComponent ) {
+
+		renderComponent.matrixWorld.copy( entity.worldMatrix );
+
+	}
+
+	function buildMuzzleEffect( weapon, weaponMesh ) {
+
+		const loader = new THREE.TextureLoader();
+		const texture = loader.load( 'model/muzzle.png' );
+
+		const material = new THREE.SpriteMaterial( { map: texture } );
+		const sprite = new THREE.Sprite( material );
+
+		sprite.position.set( 0, 0.13, - 0.4 );
+		sprite.scale.set( 0.3, 0.3, 0.3 );
+		sprite.visible = false;
+
+		weaponMesh.add( sprite );
+		weapon.muzzleSprite = sprite;
+
+	}
+
+	function buildAnimations( weapon ) {
+
+		// manually create some keyframes for testing
+
+		let positionKeyframes, rotationKeyframes;
+		let q0, q1, q2;
+
+		// shot
+
+		positionKeyframes = new THREE.VectorKeyframeTrack( '.position', [ 0, 0.05, 0.15, 0.3 ], [
+			0.3, - 0.3, - 1,
+			0.3, - 0.2, - 0.7,
+			0.3, - 0.305, - 1,
+		 	0.3, - 0.3, - 1 ]
+		);
+
+		q0 = new THREE.Quaternion();
+		q1 = new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0.2 );
+		q2 = new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), - 0.02 );
+
+		rotationKeyframes = new THREE.QuaternionKeyframeTrack( '.rotation', [ 0, 0.05, 0.15, 0.3 ], [
+			q0.x, q0.y, q0.z, q0.w,
+			q1.x, q1.y, q1.z, q1.w,
+			q2.x, q2.y, q2.z, q2.w,
+			q0.x, q0.y, q0.z, q0.w ]
+		);
+
+		const shotClip = new THREE.AnimationClip( 'Shot', weapon.shotTime, [ positionKeyframes, rotationKeyframes ] );
+		const shotAction = mixer.clipAction( shotClip );
+		shotAction.loop = THREE.LoopOnce;
+
+		weapon.animations.set( 'shot', shotAction );
+
+		// reload
+
+		positionKeyframes = new THREE.VectorKeyframeTrack( '.position', [ 0, 0.2, 1.3, 1.5 ], [
+			0.3, - 0.3, - 1,
+			0.3, - 0.6, - 1,
+			0.3, - 0.6, - 1,
+			0.3, - 0.3, - 1 ]
+		);
+
+		q1 = new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), - 0.4 );
+
+		rotationKeyframes = new THREE.QuaternionKeyframeTrack( '.rotation', [ 0, 0.2, 1.3, 1.5 ], [
+			q0.x, q0.y, q0.z, q0.w,
+			q1.x, q1.y, q1.z, q1.w,
+			q1.x, q1.y, q1.z, q1.w,
+			q0.x, q0.y, q0.z, q0.w ]
+		);
+
+		const reloadClip = new THREE.AnimationClip( 'Shot', weapon.reloadTime, [ positionKeyframes, rotationKeyframes ] );
+		const reloadAction = mixer.clipAction( reloadClip );
+		reloadAction.loop = THREE.LoopOnce;
+
+		weapon.animations.set( 'reload', reloadAction );
 
 
-		}
+	}
 
 	</script>
 
