@@ -86,6 +86,7 @@ class World {
 
 		bulletHole.position.copy( position );
 		target.copy( position ).add( normal );
+		bulletHole.updateMatrix();
 		bulletHole.lookAt( target.x, target.y, target.z );
 		bulletHole.updateMatrix();
 
