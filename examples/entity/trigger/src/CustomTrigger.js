@@ -16,7 +16,7 @@ class CustomTrigger extends Trigger {
 
 		super.execute();
 
-		console.log( 'Trigger activate by entity with ID: ', entity.id );
+		entity._renderComponent.material.color.set( 0x00ff00 );
 
 	}
 

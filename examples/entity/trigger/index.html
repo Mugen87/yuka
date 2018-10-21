@@ -39,7 +39,7 @@
 		//
 
 		const entityGeometry = new THREE.BoxBufferGeometry( 0.5, 0.5, 0.5 );
-		const entityMaterial = new THREE.MeshNormalMaterial();
+		const entityMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 
 		const entityMesh = new THREE.Mesh( entityGeometry, entityMaterial );
 		entityMesh.matrixAutoUpdate = false;
@@ -54,7 +54,7 @@
 		time = new YUKA.Time();
 
 		entity = new YUKA.GameEntity();
-		entity.boundingRadius = 0.5;
+		entity.boundingRadius = 0.25;
 		entity.setRenderComponent( entityMesh, sync );
 
 		entityManager.add( entity );
@@ -77,14 +77,14 @@
 		// visualize triggers
 
 		const sphereGeometry = new THREE.SphereBufferGeometry( sphericalTriggerRegion.radius, 16, 16 );
-		const sphereMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+		const sphereMaterial = new THREE.MeshBasicMaterial( { color: 0x6083c2, wireframe: true } );
 		const triggerMesh1 = new THREE.Mesh( sphereGeometry, sphereMaterial );
 		triggerMesh1.position.copy( sphericalTriggerRegion.position );
 
 		scene.add( triggerMesh1 );
 
 		const boxGeometry = new THREE.BoxBufferGeometry( size.x, size.y, size.z );
-		const boxMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+		const boxMaterial = new THREE.MeshBasicMaterial( { color: 0x6083c2, wireframe: true } );
 		const triggerMesh2 = new THREE.Mesh( boxGeometry, boxMaterial );
 		triggerMesh2.position.copy( position );
 
@@ -124,6 +124,7 @@
 		const elapsedTime = time.getElapsed();
 
 		entity.position.x = Math.sin( elapsedTime ) * 2;
+		entity._renderComponent.material.color.set( 0xff0000 );
 
 		entityManager.update( delta );
 
