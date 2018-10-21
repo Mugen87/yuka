@@ -3,20 +3,181 @@
 		<title>Yuka | FSM Basic</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+			body {
+				margin:0;
+				overflow:hidden;
+				font-family: 'Roboto Condensed', sans-serif;
+			}
+			#info {
+				position: absolute;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 28px;
+				color: #ffffff;
+				text-align: center;
+				line-height: 20px;
+				width: 100%;
+			}
+			#info>div {
+				background-color: #282828;
+				width: 250px;
+				padding: 16px;
+			}
+			#info>div>span {
+				display: inline-block;
+			}
+		</style>
 	</head>
 <body>
 
+	<section id="info">
+		<div>
+			<span>Current State:</span>
+			<span id="currentState"></span>
+		</div>
+	</section>
+
 	<script type="module">
 
-		import { Miner } from './src/entities/Miner.js';
+		import * as YUKA from '../../../build/yuka.module.js';
+		import * as THREE from '../../lib/three.module.js';
+		import { GLTFLoader } from '../../lib/GLTFLoader.module.js';
 
-		const miner = new Miner();
+		import { Girl } from './src/entities/Girl.js';
 
-		setInterval( function () {
+		let camera, scene, renderer, target = new THREE.Vector3();
 
-			miner.update();
+		let entityManager, time;
 
-		}, 2000 );
+		init();
+
+		function init() {
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0xa0a0a0 );
+			scene.fog = new THREE.Fog( 0xa0a0a0, 20, 40 );
+
+			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
+			camera.position.set( 0, 2, - 4 );
+
+			//
+
+			const geometry = new THREE.PlaneBufferGeometry( 150, 150 );
+			const material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
+
+			const ground = new THREE.Mesh( geometry, material );
+			ground.rotation.x = - Math.PI / 2;
+			ground.matrixAutoUpdate = false;
+			ground.receiveShadow = true;
+			ground.updateMatrix();
+			scene.add( ground );
+
+			//
+
+			const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.6 );
+			hemiLight.position.set( 0, 100, 0 );
+			hemiLight.matrixAutoUpdate = false;
+			hemiLight.updateMatrix();
+			scene.add( hemiLight );
+
+		 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+			dirLight.position.set( - 4, 5, - 5 );
+			dirLight.matrixAutoUpdate = false;
+			dirLight.updateMatrix();
+			dirLight.castShadow = true;
+			dirLight.shadow.camera.top = 2;
+			dirLight.shadow.camera.bottom = - 2;
+			dirLight.shadow.camera.left = - 2;
+			dirLight.shadow.camera.right = 2;
+			dirLight.shadow.camera.near = 0.1;
+			dirLight.shadow.camera.far = 20;
+			scene.add( dirLight );
+
+			//
+
+			const glTFLoader = new GLTFLoader();
+			glTFLoader.load( 'model/yuka.glb', ( gltf ) => {
+
+				// add object to scene
+
+				const avatar = gltf.scene;
+				avatar.animations = gltf.animations;
+
+				avatar.traverse( ( object ) => {
+
+					if ( object.isMesh ) {
+
+						object.material.transparent = true;
+						object.material.opacity = 1;
+						object.material.alphaTest = 0.7;
+						object.castShadow = true;
+
+					}
+
+				} );
+
+				avatar.add( camera );
+
+				target.copy( avatar.position );
+				target.y += 1;
+				camera.lookAt( target );
+
+				scene.add( avatar );
+
+				const mixer = new THREE.AnimationMixer( avatar );
+				const animations = new Map();
+
+				animations.set( 'IDLE', mixer.clipAction( 'Character_Idle' ) );
+				animations.set( 'WALK', mixer.clipAction( 'Character_Walk' ) );
+
+				const girl = new Girl( mixer, animations );
+				entityManager.add( girl );
+
+				animate();
+
+			} );
+
+			//
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.gammaOutput = true;
+			renderer.shadowMap.enabled = true;
+			document.body.appendChild( renderer.domElement );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			// game setup
+
+			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			const delta = time.update().getDelta();
+
+			entityManager.update( delta );
+
+			renderer.render( scene, camera );
+
+		}
 
 	</script>
 
