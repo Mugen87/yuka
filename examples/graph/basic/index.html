@@ -17,10 +17,17 @@
 
 	import * as YUKA from '../../../build/yuka.module.js';
 	import * as THREE from '../../lib/three.module.js';
+	import * as DAT from '../../lib/dat.gui.module.js';
 
 	import { createGraphHelper, createPathHelper, createSearchTreeHelper } from '../common/js/GraphHelper.js';
 
 	let renderer, scene, camera;
+
+	let searchTreeHelper, pathHelper;
+
+	const params = {
+		algorithm: 'AStar'
+	};
 
 	init();
 	animate();
@@ -40,23 +47,7 @@
 		const graphHelper = createGraphHelper( graph, 0.2 );
 		scene.add( graphHelper );
 
-		const graphSearch = new YUKA.AStar( graph, 60, 104 );
-		// const graphSearch = new YUKA.Dijkstra( graph, 60, 104 );
-		// const graphSearch = new YUKA.BFS( graph, 60, 104 );
-		// const graphSearch = new YUKA.DFS( graph, 60, 100 );
-
-		graphSearch.search();
-
-		const searchTree = graphSearch.getSearchTree();
-		const path = graphSearch.getPath();
-
-		const searchTreeHelper = createSearchTreeHelper( graph, searchTree );
-		scene.add( searchTreeHelper );
-
-		const pathHelper = createPathHelper( graph, path, 0.4 );
-		scene.add( pathHelper );
-
-		graphSearch.clear();
+		performSearch( 'AStar', graph, 60, 104 );
 
 		// renderer
 
@@ -69,6 +60,65 @@
 
 		window.addEventListener( 'resize', onWindowResize, false );
 
+		// dat.gui
+
+		var gui = new DAT.GUI( { width: 300 } );
+
+		gui.add( params, 'algorithm', [ 'AStar', 'Dijkstra', 'BFS', 'DFS' ] ).onChange( ( value ) => {
+
+			performSearch( value, graph, 60, 104 );
+
+		} );
+
+		gui.open();
+
+	}
+
+	function performSearch( algorithm, graph, from, to ) {
+
+		const graphSearch = new YUKA[ algorithm ]( graph, from, to );
+
+		graphSearch.search();
+
+		const searchTree = graphSearch.getSearchTree();
+		const path = graphSearch.getPath();
+
+		// update helper
+
+		if ( searchTreeHelper !== undefined && pathHelper !== undefined ) {
+
+			scene.remove( searchTreeHelper );
+			scene.remove( pathHelper );
+
+			dispose( searchTreeHelper );
+			dispose( pathHelper );
+
+		}
+
+		searchTreeHelper = createSearchTreeHelper( graph, searchTree );
+		scene.add( searchTreeHelper );
+
+		pathHelper = createPathHelper( graph, path, 0.4 );
+		scene.add( pathHelper );
+
+		// clean up
+
+		graphSearch.clear();
+
+	}
+
+	function dispose( object ) {
+
+		object.traverse( child => {
+
+			if ( child.isMesh || child.isLine ) {
+
+				child.geometry.dispose();
+				child.material.dispose();
+
+			}
+
+		} );
 
 	}
 

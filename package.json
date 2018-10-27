@@ -27,7 +27,8 @@
   },
   "eslintIgnore": [
     "yuka.module.js",
-    "three.module.js"
+    "three.module.js",
+    "dat.gui.module.js"
   ],
   "directories": {
     "example": "examples"
