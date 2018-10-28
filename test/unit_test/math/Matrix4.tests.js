@@ -236,12 +236,14 @@ describe( 'Matrix4', function () {
 		it( 'should return the inverse of the matrix or the identity matrix if its determinant is zero', function () {
 
 			const m1 = new Matrix4().set( 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, 1 );
-			const m2 = new Matrix4().getInverse( m1 );
+			const m2 = new Matrix4();
+			m1.getInverse( m2 );
 
 			expect( m2 ).to.deep.equal( m1.multiplyScalar( 0.25 ) );
 
+			m2.identity();
 			const m3 = new Matrix4().set( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-			m2.getInverse( m3 );
+			m3.getInverse( m2 );
 
 			expect( m2 ).to.deep.equal( new Matrix4() );
 

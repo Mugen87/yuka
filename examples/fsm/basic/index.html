@@ -46,7 +46,7 @@
 		import * as THREE from '../../lib/three.module.js';
 		import { GLTFLoader } from '../../lib/GLTFLoader.module.js';
 
-		import { Girl } from './src/entities/Girl.js';
+		import { Girl } from './src/Girl.js';
 
 		let camera, scene, renderer, target = new THREE.Vector3();
 
@@ -113,6 +113,7 @@
 						object.material.transparent = true;
 						object.material.opacity = 1;
 						object.material.alphaTest = 0.7;
+						object.material.side = THREE.DoubleSide;
 						object.castShadow = true;
 
 					}
@@ -130,8 +131,16 @@
 				const mixer = new THREE.AnimationMixer( avatar );
 				const animations = new Map();
 
-				animations.set( 'IDLE', mixer.clipAction( 'Character_Idle' ) );
-				animations.set( 'WALK', mixer.clipAction( 'Character_Walk' ) );
+				const idleAction = mixer.clipAction( 'Character_Idle' );
+				idleAction.play();
+				idleAction.enabled = false;
+
+				const walkAction = mixer.clipAction( 'Character_Walk' );
+				walkAction.play();
+				walkAction.enabled = false;
+
+				animations.set( 'IDLE', idleAction );
+				animations.set( 'WALK', walkAction );
 
 				const girl = new Girl( mixer, animations );
 				entityManager.add( girl );

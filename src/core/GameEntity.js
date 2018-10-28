@@ -256,16 +256,14 @@ class GameEntity {
 	*
 	* @param {Vector3} target - The target position.
 	* @param {Number} delta - The time delta.
-	* @return {GameEntity} A reference to this game entity.
+	* @return {Boolean} Whether the entity is faced to the target or not.
 	*/
 	rotateTo( target, delta ) {
 
 		targetDirection.subVectors( target, this.position ).normalize();
 		targetRotation.lookAt( this.forward, targetDirection, this.up );
 
-		this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta );
-
-		return this;
+		return this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta );
 
 	}
 

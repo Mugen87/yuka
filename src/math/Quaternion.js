@@ -249,19 +249,19 @@ class Quaternion {
 	*
 	* @param {Quaternion} q - The target rotation.
 	* @param {Number} step - The maximum step in radians.
-	* @return {Quaternion} A reference to this quaternion.
+	* @return {Boolean} Whether the given quaternion already represents the target rotation.
 	*/
 	rotateTo( q, step ) {
 
 		const angle = this.angleTo( q );
 
-		if ( angle === 0 ) return this;
+		if ( angle < 0.0001 ) return true;
 
 		const t = Math.min( 1, step / angle );
 
 		this.slerp( q, t );
 
-		return this;
+		return false;
 
 	}
 

@@ -1,0 +1,207 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Goal Basic</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+			body {
+				margin:0;
+				overflow:hidden;
+				font-family: 'Roboto Condensed', sans-serif;
+			}
+			#info {
+				position: absolute;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 28px;
+				color: #ffffff;
+				text-align: center;
+				line-height: 20px;
+				width: 100%;
+			}
+			#info>div {
+				background-color: #282828;
+				width: 500px;
+				padding: 16px;
+			}
+			#info>div>span {
+				display: inline-block;
+			}
+		</style>
+	</head>
+<body>
+
+	<section id="info">
+		<div>
+			<span>Current Goal:</span>
+			<span id="currentGoal"></span>
+			<span>| Subgoal:</span>
+			<span id="currentSubgoal"></span>
+		</div>
+	</section>
+
+	<script type="module">
+
+		import * as THREE from '../../lib/three.module.js';
+		import { GLTFLoader } from '../../lib/GLTFLoader.module.js';
+		import { OrbitControls } from '../../lib/OrbitControls.module.js';
+
+		import { Girl } from './src/Girl.js';
+		import world from './src/World.js';
+
+		let camera, scene, renderer;
+
+		init();
+
+		function init() {
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0xa0a0a0 );
+			scene.fog = new THREE.Fog( 0xa0a0a0, 20, 40 );
+			world.scene = scene;
+
+			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
+			camera.position.set( 0, 5, 15 );
+
+			//
+
+			const groundGeometry = new THREE.PlaneBufferGeometry( 150, 150 );
+			const groundMaterial = new THREE.MeshPhongMaterial( { color: 0x999999 } );
+
+			const groundMesh = new THREE.Mesh( groundGeometry, groundMaterial );
+			groundMesh.rotation.x = - Math.PI / 2;
+			groundMesh.matrixAutoUpdate = false;
+			groundMesh.receiveShadow = true;
+			groundMesh.updateMatrix();
+			scene.add( groundMesh );
+
+			//
+
+			const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.6 );
+			hemiLight.position.set( 0, 100, 0 );
+			hemiLight.matrixAutoUpdate = false;
+			hemiLight.updateMatrix();
+			scene.add( hemiLight );
+
+		 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+			dirLight.position.set( 4, 5, 5 );
+			dirLight.matrixAutoUpdate = false;
+			dirLight.updateMatrix();
+			dirLight.castShadow = true;
+			dirLight.shadow.camera.top = 10;
+			dirLight.shadow.camera.bottom = - 10;
+			dirLight.shadow.camera.left = - 10;
+			dirLight.shadow.camera.right = 10;
+			dirLight.shadow.camera.near = 0.1;
+			dirLight.shadow.camera.far = 20;
+			dirLight.shadow.mapSize.x = 2048;
+			dirLight.shadow.mapSize.y = 2048;
+			scene.add( dirLight );
+
+			// scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
+
+			//
+
+			const glTFLoader = new GLTFLoader();
+			glTFLoader.load( 'model/yuka.glb', ( gltf ) => {
+
+				// add object to scene
+
+				const avatar = gltf.scene;
+				avatar.matrixAutoUpdate = false;
+				avatar.animations = gltf.animations;
+
+				avatar.traverse( ( object ) => {
+
+					if ( object.isMesh ) {
+
+						object.material.transparent = true;
+						object.material.opacity = 1;
+						object.material.alphaTest = 0.7;
+						object.material.side = THREE.DoubleSide;
+						object.castShadow = true;
+
+					}
+
+				} );
+
+				scene.add( avatar );
+
+				const mixer = new THREE.AnimationMixer( avatar );
+				const animations = new Map();
+
+				animations.set( 'IDLE', createAnimationAction( mixer, 'Character_Idle' ) );
+				animations.set( 'WALK', createAnimationAction( mixer, 'Character_Walk' ) );
+				animations.set( 'GATHER', createAnimationAction( mixer, 'Character_Gather' ) );
+				animations.set( 'RIGHT_TURN', createAnimationAction( mixer, 'Character_RightTurn' ) );
+				animations.set( 'LEFT_TURN', createAnimationAction( mixer, 'Character_LeftTurn' ) );
+
+				const girl = new Girl( mixer, animations );
+				girl.setRenderComponent( avatar, sync );
+
+				world.add( girl );
+
+				animate();
+
+			} );
+
+			//
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.gammaOutput = true;
+			renderer.shadowMap.enabled = true;
+			document.body.appendChild( renderer.domElement );
+
+			//
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+			controls.minDistance = 2;
+			controls.maxDistance = 20;
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			world.update();
+
+			renderer.render( scene, camera );
+
+		}
+
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
+
+		}
+
+		function createAnimationAction( mixer, clip ) {
+
+			let action = mixer.clipAction( clip );
+			action.play();
+			action.enabled = false;
+
+			return action;
+
+		}
+
+	</script>
+
+</body>
+</html>

@@ -56,7 +56,7 @@ class Obstacle extends GameEntity {
 
 			// transform the ray into the local space of the obstacle
 
-			inverseMatrix.getInverse( this.worldMatrix );
+			this.worldMatrix.getInverse( inverseMatrix );
 			rayLocal.copy( ray ).applyMatrix4( inverseMatrix );
 
 			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
