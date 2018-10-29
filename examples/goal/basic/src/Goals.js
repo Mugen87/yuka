@@ -89,11 +89,9 @@ class GatherGoal extends CompositeGoal {
 
 		owner.ui.currentGoal.textContent = GATHER;
 
-		// TODO Adjust addSubgoal() so goals are in reversed order
-
-		this.addSubgoal( new PickUpCollectible( owner ) );
-		this.addSubgoal( new SeekToCollectible( owner ) );
 		this.addSubgoal( new FindNextCollectible( owner ) );
+		this.addSubgoal( new SeekToCollectible( owner ) );
+		this.addSubgoal( new PickUpCollectible( owner ) );
 
 		// TODO This line fixes the problem of a frame where no animation is active
 

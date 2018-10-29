@@ -56,6 +56,22 @@ describe( 'CompositeGoal', function () {
 
 	} );
 
+	describe( '#removeSubgoal()', function () {
+
+		it( 'should remove a subgoal from the internal array', function () {
+
+			const compositeGoal = new CompositeGoal();
+			const subgoal = new Goal();
+
+			compositeGoal.addSubgoal( subgoal );
+			compositeGoal.removeSubgoal( subgoal );
+
+			expect( compositeGoal.subgoals ).to.be.empty;
+
+		} );
+
+	} );
+
 	describe( '#clearSubgoals()', function () {
 
 		it( 'should remove all subgoals from the internal array', function () {
@@ -80,10 +96,11 @@ describe( 'CompositeGoal', function () {
 
 			const compositeGoal = new CompositeGoal();
 
-			compositeGoal.addSubgoal( new Goal() );
-			compositeGoal.addSubgoal( new Goal() );
 			const subgoal = new Goal();
+
 			compositeGoal.addSubgoal( subgoal );
+			compositeGoal.addSubgoal( new Goal() );
+			compositeGoal.addSubgoal( new Goal() );
 
 			expect( compositeGoal.currentSubgoal() ).to.equal( subgoal );
 
@@ -121,11 +138,11 @@ describe( 'CompositeGoal', function () {
 		it( 'should set the status of the current subgoal to "active" and call activate() if its status is "inactive"', function () {
 
 			const compositeGoal = new CompositeGoal();
-
-			compositeGoal.addSubgoal( new Goal() );
-			compositeGoal.addSubgoal( new Goal() );
 			const subgoal = new CustomGoalCompleted();
+
 			compositeGoal.addSubgoal( subgoal );
+			compositeGoal.addSubgoal( new Goal() );
+			compositeGoal.addSubgoal( new Goal() );
 
 			compositeGoal.executeSubgoals();
 
@@ -136,11 +153,11 @@ describe( 'CompositeGoal', function () {
 		it( 'should call execute() of the current subgoal', function () {
 
 			const compositeGoal = new CompositeGoal();
-
-			compositeGoal.addSubgoal( new Goal() );
-			compositeGoal.addSubgoal( new Goal() );
 			const subgoal = new CustomGoalCompleted();
+
 			compositeGoal.addSubgoal( subgoal );
+			compositeGoal.addSubgoal( new Goal() );
+			compositeGoal.addSubgoal( new Goal() );
 
 			compositeGoal.executeSubgoals();
 
@@ -152,14 +169,15 @@ describe( 'CompositeGoal', function () {
 
 			const compositeGoal = new CompositeGoal();
 
-			compositeGoal.addSubgoal( new Goal() );
-			const goalFailed = new CustomGoalFailed();
-			goalFailed.status = STATUS.FAILED;
-			compositeGoal.addSubgoal( goalFailed );
-
 			const goalCompleted = new CustomGoalCompleted();
 			goalCompleted.status = STATUS.COMPLETED;
+
+			const goalFailed = new CustomGoalFailed();
+			goalFailed.status = STATUS.FAILED;
+
 			compositeGoal.addSubgoal( goalCompleted );
+			compositeGoal.addSubgoal( goalFailed );
+			compositeGoal.addSubgoal( new Goal() );
 
 			compositeGoal.executeSubgoals();
 
@@ -173,9 +191,9 @@ describe( 'CompositeGoal', function () {
 
 			const compositeGoal = new CompositeGoal();
 
-			compositeGoal.addSubgoal( new Goal() );
-			compositeGoal.addSubgoal( new CustomGoalFailed() );
 			compositeGoal.addSubgoal( new CustomGoalCompleted() );
+			compositeGoal.addSubgoal( new CustomGoalFailed() );
+			compositeGoal.addSubgoal( new Goal() );
 
 			expect( compositeGoal.executeSubgoals() ).to.equal( STATUS.ACTIVE );
 

@@ -4339,19 +4339,34 @@
 			* A list of subgoals.
 			* @type Array
 			*/
-			this.subgoals = new Array(); // used as a stack (LIFO)
+			this.subgoals = new Array();
 
 		}
 
 		/**
 		* Adds a goal as a subgoal to this instance.
 		*
-		* @param {Goal} goal - The subgoal to add
+		* @param {Goal} goal - The subgoal to add.
 		* @return {Goal} A reference to this goal.
 		*/
 		addSubgoal( goal ) {
 
-			this.subgoals.push( goal );
+			this.subgoals.unshift( goal );
+
+			return this;
+
+		}
+
+		/**
+		* Removes a subgoal from this instance.
+		*
+		* @param {Goal} goal - The subgoal to remove.
+		* @return {Goal} A reference to this goal.
+		*/
+		removeSubgoal( goal ) {
+
+			const index = this.subgoals.indexOf( goal );
+			this.subgoals.splice( index, 1 );
 
 			return this;
 
