@@ -50,11 +50,9 @@ class RestGoal extends Goal {
 
 		const owner = this.owner;
 
-		if ( owner.currentTime <= owner.pickUpDuration ) {
+		owner.currentTime += owner.deltaTime;
 
-			owner.currentTime += owner.deltaTime;
-
-		} else {
+		if ( owner.currentTime >= owner.pickUpDuration ) {
 
 			owner.currentTime = 0;
 			owner.currentTarget = null;
@@ -282,6 +280,8 @@ class PickUpCollectibleGoal extends Goal {
 
 		super( owner );
 
+		this.collectibleRemoveTimeout = 3; // the time in seconds after a collectible is removed
+
 	}
 
 	activate() {
@@ -293,14 +293,20 @@ class PickUpCollectibleGoal extends Goal {
 	execute() {
 
 		const owner = this.owner;
+		owner.currentTime += owner.deltaTime;
 
-		if ( owner.currentTime <= owner.pickUpDuration ) {
-
-			owner.currentTime += owner.deltaTime;
-
-		} else {
+		if ( owner.currentTime >= owner.pickUpDuration ) {
 
 			this.status = Goal.STATUS.COMPLETED;
+
+		} else if ( owner.currentTime >= this.collectibleRemoveTimeout ) {
+
+			if ( owner.currentTarget !== null ) {
+
+				world.removeCollectible( owner.currentTarget );
+				owner.currentTarget = null;
+
+			}
 
 		}
 
@@ -310,10 +316,8 @@ class PickUpCollectibleGoal extends Goal {
 
 		const owner = this.owner;
 
-		world.removeCollectible( owner.currentTarget );
-
 		owner.currentTime = 0;
-		owner.currentTarget = null;
+
 		owner.fatigueLevel ++;
 
 	}
