@@ -11,9 +11,8 @@ class IdleState extends State {
 
 	enter( girl ) {
 
-		const animation = girl.animations.get( IDLE );
-		animation.enabled = true;
-		animation.time = 0;
+		const idle = girl.animations.get( IDLE );
+		idle.reset().fadeIn( girl.crossFadeDuration );
 
 		//
 
@@ -35,11 +34,7 @@ class IdleState extends State {
 	exit( girl ) {
 
 		const idle = girl.animations.get( IDLE );
-		const walk = girl.animations.get( WALK );
-
-		walk.enabled = true;
-		walk.time = 0;
-		idle.crossFadeTo( walk, girl.crossFadeDuration );
+		idle.fadeOut( girl.crossFadeDuration );
 
 	}
 
@@ -50,6 +45,9 @@ class WalkState extends State {
 	enter( girl ) {
 
 		girl.ui.currentState.textContent = WALK;
+
+		const walk = girl.animations.get( WALK );
+		walk.reset().fadeIn( girl.crossFadeDuration );
 
 	}
 
@@ -68,11 +66,7 @@ class WalkState extends State {
 	exit( girl ) {
 
 		const walk = girl.animations.get( WALK );
-		const idle = girl.animations.get( IDLE );
-
-		idle.enabled = true;
-		idle.time = 0;
-		walk.crossFadeTo( idle, girl.crossFadeDuration );
+		walk.fadeOut( girl.crossFadeDuration );
 
 	}
 

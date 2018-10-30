@@ -37,12 +37,8 @@ class RestGoal extends Goal {
 
 		//
 
-		const gather = owner.animations.get( GATHER );
 		const idle = owner.animations.get( IDLE );
-
-		idle.time = 0;
-		idle.enabled = true;
-		gather.crossFadeTo( idle, owner.crossFadeDuration );
+		idle.reset().fadeIn( owner.crossFadeDuration );
 
 	}
 
@@ -65,7 +61,12 @@ class RestGoal extends Goal {
 
 	terminate() {
 
-		this.owner.fatigueLevel = 0;
+		const owner = this.owner;
+
+		owner.fatigueLevel = 0;
+
+		const idle = owner.animations.get( IDLE );
+		idle.fadeOut( owner.crossFadeDuration );
 
 	}
 
@@ -94,7 +95,6 @@ class GatherGoal extends CompositeGoal {
 		// TODO This line fixes the problem of a frame where no animation is active
 
 		owner.animations.get( IDLE ).enabled = false;
-		owner.animations.get( GATHER ).enabled = false;
 
 	}
 
@@ -157,9 +157,8 @@ class FindNextCollectibleGoal extends Goal {
 
 		this.animationId = ( localPosition.x >= 0 ) ? LEFT_TURN : RIGHT_TURN;
 
-		const animation = owner.animations.get( this.animationId );
-		animation.enabled = true;
-		animation.time = 0;
+		const turn = owner.animations.get( this.animationId );
+		turn.reset().fadeIn( owner.crossFadeDuration );
 
 	}
 
@@ -188,11 +187,7 @@ class FindNextCollectibleGoal extends Goal {
 		const owner = this.owner;
 
 		const turn = owner.animations.get( this.animationId );
-		const walk = owner.animations.get( WALK );
-
-		walk.enabled = true;
-		walk.time = 0;
-		turn.crossFadeTo( walk, owner.crossFadeDuration );
+		turn.fadeOut( owner.crossFadeDuration );
 
 	}
 
@@ -230,6 +225,11 @@ class SeekToCollectibleGoal extends Goal {
 
 		}
 
+		//
+
+		const walk = owner.animations.get( WALK );
+		walk.reset().fadeIn( owner.crossFadeDuration );
+
 	}
 
 	execute() {
@@ -262,11 +262,7 @@ class SeekToCollectibleGoal extends Goal {
 		const owner = this.owner;
 
 		const walk = owner.animations.get( WALK );
-		const gather = owner.animations.get( GATHER );
-
-		gather.enabled = true;
-		gather.time = 0;
-		walk.crossFadeTo( gather, owner.crossFadeDuration );
+		walk.fadeOut( owner.crossFadeDuration );
 
 	}
 
@@ -286,7 +282,12 @@ class PickUpCollectibleGoal extends Goal {
 
 	activate() {
 
-		this.owner.ui.currentSubgoal.textContent = PICK_UP;
+		const owner = this.owner;
+
+		owner.ui.currentSubgoal.textContent = PICK_UP;
+
+		const gather = owner.animations.get( GATHER );
+		gather.reset().fadeIn( owner.crossFadeDuration );
 
 	}
 
@@ -317,8 +318,10 @@ class PickUpCollectibleGoal extends Goal {
 		const owner = this.owner;
 
 		owner.currentTime = 0;
-
 		owner.fatigueLevel ++;
+
+		const gather = owner.animations.get( GATHER );
+		gather.fadeOut( owner.crossFadeDuration );
 
 	}
 
