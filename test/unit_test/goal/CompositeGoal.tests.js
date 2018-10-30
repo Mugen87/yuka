@@ -187,6 +187,27 @@ describe( 'CompositeGoal', function () {
 
 		} );
 
+		it( 'should terminate subgoals if a composite goal is terminated and removed from the internal array of subgoals', function () {
+
+			const compositeGoal = new CompositeGoal();
+
+			const complexGoal = new CompositeGoal();
+			complexGoal.status = STATUS.COMPLETED;
+
+			const goalCompleted = new CustomGoalCompleted();
+			compositeGoal.status = STATUS.COMPLETED;
+
+			compositeGoal.addSubgoal( complexGoal );
+			complexGoal.addSubgoal( goalCompleted );
+
+			compositeGoal.executeSubgoals();
+
+			expect( compositeGoal.subgoals ).to.be.empty;
+			expect( complexGoal.subgoals ).to.be.empty;
+			expect( goalCompleted.terminateCalled ).to.be.true;
+
+		} );
+
 		it( 'should return "active" if the current subgoal was executed with status "completed" and if there are subgoals waiting for processing', function () {
 
 			const compositeGoal = new CompositeGoal();

@@ -89,9 +89,9 @@ class GatherGoal extends CompositeGoal {
 
 		owner.ui.currentGoal.textContent = GATHER;
 
-		this.addSubgoal( new FindNextCollectible( owner ) );
-		this.addSubgoal( new SeekToCollectible( owner ) );
-		this.addSubgoal( new PickUpCollectible( owner ) );
+		this.addSubgoal( new FindNextCollectibleGoal( owner ) );
+		this.addSubgoal( new SeekToCollectibleGoal( owner ) );
+		this.addSubgoal( new PickUpCollectibleGoal( owner ) );
 
 		// TODO This line fixes the problem of a frame where no animation is active
 
@@ -108,17 +108,11 @@ class GatherGoal extends CompositeGoal {
 
 	}
 
-	terminate() {
-
-		this.clearSubgoals();
-
-	}
-
 }
 
 //
 
-class FindNextCollectible extends Goal {
+class FindNextCollectibleGoal extends Goal {
 
 	constructor( owner ) {
 
@@ -208,7 +202,7 @@ class FindNextCollectible extends Goal {
 
 //
 
-class SeekToCollectible extends Goal {
+class SeekToCollectibleGoal extends Goal {
 
 	constructor( owner ) {
 
@@ -282,7 +276,7 @@ class SeekToCollectible extends Goal {
 
 //
 
-class PickUpCollectible extends Goal {
+class PickUpCollectibleGoal extends Goal {
 
 	constructor( owner ) {
 

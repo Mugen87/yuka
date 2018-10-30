@@ -4434,6 +4434,16 @@
 
 				if ( ( subgoal.completed() === true ) || ( subgoal.failed() === true ) ) {
 
+					// if the current subgoal is a composite goal, terminate its subgoals too
+
+					if ( subgoal instanceof CompositeGoal ) {
+
+						subgoal.clearSubgoals();
+
+					}
+
+					// terminate the subgoal itself
+
 					subgoal.terminate();
 					subgoals.pop();
 
