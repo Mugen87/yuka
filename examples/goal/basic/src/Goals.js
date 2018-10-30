@@ -92,10 +92,6 @@ class GatherGoal extends CompositeGoal {
 		this.addSubgoal( new SeekToCollectibleGoal( owner ) );
 		this.addSubgoal( new PickUpCollectibleGoal( owner ) );
 
-		// TODO This line fixes the problem of a frame where no animation is active
-
-		owner.animations.get( IDLE ).enabled = false;
-
 	}
 
 	execute() {
