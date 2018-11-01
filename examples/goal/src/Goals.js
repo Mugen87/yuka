@@ -2,8 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Goal, CompositeGoal, Matrix4, Vector3 } from '../../../../../build/yuka.module.js';
-import world from './World.js';
+import { Goal, CompositeGoal, Matrix4, Vector3 } from '../../../build/yuka.module.js';
 
 const REST = 'REST';
 const GATHER = 'GATHER';
@@ -126,19 +125,23 @@ class FindNextCollectibleGoal extends Goal {
 
 		// select closest collectible
 
-		const collectibles = world.collectibles;
+		const entities = owner.manager.entities;
 		let minDistance = Infinity;
 
-		for ( let i = 0, l = collectibles.length; i < l; i ++ ) {
+		for ( let i = 0, l = entities.length; i < l; i ++ ) {
 
-			const collectible = collectibles[ i ];
+			const entity = entities[ i ];
 
-			const squaredDistance = owner.position.squaredDistanceTo( collectible.position );
+			if ( entity !== owner ) {
 
-			if ( squaredDistance < minDistance ) {
+				const squaredDistance = owner.position.squaredDistanceTo( entity.position );
 
-				minDistance = squaredDistance;
-				owner.currentTarget = collectible;
+				if ( squaredDistance < minDistance ) {
+
+					minDistance = squaredDistance;
+					owner.currentTarget = entity;
+
+				}
 
 			}
 
@@ -300,7 +303,7 @@ class PickUpCollectibleGoal extends Goal {
 
 			if ( owner.currentTarget !== null ) {
 
-				world.removeCollectible( owner.currentTarget );
+				owner.sendMessage( owner.currentTarget, 'PickedUp' );
 				owner.currentTarget = null;
 
 			}

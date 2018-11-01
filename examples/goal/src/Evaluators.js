@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { GoalEvaluator } from '../../../../../build/yuka.module.js';
+import { GoalEvaluator } from '../../../build/yuka.module.js';
 
 import { RestGoal, GatherGoal } from './Goals.js';
 

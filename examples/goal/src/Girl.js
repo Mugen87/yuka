@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Vehicle, Think, ArriveBehavior } from '../../../../../build/yuka.module.js';
+import { Vehicle, Think, ArriveBehavior } from '../../../build/yuka.module.js';
 import { RestEvaluator, GatherEvaluator } from './Evaluators.js';
 
 class Girl extends Vehicle {

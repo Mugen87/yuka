@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { State } from '../../../../../build/yuka.module.js';
+import { State } from '../../../build/yuka.module.js';
 
 const IDLE = 'IDLE';
 const WALK = 'WALK';

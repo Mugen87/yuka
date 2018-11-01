@@ -44,14 +44,17 @@
 
 	<script type="module">
 
-		import * as THREE from '../../lib/three.module.js';
-		import { GLTFLoader } from '../../lib/GLTFLoader.module.js';
-		import { OrbitControls } from '../../lib/OrbitControls.module.js';
+		import * as YUKA from '../../build/yuka.module.js';
+		import * as THREE from '../lib/three.module.js';
+		import { GLTFLoader } from '../lib/GLTFLoader.module.js';
+		import { OrbitControls } from '../lib/OrbitControls.module.js';
 
 		import { Girl } from './src/Girl.js';
-		import world from './src/World.js';
+		import { Collectible } from './src/Collectible.js';
 
 		let camera, scene, renderer;
+
+		let entityManager, time;
 
 		init();
 
@@ -60,7 +63,6 @@
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color( 0xa0a0a0 );
 			scene.fog = new THREE.Fog( 0xa0a0a0, 20, 40 );
-			world.scene = scene;
 
 			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
 			camera.position.set( 0, 5, 15 );
@@ -138,10 +140,37 @@
 				animations.set( 'RIGHT_TURN', createAnimationAction( mixer, 'Character_RightTurn' ) );
 				animations.set( 'LEFT_TURN', createAnimationAction( mixer, 'Character_LeftTurn' ) );
 
+				// game setup
+
+				entityManager = new YUKA.EntityManager();
+				time = new YUKA.Time();
+
 				const girl = new Girl( mixer, animations );
 				girl.setRenderComponent( avatar, sync );
 
-				world.add( girl );
+				scene.add( avatar );
+				entityManager.add( girl );
+
+				//
+
+				const collectibleGeometry = new THREE.BoxBufferGeometry( 0.2, 0.2, 0.2 );
+				collectibleGeometry.translate( 0, 0.1, 0 );
+				const collectibleMaterial = new THREE.MeshBasicMaterial( { color: 0x040404 } );
+
+				for ( let i = 0; i < 5; i ++ ) {
+
+					const collectibleMesh = new THREE.Mesh( collectibleGeometry, collectibleMaterial );
+					collectibleMesh.matrixAutoUpdate = false;
+					collectibleMesh.castShadow = true;
+
+					const collectible = new Collectible();
+					collectible.setRenderComponent( collectibleMesh, sync );
+					collectible.spawn();
+
+					scene.add( collectibleMesh );
+					entityManager.add( collectible );
+
+				}
 
 				animate();
 
@@ -179,7 +208,9 @@
 
 			requestAnimationFrame( animate );
 
-			world.update();
+			const delta = time.update().getDelta();
+
+			entityManager.update( delta );
 
 			renderer.render( scene, camera );
 

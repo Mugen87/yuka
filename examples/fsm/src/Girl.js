@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { GameEntity, StateMachine } from '../../../../../build/yuka.module.js';
+import { GameEntity, StateMachine } from '../../../build/yuka.module.js';
 
 import { IdleState, WalkState } from './States.js';
 
