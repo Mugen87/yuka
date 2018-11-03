@@ -205,6 +205,8 @@
 		const impact1 = new THREE.PositionalAudio( listener );
 		const impact2 = new THREE.PositionalAudio( listener );
 		const impact3 = new THREE.PositionalAudio( listener );
+		const impact4 = new THREE.PositionalAudio( listener );
+		const impact5 = new THREE.PositionalAudio( listener );
 
 		shot.setVolume( 0.3 );
 		reload.setVolume( 0.1 );
@@ -216,6 +218,8 @@
 		audioLoader.load( 'audio/impact1.ogg', ( buffer ) => { impact1.setBuffer( buffer ) } );
 		audioLoader.load( 'audio/impact2.ogg', ( buffer ) => { impact2.setBuffer( buffer ) } );
 		audioLoader.load( 'audio/impact3.ogg', ( buffer ) => { impact3.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/impact4.ogg', ( buffer ) => { impact4.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/impact5.ogg', ( buffer ) => { impact5.setBuffer( buffer ) } );
 
 		//
 
@@ -254,6 +258,8 @@
 		player.weapon.sounds.set( 'impact1', impact1 );
 		player.weapon.sounds.set( 'impact2', impact2 );
 		player.weapon.sounds.set( 'impact3', impact3 );
+		player.weapon.sounds.set( 'impact4', impact4 );
+		player.weapon.sounds.set( 'impact5', impact5 );
 
 		controls = new FirstPersonControls( player );
 		controls.lookSpeed = 2;

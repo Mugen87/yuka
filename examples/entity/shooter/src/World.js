@@ -141,7 +141,7 @@ class World {
 		const texture = loader.load( 'model/bulletHole.png' );
 		texture.minFilter = THREE.LinearFilter;
 		const bulletHoleGeometry = new THREE.PlaneBufferGeometry( 0.1, 0.1 );
-		const bulletHoleMaterial = new THREE.MeshLambertMaterial( { map: texture, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: - 4, } );
+		const bulletHoleMaterial = new THREE.MeshLambertMaterial( { map: texture, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: - 4 } );
 
 		const bulletHole = new THREE.Mesh( bulletHoleGeometry, bulletHoleMaterial );
 		bulletHole.matrixAutoUpdate = false;

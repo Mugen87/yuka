@@ -60,7 +60,7 @@ class Bullet extends MovingEntity {
 
 					// hit!
 
-					const audio = this.owner.weapon.sounds.get( 'impact' + MathUtils.randInt( 1, 3 ) );
+					const audio = this.owner.weapon.sounds.get( 'impact' + MathUtils.randInt( 1, 5 ) );
 
 					if ( audio.isPlaying === true ) audio.stop();
 					audio.play();
