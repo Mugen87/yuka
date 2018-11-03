@@ -20,7 +20,7 @@ class Blaster extends GameEntity {
 
 		this.roundsLeft = 12;
 		this.roundsPerClip = 12;
-		this.ammo = 48;
+		this.ammo = 12;
 		this.maxAmmo = 96;
 
 		// times are in seconds
@@ -64,7 +64,7 @@ class Blaster extends GameEntity {
 
 			} else {
 
-				this.roundsLeft = this.ammo;
+				this.roundsLeft += this.ammo;
 				this.ammo = 0;
 
 			}
