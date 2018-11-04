@@ -4,31 +4,41 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
+			@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
 			body {
 				margin:0;
 				overflow:hidden;
+				font-family: 'Roboto Condensed', sans-serif;
 			}
 			#intro {
 				position: fixed;
 				height: 100%;
 				width: 100%;
 				display: flex;
+				flex-direction: column;
 				align-items: center;
 				justify-content: center;
 				background-color: rgba(0,0,0,0.5);
 				color: #ffffff;
-				font-family: Arial, Helvetica, sans-serif;
 				font-size: 40;
 			}
 			#intro.hidden {
 				display: none;
+			}
+			#info{
+				font-size: 20;
 			}
 		</style>
 	</head>
 <body>
 
 	<section id="intro">
-		Click to Play
+		<p>
+			Click to Play
+		</p>
+		<p id="info">
+			A navigation mesh defines the walkable area of this level.
+		</p>
 	</section>
 
 	<script type="module">
@@ -39,7 +49,7 @@
 
 	import { FirstPersonControls } from './src/FirstPersonControls.js';
 	import { Player } from './src/Player.js';
-	// import { createConvexRegionHelper } from '../../graph/common/js/NavMeshHelper.js';
+	// import { createConvexRegionHelper } from '../../navigation/common/js/NavMeshHelper.js';
 
 	let camera, scene, renderer;
 
