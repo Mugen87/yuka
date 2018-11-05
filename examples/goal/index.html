@@ -11,6 +11,12 @@
 				font-family: 'Roboto Condensed', sans-serif;
 			}
 			#info {
+				width: 100%;
+				color: #ffffff;
+				position: fixed;
+				text-align: center;
+			}
+			#status {
 				position: absolute;
 				display: flex;
 				align-items: center;
@@ -20,13 +26,14 @@
 				text-align: center;
 				line-height: 20px;
 				width: 100%;
+				bottom: 0;
 			}
-			#info>div {
+			#status>div {
 				background-color: #282828;
 				width: 500px;
 				padding: 16px;
 			}
-			#info>div>span {
+			#status>div>span {
 				display: inline-block;
 			}
 		</style>
@@ -34,6 +41,13 @@
 <body>
 
 	<section id="info">
+		<p>
+			The main goal of the game entity is to gather collectibles. After a while, the game entity takes a short rest.<br/>
+			The Goal-driven agent design enables a clean implementation of more advanced AI logic.
+		</p>
+	</section>
+
+	<section id="status">
 		<div>
 			<span>Current Goal:</span>
 			<span id="currentGoal"></span>

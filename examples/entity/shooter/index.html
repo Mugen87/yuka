@@ -15,15 +15,19 @@
 				height: 100%;
 				width: 100%;
 				display: flex;
+				flex-direction: column;
 				align-items: center;
 				justify-content: center;
-				background-color: rgba(0,0,0,0.5);
+				background-color: rgba(0,0,0,0.7);
 				color: #ffffff;
 				font-size: 40;
 				z-index: 10;
 			}
 			#intro.hidden {
 				display: none;
+			}
+			#info{
+				font-size: 20;
 			}
 			#crosshairs {
 				position: absolute;
@@ -86,7 +90,12 @@
 <body>
 
 	<section id="intro">
-		Click to Play
+		<p>
+			Click to Play
+		</p>
+		<p id="info">
+			This demo implements some basic concepts of First-Person shooters e.g. simulating bullets and collision detection.
+		</p>
 	</section>
 
 	<section id="crosshairs" class="hidden">
