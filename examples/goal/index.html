@@ -3,19 +3,8 @@
 		<title>Yuka | Goal-driven Agent Design</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../lib/styles.css">
 		<style>
-			@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
-			body {
-				margin:0;
-				overflow:hidden;
-				font-family: 'Roboto Condensed', sans-serif;
-			}
-			#info {
-				width: 100%;
-				color: #ffffff;
-				position: fixed;
-				text-align: center;
-			}
 			#status {
 				position: absolute;
 				display: flex;
@@ -39,6 +28,16 @@
 		</style>
 	</head>
 <body>
+
+	<section id="loading-screen">
+		<div class="spinner">
+			<div class="rect1"></div>
+			<div class="rect2"></div>
+			<div class="rect3"></div>
+			<div class="rect4"></div>
+			<div class="rect5"></div>
+		</div>
+	</section>
 
 	<section id="info">
 		<p>
@@ -120,7 +119,18 @@
 
 			//
 
-			const glTFLoader = new GLTFLoader();
+			const loadingManager = new THREE.LoadingManager( () => {
+
+				const loadingScreen = document.getElementById( 'loading-screen' );
+
+				loadingScreen.classList.add( 'fade-out' );
+				loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
+
+				animate();
+
+			} );
+
+			const glTFLoader = new GLTFLoader( loadingManager );
 			glTFLoader.load( 'model/yuka.glb', ( gltf ) => {
 
 				// add object to scene
@@ -186,8 +196,6 @@
 
 				}
 
-				animate();
-
 			} );
 
 			//
@@ -243,6 +251,12 @@
 			action.enabled = false;
 
 			return action;
+
+		}
+
+		function onTransitionEnd( event ) {
+
+			event.target.remove();
 
 		}
 

@@ -3,40 +3,25 @@
 		<title>Yuka | First-Person Controls</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
-			body {
-				margin:0;
-				overflow:hidden;
-				font-family: 'Roboto Condensed', sans-serif;
-			}
-			#intro {
-				position: fixed;
-				height: 100%;
-				width: 100%;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				background-color: rgba(0,0,0,0.7);
-				color: #ffffff;
-				font-size: 40;
-			}
-			#intro.hidden {
-				display: none;
-			}
-			#info{
-				font-size: 20;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
 	</head>
 <body>
+
+	<section id="loading-screen">
+		<div class="spinner">
+			<div class="rect1"></div>
+			<div class="rect2"></div>
+			<div class="rect3"></div>
+			<div class="rect4"></div>
+			<div class="rect5"></div>
+		</div>
+	</section>
 
 	<section id="intro">
 		<p>
 			Click to Play
 		</p>
-		<p id="info">
+		<p class="sub">
 			A navigation mesh defines the walkable area of this level.
 		</p>
 	</section>
@@ -91,7 +76,34 @@
 
 		//
 
-		const audioLoader = new THREE.AudioLoader();
+		const loadingManager = new THREE.LoadingManager( () => {
+
+			// 3D assets are loaded, now load nav mesh
+
+			const loader = new YUKA.NavMeshLoader();
+			loader.load( './navmesh/navmesh.glb', { epsilonCoplanarTest: 0.25 } ).then( ( navMesh ) => {
+
+				// visualize convex regions
+
+				// const navMeshGroup = createConvexRegionHelper( navMesh );
+				// scene.add( navMeshGroup );
+
+				player.navMesh = navMesh;
+
+				const loadingScreen = document.getElementById( 'loading-screen' );
+
+				loadingScreen.classList.add( 'fade-out' );
+				loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
+
+				animate();
+
+			} );
+
+		} );
+
+		//
+
+		const audioLoader = new THREE.AudioLoader( loadingManager );
 		const listener = new THREE.AudioListener();
 		camera.add( listener );
 
@@ -112,7 +124,7 @@
 
 		//
 
-		const glTFLoader = new GLTFLoader();
+		const glTFLoader = new GLTFLoader( loadingManager );
 		glTFLoader.load( 'model/house.glb', ( gltf ) => {
 
 			// add object to scene
@@ -133,23 +145,6 @@
 					}
 
 				}
-
-			} );
-
-			// load respective navmesh
-
-			const loader = new YUKA.NavMeshLoader();
-
-			loader.load( './navmesh/navmesh.glb', { epsilonCoplanarTest: 0.25 } ).then( ( navMesh ) => {
-
-				// visualize convex regions
-
-				// const navMeshGroup = createConvexRegionHelper( navMesh );
-				// scene.add( navMeshGroup );
-
-				player.navMesh = navMesh;
-
-				animate();
 
 			} );
 
@@ -231,6 +226,12 @@
 	function sync( entity, renderComponent ) {
 
 		renderComponent.matrixWorld.copy( entity.worldMatrix );
+
+	}
+
+	function onTransitionEnd( event ) {
+
+		event.target.remove();
 
 	}
 
