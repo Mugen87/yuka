@@ -104,3 +104,14 @@ body {
     -webkit-transform: scaleY(1.0);
   }
 }
+
+/* hide some information on small devices */
+
+@media screen and (max-width: 414px) {
+	#info {
+		display: none;
+	}
+	.dg {
+		display: none;
+	}
+}
