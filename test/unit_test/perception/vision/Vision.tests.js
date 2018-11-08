@@ -3,7 +3,7 @@
  */
 
 const expect = require( 'chai' ).expect;
-const YUKA = require( '../../../build/yuka.js' );
+const YUKA = require( '../../../../build/yuka.js' );
 
 const Vision = YUKA.Vision;
 const GameEntity = YUKA.GameEntity;

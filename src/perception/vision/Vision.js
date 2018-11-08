@@ -1,5 +1,5 @@
-import { Ray } from '../math/Ray.js';
-import { Vector3 } from '../math/Vector3.js';
+import { Ray } from '../../math/Ray.js';
+import { Vector3 } from '../../math/Vector3.js';
 
 const toPoint = new Vector3();
 const direction = new Vector3();
@@ -20,8 +20,16 @@ class Vision {
 	*/
 	constructor( owner = null ) {
 
+		/**
+		* The game entity that owns this vision instance.
+		* @type GameEntity
+		*/
 		this.owner = owner;
 
+		/**
+		* An array of {@link Obstacle obstacles}.
+		* @type Array
+		*/
 		this.obstacles = new Array();
 
 	}

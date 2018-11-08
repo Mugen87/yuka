@@ -1,10 +1,10 @@
-import { GameEntity } from '../core/GameEntity.js';
-import { MeshGeometry } from '../core/MeshGeometry.js';
-import { BoundingSphere } from '../math/BoundingSphere.js';
-import { Plane } from '../math/Plane.js';
-import { Vector3 } from '../math/Vector3.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { Ray } from '../math/Ray.js';
+import { GameEntity } from '../../core/GameEntity.js';
+import { MeshGeometry } from '../../core/MeshGeometry.js';
+import { BoundingSphere } from '../../math/BoundingSphere.js';
+import { Plane } from '../../math/Plane.js';
+import { Vector3 } from '../../math/Vector3.js';
+import { Matrix4 } from '../../math/Matrix4.js';
+import { Ray } from '../../math/Ray.js';
 
 const boundingSphere = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
@@ -30,6 +30,10 @@ class Obstacle extends GameEntity {
 
 		super();
 
+		/**
+		* Represents the geometry of this obstacle.
+		* @type MeshGeometry
+		*/
 		this.geometry = geometry;
 
 	}

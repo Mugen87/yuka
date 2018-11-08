@@ -13,7 +13,7 @@ class StateMachine {
 	*
 	* @param {GameEntity} owner - The owner of this state machine.
 	*/
-	constructor( owner ) {
+	constructor( owner = null ) {
 
 		/**
 		* The game entity that owns this state machine.

@@ -7,8 +7,33 @@ const YUKA = require( '../../../build/yuka.js' );
 
 const State = YUKA.State;
 const StateMachine = YUKA.StateMachine;
+const GameEntity = YUKA.GameEntity;
 
 describe( 'StateMachine', function () {
+
+	describe( '#constructor()', function () {
+
+		it( 'should create an object with correct default values', function () {
+
+			const stateMachine = new StateMachine();
+			expect( stateMachine ).to.have.a.property( 'owner' ).that.is.null;
+			expect( stateMachine ).to.have.a.property( 'currentState' ).that.is.null;
+			expect( stateMachine ).to.have.a.property( 'previousState' ).that.is.null;
+			expect( stateMachine ).to.have.a.property( 'globalState' ).that.is.null;
+			expect( stateMachine ).to.have.a.property( 'states' ).that.is.a( 'map' );
+
+		} );
+
+		it( 'should apply the parameters to the new object', function () {
+
+			const entity = new GameEntity();
+			const stateMachine = new StateMachine( entity );
+
+			expect( stateMachine.owner ).to.equal( entity );
+
+		} );
+
+	} );
 
 	describe( '#update()', function () {
 
