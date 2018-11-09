@@ -93,7 +93,7 @@ class CustomEntity extends GameEntity {
 
 			if ( memorySystem.hasRecord( entity ) === false ) {
 
-				memorySystem.setRecord( entity );
+				memorySystem.createRecord( entity );
 
 			}
 

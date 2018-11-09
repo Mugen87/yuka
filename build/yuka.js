@@ -9241,7 +9241,7 @@
 			* of the game entity.
 			* @type Map
 			*/
-			this.recordsMap = new Map(); // for fast access
+			this.recordsMap = new Map();
 
 			/**
 			* Represents the duration of the game entities short term memory in seconds.
@@ -9272,7 +9272,7 @@
 		* @param {GameEntity} entity - The game entity.
 		* @return {MemorySystem} A reference to this memory system.
 		*/
-		setRecord( entity ) {
+		createRecord( entity ) {
 
 			const record = new MemoryRecord( entity );
 

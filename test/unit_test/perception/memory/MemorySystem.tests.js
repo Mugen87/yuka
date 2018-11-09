@@ -33,14 +33,14 @@ describe( 'MemorySystem', function () {
 
 	} );
 
-	describe( '#setRecord()', function () {
+	describe( '#createRecord()', function () {
 
 		it( 'should create a memory record for the given game entity', function () {
 
 			const memorySystem = new MemorySystem();
 			const entity = new GameEntity();
 
-			memorySystem.setRecord( entity );
+			memorySystem.createRecord( entity );
 			expect( memorySystem.recordsMap.has( entity.id ) ).to.be.true;
 
 			const record = memorySystem.recordsMap.get( entity.id );
@@ -57,7 +57,7 @@ describe( 'MemorySystem', function () {
 			const memorySystem = new MemorySystem();
 			const entity = new GameEntity();
 
-			memorySystem.setRecord( entity );
+			memorySystem.createRecord( entity );
 			const record = memorySystem.getRecord( entity );
 
 			expect( record.entity ).to.equal( entity );
@@ -73,7 +73,7 @@ describe( 'MemorySystem', function () {
 			const memorySystem = new MemorySystem();
 			const entity = new GameEntity();
 
-			memorySystem.setRecord( entity );
+			memorySystem.createRecord( entity );
 			const record = memorySystem.getRecord( entity );
 
 			memorySystem.deleteRecord( entity );
@@ -92,7 +92,7 @@ describe( 'MemorySystem', function () {
 			const memorySystem = new MemorySystem();
 			const entity = new GameEntity();
 
-			memorySystem.setRecord( entity );
+			memorySystem.createRecord( entity );
 			expect( memorySystem.hasRecord( entity ) ).to.be.true;
 
 			memorySystem.deleteRecord( entity );
@@ -110,7 +110,7 @@ describe( 'MemorySystem', function () {
 			const memorySystem = new MemorySystem();
 			const entity = new GameEntity();
 
-			memorySystem.setRecord( entity );
+			memorySystem.createRecord( entity );
 			memorySystem.clear();
 
 			expect( memorySystem.hasRecord( entity ) ).to.be.false;
@@ -132,9 +132,9 @@ describe( 'MemorySystem', function () {
 			const entity2 = new GameEntity();
 			const entity3 = new GameEntity();
 
-			memorySystem.setRecord( entity1 );
-			memorySystem.setRecord( entity2 );
-			memorySystem.setRecord( entity3 );
+			memorySystem.createRecord( entity1 );
+			memorySystem.createRecord( entity2 );
+			memorySystem.createRecord( entity3 );
 
 			const record1 = memorySystem.getRecord( entity1 );
 			record1.timeLastSensed = 1.5;
