@@ -2962,20 +2962,6 @@
 			this.maxTurnRate = Math.PI;
 
 			/**
-			* The field of view of this game entity in radians.
-			* @type Number
-			* @default π/2
-			*/
-			this.fieldOfView = Math.PI;
-
-			/**
-			* The visual range of this game entity in world units.
-			* @type Number
-			* @default Infinity
-			*/
-			this.visualRange = Infinity;
-
-			/**
 			* A transformation matrix representing the local space of this game entity.
 			* @type Matrix4
 			*/
@@ -9532,6 +9518,20 @@
 			this.owner = owner;
 
 			/**
+			* The field of view of this game entity in radians.
+			* @type Number
+			* @default π/2
+			*/
+			this.fieldOfView = Math.PI;
+
+			/**
+			* The visual range of this game entity in world units.
+			* @type Number
+			* @default Infinity
+			*/
+			this.range = Infinity;
+
+			/**
 			* An array of {@link Obstacle obstacles}.
 			* @type Array
 			*/
@@ -9585,7 +9585,7 @@
 			toPoint.subVectors( point, owner.position );
 			const distanceToPoint = toPoint.length();
 
-			if ( distanceToPoint > owner.visualRange ) return false;
+			if ( distanceToPoint > this.range ) return false;
 
 			// next, check if the point lies within the game entity's field of view
 
@@ -9593,7 +9593,7 @@
 
 			const angle = direction.angleTo( toPoint );
 
-			if ( angle > ( owner.fieldOfView * 0.5 ) ) return false;
+			if ( angle > ( this.fieldOfView * 0.5 ) ) return false;
 
 			// the point lies within the game entity's visual range and field
 			// of view. now check if obstacles block the game entity's view to the given point.

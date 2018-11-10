@@ -21,7 +21,7 @@
 		import * as THREE from '../../lib/three.module.js';
 
 		import { CustomEntity } from './src/CustomEntity.js';
-		import { createVisionHelper } from '../lineOfSight/src/VisionHelper.js';
+		import { createVisionHelper } from '../common/VisionHelper.js';
 
 		let renderer, scene, camera, targetMaterial;
 
@@ -99,7 +99,7 @@
 			entity.setRenderComponent( entityMesh, sync );
 			entity.vision.addObstacle( obstacle );
 
-			const helper = createVisionHelper( entity );
+			const helper = createVisionHelper( entity.vision );
 			entityMesh.add( helper );
 
 			entityManager.add( entity );

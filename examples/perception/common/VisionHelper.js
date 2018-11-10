@@ -2,12 +2,12 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import * as THREE from '../../../lib/three.module.js';
+import * as THREE from '../../lib/three.module.js';
 
-function createVisionHelper( entity, division = 8 ) {
+function createVisionHelper( vision, division = 8 ) {
 
-	const fieldOfView = entity.fieldOfView;
-	const visualRange = entity.visualRange;
+	const fieldOfView = vision.fieldOfView;
+	const range = vision.range;
 
 	const geometry = new THREE.BufferGeometry();
 	const material = new THREE.MeshBasicMaterial( { wireframe: true } );
@@ -24,8 +24,8 @@ function createVisionHelper( entity, division = 8 ) {
 	for ( let i = - foV05; i < foV05; i += step ) {
 
 		positions.push( 0, 0, 0 );
-		positions.push( Math.sin( i ) * visualRange, 0, Math.cos( i ) * visualRange );
-		positions.push( Math.sin( i + step ) * visualRange, 0, Math.cos( i + step ) * visualRange );
+		positions.push( Math.sin( i ) * range, 0, Math.cos( i ) * range );
+		positions.push( Math.sin( i + step ) * range, 0, Math.cos( i + step ) * range );
 
 	}
 

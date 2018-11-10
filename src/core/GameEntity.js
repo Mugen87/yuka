@@ -120,20 +120,6 @@ class GameEntity {
 		this.maxTurnRate = Math.PI;
 
 		/**
-		* The field of view of this game entity in radians.
-		* @type Number
-		* @default π/2
-		*/
-		this.fieldOfView = Math.PI;
-
-		/**
-		* The visual range of this game entity in world units.
-		* @type Number
-		* @default Infinity
-		*/
-		this.visualRange = Infinity;
-
-		/**
 		* A transformation matrix representing the local space of this game entity.
 		* @type Matrix4
 		*/

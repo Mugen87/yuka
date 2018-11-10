@@ -12,9 +12,10 @@ class CustomEntity extends GameEntity {
 
 		this.memorySystem = new MemorySystem();
 		this.memorySystem.memorySpan = 3;
+
 		this.vision = new Vision( this );
-		this.visualRange = 5;
-		this.fieldOfView = Math.PI * 0.5;
+		this.vision.range = 5;
+		this.vision.fieldOfView = Math.PI * 0.5;
 
 		this.maxTurnRate = Math.PI * 0.5;
 

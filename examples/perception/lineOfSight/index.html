@@ -19,7 +19,7 @@
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
 
-		import { createVisionHelper } from './src/VisionHelper.js';
+		import { createVisionHelper } from '../common/VisionHelper.js';
 
 		let renderer, scene, camera, targetMaterial;
 
@@ -95,14 +95,14 @@
 
 			entity = new YUKA.GameEntity();
 			entity.setRenderComponent( entityMesh, sync );
-			entity.visualRange = 5;
-			entity.fieldOfView = Math.PI * 0.5;
 
 			const vision = new YUKA.Vision( entity );
+			vision.range = 5;
+			vision.fieldOfView = Math.PI * 0.5;
 			vision.addObstacle( obstacle );
 			entity.vision = vision;
 
-			const helper = createVisionHelper( entity );
+			const helper = createVisionHelper( vision );
 			entityMesh.add( helper );
 
 			entityManager.add( entity );
