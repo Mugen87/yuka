@@ -41,6 +41,7 @@
   "devDependencies": {
     "benchmark": "2.1.4",
     "chai": "4.1.2",
+    "commenting": "1.0.5",
     "concurrently": "3.6.1",
     "coveralls": "3.0.2",
     "eslint": "5.1.0",
