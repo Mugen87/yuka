@@ -25,7 +25,7 @@
 
 		let renderer, scene, camera, targetMaterial;
 
-		let entityManager, time, entity, target;
+		let entityManager, time, target;
 
 		init();
 		animate();
@@ -89,15 +89,16 @@
 			const geometry = new YUKA.MeshGeometry( vertices, indices );
 
 			const obstacle = new YUKA.Obstacle( geometry );
+			obstacle.name = 'obstacle';
 			obstacle.position.z = 3;
 			obstacle.setRenderComponent( obstacleMesh, sync );
 
 			target = new YUKA.GameEntity();
+			target.name = 'target';
 			target.setRenderComponent( targetMesh, sync );
 
-			entity = new CustomEntity();
+			const entity = new CustomEntity();
 			entity.setRenderComponent( entityMesh, sync );
-			entity.vision.addObstacle( obstacle );
 
 			const helper = createVisionHelper( entity.vision );
 			entityMesh.add( helper );

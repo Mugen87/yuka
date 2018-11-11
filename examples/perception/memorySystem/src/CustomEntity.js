@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { GameEntity, Vision, Obstacle, MemorySystem } from '../../../../build/yuka.module.js';
+import { GameEntity, Vision, MemorySystem } from '../../../../build/yuka.module.js';
 
 class CustomEntity extends GameEntity {
 
@@ -21,6 +21,18 @@ class CustomEntity extends GameEntity {
 
 		this.currentTime = 0;
 		this.memoryRecords = new Array();
+
+		this.target = null;
+
+	}
+
+	start() {
+
+		const target = this.manager.getEntityByName( 'target' );
+		const obstacle = this.manager.getEntityByName( 'obstacle' );
+
+		this.target = target;
+		this.vision.addObstacle( obstacle );
 
 	}
 
@@ -82,35 +94,25 @@ class CustomEntity extends GameEntity {
 
 		const memorySystem = this.memorySystem;
 		const vision = this.vision;
-		const manager = this.manager;
+		const target = this.target;
 
-		const entities = manager.entities;
+		if ( memorySystem.hasRecord( target ) === false ) {
 
-		for ( let i = 0, l = entities.length; i < l; i ++ ) {
+			memorySystem.createRecord( target );
 
-			const entity = entities[ i ];
+		}
 
-			if ( entity === this || entity instanceof Obstacle ) continue;
+		const record = memorySystem.getRecord( target );
 
-			if ( memorySystem.hasRecord( entity ) === false ) {
+		if ( vision.visible( target.position ) === true ) {
 
-				memorySystem.createRecord( entity );
+			record.timeLastSensed = this.currentTime;
+			record.lastSensedPosition.copy( target.position );
+			record.visible = true;
 
-			}
+		} else {
 
-			const record = memorySystem.getRecord( entity );
-
-			if ( vision.visible( entity.position ) === true ) {
-
-				record.timeLastSensed = this.currentTime;
-				record.lastSensedPosition.copy( entity.position );
-				record.visible = true;
-
-			} else {
-
-				record.visible = false;
-
-			}
+			record.visible = false;
 
 		}
 
