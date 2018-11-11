@@ -9544,14 +9544,14 @@
 			this.owner = owner;
 
 			/**
-			* The field of view of this game entity in radians.
+			* The field of view in radians.
 			* @type Number
 			* @default π/2
 			*/
 			this.fieldOfView = Math.PI;
 
 			/**
-			* The visual range of this game entity in world units.
+			* The visual range in world units.
 			* @type Number
 			* @default Infinity
 			*/
