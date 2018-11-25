@@ -58,7 +58,7 @@ class Cell {
 	}
 
 	/**
-	* Removes all entries from the cell.
+	* Removes all entries from this cell.
 	*
 	* @return {Cell} A reference to this cell.
 	*/
@@ -71,9 +71,9 @@ class Cell {
 	}
 
 	/**
-	* Returns true if the cell is empty.
+	* Returns true if this cell is empty.
 	*
-	* @return {Boolean} The result of the test.
+	* @return {Boolean} Whether this cell is empty or not.
 	*/
 	empty() {
 
@@ -85,7 +85,7 @@ class Cell {
 	* Returns true if the given AABB intersects the internal bounding volume of this cell.
 	*
 	* @param {AABB} aabb - The AABB to test.
-	* @return {Boolean} The result of the intersection test.
+	* @return {Boolean} Whether this cell intersects with the given AABB or not.
 	*/
 	intersects( aabb ) {
 

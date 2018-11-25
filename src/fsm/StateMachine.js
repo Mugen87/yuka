@@ -149,9 +149,9 @@ class StateMachine {
 	}
 
 	/**
-	* Returns true if the state machine is in the given state.
+	* Returns true if this FSM is in the given state.
 	*
-	* @return {Boolean} The result of the test.
+	* @return {Boolean} Whether this FSM is in the given state or not.
 	*/
 	in( id ) {
 
