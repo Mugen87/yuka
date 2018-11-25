@@ -64,6 +64,8 @@ export { PursuitBehavior } from './steering/behaviors/PursuitBehavior.js';
 export { SeekBehavior } from './steering/behaviors/SeekBehavior.js';
 export { SeparationBehavior } from './steering/behaviors/SeparationBehavior.js';
 export { WanderBehavior } from './steering/behaviors/WanderBehavior.js';
+export { Task } from './task/Task.js';
+export { TaskQueue } from './task/TaskQueue.js';
 export { RectangularTriggerRegion } from './trigger/regions/RectangularTriggerRegion.js';
 export { SphericalTriggerRegion } from './trigger/regions/SphericalTriggerRegion.js';
 export { TriggerRegion } from './trigger/TriggerRegion.js';
