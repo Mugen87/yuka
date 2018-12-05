@@ -208,7 +208,7 @@ function onKeyDown( event ) {
 
 }
 
-function onKeyUp() {
+function onKeyUp( event ) {
 
 	switch ( event.keyCode ) {
 
