@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+@import url('https://fonts.googleapis.com/css?family=Jura');
 
 body {
 	margin:0;
 	overflow:hidden;
-	font-family: 'Roboto Condensed', sans-serif;
+	font-family: 'Jura', sans-serif;
 }
 
 #info {

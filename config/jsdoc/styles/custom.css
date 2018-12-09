@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Jura');
+
+body {
+	font-family: 'Jura', sans-serif;
+}
 .lnb {
 	bottom: 0;
 }
@@ -7,6 +12,37 @@
 .main {
 	margin-bottom: 0;
 }
+.main section header h2 {
+	border-left: 5px solid #ee0808;
+}
+.main section article h3.subsection-title {
+	color: #ee0808;
+}
+.lnb h3 {
+	color: #ffffff;
+}
+.lnb .title .link {
+	font-style: normal;
+}
+.lnb .lnb-api a {
+	color: rgba(255,255,255,1);
+}
+.lnb .lnb-api a:hover {
+	color: rgba(255,255,255,.75);
+	text-decoration: none;
+}
+.lnb .member-type {
+	color: rgba(255,255,255,.5);
+}
 footer {
 	display: none;
+}
+#resizer {
+	background-color: #f4f7f8;
+}
+a:hover {
+	text-decoration: none;
+}
+code {
+	color: #ee0808;
 }
