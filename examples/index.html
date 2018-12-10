@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="A JavaScript library for developing Game AI">
+
+    <title>Yuka | Examples</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/app.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md fixed-top bg-light">
+      <a class="navbar-brand" href="../">Yuka</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href=".">Examples</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../docs/" target="_blank">Documentation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/Mugen87/yuka" target="_blank">Github</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main">
+
+      <div class="container" style="padding-top: 3rem">
+
+				<h1>Examples</h1>
+
+				<br/>
+
+				<h2>Game Entity</h2>
+
+				<br/>
+
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">Name</th>
+				      <th scope="col">Description</th>
+				      <th scope="col">Link</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr>
+				      <th scope="row">First-Person Controls</th>
+				      <td>First-Person example with navigation mesh usage to restrict movement.</td>
+				      <td><a href="./entity/firstperson/" target="_blank">Open</a></td>
+				    </tr>
+						<tr>
+							<th scope="row">First-Person Shooter</th>
+							<td>Basic concepts of FPS like simulating bullets and collision detection.</td>
+							<td><a href="./entity/shooter/" target="_blank">Open</a></td>
+						</tr>
+				    <tr>
+				      <th scope="row">Orientation</th>
+				      <td>Demonstrates how to orient a game entity towards a specific target.</td>
+				      <td><a href="./entity/orientation/" target="_blank">Open</a></td>
+				    </tr>
+						<tr>
+							<th scope="row">Triggers</th>
+							<td>Usage of triggers to dynamically generate actions in the game world.</td>
+							<td><a href="./entity/trigger/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">State-driven Agent Design</th>
+							<td>The State-driven agent design enables a clean implementation of basic AI logic.</td>
+							<td><a href="./fsm/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Goal-driven Agent Design</th>
+							<td>The Goal-driven agent design enables a clean implementation of more advanced AI logic.</td>
+							<td><a href="./goal/" target="_blank">Open</a></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h3>Graphs and Navigation</h3>
+
+				<br/>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col">Description</th>
+							<th scope="col">Link</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Graphs</th>
+							<td>Demonstrates basic graph search algorithms.</td>
+							<td><a href="./graph/basic/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Navigation Mesh (Basic)</th>
+							<td>A simple showcase of a navigation mesh.</td>
+							<td><a href="./navigation/navmesh/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Navigation Mesh (Advanced)</th>
+							<td>An advanced showcase that shows the usage of a spatial index and tasks.</td>
+							<td><a href="./navigation/navmeshPerformance/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Line of Sight</th>
+							<td>Demonstrates a basic line of sight test.</td>
+							<td><a href="./perception/lineOfSight/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Memory System</th>
+							<td>Enables Game Entites to have a short-term memory.</td>
+							<td><a href="./perception/memorySystem/" target="_blank">Open</a></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h3>Perception</h3>
+
+				<br/>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col">Description</th>
+							<th scope="col">Link</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Line of Sight</th>
+							<td>Demonstrates a basic line of sight test.</td>
+							<td><a href="./perception/lineOfSight/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Memory System</th>
+							<td>Enables game entites to have a short-term memory so they react in a more natural way.</td>
+							<td><a href="./perception/memorySystem/" target="_blank">Open</a></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h3>Steering Behaviors</h3>
+
+				<br/>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col">Description</th>
+							<th scope="col">Link</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Arrive Steering Behavior</th>
+							<td>Produces a force that directs an agent toward a target position.</td>
+							<td><a href="./steering/arrive/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Flee Steering Behavior</th>
+							<td>Produces a force that steers an agent away from a target position.</td>
+							<td><a href="./steering/flee/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Flocking Steering Behavior</th>
+							<td>A group steering behavior based on "Alignment", "Cohesion" and "Separation".</td>
+							<td><a href="./steering/flocking/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Follow Path Steering Behavior</th>
+							<td>Produces a force that moves a vehicle along a series of waypoints.</td>
+							<td><a href="./steering/followPath/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Interpose Steering Behavior</th>
+							<td>Produces a force that moves a vehicle to the midpoint of the imaginary line connecting two other agents.</td>
+							<td><a href="./steering/interpose/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Obstacle Avoidance Steering Behavior</th>
+							<td>Produces a force so a vehicle avoids obstacles lying in its path.</td>
+							<td><a href="./steering/obstacleAvoidance/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Pursuit Steering Behavior</th>
+							<td>Useful when an agent is required to intercept a moving agent.</td>
+							<td><a href="./steering/pursuit/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Seek Steering Behavior</th>
+							<td>Produces a force that directs an agent toward a target position.</td>
+							<td><a href="./steering/seek/" target="_blank">Open</a></td>
+						</tr>
+						<tr>
+							<th scope="row">Wander Steering Behavior</th>
+							<td>Produces a force that will give the impression of a random walk through the agent’s environment.</td>
+							<td><a href="./steering/wander/" target="_blank">Open</a></td>
+						</tr>
+				  </tbody>
+				</table>
+        <hr>
+
+      </div> <!-- /container -->
+
+    </main>
+
+    <footer class="container">
+      <p>&copy; Yuka authors 2019</p>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="../js/bootstrap.min.js"></script>
+  </body>
+</html>

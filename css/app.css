@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css?family=Jura');
+
+body {
+	padding-top: 3.5rem;
+}
+
+.jumbotron {
+	text-align: center;
+	background-image: url(../images/gamer.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	border-radius: 0;
+	color: #ffffff;
+	margin-bottom: 4rem;
+}
+
+.vertical-center {
+	min-height: 50%;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+}
+
+.lead {
+	font-size: 2rem;
+}
+
+hr.divider {
+	margin: 5rem 0;
+}
+
+.teaser h2 {
+	text-align: center;
+}
+.teaser p {
+	text-align: center;
+}
+
+.navbar {
+	border-bottom: 1px solid #ccc;
+}
+
+.navbar-toggler-icon {
+	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(238, 8, 8, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
