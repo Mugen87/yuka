@@ -3,6 +3,13 @@
 body {
 	font-family: 'Jura', sans-serif;
 }
+a {
+	color: #ee0808;
+}
+a:hover {
+	color: #a40606;
+	text-decoration: none;
+}
 .lnb {
 	bottom: 0;
 	background-color: #f8f9fa;
@@ -87,4 +94,7 @@ code {
 
 .search-container ul li .group {
 	color: #000000;
+}
+.main section article dl h4 .type-signature {
+	color: #a40606;
 }
