@@ -5,6 +5,7 @@ body {
 }
 .lnb {
 	bottom: 0;
+	background-color: #f8f9fa;
 }
 .logo {
 	display: none;
@@ -19,20 +20,21 @@ body {
 	color: #ee0808;
 }
 .lnb h3 {
-	color: #ffffff;
+	color: #000000;
 }
 .lnb .title .link {
 	font-style: normal;
+	color: #ee0808;
 }
 .lnb .lnb-api a {
-	color: rgba(255,255,255,1);
+	color: #ee0808;
 }
 .lnb .lnb-api a:hover {
-	color: rgba(255,255,255,.75);
+	color: #a40606;
 	text-decoration: none;
 }
 .lnb .member-type {
-	color: rgba(255,255,255,.5);
+	color: #000000;
 }
 footer {
 	display: none;
@@ -45,4 +47,44 @@ a:hover {
 }
 code {
 	color: #ee0808;
+}
+
+.toggle-subnav {
+	display: none;
+}
+
+.lnb .lnb-api li, .lnb .lnb-examples li {
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.lnb .inner li {
+	border-bottom: 0;
+}
+
+.search-container input {
+	background-color: #ffffff;
+	border: none;
+}
+
+.search-container ul {
+	opacity: 1;
+	background-color: #ee0808;
+	border: none;
+}
+
+.search-container a {
+	color: #ffffff;
+}
+
+.search-container ul li:hover a, .search-container ul li.highlight a {
+	color: #ee0808;
+	text-decoration: none;
+}
+
+.search-container strong {
+	color: #ffffff;
+}
+
+.search-container ul li .group {
+	color: #000000;
 }
