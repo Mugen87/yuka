@@ -16,7 +16,7 @@ You can find the Yuka documentation [on the website](https://mugen87.github.io/y
 
 ## Examples
 
-We have several examples [on the website](https://mugen87.github.io/yuka/examples/). If you donwload the repository and execute `npm install && npm start` in the main directory, you start a local server and can check out the examples on your computer.
+We have several examples [on the website](https://mugen87.github.io/yuka/examples/). If you donwload the repository and execute `npm install && npm start` in the main directory, you can start a local server and check out the examples on your computer.
 
 ## Resources
 
