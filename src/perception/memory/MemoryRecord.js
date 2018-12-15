@@ -29,7 +29,7 @@ class MemoryRecord {
 		this.timeLastSensed = - 1;
 
 		/**
-		*	Marks the position where the opponent was last sensed.
+		* Marks the position where the opponent was last sensed.
 		* @type Vector3
 		*/
 		this.lastSensedPosition = new Vector3();
