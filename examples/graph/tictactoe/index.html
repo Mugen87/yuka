@@ -1,0 +1,262 @@
+<html lang="en">
+<head>
+		<title>Yuka | Tic-Tac-Toe</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
+		<style>
+			#container {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+				width: 100%;
+			}
+			.row {
+				display: flex;
+				justify-content: center;
+			}
+			.cell {
+				width: 150px;
+				height: 150px;
+				line-height: 150px;
+				margin: 8px;
+				background-color: #ee0808;
+				color: #ffffff;
+				text-align: center;
+				font-size: 150px;
+				cursor: pointer;
+			}
+			button {
+				height: 20px;
+				width: 120px;
+				color: #ffffff;
+				background: transparent;
+				outline: 1px solid #ffffff;
+				border: 0px;
+				cursor: pointer;
+			}
+			#intro div {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+			}
+		</style>
+</head>
+<body>
+
+	<section id="intro">
+		<div id="startSection">
+			<p>
+				Welcome to "Tic-Tac-Toe"
+			</p>
+			<p class="sub">
+				Do you want to make the first move?
+			</p>
+			<p>
+				<button type="button" data-player="1">Yes please!</button> <button type="button" data-player="2">Let the AI begin!</button>
+			</p>
+		</div>
+		<div id="endSection" style="display: none;">
+			<p id="result">
+			</p>
+			<p>
+				<button type="button">Restart Game</button>
+			</p>
+		</div>
+	</section>
+
+	<section id="container">
+		<section id="board">
+			<div class="row">
+				<div class="cell" data-cellId="0"></div>
+				<div class="cell" data-cellId="1"></div>
+				<div class="cell" data-cellId="2"></div>
+			</div>
+			<div class="row">
+				<div class="cell" data-cellId="3"></div>
+				<div class="cell" data-cellId="4"></div>
+				<div class="cell" data-cellId="5"></div>
+			</div>
+			<div class="row">
+				<div class="cell" data-cellId="6"></div>
+				<div class="cell" data-cellId="7"></div>
+				<div class="cell" data-cellId="8"></div>
+			</div>
+		</section>
+	</section>
+
+<script type="module">
+
+	import { TTTGraph } from './src/TTTGraph.js';
+
+	let player, graph, fin = false;
+
+	initUI();
+
+	function initUI() {
+
+		// init buttons
+
+		const buttons = document.querySelectorAll( '#startSection button' );
+
+		for ( let button of buttons ) {
+
+			button.addEventListener( 'click', onButtonClick );
+
+		}
+
+		const button = document.querySelector( '#endSection button' );
+
+		button.addEventListener( 'click', onRestart );
+
+		// init cells
+
+		const cells = document.querySelectorAll( '.cell' );
+
+		for ( let cell of cells ) {
+
+			cell.addEventListener( 'click', onCellClick );
+
+		}
+
+	}
+
+	function initGame() {
+
+		const intro = document.getElementById( 'intro' );
+		intro.classList.add( 'hidden' );
+
+		// create game state graph
+
+		graph = new TTTGraph( player );
+
+		// let the ai make its first move
+
+		if ( player === 2 ) {
+
+			graph.aiTurn();
+			updateUI();
+
+		}
+
+	}
+
+	function onButtonClick( event ) {
+
+		const button = event.target;
+		player = parseInt( button.dataset.player );
+
+		initGame();
+
+	}
+
+	function onRestart() {
+
+		window.location.reload();
+
+	}
+
+	function onCellClick( event ) {
+
+		if ( fin === false ) {
+
+			const cell = event.target;
+			const cellid = cell.dataset.cellid;
+
+			graph.turn( cellid, graph.currentPlayer );
+			evaluate();
+
+			if ( fin === false ) {
+
+				graph.aiTurn();
+				evaluate();
+
+			}
+
+			updateUI();
+
+		}
+
+	}
+
+	function evaluate() {
+
+		const board = graph.getNode( graph.currentNode );
+
+		if ( board.win === true || board.finished === true ) fin = true;
+
+	}
+
+	function updateUI() {
+
+		const node = graph.getNode( graph.currentNode );
+
+		const board = node.board;
+		const cells = document.querySelectorAll( '.cell' );
+
+		for ( let cell of cells ) {
+
+			const cellid = cell.dataset.cellid;
+			const status = board[ cellid ];
+
+			switch ( status ) {
+
+				case 1:
+					cell.textContent = 'X';
+					cell.removeEventListener( 'click', onCellClick );
+					break;
+
+				case 2:
+					cell.textContent = 'O';
+					cell.removeEventListener( 'click', onCellClick );
+					break;
+
+				default:
+					cell.textContent = '';
+					break;
+
+			}
+
+		}
+
+		if ( fin === true ) {
+
+			const intro = document.getElementById( 'intro' );
+			intro.classList.remove( 'hidden' );
+
+			const startSection = document.getElementById( 'startSection' );
+			startSection.style.display = 'none';
+
+			const endSection = document.getElementById( 'endSection' );
+			endSection.style.display = 'flex';
+
+			const result = document.getElementById( 'result' );
+
+			if ( node.win === true ) {
+
+				if ( node.winPlayer === player ) {
+
+					result.textContent = 'You win the game!';
+
+				} else {
+
+					result.textContent = 'The AI wins the game!';
+
+				}
+
+			} else {
+
+				result.textContent = 'Draw!';
+
+			}
+
+		}
+
+	}
+
+</script>
+
+</body>
+</html>
