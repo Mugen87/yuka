@@ -1,6 +1,6 @@
 /**
-* This class represents an implementation of the MinMax algorithm. It is based
-* on the generic graph class of Yuka and enables a optimal play behavior of the AI.
+* This class represents an implementation of the MinMax algorithm for Tic-Tac-Toe. It is based
+* on the generic graph class of Yuka and enables an optimal play behavior of the AI.
 *
 * More information about MinMax right here: https://www.youtube.com/watch?v=5oXyibEgJr0
 *
