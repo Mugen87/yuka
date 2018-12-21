@@ -1,6 +1,7 @@
 /**
- * @author robp94 / https://github.com/robp94
- */
+* @author robp94 / https://github.com/robp94
+*/
+
 import { Edge } from '../../../../build/yuka.module.js';
 
 class TTTEdge extends Edge {

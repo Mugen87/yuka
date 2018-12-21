@@ -1,6 +1,11 @@
 /**
- * @author robp94 / https://github.com/robp94
- */
+* This class represents an implementation of the MinMax algorithm. It is based
+* on the generic graph class of Yuka and enables a optimal play behavior of the AI.
+*
+* More information about MinMax right here: https://www.youtube.com/watch?v=5oXyibEgJr0
+*
+* @author robp94 / https://github.com/robp94
+*/
 
 import { Graph } from '../../../../build/yuka.module.js';
 import { TTTNode } from './TTTNode.js';
