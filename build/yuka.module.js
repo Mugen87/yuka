@@ -5655,7 +5655,7 @@ function compare( a, b ) {
 }
 
 /**
-* Implementation of Breadth First Search.
+* Implementation of Breadth-first Search.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -5858,7 +5858,7 @@ class BFS {
 }
 
 /**
-* Implementation of Depth First Search.
+* Implementation of Depth-first Search.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

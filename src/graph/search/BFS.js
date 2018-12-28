@@ -1,7 +1,7 @@
 import { Edge } from '../core/Edge.js';
 
 /**
-* Implementation of Breadth First Search.
+* Implementation of Breadth-first Search.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

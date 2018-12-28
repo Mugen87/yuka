@@ -1,7 +1,7 @@
 import { Edge } from '../core/Edge.js';
 
 /**
-* Implementation of Depth First Search.
+* Implementation of Depth-first Search.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
