@@ -52,32 +52,49 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
-* Base class for all concrete steering behaviors. They produce a force that describes
-* where an agent should move and how fast it should travel to get there.
+            <pre class="prettyprint source linenums"><code>import { SteeringBehavior } from '../SteeringBehavior.js';
+import { ArriveBehavior } from './ArriveBehavior.js';
+import { Vector3 } from '../../math/Vector3.js';
+
+const offsetWorld = new Vector3();
+const toOffset = new Vector3();
+const newLeaderVelocity = new Vector3();
+const predcitedPosition = new Vector3();
+
+/**
+* This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
+* Useful for creating formations.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
+* @augments SteeringBehavior
 */
-class SteeringBehavior {
+class OffsetPursuitBehavior extends SteeringBehavior {
 
 	/**
-	* Constructs a new steering behavior.
+	* Constructs a new offset pursuit behavior.
+	*
+	* @param {Vector3} target - The target vector.
 	*/
-	constructor() {
+	constructor( leader = null, offset = new Vector3() ) {
+
+		super();
 
 		/**
-		* Whether this steering behavior is active or not.
-		* @type Boolean
-		* @default true
+		* The leader vehicle.
+		* @type Vehicle
 		*/
-		this.active = true;
+		this.leader = leader;
 
 		/**
-		* Can be used to tweak the amount that a steering force contributes to the total steering force.
-		* @type Number
-		* @default 1
+		* The offset from the leader.
+		* @type Vector3
 		*/
-		this.weigth = 1;
+		this.offset = offset;
+
+		// internal behaviors
+
+		this._arrive = new ArriveBehavior();
+		this._arrive.deceleration = 1.5;
 
 	}
 
@@ -89,11 +106,43 @@ class SteeringBehavior {
 	* @param {Number} delta - The time delta.
 	* @return {Vector3} The force/result vector.
 	*/
-	calculate( /* vehicle, force, delta */ ) {}
+	calculate( vehicle, force /*, delta */ ) {
+
+		const leader = this.leader;
+		const offset = this.offset;
+
+		// calculate the offset's position in world space
+
+		offsetWorld.copy( offset ).applyMatrix4( leader.matrix );
+
+		// calculate the vector that points from the vehicle to the offset position
+
+		toOffset.subVectors( offsetWorld, vehicle.position );
+
+		// the lookahead time is proportional to the distance between the leader
+		// and the pursuer and is inversely proportional to the sum of both
+		// agent's velocities
+
+		const lookAheadTime = toOffset.length() / ( vehicle.maxSpeed + leader.getSpeed() );
+
+		// calculate new velocity and predicted future position
+
+		newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
+
+		predcitedPosition.addVectors( offsetWorld, newLeaderVelocity );
+
+		// now arrive at the predicted future position of the offset
+
+		this._arrive.target = predcitedPosition;
+		this._arrive.calculate( vehicle, force );
+
+		return force;
+
+	}
 
 }
 
-export { SteeringBehavior };
+export { OffsetPursuitBehavior };
 </code></pre>
         </article>
     </section>

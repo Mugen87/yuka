@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,54 +47,760 @@
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
-* Base class for all concrete steering behaviors. They produce a force that describes
-* where an agent should move and how fast it should travel to get there.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-*/
-class SteeringBehavior {
+        <h2><span class="attribs"><span class="type-signature"></span></span>OffsetPursuitBehavior<span class="signature">(target)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
+Useful for creating formations.</p></div>
+        
+    
+</header>
 
-	/**
-	* Constructs a new steering behavior.
-	*/
-	constructor() {
+<article>
+    
+        <div class="container-overview">
+        
+            
 
-		/**
-		* Whether this steering behavior is active or not.
-		* @type Boolean
-		* @default true
-		*/
-		this.active = true;
+<dt>
+    
+        <h4 class="name" id="OffsetPursuitBehavior">
+            
+                new <span class="type-signature"></span>OffsetPursuitBehavior<span class="signature">(target)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html">steering/behaviors/OffsetPursuitBehavior.js</a></code>,
+                <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html#line17">line 17</a></code>
+            </div>
+            
+        </h4>
 
-		/**
-		* Can be used to tweak the amount that a steering force contributes to the total steering force.
-		* @type Number
-		* @default 1
-		*/
-		this.weigth = 1;
+        
+    
+</dt>
+<dd>
 
-	}
+    
+    <div class="description">
+        <p>Constructs a new offset pursuit behavior.</p>
+    </div>
+    
 
-	/**
-	* Calculates the steering force for a single simulation step.
-	*
-	* @param {Vehicle} vehicle - The game entity the force is produced for.
-	* @param {Vector3} force - The force/result vector.
-	* @param {Number} delta - The time delta.
-	* @return {Vector3} The force/result vector.
-	*/
-	calculate( /* vehicle, force, delta */ ) {}
+    
 
-}
+    
 
-export { SteeringBehavior };
-</code></pre>
-        </article>
-    </section>
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The target vector.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="https://github.com/Mugen87">Mugen87</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+        </div>
+    
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="SteeringBehavior.html">SteeringBehavior</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="active">
+    <span class="type-signature"></span>active<span class="type-signature"> :Boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="steering_SteeringBehavior.js.html">steering/SteeringBehavior.js</a></code>,
+        <code><a href="steering_SteeringBehavior.js.html#line19">line 19</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Whether this steering behavior is active or not.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#active">SteeringBehavior#active</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>true</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="leader">
+    <span class="type-signature"></span>leader<span class="type-signature"> :<a href="Vehicle.html">Vehicle</a></span>
+    
+    <div class="container-source members">
+        <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html">steering/behaviors/OffsetPursuitBehavior.js</a></code>,
+        <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html#line32">line 32</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The leader vehicle.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Vehicle.html">Vehicle</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="offset">
+    <span class="type-signature"></span>offset<span class="type-signature"> :<a href="Vector3.html">Vector3</a></span>
+    
+    <div class="container-source members">
+        <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html">steering/behaviors/OffsetPursuitBehavior.js</a></code>,
+        <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html#line38">line 38</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The offset from the leader.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="weigth">
+    <span class="type-signature"></span>weigth<span class="type-signature"> :Number</span>
+    
+    <div class="container-source members">
+        <code><a href="steering_SteeringBehavior.js.html">steering/SteeringBehavior.js</a></code>,
+        <code><a href="steering_SteeringBehavior.js.html#line26">line 26</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Can be used to tweak the amount that a steering force contributes to the total steering force.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Number</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#weigth">SteeringBehavior#weigth</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>1</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id="calculate">
+            
+                <span class="type-signature"></span>calculate<span class="signature">(vehicle, force, delta)</span><span class="type-signature"> &rarr; {<a href="Vector3.html">Vector3</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html">steering/behaviors/OffsetPursuitBehavior.js</a></code>,
+                <code><a href="steering_behaviors_OffsetPursuitBehavior.js.html#line55">line 55</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Calculates the steering force for a single simulation step.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>vehicle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vehicle.html">Vehicle</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The game entity the force is produced for.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>force</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The force/result vector.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The time delta.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+
+
+
+- <p>The force/result vector.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#calculate">SteeringBehavior#calculate</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
@@ -113,7 +817,7 @@ export { SteeringBehavior };
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = '_sub'.replace(/"/g, '_');
+        var id = 'OffsetPursuitBehavior_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 
