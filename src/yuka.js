@@ -60,6 +60,7 @@ export { FleeBehavior } from './steering/behaviors/FleeBehavior.js';
 export { FollowPathBehavior } from './steering/behaviors/FollowPathBehavior.js';
 export { InterposeBehavior } from './steering/behaviors/InterposeBehavior.js';
 export { ObstacleAvoidanceBehavior } from './steering/behaviors/ObstacleAvoidanceBehavior.js';
+export { OffsetPursuitBehavior } from './steering/behaviors/OffsetPursuitBehavior.js';
 export { PursuitBehavior } from './steering/behaviors/PursuitBehavior.js';
 export { SeekBehavior } from './steering/behaviors/SeekBehavior.js';
 export { SeparationBehavior } from './steering/behaviors/SeparationBehavior.js';

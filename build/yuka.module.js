@@ -10913,11 +10913,97 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 }
 
+const offsetWorld = new Vector3();
+const toOffset = new Vector3();
+const newLeaderVelocity = new Vector3();
+const predcitedPosition$1 = new Vector3();
+
+/**
+* This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
+* Useful for creating formations.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments SteeringBehavior
+*/
+class OffsetPursuitBehavior extends SteeringBehavior {
+
+	/**
+	* Constructs a new offset pursuit behavior.
+	*
+	* @param {Vector3} target - The target vector.
+	*/
+	constructor( leader = null, offset = new Vector3() ) {
+
+		super();
+
+		/**
+		* The leader vehicle.
+		* @type Vehicle
+		*/
+		this.leader = leader;
+
+		/**
+		* The offset from the leader.
+		* @type Vector3
+		*/
+		this.offset = offset;
+
+		// internal behaviors
+
+		this._arrive = new ArriveBehavior();
+		this._arrive.deceleration = 1.5;
+
+	}
+
+	/**
+	* Calculates the steering force for a single simulation step.
+	*
+	* @param {Vehicle} vehicle - The game entity the force is produced for.
+	* @param {Vector3} force - The force/result vector.
+	* @param {Number} delta - The time delta.
+	* @return {Vector3} The force/result vector.
+	*/
+	calculate( vehicle, force /*, delta */ ) {
+
+		const leader = this.leader;
+		const offset = this.offset;
+
+		// calculate the offset's position in world space
+
+		offsetWorld.copy( offset ).applyMatrix4( leader.matrix );
+
+		// calculate the vector that points from the vehicle to the offset position
+
+		toOffset.subVectors( offsetWorld, vehicle.position );
+
+		// the lookahead time is proportional to the distance between the leader
+		// and the pursuer and is inversely proportional to the sum of both
+		// agent's velocities
+
+		const lookAheadTime = toOffset.length() / ( vehicle.maxSpeed + leader.getSpeed() );
+
+		// calculate new velocity and predicted future position
+
+		newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
+
+		predcitedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
+
+		// now arrive at the predicted future position of the offset
+
+		this._arrive.target = predcitedPosition$1;
+		this._arrive.calculate( vehicle, force );
+
+		return force;
+
+	}
+
+}
+
 const displacement$4 = new Vector3();
 const vehicleDirection = new Vector3();
 const evaderDirection = new Vector3();
 const newEvaderVelocity = new Vector3();
-const predcitedPosition$1 = new Vector3();
+const predcitedPosition$2 = new Vector3();
 
 /**
 * This steering behavior is useful when an agent is required to intercept a moving agent.
@@ -11004,11 +11090,11 @@ class PursuitBehavior extends SteeringBehavior {
 		// calculate new velocity and predicted future position
 
 		newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
-		predcitedPosition$1.addVectors( evader.position, newEvaderVelocity );
+		predcitedPosition$2.addVectors( evader.position, newEvaderVelocity );
 
 		// now seek to the predicted future position of the evader
 
-		this._seek.target = predcitedPosition$1;
+		this._seek.target = predcitedPosition$2;
 		this._seek.calculate( vehicle, force );
 
 		return force;
@@ -11557,4 +11643,4 @@ class Trigger {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };

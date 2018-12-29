@@ -1,0 +1,146 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Steering Behaviors | Offset Pursuit</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
+	</head>
+<body>
+
+	<section id="info">
+		<p>
+			This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
+		</p>
+	</section>
+
+	<script type="module">
+
+		import * as YUKA from '../../../build/yuka.module.js';
+		import * as THREE from '../../lib/three.module.js';
+
+		let renderer, scene, camera;
+
+		let entityManager, time, target;
+
+		init();
+		animate();
+
+		function init() {
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 100 );
+			camera.position.set( 0, 20, 0 );
+			camera.lookAt( scene.position );
+
+			//
+
+			const vehicleGeometry = new THREE.ConeBufferGeometry( 0.2, 1, 8 );
+			vehicleGeometry.rotateX( Math.PI * 0.5 );
+			const vehicleMaterial = new THREE.MeshNormalMaterial();
+
+			const leaderMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+			leaderMesh.matrixAutoUpdate = false;
+			scene.add( leaderMesh );
+
+			const followerMeshTemplate = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
+			followerMeshTemplate.matrixAutoUpdate = false;
+
+			const grid = new THREE.GridHelper( 10, 25 );
+			scene.add( grid );
+
+			//
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			// game setup
+
+			entityManager = new YUKA.EntityManager();
+			time = new YUKA.Time();
+
+			target = new YUKA.Vector3();
+
+			// leader
+
+			const leader = new YUKA.Vehicle();
+			leader.setRenderComponent( leaderMesh, sync );
+
+			const seekBehavior = new YUKA.SeekBehavior( target );
+			leader.steering.add( seekBehavior );
+
+			entityManager.add( leader );
+
+			// follower
+
+			const offsets = [
+				new YUKA.Vector3( 0.5, 0, - 0.5 ),
+				new YUKA.Vector3( - 0.5, 0, - 0.5 ),
+				new YUKA.Vector3( 1.5, 0, - 1.5 ),
+				new YUKA.Vector3( - 1.5, 0, - 1.5 )
+			];
+
+			for ( let i = 0; i < 4; i ++ ) {
+
+				const followerMesh = followerMeshTemplate.clone();
+				scene.add( followerMesh );
+
+				const follower = new YUKA.Vehicle();
+				follower.maxSpeed = 2;
+				follower.position.copy( offsets[ i ] ); // initial position
+				follower.scale.set( 0.5, 0.5, 0.5 ); // make the followers a bit smaller
+				follower.setRenderComponent( followerMesh, sync );
+
+				const offsetPursuitBehavior = new YUKA.OffsetPursuitBehavior( leader, offsets[ i ] );
+				follower.steering.add( offsetPursuitBehavior );
+
+				entityManager.add( follower );
+
+			}
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			time.update();
+
+			const deltaTime = time.getDelta();
+			const elapsedTime = time.getElapsed();
+
+			target.z = Math.cos( elapsedTime * 0.2 ) * 5;
+			target.x = Math.sin( elapsedTime * 0.2 ) * 5;
+
+			entityManager.update( deltaTime );
+
+			renderer.render( scene, camera );
+
+		}
+
+		function sync( entity, renderComponent ) {
+
+			renderComponent.matrix.copy( entity.matrix );
+
+		}
+
+	</script>
+
+</body>
+</html>
