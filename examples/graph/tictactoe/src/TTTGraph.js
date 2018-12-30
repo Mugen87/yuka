@@ -139,6 +139,7 @@ class TTTGraph extends Graph {
 
 		const possibleMoves = [];
 		this.getEdgesOfNode( this.currentNode, possibleMoves );
+		let bestMove;
 
 		for ( let i = 0, l = possibleMoves.length; i < l; i ++ ) {
 
@@ -147,12 +148,29 @@ class TTTGraph extends Graph {
 
 			if ( node.weight === currentWeight ) {
 
-				this.turn( move.cell, this.aiPlayer );
-				break;
+				// check if the AI can immediately finish the game
+
+				if ( node.finished ) {
+
+					// if so, perform the move
+
+					this.turn( move.cell, this.aiPlayer );
+					return;
+
+				} else if ( bestMove === undefined ) {
+
+					// otherwise save it if no better move is found
+
+					bestMove = move;
+
+				}
+
 
 			}
 
 		}
+
+		this.turn( bestMove.cell, this.aiPlayer );
 
 	}
 
