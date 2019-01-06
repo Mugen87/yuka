@@ -4551,7 +4551,7 @@
 
 			/**
 			* The maximum of the set's membership function. For instamce, if
-		  * the set is triangular then this will be the peak point of the triangular.
+			* the set is triangular then this will be the peak point of the triangular.
 			* If the set has a plateau then this value will be the mid point of the
 			* plateau. Used to avoid runtime calculations.
 			* @type Number
@@ -5172,7 +5172,7 @@
 
 		/**
 		* Evaluates the rule and updates the degree of membership of the consequent term with
-	  * the degree of membership of the antecedent term.
+		* the degree of membership of the antecedent term.
 		*
 		* @return {FuzzyRule} A reference to this fuzzy rule.
 		*/
@@ -5336,7 +5336,7 @@
 		/**
 		* Defuzzifies the FLV using the "Centroid" method.
 		*
-		*	@param {Number} samples - The amount of samples used for defuzzification.
+		* @param {Number} samples - The amount of samples used for defuzzification.
 		* @return {Number} The defuzzified, crips value.
 		*/
 		defuzzifyCentroid( samples = 10 ) {

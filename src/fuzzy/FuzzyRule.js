@@ -48,7 +48,7 @@ class FuzzyRule {
 
 	/**
 	* Evaluates the rule and updates the degree of membership of the consequent term with
-  * the degree of membership of the antecedent term.
+	* the degree of membership of the antecedent term.
 	*
 	* @return {FuzzyRule} A reference to this fuzzy rule.
 	*/

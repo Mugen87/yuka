@@ -32,7 +32,7 @@ class FuzzySet extends FuzzyTerm {
 
 		/**
 		* The maximum of the set's membership function. For instamce, if
-	  * the set is triangular then this will be the peak point of the triangular.
+		* the set is triangular then this will be the peak point of the triangular.
 		* If the set has a plateau then this value will be the mid point of the
 		* plateau. Used to avoid runtime calculations.
 		* @type Number
