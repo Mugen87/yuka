@@ -1,7 +1,7 @@
 import { FuzzySet } from '../FuzzySet.js';
 
 /**
-* Class for representing fuzzy set that has a triangular shape. It can be defined
+* Class for representing a fuzzy set that has a triangular shape. It can be defined
 * by a left point, a midpoint (peak) and a right point.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}

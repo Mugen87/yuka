@@ -4626,7 +4626,7 @@ class FuzzySet extends FuzzyTerm {
 }
 
 /**
-* Class for representing fuzzy set that has a left shoulder shape. The range between
+* Class for representing a fuzzy set that has a left shoulder shape. The range between
 * the midpoint and left border point represents the same DOM.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -4711,7 +4711,7 @@ class LeftShoulderFuzzySet extends FuzzySet {
 }
 
 /**
-* Class for representing fuzzy set that has a right shoulder shape. The range between
+* Class for representing a fuzzy set that has a right shoulder shape. The range between
 * the midpoint and right border point represents the same DOM.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -4858,7 +4858,7 @@ class SingletonFuzzySet extends FuzzySet {
 }
 
 /**
-* Class for representing fuzzy set that has a triangular shape. It can be defined
+* Class for representing a fuzzy set that has a triangular shape. It can be defined
 * by a left point, a midpoint (peak) and a right point.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}

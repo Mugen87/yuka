@@ -1,7 +1,7 @@
 import { FuzzySet } from '../FuzzySet.js';
 
 /**
-* Class for representing fuzzy set that has a right shoulder shape. The range between
+* Class for representing a fuzzy set that has a right shoulder shape. The range between
 * the midpoint and right border point represents the same DOM.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
