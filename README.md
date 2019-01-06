@@ -7,6 +7,7 @@ Yuka is a JavaScript library for developing Game AI.
 * **Navigation:** Graph classes, search algorithms and a navigation mesh implementation enables advanced path finding.
 * **Perception:** Create game entities with a short-term memory and a vision component.
 * **Trigger:** Use triggers to generate dynamic actions in your game.
+* **Fuzzy Logic:** Make your game entities smarter with Yuka's fuzzy inference system.
 
 Yuka is a standalone library and independent of a particular 3D engine.
 
