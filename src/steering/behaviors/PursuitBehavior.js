@@ -6,7 +6,7 @@ const displacement = new Vector3();
 const vehicleDirection = new Vector3();
 const evaderDirection = new Vector3();
 const newEvaderVelocity = new Vector3();
-const predcitedPosition = new Vector3();
+const predictedPosition = new Vector3();
 
 /**
 * This steering behavior is useful when an agent is required to intercept a moving agent.
@@ -93,11 +93,11 @@ class PursuitBehavior extends SteeringBehavior {
 		// calculate new velocity and predicted future position
 
 		newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
-		predcitedPosition.addVectors( evader.position, newEvaderVelocity );
+		predictedPosition.addVectors( evader.position, newEvaderVelocity );
 
 		// now seek to the predicted future position of the evader
 
-		this._seek.target = predcitedPosition;
+		this._seek.target = predictedPosition;
 		this._seek.calculate( vehicle, force );
 
 		return force;

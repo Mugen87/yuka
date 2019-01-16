@@ -5,7 +5,7 @@ import { Vector3 } from '../../math/Vector3.js';
 const offsetWorld = new Vector3();
 const toOffset = new Vector3();
 const newLeaderVelocity = new Vector3();
-const predcitedPosition = new Vector3();
+const predictedPosition = new Vector3();
 
 /**
 * This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
@@ -75,11 +75,11 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 		newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
 
-		predcitedPosition.addVectors( offsetWorld, newLeaderVelocity );
+		predictedPosition.addVectors( offsetWorld, newLeaderVelocity );
 
 		// now arrive at the predicted future position of the offset
 
-		this._arrive.target = predcitedPosition;
+		this._arrive.target = predictedPosition;
 		this._arrive.calculate( vehicle, force );
 
 		return force;

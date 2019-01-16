@@ -4,8 +4,8 @@ import { Vector3 } from '../../math/Vector3.js';
 
 const midPoint = new Vector3();
 const translation = new Vector3();
-const predcitedPosition1 = new Vector3();
-const predcitedPosition2 = new Vector3();
+const predictedPosition1 = new Vector3();
+const predictedPosition2 = new Vector3();
 
 /**
 * This steering behavior produces a force that moves a vehicle to the midpoint
@@ -78,14 +78,14 @@ class InterposeBehavior extends SteeringBehavior {
 		// continue on a straight trajectory and extrapolate to get their future positions
 
 		translation.copy( entity1.velocity ).multiplyScalar( time );
-		predcitedPosition1.addVectors( entity1.position, translation );
+		predictedPosition1.addVectors( entity1.position, translation );
 
 		translation.copy( entity2.velocity ).multiplyScalar( time );
-		predcitedPosition2.addVectors( entity2.position, translation );
+		predictedPosition2.addVectors( entity2.position, translation );
 
 		// calculate the mid point of these predicted positions
 
-		midPoint.addVectors( predcitedPosition1, predcitedPosition2 ).multiplyScalar( 0.5 );
+		midPoint.addVectors( predictedPosition1, predictedPosition2 ).multiplyScalar( 0.5 );
 
 		// then steer to arrive at it
 

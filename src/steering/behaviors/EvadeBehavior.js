@@ -3,8 +3,8 @@ import { FleeBehavior } from './FleeBehavior.js';
 import { Vector3 } from '../../math/Vector3.js';
 
 const displacement = new Vector3();
-const newPuruserVelocity = new Vector3();
-const predcitedPosition = new Vector3();
+const newPursuerVelocity = new Vector3();
+const predictedPosition = new Vector3();
 
 /**
 * This steering behavior is is almost the same as {@link PursuitBehavior} except that
@@ -72,12 +72,12 @@ class EvadeBehavior extends SteeringBehavior {
 
 		// calculate new velocity and predicted future position
 
-		newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-		predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
+		newPursuerVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+		predictedPosition.addVectors( pursuer.position, newPursuerVelocity );
 
 		// now flee away from predicted future position of the pursuer
 
-		this._flee.target = predcitedPosition;
+		this._flee.target = predictedPosition;
 		this._flee.panicDistance = this.panicDistance;
 		this._flee.calculate( vehicle, force );
 

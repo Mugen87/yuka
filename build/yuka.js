@@ -11688,8 +11688,8 @@
 	}
 
 	const displacement$3 = new Vector3();
-	const newPuruserVelocity = new Vector3();
-	const predcitedPosition = new Vector3();
+	const newPursuerVelocity = new Vector3();
+	const predictedPosition = new Vector3();
 
 	/**
 	* This steering behavior is is almost the same as {@link PursuitBehavior} except that
@@ -11757,12 +11757,12 @@
 
 			// calculate new velocity and predicted future position
 
-			newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-			predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
+			newPursuerVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+			predictedPosition.addVectors( pursuer.position, newPursuerVelocity );
 
 			// now flee away from predicted future position of the pursuer
 
-			this._flee.target = predcitedPosition;
+			this._flee.target = predictedPosition;
 			this._flee.panicDistance = this.panicDistance;
 			this._flee.calculate( vehicle, force );
 
@@ -11856,8 +11856,8 @@
 
 	const midPoint = new Vector3();
 	const translation = new Vector3();
-	const predcitedPosition1 = new Vector3();
-	const predcitedPosition2 = new Vector3();
+	const predictedPosition1 = new Vector3();
+	const predictedPosition2 = new Vector3();
 
 	/**
 	* This steering behavior produces a force that moves a vehicle to the midpoint
@@ -11930,14 +11930,14 @@
 			// continue on a straight trajectory and extrapolate to get their future positions
 
 			translation.copy( entity1.velocity ).multiplyScalar( time );
-			predcitedPosition1.addVectors( entity1.position, translation );
+			predictedPosition1.addVectors( entity1.position, translation );
 
 			translation.copy( entity2.velocity ).multiplyScalar( time );
-			predcitedPosition2.addVectors( entity2.position, translation );
+			predictedPosition2.addVectors( entity2.position, translation );
 
 			// calculate the mid point of these predicted positions
 
-			midPoint.addVectors( predcitedPosition1, predcitedPosition2 ).multiplyScalar( 0.5 );
+			midPoint.addVectors( predictedPosition1, predictedPosition2 ).multiplyScalar( 0.5 );
 
 			// then steer to arrive at it
 
@@ -12109,7 +12109,7 @@
 	const offsetWorld = new Vector3();
 	const toOffset = new Vector3();
 	const newLeaderVelocity = new Vector3();
-	const predcitedPosition$1 = new Vector3();
+	const predictedPosition$1 = new Vector3();
 
 	/**
 	* This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
@@ -12179,11 +12179,11 @@
 
 			newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
 
-			predcitedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
+			predictedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
 
 			// now arrive at the predicted future position of the offset
 
-			this._arrive.target = predcitedPosition$1;
+			this._arrive.target = predictedPosition$1;
 			this._arrive.calculate( vehicle, force );
 
 			return force;
@@ -12196,7 +12196,7 @@
 	const vehicleDirection = new Vector3();
 	const evaderDirection = new Vector3();
 	const newEvaderVelocity = new Vector3();
-	const predcitedPosition$2 = new Vector3();
+	const predictedPosition$2 = new Vector3();
 
 	/**
 	* This steering behavior is useful when an agent is required to intercept a moving agent.
@@ -12283,11 +12283,11 @@
 			// calculate new velocity and predicted future position
 
 			newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
-			predcitedPosition$2.addVectors( evader.position, newEvaderVelocity );
+			predictedPosition$2.addVectors( evader.position, newEvaderVelocity );
 
 			// now seek to the predicted future position of the evader
 
-			this._seek.target = predcitedPosition$2;
+			this._seek.target = predictedPosition$2;
 			this._seek.calculate( vehicle, force );
 
 			return force;
