@@ -90,7 +90,7 @@ class Matrix3 {
 	}
 
 	/**
-	* Transforms this matrix to an indentiy matrix.
+	* Transforms this matrix to an identity matrix.
 	*
 	* @return {Matrix3} A reference to this matrix.
 	*/

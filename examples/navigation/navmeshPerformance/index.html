@@ -50,7 +50,7 @@
 		const pathHelpers = [];
 
 		const params = {
-			showNavigatonPaths: false,
+			showNavigationPaths: false,
 			showRegions: false,
 			showSpatialIndex: false,
 		};
@@ -98,7 +98,7 @@
 
 			var gui = new DAT.GUI( { width: 400 } );
 
-			gui.add( params, 'showNavigatonPaths', 1, 30 ).name( 'show navigation paths' ).onChange( ( value ) => {
+			gui.add( params, 'showNavigationPaths', 1, 30 ).name( 'show navigation paths' ).onChange( ( value ) => {
 
 				for ( let i = 0, l = pathHelpers.length; i < l; i ++ ) {
 

@@ -18,9 +18,9 @@ class WanderBehavior extends SteeringBehavior {
 	/**
 	* Constructs a new wander behavior.
 	*
-	* @param {Numer} radius - The radius of the wander circle for the wander behavior.
-	* @param {Numer} distance - The distance the wander circle is projected in front of the agent.
-	* @param {Numer} jitter - The maximum amount of displacement along the sphere each frame.
+	* @param {Number} radius - The radius of the wander circle for the wander behavior.
+	* @param {Number} distance - The distance the wander circle is projected in front of the agent.
+	* @param {Number} jitter - The maximum amount of displacement along the sphere each frame.
 	*/
 	constructor( radius = 1, distance = 5, jitter = 5 ) {
 

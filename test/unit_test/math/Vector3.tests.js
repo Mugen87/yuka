@@ -119,7 +119,7 @@ describe( 'Vector3', function () {
 
 	describe( '#subScalar()', function () {
 
-		it( 'should substract the given scalar from the current instance', function () {
+		it( 'should subtract the given scalar from the current instance', function () {
 
 			const v1 = new Vector3( x, y, z );
 			v1.subScalar( 1 );
@@ -249,7 +249,7 @@ describe( 'Vector3', function () {
 
 	describe( '#min()', function () {
 
-		it( 'should produce a vector with minimum values of the given vector and this istance', function () {
+		it( 'should produce a vector with minimum values of the given vector and this instance', function () {
 
 			const v0 = new Vector3( 4, 5, 6 );
 			const v1 = new Vector3( 6, 5, 4 );
@@ -264,7 +264,7 @@ describe( 'Vector3', function () {
 
 	describe( '#max()', function () {
 
-		it( 'should produce a vector with maximum values of the given vector and this istance', function () {
+		it( 'should produce a vector with maximum values of the given vector and this instance', function () {
 
 			const v0 = new Vector3( 4, 5, 6 );
 			const v1 = new Vector3( 6, 5, 4 );

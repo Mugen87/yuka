@@ -196,7 +196,7 @@ describe( 'FuzzyModule', function () {
 
 			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
 
-			// unkowen defuzzification method (use MaxAv as fallback)
+			// unknown defuzzification method (use MaxAv as fallback)
 
 			expect( fuzzyModule.defuzzify( 'desirability', 2 ) ).to.closeTo( 60.41666666666667, Number.EPSILON );
 

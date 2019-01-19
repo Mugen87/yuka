@@ -1,6 +1,6 @@
 /**
 * Class for representing a heuristic for graph search algorithms based
-* on the euclidian distance. The heuristic assumes that the node have
+* on the euclidean distance. The heuristic assumes that the node have
 * a *position* property of type {@link Vector3}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -8,12 +8,12 @@
 class HeuristicPolicyEuclid {
 
 	/**
-	* Calculates the euclidian distance between two nodes.
+	* Calculates the euclidean distance between two nodes.
 	*
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The euclidian distance between both nodes.
+	* @return {Number} The euclidean distance between both nodes.
 	*/
 	static calculate( graph, source, target ) {
 
@@ -28,7 +28,7 @@ class HeuristicPolicyEuclid {
 
 /**
 * Class for representing a heuristic for graph search algorithms based
-* on the squared euclidian distance. The heuristic assumes that the node
+* on the squared euclidean distance. The heuristic assumes that the node
 * have a *position* property of type {@link Vector3}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -36,12 +36,12 @@ class HeuristicPolicyEuclid {
 class HeuristicPolicyEuclidSquared {
 
 	/**
-	* Calculates the squared euclidian distance between two nodes.
+	* Calculates the squared euclidean distance between two nodes.
 	*
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The squared euclidian distance between both nodes.
+	* @return {Number} The squared euclidean distance between both nodes.
 	*/
 	static calculate( graph, source, target ) {
 
@@ -56,20 +56,20 @@ class HeuristicPolicyEuclidSquared {
 
 /**
 * Class for representing a heuristic for graph search algorithms based
-* on the manhatten distance. The heuristic assumes that the node
+* on the manhattan distance. The heuristic assumes that the node
 * have a *position* property of type {@link Vector3}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
-class HeuristicPolicyManhatten {
+class HeuristicPolicyManhattan {
 
 	/**
-	* Calculates the manhatten distance between two nodes.
+	* Calculates the manhattan distance between two nodes.
 	*
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The manhatten distance between both nodes.
+	* @return {Number} The manhattan distance between both nodes.
 	*/
 	static calculate( graph, source, target ) {
 
@@ -97,7 +97,7 @@ class HeuristicPolicyDijkstra {
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The manhatten distance between both nodes.
+	* @return {Number} The manhattan distance between both nodes.
 	*/
 	static calculate( /* graph, source, target */ ) {
 
@@ -110,6 +110,6 @@ class HeuristicPolicyDijkstra {
 export {
 	HeuristicPolicyEuclid,
 	HeuristicPolicyEuclidSquared,
-	HeuristicPolicyManhatten,
+	HeuristicPolicyManhattan,
 	HeuristicPolicyDijkstra
 };

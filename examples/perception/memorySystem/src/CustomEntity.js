@@ -41,7 +41,7 @@ class CustomEntity extends GameEntity {
 		this.currentTime += delta;
 
 		 // In many scenarios it is not necessary to update the vision in each
-		 // sumulation step. A regulator could be used to restrict the update rate.
+		 // simulation step. A regulator could be used to restrict the update rate.
 
 		this.updateVision();
 
@@ -51,7 +51,7 @@ class CustomEntity extends GameEntity {
 
 		if ( this.memoryRecords.length > 0 ) {
 
-			// Pick the first one. It's highly application specific what record is choosen
+			// Pick the first one. It's highly application specific what record is chosen
 			// for further processing.
 
 			const record = this.memoryRecords[ 0 ];

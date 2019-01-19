@@ -131,7 +131,7 @@ class Vector3 {
 	}
 
 	/**
-	* Substracts the given 3D vector from this 3D vector.
+	* Subtracts the given 3D vector from this 3D vector.
 	*
 	* @param {Vector3} v - The vector to substract.
 	* @return {Vector3} A reference to this vector.
@@ -147,7 +147,7 @@ class Vector3 {
 	}
 
 	/**
-	* Substracts the given scalar from this 3D vector.
+	* Subtracts the given scalar from this 3D vector.
 	*
 	* @param {Number} s - The scalar to substract.
 	* @return {Vector3} A reference to this vector.
@@ -163,7 +163,7 @@ class Vector3 {
 	}
 
 	/**
-	* Substracts two given 3D vectors and stores the result in this 3D vector.
+	* Subtracts two given 3D vectors and stores the result in this 3D vector.
 	*
 	* @param {Vector3} a - The first vector of the operation.
 	* @param {Vector3} b - The second vector of the operation.
@@ -421,9 +421,9 @@ class Vector3 {
 	}
 
 	/**
-	* Computes the manhatten length of this 3D vector.
+	* Computes the manhattan length of this 3D vector.
 	*
-	* @return {Number} The manhatten length of this 3D vector.
+	* @return {Number} The manhattan length of this 3D vector.
 	*/
 	manhattanLength() {
 
@@ -460,10 +460,10 @@ class Vector3 {
 	}
 
 	/**
-	* Computes the manhatten distance between this 3D vector and the given one.
+	* Computes the manhattan distance between this 3D vector and the given one.
 	*
 	* @param {Vector3} v - A 3D vector.
-	* @return {Number} The manhatten distance between two 3D vectors.
+	* @return {Number} The manhattan distance between two 3D vectors.
 	*/
 	manhattanDistanceTo( v ) {
 

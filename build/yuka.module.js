@@ -403,7 +403,7 @@ class EntityManager {
 	/**
 	* Returns an entity by the given name. If no game entity is found, *null*
 	* is returned. This method is more expensive than {@link GameEntity#getEntityById}
-	* and should not be used in each simlation step. Instead, it should be used once
+	* and should not be used in each simulation step. Instead, it should be used once
 	* and the result should be cached for later use.
 	*
 	* @param {String} name - The name of the game entity.
@@ -941,7 +941,7 @@ class Vector3 {
 	}
 
 	/**
-	* Substracts the given 3D vector from this 3D vector.
+	* Subtracts the given 3D vector from this 3D vector.
 	*
 	* @param {Vector3} v - The vector to substract.
 	* @return {Vector3} A reference to this vector.
@@ -957,7 +957,7 @@ class Vector3 {
 	}
 
 	/**
-	* Substracts the given scalar from this 3D vector.
+	* Subtracts the given scalar from this 3D vector.
 	*
 	* @param {Number} s - The scalar to substract.
 	* @return {Vector3} A reference to this vector.
@@ -973,7 +973,7 @@ class Vector3 {
 	}
 
 	/**
-	* Substracts two given 3D vectors and stores the result in this 3D vector.
+	* Subtracts two given 3D vectors and stores the result in this 3D vector.
 	*
 	* @param {Vector3} a - The first vector of the operation.
 	* @param {Vector3} b - The second vector of the operation.
@@ -1231,9 +1231,9 @@ class Vector3 {
 	}
 
 	/**
-	* Computes the manhatten length of this 3D vector.
+	* Computes the manhattan length of this 3D vector.
 	*
-	* @return {Number} The manhatten length of this 3D vector.
+	* @return {Number} The manhattan length of this 3D vector.
 	*/
 	manhattanLength() {
 
@@ -1270,10 +1270,10 @@ class Vector3 {
 	}
 
 	/**
-	* Computes the manhatten distance between this 3D vector and the given one.
+	* Computes the manhattan distance between this 3D vector and the given one.
 	*
 	* @param {Vector3} v - A 3D vector.
-	* @return {Number} The manhatten distance between two 3D vectors.
+	* @return {Number} The manhattan distance between two 3D vectors.
 	*/
 	manhattanDistanceTo( v ) {
 
@@ -1565,7 +1565,7 @@ class Matrix3 {
 	}
 
 	/**
-	* Transforms this matrix to an indentiy matrix.
+	* Transforms this matrix to an identity matrix.
 	*
 	* @return {Matrix3} A reference to this matrix.
 	*/
@@ -2150,7 +2150,7 @@ class Quaternion {
 	* The parameter t is clamped to the range [0, 1].
 	*
 	* @param {Quaternion} q - The target rotation.
-	* @param {Number} t - The interpolation paramter.
+	* @param {Number} t - The interpolation parameter.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
 	slerp( q, t ) {
@@ -2443,7 +2443,7 @@ class Matrix4 {
 	}
 
 	/**
-	* Transforms this matrix to an indentiy matrix.
+	* Transforms this matrix to an identity matrix.
 	*
 	* @return {Matrix4} A reference to this matrix.
 	*/
@@ -3146,7 +3146,7 @@ class GameEntity {
 	* Updates the world matrix representing the world space.
 	*
 	* @param {Boolean} up - Whether to update the world matrices of the parents or not.
-	* @param {Boolean} down - Whether to update the world matrices of the childs or not.
+	* @param {Boolean} down - Whether to update the world matrices of the children or not.
 	* @return {GameEntity} A reference to this game entity.
 	*/
 	updateWorldMatrix( up = false, down = false ) {
@@ -3392,7 +3392,7 @@ class AABB {
 	}
 
 	/**
-	* Returns true if the given ABBB intersects this AABB.
+	* Returns true if the given AABB intersects this AABB.
 	*
 	* @param {AABB} aabb - The AABB to test.
 	* @return {Boolean} The result of the intersection test.
@@ -3932,7 +3932,7 @@ class Regulator {
 }
 
 /**
-* Base class for represeting a state in context of State-driven agent design.
+* Base class for representing a state in context of State-driven agent design.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -4180,7 +4180,7 @@ class StateMachine {
 }
 
 /**
-* Base class for represeting a term in a {@link FuzzyRule}.
+* Base class for representing a term in a {@link FuzzyRule}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -4544,7 +4544,7 @@ class FuzzySet extends FuzzyTerm {
 		this.degreeOfMembership = 0;
 
 		/**
-		* The maximum of the set's membership function. For instamce, if
+		* The maximum of the set's membership function. For instance, if
 		* the set is triangular then this will be the peak point of the triangular.
 		* If the set has a plateau then this value will be the mid point of the
 		* plateau. Used to avoid runtime calculations.
@@ -4572,7 +4572,7 @@ class FuzzySet extends FuzzyTerm {
 	/**
 	* Computes the degree of membership for the given value. Notice that this method
 	* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
-	* order to calculate intermediate degree of membership values. This methid be
+	* order to calculate intermediate degree of membership values. This method be
 	* implemented by all concrete fuzzy set classes.
 	*
 	* @param {Number} value - The value used to calculate the degree of membership.
@@ -5203,7 +5203,7 @@ class FuzzyVariable {
 
 		/**
 		* The minimum value range of this FLV. This value is
-		* autotamically updated when adding/removing fuzzy sets.
+		* automatically updated when adding/removing fuzzy sets.
 		* @type Number
 		* @default Infinity
 		*/
@@ -5211,7 +5211,7 @@ class FuzzyVariable {
 
 		/**
 		* The maximum value range of this FLV. This value is
-		* autotamically updated when adding/removing fuzzy sets.
+		* automatically updated when adding/removing fuzzy sets.
 		* @type Number
 		* @default - Infinity
 		*/
@@ -5367,7 +5367,7 @@ class FuzzyVariable {
 }
 
 /**
-* Base class for represeting a goal in context of Goal-driven agent design.
+* Base class for representing a goal in context of Goal-driven agent design.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -5512,7 +5512,7 @@ Goal.STATUS = Object.freeze( {
 } );
 
 /**
-* Class represeting a composite goal. Essentially it's a goal which consists of subgoals.
+* Class representing a composite goal. Essentially it's a goal which consists of subgoals.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments Goal
@@ -5712,7 +5712,7 @@ class CompositeGoal extends Goal {
 }
 
 /**
-* Base class for represeting a goal evaluator in context of Goal-driven agent design.
+* Base class for representing a goal evaluator in context of Goal-driven agent design.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -5760,7 +5760,7 @@ class GoalEvaluator {
 }
 
 /**
-* Class for represeting the brain of a game entity.
+* Class for representing the brain of a game entity.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments CompositeGoal
@@ -5859,7 +5859,7 @@ class Think extends CompositeGoal {
 
 		const evaluators = this.evaluators;
 
-		let bestDesirabilty = - 1;
+		let bestDesirability = - 1;
 		let bestEvaluator = null;
 
 		// try to find the best top-level goal/strategy for the entity
@@ -5868,12 +5868,12 @@ class Think extends CompositeGoal {
 
 			const evaluator = evaluators[ i ];
 
-			let desirabilty = evaluator.calculateDesirability( this.owner );
-			desirabilty *= evaluator.characterBias;
+			let desirability = evaluator.calculateDesirability( this.owner );
+			desirability *= evaluator.characterBias;
 
-			if ( desirabilty >= bestDesirabilty ) {
+			if ( desirability >= bestDesirability ) {
 
-				bestDesirabilty = desirabilty;
+				bestDesirability = desirability;
 				bestEvaluator = evaluator;
 
 			}
@@ -6359,7 +6359,7 @@ class Node {
 
 /**
 * Class for representing a heuristic for graph search algorithms based
-* on the euclidian distance. The heuristic assumes that the node have
+* on the euclidean distance. The heuristic assumes that the node have
 * a *position* property of type {@link Vector3}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -6367,12 +6367,12 @@ class Node {
 class HeuristicPolicyEuclid {
 
 	/**
-	* Calculates the euclidian distance between two nodes.
+	* Calculates the euclidean distance between two nodes.
 	*
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The euclidian distance between both nodes.
+	* @return {Number} The euclidean distance between both nodes.
 	*/
 	static calculate( graph, source, target ) {
 
@@ -6387,7 +6387,7 @@ class HeuristicPolicyEuclid {
 
 /**
 * Class for representing a heuristic for graph search algorithms based
-* on the squared euclidian distance. The heuristic assumes that the node
+* on the squared euclidean distance. The heuristic assumes that the node
 * have a *position* property of type {@link Vector3}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -6395,12 +6395,12 @@ class HeuristicPolicyEuclid {
 class HeuristicPolicyEuclidSquared {
 
 	/**
-	* Calculates the squared euclidian distance between two nodes.
+	* Calculates the squared euclidean distance between two nodes.
 	*
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The squared euclidian distance between both nodes.
+	* @return {Number} The squared euclidean distance between both nodes.
 	*/
 	static calculate( graph, source, target ) {
 
@@ -6415,20 +6415,20 @@ class HeuristicPolicyEuclidSquared {
 
 /**
 * Class for representing a heuristic for graph search algorithms based
-* on the manhatten distance. The heuristic assumes that the node
+* on the manhattan distance. The heuristic assumes that the node
 * have a *position* property of type {@link Vector3}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
-class HeuristicPolicyManhatten {
+class HeuristicPolicyManhattan {
 
 	/**
-	* Calculates the manhatten distance between two nodes.
+	* Calculates the manhattan distance between two nodes.
 	*
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The manhatten distance between both nodes.
+	* @return {Number} The manhattan distance between both nodes.
 	*/
 	static calculate( graph, source, target ) {
 
@@ -6456,7 +6456,7 @@ class HeuristicPolicyDijkstra {
 	* @param {Graph} grapj - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The manhatten distance between both nodes.
+	* @return {Number} The manhattan distance between both nodes.
 	*/
 	static calculate( /* graph, source, target */ ) {
 
@@ -7553,7 +7553,7 @@ class LineSegment {
 	}
 
 	/**
-	* Computes the clostest point on an infinite line defined by the line segment.
+	* Computes the closest point on an infinite line defined by the line segment.
 	* It's possible to clamp the closest point so it does not exceed the start and
 	* end position of the line segment.
 	*
@@ -7967,7 +7967,7 @@ class Ray {
 	*/
 	intersectTriangle( triangle, backfaceCulling, result ) {
 
-		// referenc: https://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
+		// reference: https://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
 
 		const a = triangle.a;
 		const b = triangle.b;
@@ -8445,9 +8445,9 @@ class HalfEdge {
 	}
 
 	/**
-	* Returns the destintation vertex of this half-edge.
+	* Returns the destination vertex of this half-edge.
 	*
-	* @return {Vector3} The destintation vertex.
+	* @return {Vector3} The destination vertex.
 	*/
 	to() {
 
@@ -8639,7 +8639,7 @@ class NavMesh {
 
 		sortedEdgeList.sort( descending );
 
-		// hald-edge data structure is now complete, begin build of convex regions
+		// half-edge data structure is now complete, begin build of convex regions
 
 		this._buildRegions( sortedEdgeList );
 
@@ -8799,7 +8799,7 @@ class NavMesh {
 
 		} else {
 
-			// source and target are not in same region, peform search
+			// source and target are not in same region, peforme search
 
 			const source = this.regions.indexOf( fromRegion );
 			const target = this.regions.indexOf( toRegion );
@@ -8958,7 +8958,7 @@ class NavMesh {
 
 	/**
 	* Updates the spatial index by assigning all convex regions to the
-	* partitons of the spatial index.
+	* partitions of the spatial index.
 	*
 	* @return {NavMesh} A reference to this navigation mesh.
 	*/
@@ -9858,7 +9858,7 @@ class Parser {
 
 		return this.getDependencies( 'accessor' ).then( ( accessors ) => {
 
-			// assuming a single primitve
+			// assuming a single primitive
 
 			const primitive = definition.primitives[ 0 ];
 
@@ -10072,7 +10072,7 @@ const contour = new Array();
 * a spatial index. The 3D space is divided up into a number of cells. A cell contains a
 * list of references to all the entities it contains. Compared to other spatial indices like
 * octrees, the division of the 3D space is coarse and often not balanced but the computational
-* overhead for calculating the index of a specifc cell based on a position vector is very fast.
+* overhead for calculating the index of a specific cell based on a position vector is very fast.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -10239,7 +10239,7 @@ class CellSpacePartitioning {
 	}
 
 	/**
-	* Computes the parition index for the given position vector.
+	* Computes the partition index for the given position vector.
 	*
 	* @param {Vector3} position - The given position.
 	* @return {Number} The partition index.
@@ -10267,8 +10267,8 @@ class CellSpacePartitioning {
 	/**
 	* Performs a query to the spatial index according the the given position and
 	* radius. The method approximates the query position and radius with an AABB and
-	* then performs an ntersection test with all non-empty cells in order to determine
-	* relevant paritions. Stores the result in the given result array.
+	* then performs an intersection test with all non-empty cells in order to determine
+	* relevant partitions. Stores the result in the given result array.
 	*
 	* @param {Vector3} position - The given query position.
 	* @param {Number} radius - The given query radius.
@@ -11219,7 +11219,7 @@ const velocitySmooth = new Vector3();
 /**
 * This type of game entity implements a special type of locomotion, the so called
 * *Vehicle Model*. The class uses basic physical metrics in order to implement a
-* realisitic movement.
+* realistic movement.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @author {@link https://github.com/robp94|robp94}
@@ -12364,9 +12364,9 @@ class WanderBehavior extends SteeringBehavior {
 	/**
 	* Constructs a new wander behavior.
 	*
-	* @param {Numer} radius - The radius of the wander circle for the wander behavior.
-	* @param {Numer} distance - The distance the wander circle is projected in front of the agent.
-	* @param {Numer} jitter - The maximum amount of displacement along the sphere each frame.
+	* @param {Number} radius - The radius of the wander circle for the wander behavior.
+	* @param {Number} distance - The distance the wander circle is projected in front of the agent.
+	* @param {Number} jitter - The maximum amount of displacement along the sphere each frame.
 	*/
 	constructor( radius = 1, distance = 5, jitter = 5 ) {
 
@@ -12462,7 +12462,7 @@ function generateRandomPointOnCircle( radius, target ) {
 }
 
 /**
-* Base class for represeting tasks. A task is an isolated unit of work that is
+* Base class for representing tasks. A task is an isolated unit of work that is
 * processed in an asynchronous way. Tasks are managed within a {@link TaskQueue task queue}.
 *
 * @author {@link https://github.com/robp94|robp94}
@@ -12595,7 +12595,7 @@ function runTaskQueue( deadline ) {
 }
 
 /**
-* Base class for represeting trigger regions. It's a predefine region in 3D space,
+* Base class for representing trigger regions. It's a predefine region in 3D space,
 * owned by one or more triggers. The shape of the trigger can be arbitrary.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -12620,7 +12620,7 @@ class TriggerRegion {
 const boundingSphereEntity = new BoundingSphere();
 
 /**
-* Class for represeting a rectangular trigger region as an AABB.
+* Class for representing a rectangular trigger region as an AABB.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments TriggerRegion
@@ -12700,7 +12700,7 @@ class RectangularTriggerRegion extends TriggerRegion {
 const boundingSphereEntity$1 = new BoundingSphere();
 
 /**
-* Class for represeting a spherical trigger region as a bounding sphere.
+* Class for representing a spherical trigger region as a bounding sphere.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments TriggerRegion
@@ -12763,7 +12763,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 }
 
 /**
-* Base class for represeting triggers. A trigger generates an action if a game entity
+* Base class for representing triggers. A trigger generates an action if a game entity
 * touches its trigger region, a predefine region in 3D space.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -12831,4 +12831,4 @@ class Trigger {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftShoulderFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftShoulderFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };

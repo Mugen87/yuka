@@ -23,7 +23,7 @@ class FuzzyVariable {
 
 		/**
 		* The minimum value range of this FLV. This value is
-		* autotamically updated when adding/removing fuzzy sets.
+		* automatically updated when adding/removing fuzzy sets.
 		* @type Number
 		* @default Infinity
 		*/
@@ -31,7 +31,7 @@ class FuzzyVariable {
 
 		/**
 		* The maximum value range of this FLV. This value is
-		* autotamically updated when adding/removing fuzzy sets.
+		* automatically updated when adding/removing fuzzy sets.
 		* @type Number
 		* @default - Infinity
 		*/

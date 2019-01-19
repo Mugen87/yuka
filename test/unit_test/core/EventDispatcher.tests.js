@@ -37,7 +37,7 @@ describe( 'EventDispatcher', function () {
 
 		} );
 
-		it( 'should not add a listener twice for a specifc event type', function () {
+		it( 'should not add a listener twice for a specific event type', function () {
 
 			const eventDispatcher = new EventDispatcher();
 

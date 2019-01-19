@@ -65,9 +65,9 @@ class HalfEdge {
 	}
 
 	/**
-	* Returns the destintation vertex of this half-edge.
+	* Returns the destination vertex of this half-edge.
 	*
-	* @return {Vector3} The destintation vertex.
+	* @return {Vector3} The destination vertex.
 	*/
 	to() {
 

@@ -11,7 +11,7 @@ const contour = new Array();
 * a spatial index. The 3D space is divided up into a number of cells. A cell contains a
 * list of references to all the entities it contains. Compared to other spatial indices like
 * octrees, the division of the 3D space is coarse and often not balanced but the computational
-* overhead for calculating the index of a specifc cell based on a position vector is very fast.
+* overhead for calculating the index of a specific cell based on a position vector is very fast.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -178,7 +178,7 @@ class CellSpacePartitioning {
 	}
 
 	/**
-	* Computes the parition index for the given position vector.
+	* Computes the partition index for the given position vector.
 	*
 	* @param {Vector3} position - The given position.
 	* @return {Number} The partition index.
@@ -206,8 +206,8 @@ class CellSpacePartitioning {
 	/**
 	* Performs a query to the spatial index according the the given position and
 	* radius. The method approximates the query position and radius with an AABB and
-	* then performs an ntersection test with all non-empty cells in order to determine
-	* relevant paritions. Stores the result in the given result array.
+	* then performs an intersection test with all non-empty cells in order to determine
+	* relevant partitions. Stores the result in the given result array.
 	*
 	* @param {Vector3} position - The given query position.
 	* @param {Number} radius - The given query radius.

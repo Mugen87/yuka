@@ -285,7 +285,7 @@ class Quaternion {
 	* The parameter t is clamped to the range [0, 1].
 	*
 	* @param {Quaternion} q - The target rotation.
-	* @param {Number} t - The interpolation paramter.
+	* @param {Number} t - The interpolation parameter.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
 	slerp( q, t ) {

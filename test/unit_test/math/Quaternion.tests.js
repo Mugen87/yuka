@@ -86,7 +86,7 @@ describe( 'Quaternion', function () {
 
 	describe( '#conjugate()', function () {
 
-		it( 'should conjungate the quaternion', function () {
+		it( 'should conjugate the quaternion', function () {
 
 			const q1 = new Quaternion( 1, 1, 1, 1 ).conjugate();
 			expect( q1 ).to.deep.equal( { x: - 1, y: - 1, z: - 1, w: 1 } );

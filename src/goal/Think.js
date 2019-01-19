@@ -3,7 +3,7 @@ import { CompositeGoal } from './CompositeGoal.js';
 import { Logger } from '../core/Logger.js';
 
 /**
-* Class for represeting the brain of a game entity.
+* Class for representing the brain of a game entity.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments CompositeGoal
@@ -102,7 +102,7 @@ class Think extends CompositeGoal {
 
 		const evaluators = this.evaluators;
 
-		let bestDesirabilty = - 1;
+		let bestDesirability = - 1;
 		let bestEvaluator = null;
 
 		// try to find the best top-level goal/strategy for the entity
@@ -111,12 +111,12 @@ class Think extends CompositeGoal {
 
 			const evaluator = evaluators[ i ];
 
-			let desirabilty = evaluator.calculateDesirability( this.owner );
-			desirabilty *= evaluator.characterBias;
+			let desirability = evaluator.calculateDesirability( this.owner );
+			desirability *= evaluator.characterBias;
 
-			if ( desirabilty >= bestDesirabilty ) {
+			if ( desirability >= bestDesirability ) {
 
-				bestDesirabilty = desirabilty;
+				bestDesirability = desirability;
 				bestEvaluator = evaluator;
 
 			}

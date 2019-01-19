@@ -5,7 +5,7 @@ import { Vector3 } from '../../math/Vector3.js';
 const boundingSphereEntity = new BoundingSphere();
 
 /**
-* Class for represeting a spherical trigger region as a bounding sphere.
+* Class for representing a spherical trigger region as a bounding sphere.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments TriggerRegion

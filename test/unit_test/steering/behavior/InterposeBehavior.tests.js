@@ -39,7 +39,7 @@ describe( 'InterposeBehavior', function () {
 
 	describe( '#calculate()', function () {
 
-		it( 'should seek to the point between both entites (midpoint)', function () {
+		it( 'should seek to the point between both entities (midpoint)', function () {
 
 			const vehicle = new Vehicle();
 			const entity1 = new Vehicle();

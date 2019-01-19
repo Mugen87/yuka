@@ -284,7 +284,7 @@ class GameEntity {
 	* Updates the world matrix representing the world space.
 	*
 	* @param {Boolean} up - Whether to update the world matrices of the parents or not.
-	* @param {Boolean} down - Whether to update the world matrices of the childs or not.
+	* @param {Boolean} down - Whether to update the world matrices of the children or not.
 	* @return {GameEntity} A reference to this game entity.
 	*/
 	updateWorldMatrix( up = false, down = false ) {

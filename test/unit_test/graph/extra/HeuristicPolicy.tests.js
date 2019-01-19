@@ -7,7 +7,7 @@ const YUKA = require( '../../../../build/yuka.js' );
 
 const HeuristicPolicyEuclid = YUKA.HeuristicPolicyEuclid;
 const HeuristicPolicyEuclidSquared = YUKA.HeuristicPolicyEuclidSquared;
-const HeuristicPolicyManhatten = YUKA.HeuristicPolicyManhatten;
+const HeuristicPolicyManhattan = YUKA.HeuristicPolicyManhattan;
 const HeuristicPolicyDijkstra = YUKA.HeuristicPolicyDijkstra;
 
 const Graph = YUKA.Graph;
@@ -57,13 +57,13 @@ describe( 'HeuristicPolicyEuclidSquared', function () {
 
 } );
 
-describe( 'HeuristicPolicyManhatten', function () {
+describe( 'HeuristicPolicyManhattan', function () {
 
 	describe( '#calculate()', function () {
 
-		it( 'should calculate a heuristic value based on the manhatten distance between two nav nodes', function () {
+		it( 'should calculate a heuristic value based on the manhattan distance between two nav nodes', function () {
 
-			const value = HeuristicPolicyManhatten.calculate( graph, 0, 1 );
+			const value = HeuristicPolicyManhattan.calculate( graph, 0, 1 );
 
 			expect( value ).to.equal( 2 );
 

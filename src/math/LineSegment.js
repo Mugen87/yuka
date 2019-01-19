@@ -104,7 +104,7 @@ class LineSegment {
 	}
 
 	/**
-	* Computes the clostest point on an infinite line defined by the line segment.
+	* Computes the closest point on an infinite line defined by the line segment.
 	* It's possible to clamp the closest point so it does not exceed the start and
 	* end position of the line segment.
 	*

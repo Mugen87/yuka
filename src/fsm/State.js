@@ -1,5 +1,5 @@
 /**
-* Base class for represeting a state in context of State-driven agent design.
+* Base class for representing a state in context of State-driven agent design.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

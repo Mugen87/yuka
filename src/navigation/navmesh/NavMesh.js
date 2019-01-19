@@ -148,7 +148,7 @@ class NavMesh {
 
 		sortedEdgeList.sort( descending );
 
-		// hald-edge data structure is now complete, begin build of convex regions
+		// half-edge data structure is now complete, begin build of convex regions
 
 		this._buildRegions( sortedEdgeList );
 
@@ -308,7 +308,7 @@ class NavMesh {
 
 		} else {
 
-			// source and target are not in same region, peform search
+			// source and target are not in same region, peforme search
 
 			const source = this.regions.indexOf( fromRegion );
 			const target = this.regions.indexOf( toRegion );
@@ -467,7 +467,7 @@ class NavMesh {
 
 	/**
 	* Updates the spatial index by assigning all convex regions to the
-	* partitons of the spatial index.
+	* partitions of the spatial index.
 	*
 	* @return {NavMesh} A reference to this navigation mesh.
 	*/

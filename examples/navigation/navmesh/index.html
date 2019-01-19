@@ -33,7 +33,7 @@
 		let pathMaterial, pathHelper, graphHelper;
 
 		const params = {
-			showNavigatonGraph: true
+			showNavigationGraph: true
 		};
 
 		init();
@@ -85,7 +85,7 @@
 
 			var gui = new DAT.GUI( { width: 300 } );
 
-			gui.add( params, 'showNavigatonGraph', 1, 30 ).onChange( ( value ) => {
+			gui.add( params, 'showNavigationGraph', 1, 30 ).onChange( ( value ) => {
 
 				if ( graphHelper ) graphHelper.visible = value;
 

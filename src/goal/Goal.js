@@ -1,5 +1,5 @@
 /**
-* Base class for represeting a goal in context of Goal-driven agent design.
+* Base class for representing a goal in context of Goal-driven agent design.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

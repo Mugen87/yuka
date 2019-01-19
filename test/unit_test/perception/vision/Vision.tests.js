@@ -106,7 +106,7 @@ describe( 'Vision', function () {
 
 		} );
 
-		it( 'should return false if the given point lies inside the visual range and the field of view of the game entity but an obstalce blocks the line of sight', function () {
+		it( 'should return false if the given point lies inside the visual range and the field of view of the game entity but an obstacle blocks the line of sight', function () {
 
 			const entity = new GameEntity();
 			entity.position.set( 0.5, 2, 0.5 );

@@ -110,7 +110,7 @@ describe( 'Matrix3', function () {
 
 	describe( '#multiplyScalar()', function () {
 
-		it( 'should mulitply the matrix with a scalar value', function () {
+		it( 'should multiply the matrix with a scalar value', function () {
 
 			const m1 = new Matrix3().multiplyScalar( 2 );
 

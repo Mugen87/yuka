@@ -1,7 +1,7 @@
 import { Goal } from './Goal.js';
 
 /**
-* Class represeting a composite goal. Essentially it's a goal which consists of subgoals.
+* Class representing a composite goal. Essentially it's a goal which consists of subgoals.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @augments Goal

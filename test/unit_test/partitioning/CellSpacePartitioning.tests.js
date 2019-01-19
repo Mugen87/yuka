@@ -99,7 +99,7 @@ describe( 'CellSpacePartitioning', function () {
 
 	describe( '#updateEntity()', function () {
 
-		it( 'should update the given entity by assigning the correct parition', function () {
+		it( 'should update the given entity by assigning the correct partition', function () {
 
 			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
 

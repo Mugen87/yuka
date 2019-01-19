@@ -143,7 +143,7 @@ class AABB {
 	}
 
 	/**
-	* Returns true if the given ABBB intersects this AABB.
+	* Returns true if the given AABB intersects this AABB.
 	*
 	* @param {AABB} aabb - The AABB to test.
 	* @return {Boolean} The result of the intersection test.

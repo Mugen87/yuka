@@ -345,7 +345,7 @@ class Parser {
 
 		return this.getDependencies( 'accessor' ).then( ( accessors ) => {
 
-			// assuming a single primitve
+			// assuming a single primitive
 
 			const primitive = definition.primitives[ 0 ];
 

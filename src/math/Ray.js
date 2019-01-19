@@ -222,7 +222,7 @@ class Ray {
 	*/
 	intersectTriangle( triangle, backfaceCulling, result ) {
 
-		// referenc: https://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
+		// reference: https://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
 
 		const a = triangle.a;
 		const b = triangle.b;

@@ -1,5 +1,5 @@
 /**
-* Base class for represeting a term in a {@link FuzzyRule}.
+* Base class for representing a term in a {@link FuzzyRule}.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

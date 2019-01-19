@@ -31,7 +31,7 @@ class FuzzySet extends FuzzyTerm {
 		this.degreeOfMembership = 0;
 
 		/**
-		* The maximum of the set's membership function. For instamce, if
+		* The maximum of the set's membership function. For instance, if
 		* the set is triangular then this will be the peak point of the triangular.
 		* If the set has a plateau then this value will be the mid point of the
 		* plateau. Used to avoid runtime calculations.
@@ -59,7 +59,7 @@ class FuzzySet extends FuzzyTerm {
 	/**
 	* Computes the degree of membership for the given value. Notice that this method
 	* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
-	* order to calculate intermediate degree of membership values. This methid be
+	* order to calculate intermediate degree of membership values. This method be
 	* implemented by all concrete fuzzy set classes.
 	*
 	* @param {Number} value - The value used to calculate the degree of membership.

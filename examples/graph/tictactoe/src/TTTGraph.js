@@ -92,7 +92,7 @@ class TTTGraph extends Graph {
 
 					} else {
 
-						// if not, recursively call "generate()" to contiune the build of the graph
+						// if not, recursively call "generate()" to continue the build of the graph
 
 						weights.push( this.generate( activeNodeIndex, this.nextPlayer( activePlayer ) ) );
 

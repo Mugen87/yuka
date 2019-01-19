@@ -11,7 +11,7 @@ function createGraphHelper( graph, nodeSize = 1, nodeColor = 0x4e84c4, edgeColor
 	// nodes
 
 	const nodeMaterial = new THREE.MeshBasicMaterial( { color: nodeColor } );
-	const nodeGeomety = new THREE.IcosahedronBufferGeometry( nodeSize, 2 );
+	const nodeGeometry = new THREE.IcosahedronBufferGeometry( nodeSize, 2 );
 
 	const nodes = [];
 
@@ -19,7 +19,7 @@ function createGraphHelper( graph, nodeSize = 1, nodeColor = 0x4e84c4, edgeColor
 
 	for ( let node of nodes ) {
 
-		const nodeMesh = new THREE.Mesh( nodeGeomety, nodeMaterial );
+		const nodeMesh = new THREE.Mesh( nodeGeometry, nodeMaterial );
 		nodeMesh.position.copy( node.position );
 		nodeMesh.userData.nodeIndex = node.index;
 
@@ -74,10 +74,10 @@ function createPathHelper( graph, path, nodeSize, color = 0x00ff00 ) {
 
 	const startNodeMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 	const endNodeMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-	const nodeGeomety = new THREE.IcosahedronBufferGeometry( nodeSize, 2 );
+	const nodeGeometry = new THREE.IcosahedronBufferGeometry( nodeSize, 2 );
 
-	const startNodeMesh = new THREE.Mesh( nodeGeomety, startNodeMaterial );
-	const endNodeMesh = new THREE.Mesh( nodeGeomety, endNodeMaterial );
+	const startNodeMesh = new THREE.Mesh( nodeGeometry, startNodeMaterial );
+	const endNodeMesh = new THREE.Mesh( nodeGeometry, endNodeMaterial );
 
 	const startNode = graph.getNode( path[ 0 ] );
 	const endNode = graph.getNode( path[ path.length - 1 ] );

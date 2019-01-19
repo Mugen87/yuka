@@ -230,7 +230,7 @@ describe( 'LineSegment', function () {
 
 	describe( '#equals()', function () {
 
-		it( 'should return true if both line segmens are equal else false', function () {
+		it( 'should return true if both line segments are equal else false', function () {
 
 			const lineSegment1 = new LineSegment( new Vector3( 0, 0, 1 ), new Vector3( 0, 0, 2 ) );
 			const lineSegment2 = new LineSegment( new Vector3( 0, 0, 1 ), new Vector3( 0, 0, 2 ) );

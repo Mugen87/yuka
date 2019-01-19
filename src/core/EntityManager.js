@@ -142,7 +142,7 @@ class EntityManager {
 	/**
 	* Returns an entity by the given name. If no game entity is found, *null*
 	* is returned. This method is more expensive than {@link GameEntity#getEntityById}
-	* and should not be used in each simlation step. Instead, it should be used once
+	* and should not be used in each simulation step. Instead, it should be used once
 	* and the result should be cached for later use.
 	*
 	* @param {String} name - The name of the game entity.

@@ -11,7 +11,7 @@ const velocitySmooth = new Vector3();
 /**
 * This type of game entity implements a special type of locomotion, the so called
 * *Vehicle Model*. The class uses basic physical metrics in order to implement a
-* realisitic movement.
+* realistic movement.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @author {@link https://github.com/robp94|robp94}
