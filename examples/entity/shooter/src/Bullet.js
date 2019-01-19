@@ -53,10 +53,10 @@ class Bullet extends MovingEntity {
 
 				// calculate distance from origin to intersection point
 
-				const distanceToIntersction = ray.origin.squaredDistanceTo( intersectionPoint );
+				const distanceToIntersection = ray.origin.squaredDistanceTo( intersectionPoint );
 				const validDistance = ray.origin.squaredDistanceTo( this.position );
 
-				if ( distanceToIntersction <= validDistance ) {
+				if ( distanceToIntersection <= validDistance ) {
 
 					// hit!
 
