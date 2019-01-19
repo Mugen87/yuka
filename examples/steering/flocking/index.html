@@ -63,7 +63,7 @@
 
 			alignmentBehavior.weight = params.alignment;
 			cohesionBehavior.weight = params.cohesion;
-			separationBehavior.weigth = params.separation;
+			separationBehavior.weight = params.separation;
 
 			for ( let i = 0; i < 50; i ++ ) {
 
@@ -87,7 +87,7 @@
 				vehicle.steering.add( separationBehavior );
 
 				const wanderBehavior = new YUKA.WanderBehavior();
-				wanderBehavior.weigth = 0.5;
+				wanderBehavior.weight = 0.5;
 				vehicle.steering.add( wanderBehavior );
 
 				entityManager.add( vehicle );
@@ -98,9 +98,9 @@
 
 			var gui = new DAT.GUI( { width: 300 } );
 
-			gui.add( params, 'alignment', 0.1, 2 ).name( 'alignment' ).onChange( ( value ) => { alignmentBehavior.weigth = value; } );
-			gui.add( params, 'cohesion', 0.1, 2 ).name( 'cohesion' ).onChange( ( value ) => { cohesionBehavior.weigth = value; } );
-			gui.add( params, 'separation', 0.1, 2 ).name( 'separation' ).onChange( ( value ) => { separationBehavior.weigth = value; } );
+			gui.add( params, 'alignment', 0.1, 2 ).name( 'alignment' ).onChange( ( value ) => { alignmentBehavior.weight = value; } );
+			gui.add( params, 'cohesion', 0.1, 2 ).name( 'cohesion' ).onChange( ( value ) => { cohesionBehavior.weight = value; } );
+			gui.add( params, 'separation', 0.1, 2 ).name( 'separation' ).onChange( ( value ) => { separationBehavior.weight = value; } );
 
 			gui.open();
 

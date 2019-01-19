@@ -4180,6 +4180,1193 @@ class StateMachine {
 }
 
 /**
+* Base class for represeting a term in a {@link FuzzyRule}.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class FuzzyTerm {
+
+	/**
+	* Clears the degree of membership value.
+	*
+	* @return {FuzzyTerm} A reference to this term.
+	*/
+	clearDegreeOfMembership() {}
+
+	/**
+	* Returns the degree of membership.
+	*
+	* @return {Number} Degree of membership.
+	*/
+	getDegreeOfMembership() {}
+
+	/**
+	* Updates the degree of membership by the given value. This method is used when
+	* the term is part of a fuzzy rule's consequent.
+	*
+	* @param {Number} value - The value used to update the degree of membership.
+	* @return {FuzzyTerm} A reference to this term.
+	*/
+	updateDegreeOfMembership( /* value */ ) {}
+
+}
+
+/**
+* Base class for representing more complex fuzzy terms based on the
+* composite design pattern.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzyTerm
+*/
+class FuzzyCompositeTerm extends FuzzyTerm {
+
+	/**
+	* Constructs a new fuzzy composite term with the given values.
+	*
+	* @param {Array} terms - An arbitrary amount of fuzzy terms.
+	*/
+	constructor( terms = [] ) {
+
+		super();
+
+		/**
+		* List of fuzzy terms.
+		* @type Array
+		*/
+		this.terms = terms;
+
+	}
+
+	/**
+	* Clears the degree of membership value.
+	*
+	* @return {FuzzyCompositeTerm} A reference to this term.
+	*/
+	clearDegreeOfMembership() {
+
+		const terms = this.terms;
+
+		for ( let i = 0, l = terms.length; i < l; i ++ ) {
+
+			terms[ i ].clearDegreeOfMembership();
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Updates the degree of membership by the given value. This method is used when
+	* the term is part of a fuzzy rule's consequent.
+	*
+	* @param {Number} value - The value used to update the degree of membership.
+	* @return {FuzzyCompositeTerm} A reference to this term.
+	*/
+	updateDegreeOfMembership( value ) {
+
+		const terms = this.terms;
+
+		for ( let i = 0, l = terms.length; i < l; i ++ ) {
+
+			terms[ i ].updateDegreeOfMembership( value );
+
+		}
+
+		return this;
+
+	}
+
+}
+
+/**
+* Class for representing an AND operator. Can be used to construct
+* fuzzy rules.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzyCompositeTerm
+*/
+class FuzzyAND extends FuzzyCompositeTerm {
+
+	/**
+	* Constructs a new fuzzy AND operator with the given values. The constructor
+	* accepts and arbitrary amount of fuzzy terms.
+	*/
+	constructor() {
+
+		const terms = Array.from( arguments );
+
+		super( terms );
+
+	}
+
+	/**
+	* Returns the degree of membership. The AND operator returns the minimum
+	* degree of membership of the sets it is operating on.
+	*
+	* @return {Number} Degree of membership.
+	*/
+	getDegreeOfMembership() {
+
+		const terms = this.terms;
+		let minDOM = Infinity;
+
+		for ( let i = 0, l = terms.length; i < l; i ++ ) {
+
+			const term = terms[ i ];
+			const currentDOM = term.getDegreeOfMembership();
+
+			if ( currentDOM < minDOM ) minDOM = currentDOM;
+
+		}
+
+		return minDOM;
+
+	}
+
+}
+
+/**
+* Hedges are special unary operators that can be employed to modify the meaning
+* of a fuzzy set. The FAIRLY fuzzy hedge widens the membership function.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzyTerm
+*/
+class FuzzyFAIRLY extends FuzzyTerm {
+
+	/**
+	* Constructs a new fuzzy FAIRLY hedge with the given values.
+	*
+	* @param {FuzzyTerm} fuzzyTerm - The fuzzy term this hedge is working on.
+	*/
+	constructor( fuzzyTerm = null ) {
+
+		super();
+
+		/**
+		* The fuzzy term this hedge is working on.
+		* @type FuzzyTerm
+		* @default null
+		*/
+		this.fuzzyTerm = fuzzyTerm;
+
+	}
+
+	// FuzzyTerm API
+
+	/**
+	* Clears the degree of membership value.
+	*
+	* @return {FuzzyFAIRLY} A reference to this fuzzy hedge.
+	*/
+	clearDegreeOfMembership() {
+
+		this.fuzzyTerm.clearDegreeOfMembership();
+
+		return this;
+
+	}
+
+	/**
+	* Returns the degree of membership.
+	*
+	* @return {Number} Degree of membership.
+	*/
+	getDegreeOfMembership() {
+
+		const dom = this.fuzzyTerm.getDegreeOfMembership();
+
+		return Math.sqrt( dom );
+
+	}
+
+	/**
+	* Updates the degree of membership by the given value.
+	*
+	* @return {FuzzyFAIRLY} A reference to this fuzzy hedge.
+	*/
+	updateDegreeOfMembership( value ) {
+
+		this.fuzzyTerm.updateDegreeOfMembership( Math.sqrt( value ) );
+
+		return this;
+
+	}
+
+}
+
+/**
+* Class for representing an OR operator. Can be used to construct
+* fuzzy rules.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzyCompositeTerm
+*/
+class FuzzyOR extends FuzzyCompositeTerm {
+
+	/**
+	* Constructs a new fuzzy AND operator with the given values. The constructor
+	* accepts and arbitrary amount of fuzzy terms.
+	*/
+	constructor() {
+
+		const terms = Array.from( arguments );
+
+		super( terms );
+
+	}
+
+	/**
+	* Returns the degree of membership. The AND operator returns the maximum
+	* degree of membership of the sets it is operating on.
+	*
+	* @return {Number} Degree of membership.
+	*/
+	getDegreeOfMembership() {
+
+		const terms = this.terms;
+		let maxDOM = - Infinity;
+
+		for ( let i = 0, l = terms.length; i < l; i ++ ) {
+
+			const term = terms[ i ];
+			const currentDOM = term.getDegreeOfMembership();
+
+			if ( currentDOM > maxDOM ) maxDOM = currentDOM;
+
+		}
+
+		return maxDOM;
+
+	}
+
+}
+
+/**
+* Hedges are special unary operators that can be employed to modify the meaning
+* of a fuzzy set. The FAIRLY fuzzy hedge widens the membership function.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzyTerm
+*/
+class FuzzyVERY extends FuzzyTerm {
+
+	/**
+	* Constructs a new fuzzy VERY hedge with the given values.
+	*
+	* @param {FuzzyTerm} fuzzyTerm - The fuzzy term this hedge is working on.
+	*/
+	constructor( fuzzyTerm = null ) {
+
+		super();
+
+		/**
+		* The fuzzy term this hedge is working on.
+		* @type FuzzyTerm
+		* @default null
+		*/
+		this.fuzzyTerm = fuzzyTerm;
+
+	}
+
+	// FuzzyTerm API
+
+	/**
+	* Clears the degree of membership value.
+	*
+	* @return {FuzzyVERY} A reference to this fuzzy hedge.
+	*/
+	clearDegreeOfMembership() {
+
+		this.fuzzyTerm.clearDegreeOfMembership();
+
+		return this;
+
+	}
+
+	/**
+	* Returns the degree of membership.
+	*
+	* @return {Number} Degree of membership.
+	*/
+	getDegreeOfMembership() {
+
+		const dom = this.fuzzyTerm.getDegreeOfMembership();
+
+		return dom * dom;
+
+	}
+
+	/**
+	* Updates the degree of membership by the given value.
+	*
+	* @return {FuzzyVERY} A reference to this fuzzy hedge.
+	*/
+	updateDegreeOfMembership( value ) {
+
+		this.fuzzyTerm.updateDegreeOfMembership( value * value );
+
+		return this;
+
+	}
+
+}
+
+/**
+* Base class for fuzzy sets. This type of sets are defined by a membership function
+* which can be any arbitrary shape but are typically triangular or trapezoidal. They define
+* a gradual transition from regions completely outside the set to regions completely
+* within the set, thereby enabling a value to have partial membership to a set.
+*
+* This class is derived from {@link FuzzyTerm} so it can be directly used in fuzzy rules.
+* According to the composite design pattern, a fuzzy set can be considered as an atomic fuzzy term.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzyTerm
+*/
+class FuzzySet extends FuzzyTerm {
+
+	/**
+	* Constructs a new fuzzy set with the given values.
+	*
+	* @param {Number} representativeValue - The maximum of the set's membership function.
+	*/
+	constructor( representativeValue = 0 ) {
+
+		super();
+
+		/**
+		* Represents the degree of membership to this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.degreeOfMembership = 0;
+
+		/**
+		* The maximum of the set's membership function. For instamce, if
+		* the set is triangular then this will be the peak point of the triangular.
+		* If the set has a plateau then this value will be the mid point of the
+		* plateau. Used to avoid runtime calculations.
+		* @type Number
+		* @default 0
+		*/
+		this.representativeValue = representativeValue;
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = 0;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = 0;
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value. Notice that this method
+	* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
+	* order to calculate intermediate degree of membership values. This methid be
+	* implemented by all concrete fuzzy set classes.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( /* value */ ) {}
+
+	// FuzzyTerm API
+
+	/**
+	* Clears the degree of membership value.
+	*
+	* @return {FuzzySet} A reference to this fuzzy set.
+	*/
+	clearDegreeOfMembership() {
+
+		this.degreeOfMembership = 0;
+
+		return this;
+
+	}
+
+	/**
+	* Returns the degree of membership.
+	*
+	* @return {Number} Degree of membership.
+	*/
+	getDegreeOfMembership() {
+
+		return this.degreeOfMembership;
+
+	}
+
+	/**
+	* Updates the degree of membership by the given value. This method is used when
+	* the set is part of a fuzzy rule's consequent.
+	*
+	* @return {FuzzySet} A reference to this fuzzy set.
+	*/
+	updateDegreeOfMembership( value ) {
+
+		// update the degree of membership if the given value is greater than the
+		// existing one
+
+		if ( value > this.degreeOfMembership ) this.degreeOfMembership = value;
+
+		return this;
+
+	}
+
+}
+
+/**
+* Class for representing a fuzzy set that has a left shoulder shape. The range between
+* the midpoint and left border point represents the same DOM.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzySet
+*/
+class LeftShoulderFuzzySet extends FuzzySet {
+
+	/**
+	* Constructs a new left shoulder fuzzy set with the given values.
+	*
+	* @param {Number} left - Represents the left border of this fuzzy set.
+	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+	* @param {Number} right - Represents the right border of this fuzzy set.
+	*/
+	constructor( left = 0, midpoint = 0, right = 0 ) {
+
+		// the representative value is the midpoint of the plateau of the shoulder
+
+		const representativeValue = ( midpoint + left ) / 2;
+
+		super( representativeValue );
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = left;
+
+		/**
+		* Represents the peak value of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.midpoint = midpoint;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = right;
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( value ) {
+
+		const midpoint = this.midpoint;
+		const left = this.left;
+		const right = this.right;
+
+		// find DOM if the given value is left of the center or equal to the center
+
+		if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+			return 1;
+
+		}
+
+		// find DOM if the given value is right of the midpoint
+
+		if ( ( value > midpoint ) && ( value <= right ) ) {
+
+			const grad = 1 / ( right - midpoint );
+
+			return grad * ( right - value );
+
+		}
+
+		// out of range
+
+		return 0;
+
+	}
+
+}
+
+/**
+* Class for representing a fuzzy set that has a right shoulder shape. The range between
+* the midpoint and right border point represents the same DOM.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzySet
+*/
+class RightShoulderFuzzySet extends FuzzySet {
+
+	/**
+	* Constructs a new right shoulder fuzzy set with the given values.
+	*
+	* @param {Number} left - Represents the left border of this fuzzy set.
+	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+	* @param {Number} right - Represents the right border of this fuzzy set.
+	*/
+	constructor( left = 0, midpoint = 0, right = 0 ) {
+
+		// the representative value is the midpoint of the plateau of the shoulder
+
+		const representativeValue = ( midpoint + right ) / 2;
+
+		super( representativeValue );
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = left;
+
+		/**
+		* Represents the peak value of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.midpoint = midpoint;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = right;
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( value ) {
+
+		const midpoint = this.midpoint;
+		const left = this.left;
+		const right = this.right;
+
+		// find DOM if the given value is left of the center or equal to the center
+
+		if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+			const grad = 1 / ( midpoint - left );
+
+			return grad * ( value - left );
+
+		}
+
+		// find DOM if the given value is right of the midpoint
+
+		if ( ( value > midpoint ) && ( value <= right ) ) {
+
+			return 1;
+
+		}
+
+		// out of range
+
+		return 0;
+
+	}
+
+}
+
+/**
+* Class for representing a fuzzy set that is a singleton. In its range, the degree of
+* membership is always one.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzySet
+*/
+class SingletonFuzzySet extends FuzzySet {
+
+	/**
+	* Constructs a new singleton fuzzy set with the given values. {@link SingletonFuzzySet#midpoint}
+	* is not needed in this class but it's still present in order to have a common interface for all
+	* fuzzy sets.
+	*
+	* @param {Number} left - Represents the left border of this fuzzy set.
+	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+	* @param {Number} right - Represents the right border of this fuzzy set.
+	*/
+	constructor( left = 0, midpoint = 0, right = 0 ) {
+
+		super( midpoint );
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = left;
+
+		/**
+		* Represents the peak value of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.midpoint = midpoint;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = right;
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( value ) {
+
+		const left = this.left;
+		const right = this.right;
+
+		return ( value >= left && value <= right ) ? 1 : 0;
+
+	}
+
+}
+
+/**
+* Class for representing a fuzzy set that has a triangular shape. It can be defined
+* by a left point, a midpoint (peak) and a right point.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @augments FuzzySet
+*/
+class TriangularFuzzySet extends FuzzySet {
+
+	/**
+	* Constructs a new triangular fuzzy set with the given values.
+	*
+	* @param {Number} left - Represents the left border of this fuzzy set.
+	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+	* @param {Number} right - Represents the right border of this fuzzy set.
+	*/
+	constructor( left = 0, midpoint = 0, right = 0 ) {
+
+		super( midpoint );
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = left;
+
+		/**
+		* Represents the peak value of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.midpoint = midpoint;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = right;
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( value ) {
+
+		const midpoint = this.midpoint;
+		const left = this.left;
+		const right = this.right;
+
+		// find DOM if the given value is left of the center or equal to the center
+
+		if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+			const grad = 1 / ( midpoint - left );
+
+			return grad * ( value - left );
+
+		}
+
+		// find DOM if the given value is right of the center
+
+		if ( ( value > midpoint ) && ( value <= right ) ) {
+
+			const grad = 1 / ( right - midpoint );
+
+			return grad * ( right - value );
+
+		}
+
+		// out of range
+
+		return 0;
+
+	}
+
+}
+
+/**
+* Class for representing a fuzzy module. Instances of this class are used by
+* game entities for fuzzy inference. A fuzzy module is a collection of fuzzy variables
+* and the rules that operate on them.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class FuzzyModule {
+
+	/**
+	* Constructs a new fuzzy module.
+	*/
+	constructor() {
+
+		/**
+		* An array of the fuzzy rules.
+		* @type Array
+		*/
+		this.rules = new Array();
+
+		/**
+		* A map of FLVs.
+		* @type Map
+		*/
+		this.flvs = new Map();
+
+	}
+
+	/**
+	* Adds the given FLV under the given name to this fuzzy module.
+	*
+	* @param {String} name - The name of the FLV.
+	* @param {FuzzyVariable} flv - The FLV to add.
+	* @return {FuzzyModule} A reference to this fuzzy module.
+	*/
+	addFLV( name, flv ) {
+
+		this.flvs.set( name, flv );
+
+		return this;
+
+	}
+
+	/**
+	* Remove the FLV under the given name from this fuzzy module.
+	*
+	* @param {String} name - The name of the FLV to remove.
+	* @return {FuzzyModule} A reference to this fuzzy module.
+	*/
+	removeFLV( name ) {
+
+		this.flvs.delete( name );
+
+		return this;
+
+	}
+
+	/**
+	* Adds the given fuzzy rule to this fuzzy module.
+	*
+	* @param {FuzzyRule} rule - The fuzzy rule to add.
+	* @return {FuzzyModule} A reference to this fuzzy module.
+	*/
+	addRule( rule ) {
+
+		this.rules.push( rule );
+
+		return this;
+
+	}
+
+	/**
+	* Removes the given fuzzy rule from this fuzzy module.
+	*
+	* @param {FuzzyRule} rule - The fuzzy rule to remove.
+	* @return {FuzzyModule} A reference to this fuzzy module.
+	*/
+	removeRule( rule ) {
+
+		const rules = this.rules;
+
+		const index = rules.indexOf( rule );
+		rules.splice( index, 1 );
+
+		return this;
+
+	}
+
+	/**
+	* Calls the fuzzify method of the defined FLV with the given value.
+	*
+	* @param {String} name - The name of the FLV
+	* @param {Number} value - The crips value to fuzzify.
+	* @return {FuzzyModule} A reference to this fuzzy module.
+	*/
+	fuzzify( name, value ) {
+
+		const flv = this.flvs.get( name );
+
+		flv.fuzzify( value );
+
+		return this;
+
+	}
+
+	/**
+	* Given a fuzzy variable and a defuzzification method this returns a crisp value.
+	*
+	* @param {String} name - The name of the FLV
+	* @param {String} type - The type of defuzzification.
+	* @return {Number} The defuzzified, crips value.
+	*/
+	defuzzify( name, type = FuzzyModule.DEFUZ_TYPE.MAXAV ) {
+
+		const flvs = this.flvs;
+		const rules = this.rules;
+
+		this._initConsequences();
+
+		for ( let i = 0, l = rules.length; i < l; i ++ ) {
+
+			const rule = rules[ i ];
+
+			rule.evaluate();
+
+		}
+
+		const flv = flvs.get( name );
+
+		let value;
+
+		switch ( type ) {
+
+			case FuzzyModule.DEFUZ_TYPE.MAXAV:
+				value = flv.defuzzifyMaxAv();
+				break;
+
+			case FuzzyModule.DEFUZ_TYPE.CENTROID:
+				value = flv.defuzzifyCentroid();
+				break;
+
+			default:
+				Logger.warn( 'YUKA.FuzzyModule: Unknown defuzzification method:', type );
+				value = flv.defuzzifyMaxAv(); // use MaxAv as fallback
+
+		}
+
+		return value;
+
+	}
+
+	_initConsequences() {
+
+		const rules = this.rules;
+
+		// initializes the consequents of all rules.
+
+		for ( let i = 0, l = rules.length; i < l; i ++ ) {
+
+			const rule = rules[ i ];
+
+			rule.initConsequence();
+
+		}
+
+		return this;
+
+	}
+
+}
+
+FuzzyModule.DEFUZ_TYPE = Object.freeze( {
+	MAXAV: 0,
+	CENTROID: 1
+} );
+
+/**
+* Class for representing a fuzzy rule. Fuzzy rules are comprised of an antecedent and
+* a consequent in the form: IF antecedent THEN consequent.
+*
+* Compared to ordinary if/else statements with discrete values, the consequent term
+* of a fuzzy rule can fire to a matter of degree.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class FuzzyRule {
+
+	/**
+	* Constructs a new fuzzy rule with the given values.
+	*
+	* @param {FuzzyTerm} antecedent - Represents the condition of the rule.
+	* @param {FuzzyTerm} consequence - Describes the consequence if the condition is satisfied.
+	*/
+	constructor( antecedent = null, consequence = null ) {
+
+		/**
+		* Represents the condition of the rule.
+		* @type FuzzyTerm
+		* @default null
+		*/
+		this.antecedent = antecedent;
+
+		/**
+		* Describes the consequence if the condition is satisfied.
+		* @type FuzzyTerm
+		* @default null
+		*/
+		this.consequence = consequence;
+
+	}
+
+	/**
+	* Initializes the consequent term of this fuzzy rule.
+	*
+	* @return {FuzzyRule} A reference to this fuzzy rule.
+	*/
+	initConsequence() {
+
+		this.consequence.clearDegreeOfMembership();
+
+		return this;
+
+	}
+
+	/**
+	* Evaluates the rule and updates the degree of membership of the consequent term with
+	* the degree of membership of the antecedent term.
+	*
+	* @return {FuzzyRule} A reference to this fuzzy rule.
+	*/
+	evaluate() {
+
+		this.consequence.updateDegreeOfMembership( this.antecedent.getDegreeOfMembership() );
+
+		return this;
+
+	}
+
+}
+
+/**
+* Class for representing a fuzzy linguistic variable (FLV). A FLV is the
+* composition of one or more fuzzy sets to represent a concept or domain
+* qualitatively. For example fuzzs sets "Dumb", "Average", and "Clever"
+* are members of the fuzzy linguistic variable "IQ".
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class FuzzyVariable {
+
+	/**
+	* Constructs a new fuzzy linguistic variable.
+	*/
+	constructor() {
+
+		/**
+		* An array of the fuzzy sets that comprise this FLV.
+		* @type Array
+		*/
+		this.fuzzySets = new Array();
+
+		/**
+		* The minimum value range of this FLV. This value is
+		* autotamically updated when adding/removing fuzzy sets.
+		* @type Number
+		* @default Infinity
+		*/
+		this.minRange = Infinity;
+
+		/**
+		* The maximum value range of this FLV. This value is
+		* autotamically updated when adding/removing fuzzy sets.
+		* @type Number
+		* @default - Infinity
+		*/
+		this.maxRange = - Infinity;
+
+	}
+
+	/**
+	* Adds the given fuzzy set to this FLV.
+	*
+	* @param {FuzzySet} fuzzySet - The fuzzy set to add.
+	* @return {FuzzyVariable} A reference to this FLV.
+	*/
+	add( fuzzySet ) {
+
+		this.fuzzySets.push( fuzzySet );
+
+		// adjust range
+
+		if ( fuzzySet.left < this.minRange ) this.minRange = fuzzySet.left;
+		if ( fuzzySet.right > this.maxRange ) this.maxRange = fuzzySet.right;
+
+		return this;
+
+	}
+
+	/**
+	* Removes the given fuzzy set from this FLV.
+	*
+	* @param {FuzzySet} fuzzySet - The fuzzy set to remove.
+	* @return {FuzzyVariable} A reference to this FLV.
+	*/
+	remove( fuzzySet ) {
+
+		const fuzzySets = this.fuzzySets;
+
+		const index = fuzzySets.indexOf( fuzzySet );
+		fuzzySets.splice( index, 1 );
+
+		// iterate over all fuzzy sets to recalculate the min/max range
+
+		this.minRange = Infinity;
+		this.maxRange = - Infinity;
+
+		for ( let i = 0, l = fuzzySets.length; i < l; i ++ ) {
+
+			const fuzzySet = fuzzySets[ i ];
+
+			if ( fuzzySet.left < this.minRange ) this.minRange = fuzzySet.left;
+			if ( fuzzySet.right > this.maxRange ) this.maxRange = fuzzySet.right;
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Fuzzifies a value by calculating its degree of membership in each of
+	* this variable's fuzzy sets.
+	*
+	* @param {Number} value - The crips value to fuzzify.
+	* @return {FuzzyVariable} A reference to this FLV.
+	*/
+	fuzzify( value ) {
+
+		if ( value < this.minRange || value > this.maxRange ) {
+
+			Logger.warn( 'YUKA.FuzzyVariable: Value for fuzzification out of range.' );
+			return;
+
+		}
+
+		const fuzzySets = this.fuzzySets;
+
+		for ( let i = 0, l = fuzzySets.length; i < l; i ++ ) {
+
+			const fuzzySet = fuzzySets[ i ];
+
+			fuzzySet.degreeOfMembership = fuzzySet.computeDegreeOfMembership( value );
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Defuzzifies the FLV using the "Average of Maxima" (MaxAv) method.
+	*
+	* @return {Number} The defuzzified, crips value.
+	*/
+	defuzzifyMaxAv() {
+
+		// the average of maxima (MaxAv for short) defuzzification method scales the
+		// representative value of each fuzzy set by its DOM and takes the average
+
+		const fuzzySets = this.fuzzySets;
+
+		let bottom = 0;
+		let top = 0;
+
+		for ( let i = 0, l = fuzzySets.length; i < l; i ++ ) {
+
+			const fuzzySet = fuzzySets[ i ];
+
+			bottom += fuzzySet.degreeOfMembership;
+			top += fuzzySet.representativeValue * fuzzySet.degreeOfMembership;
+
+		}
+
+		return ( bottom === 0 ) ? 0 : ( top / bottom );
+
+	}
+
+	/**
+	* Defuzzifies the FLV using the "Centroid" method.
+	*
+	* @param {Number} samples - The amount of samples used for defuzzification.
+	* @return {Number} The defuzzified, crips value.
+	*/
+	defuzzifyCentroid( samples = 10 ) {
+
+		const fuzzySets = this.fuzzySets;
+
+		const stepSize = ( this.maxRange - this.minRange ) / samples;
+
+		let totalArea = 0;
+		let sumOfMoments = 0;
+
+		for ( let s = 1; s <= samples; s ++ ) {
+
+			const sample = this.minRange + ( s * stepSize );
+
+			for ( let i = 0, l = fuzzySets.length; i < l; i ++ ) {
+
+				const fuzzySet = fuzzySets[ i ];
+
+				const contribution = Math.min( fuzzySet.degreeOfMembership, fuzzySet.computeDegreeOfMembership( sample ) );
+
+				totalArea += contribution;
+
+				sumOfMoments += ( sample * contribution );
+
+			}
+
+		}
+
+		return ( totalArea === 0 ) ? 0 : ( sumOfMoments / totalArea );
+
+	}
+
+}
+
+/**
 * Base class for represeting a goal in context of Goal-driven agent design.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
@@ -9858,7 +11045,7 @@ class SteeringBehavior {
 		* @type Number
 		* @default 1
 		*/
-		this.weigth = 1;
+		this.weight = 1;
 
 	}
 
@@ -10011,7 +11198,7 @@ class SteeringManager {
 
 				behavior.calculate( this.vehicle, force, delta );
 
-				force.multiplyScalar( behavior.weigth );
+				force.multiplyScalar( behavior.weight );
 
 				if ( this._accumulate( force ) === false ) return;
 
@@ -10495,8 +11682,8 @@ class FleeBehavior extends SteeringBehavior {
 }
 
 const displacement$3 = new Vector3();
-const newPuruserVelocity = new Vector3();
-const predcitedPosition = new Vector3();
+const newPursuerVelocity = new Vector3();
+const predictedPosition = new Vector3();
 
 /**
 * This steering behavior is is almost the same as {@link PursuitBehavior} except that
@@ -10564,12 +11751,12 @@ class EvadeBehavior extends SteeringBehavior {
 
 		// calculate new velocity and predicted future position
 
-		newPuruserVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-		predcitedPosition.addVectors( pursuer.position, newPuruserVelocity );
+		newPursuerVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+		predictedPosition.addVectors( pursuer.position, newPursuerVelocity );
 
 		// now flee away from predicted future position of the pursuer
 
-		this._flee.target = predcitedPosition;
+		this._flee.target = predictedPosition;
 		this._flee.panicDistance = this.panicDistance;
 		this._flee.calculate( vehicle, force );
 
@@ -10599,7 +11786,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		/**
 		* The path to follow.
-		* @type MovingEntity
+		* @type Path
 		*/
 		this.path = path;
 
@@ -10663,8 +11850,8 @@ class FollowPathBehavior extends SteeringBehavior {
 
 const midPoint = new Vector3();
 const translation = new Vector3();
-const predcitedPosition1 = new Vector3();
-const predcitedPosition2 = new Vector3();
+const predictedPosition1 = new Vector3();
+const predictedPosition2 = new Vector3();
 
 /**
 * This steering behavior produces a force that moves a vehicle to the midpoint
@@ -10737,14 +11924,14 @@ class InterposeBehavior extends SteeringBehavior {
 		// continue on a straight trajectory and extrapolate to get their future positions
 
 		translation.copy( entity1.velocity ).multiplyScalar( time );
-		predcitedPosition1.addVectors( entity1.position, translation );
+		predictedPosition1.addVectors( entity1.position, translation );
 
 		translation.copy( entity2.velocity ).multiplyScalar( time );
-		predcitedPosition2.addVectors( entity2.position, translation );
+		predictedPosition2.addVectors( entity2.position, translation );
 
 		// calculate the mid point of these predicted positions
 
-		midPoint.addVectors( predcitedPosition1, predcitedPosition2 ).multiplyScalar( 0.5 );
+		midPoint.addVectors( predictedPosition1, predictedPosition2 ).multiplyScalar( 0.5 );
 
 		// then steer to arrive at it
 
@@ -10916,7 +12103,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 const offsetWorld = new Vector3();
 const toOffset = new Vector3();
 const newLeaderVelocity = new Vector3();
-const predcitedPosition$1 = new Vector3();
+const predictedPosition$1 = new Vector3();
 
 /**
 * This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
@@ -10930,7 +12117,8 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 	/**
 	* Constructs a new offset pursuit behavior.
 	*
-	* @param {Vector3} target - The target vector.
+	* @param {Vehicle} leader - The leader vehicle.
+	* @param {Vector3} offset - The offset from the leader.
 	*/
 	constructor( leader = null, offset = new Vector3() ) {
 
@@ -10986,11 +12174,11 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 		newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
 
-		predcitedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
+		predictedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
 
 		// now arrive at the predicted future position of the offset
 
-		this._arrive.target = predcitedPosition$1;
+		this._arrive.target = predictedPosition$1;
 		this._arrive.calculate( vehicle, force );
 
 		return force;
@@ -11003,7 +12191,7 @@ const displacement$4 = new Vector3();
 const vehicleDirection = new Vector3();
 const evaderDirection = new Vector3();
 const newEvaderVelocity = new Vector3();
-const predcitedPosition$2 = new Vector3();
+const predictedPosition$2 = new Vector3();
 
 /**
 * This steering behavior is useful when an agent is required to intercept a moving agent.
@@ -11090,11 +12278,11 @@ class PursuitBehavior extends SteeringBehavior {
 		// calculate new velocity and predicted future position
 
 		newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
-		predcitedPosition$2.addVectors( evader.position, newEvaderVelocity );
+		predictedPosition$2.addVectors( evader.position, newEvaderVelocity );
 
 		// now seek to the predicted future position of the evader
 
-		this._seek.target = predcitedPosition$2;
+		this._seek.target = predictedPosition$2;
 		this._seek.calculate( vehicle, force );
 
 		return force;
@@ -11643,4 +12831,4 @@ class Trigger {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftShoulderFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhatten, HeuristicPolicyDijkstra, WorldUp };
