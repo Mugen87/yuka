@@ -6369,7 +6369,7 @@ class HeuristicPolicyEuclid {
 	/**
 	* Calculates the euclidean distance between two nodes.
 	*
-	* @param {Graph} grapj - The graph.
+	* @param {Graph} graph - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
 	* @return {Number} The euclidean distance between both nodes.
@@ -6397,7 +6397,7 @@ class HeuristicPolicyEuclidSquared {
 	/**
 	* Calculates the squared euclidean distance between two nodes.
 	*
-	* @param {Graph} grapj - The graph.
+	* @param {Graph} graph - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
 	* @return {Number} The squared euclidean distance between both nodes.
@@ -6425,7 +6425,7 @@ class HeuristicPolicyManhattan {
 	/**
 	* Calculates the manhattan distance between two nodes.
 	*
-	* @param {Graph} grapj - The graph.
+	* @param {Graph} graph - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
 	* @return {Number} The manhattan distance between both nodes.
@@ -6453,7 +6453,7 @@ class HeuristicPolicyDijkstra {
 	* This heuristic always returns *0*. The {@link AStar} algorithm
 	* behaves with this heuristic exactly like {@link Dijkstra}
 	*
-	* @param {Graph} grapj - The graph.
+	* @param {Graph} graph - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
 	* @return {Number} The manhattan distance between both nodes.
