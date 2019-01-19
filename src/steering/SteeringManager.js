@@ -137,7 +137,7 @@ class SteeringManager {
 
 				behavior.calculate( this.vehicle, force, delta );
 
-				force.multiplyScalar( behavior.weigth );
+				force.multiplyScalar( behavior.weight );
 
 				if ( this._accumulate( force ) === false ) return;
 

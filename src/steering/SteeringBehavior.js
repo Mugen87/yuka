@@ -23,7 +23,7 @@ class SteeringBehavior {
 		* @type Number
 		* @default 1
 		*/
-		this.weigth = 1;
+		this.weight = 1;
 
 	}
 

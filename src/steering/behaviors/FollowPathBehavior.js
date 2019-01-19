@@ -23,7 +23,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		/**
 		* The path to follow.
-		* @type MovingEntity
+		* @type Path
 		*/
 		this.path = path;
 

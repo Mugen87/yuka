@@ -11045,7 +11045,7 @@ class SteeringBehavior {
 		* @type Number
 		* @default 1
 		*/
-		this.weigth = 1;
+		this.weight = 1;
 
 	}
 
@@ -11198,7 +11198,7 @@ class SteeringManager {
 
 				behavior.calculate( this.vehicle, force, delta );
 
-				force.multiplyScalar( behavior.weigth );
+				force.multiplyScalar( behavior.weight );
 
 				if ( this._accumulate( force ) === false ) return;
 
@@ -11786,7 +11786,7 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		/**
 		* The path to follow.
-		* @type MovingEntity
+		* @type Path
 		*/
 		this.path = path;
 
@@ -12117,7 +12117,8 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 	/**
 	* Constructs a new offset pursuit behavior.
 	*
-	* @param {Vector3} target - The target vector.
+	* @param {Vehicle} leader - The leader vehicle.
+	* @param {Vector3} offset - The offset from the leader.
 	*/
 	constructor( leader = null, offset = new Vector3() ) {
 

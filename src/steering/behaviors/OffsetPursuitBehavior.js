@@ -19,7 +19,8 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 	/**
 	* Constructs a new offset pursuit behavior.
 	*
-	* @param {Vector3} target - The target vector.
+	* @param {Vehicle} leader - The leader vehicle.
+	* @param {Vector3} offset - The offset from the leader.
 	*/
 	constructor( leader = null, offset = new Vector3() ) {
 

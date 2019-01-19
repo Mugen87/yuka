@@ -15,7 +15,7 @@ describe( 'SteeringBehavior', function () {
 
 			const steeringBehavior = new SteeringBehavior();
 			expect( steeringBehavior ).to.have.a.property( 'active' ).that.is.true;
-			expect( steeringBehavior ).to.have.a.property( 'weigth' ).that.is.equal( 1 );
+			expect( steeringBehavior ).to.have.a.property( 'weight' ).that.is.equal( 1 );
 
 		} );
 

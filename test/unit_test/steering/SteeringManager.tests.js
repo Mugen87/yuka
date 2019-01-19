@@ -154,7 +154,7 @@ describe( 'SteeringManager', function () {
 			const steeringManager = new SteeringManager( vehicle );
 
 			const steeringBehavior1 = new CustomSteeringBehavior1();
-			steeringBehavior1.weigth = 2; // this will double the steering force for this behavior
+			steeringBehavior1.weight = 2; // this will double the steering force for this behavior
 			steeringManager.add( steeringBehavior1 );
 
 			const steeringBehavior2 = new CustomSteeringBehavior2();
