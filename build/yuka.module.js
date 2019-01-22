@@ -3830,13 +3830,13 @@ class Time {
 		this.currentTime = 0;
 
 		/**
-		* Whether the Page Visibily API should be used to avoid large time
+		* Whether the Page Visibility API should be used to avoid large time
 		* delta values produced via inactivity or not. This setting is
 		* ignored if the browser does not support the API.
 		* @type Boolean
 		* @default true
 		*/
-		this.detectPageVisibilty = true;
+		this.detectPageVisibility = true;
 
 		//
 
@@ -3903,7 +3903,7 @@ class Time {
 
 function handleVisibilityChange() {
 
-	if ( this.detectPageVisibilty === true && document.hidden === false ) {
+	if ( this.detectPageVisibility === true && document.hidden === false ) {
 
 		// reset the current time when the app was inactive (window minimized or tab switched)
 
