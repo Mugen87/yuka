@@ -6,6 +6,7 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const Time = YUKA.Time;
+const EventDispatcher = YUKA.EventDispatcher;
 
 describe( 'Time', function () {
 
@@ -18,6 +19,18 @@ describe( 'Time', function () {
 			expect( time ).to.have.a.property( 'startTime' ).that.is.equal( 0 );
 			expect( time ).to.have.a.property( 'previousTime' ).that.is.equal( 0 );
 			expect( time ).to.have.a.property( 'currentTime' ).that.is.equal( 0 );
+			expect( time ).to.have.a.property( 'detectPageVisibility' ).that.is.true;
+
+		} );
+
+		it( 'should use a resetted time value if the app was inactive', function () {
+
+			const time = new Time();
+
+			time.currentTime = - 1;
+			global.document.dispatchEvent( { type: 'visibilitychange' } );
+
+			expect( time.currentTime ).to.not.equal( - 1 );
 
 		} );
 
@@ -78,3 +91,19 @@ describe( 'Time', function () {
 	} );
 
 } );
+
+//
+
+class Document extends EventDispatcher {
+
+	constructor() {
+
+		super();
+
+		this.hidden = false;
+
+	}
+
+}
+
+global.document = new Document();

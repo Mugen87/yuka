@@ -3829,6 +3829,25 @@ class Time {
 		*/
 		this.currentTime = 0;
 
+		/**
+		* Whether the Page Visibility API should be used to avoid large time
+		* delta values produced via inactivity or not. This setting is
+		* ignored if the browser does not support the API.
+		* @type Boolean
+		* @default true
+		*/
+		this.detectPageVisibility = true;
+
+		//
+
+		if ( typeof document !== 'undefined' && document.hidden !== undefined ) {
+
+			this._pageVisibilityHandler = handleVisibilityChange.bind( this );
+
+			document.addEventListener( 'visibilitychange', this._pageVisibilityHandler, false );
+
+		}
+
 	}
 
 	/**
@@ -3875,6 +3894,20 @@ class Time {
 	now() {
 
 		return ( typeof performance === 'undefined' ? Date : performance ).now();
+
+	}
+
+}
+
+//
+
+function handleVisibilityChange() {
+
+	if ( this.detectPageVisibility === true && document.hidden === false ) {
+
+		// reset the current time when the app was inactive (window minimized or tab switched)
+
+		this.currentTime = this.now();
 
 	}
 
