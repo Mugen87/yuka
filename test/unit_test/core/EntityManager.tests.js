@@ -23,7 +23,6 @@ describe( 'EntityManager', function () {
 			expect( manager ).to.have.a.property( 'entities' ).that.is.an( 'array' );
 			expect( manager ).to.have.a.property( 'triggers' ).that.is.an( 'array' );
 			expect( manager ).to.have.a.property( 'spatialIndex' ).that.is.null;
-			expect( manager ).to.have.a.property( '_entityMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_indexMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
 
@@ -41,7 +40,6 @@ describe( 'EntityManager', function () {
 			manager.add( entity );
 
 			expect( manager.entities ).to.include( entity );
-			expect( manager._entityMap.has( entity.id ) ).to.be.true;
 
 		} );
 
@@ -68,7 +66,6 @@ describe( 'EntityManager', function () {
 			manager.remove( entity );
 
 			expect( manager.entities ).to.not.include( entity );
-			expect( manager._entityMap.has( entity.id ) ).to.be.false;
 
 		} );
 
@@ -127,7 +124,6 @@ describe( 'EntityManager', function () {
 
 			manager.entities.push( entity );
 			manager.triggers.push( trigger );
-			manager._entityMap.set( entity.id, entity );
 			manager._messageDispatcher.delayedTelegrams.push( telegram );
 
 			manager.clear();
@@ -135,29 +131,6 @@ describe( 'EntityManager', function () {
 			expect( manager.entities ).to.have.lengthOf( 0 );
 			expect( manager.triggers ).to.have.lengthOf( 0 );
 			expect( manager._messageDispatcher.delayedTelegrams ).to.have.lengthOf( 0 );
-
-		} );
-
-	} );
-
-	describe( '#getEntityById()', function () {
-
-		it( 'should return an entity with the given ID', function () {
-
-			const manager = new EntityManager();
-			const entity = new GameEntity();
-
-			manager.add( entity );
-
-			expect( manager.getEntityById( entity.id ) ).to.equal( entity );
-
-		} );
-
-		it( 'should return null if there is no game entity stored for the given ID', function () {
-
-			const manager = new EntityManager();
-
-			expect( manager.getEntityById( 0 ) ).to.be.null;
 
 		} );
 

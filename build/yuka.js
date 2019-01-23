@@ -301,7 +301,6 @@
 			*/
 			this.spatialIndex = null;
 
-			this._entityMap = new Map(); // for fast ID access
 			this._indexMap = new Map(); // used by spatial indices
 			this._messageDispatcher = new MessageDispatcher();
 
@@ -316,7 +315,6 @@
 		add( entity ) {
 
 			this.entities.push( entity );
-			this._entityMap.set( entity.id, entity );
 
 			entity.manager = this;
 
@@ -334,8 +332,6 @@
 
 			const index = this.entities.indexOf( entity );
 			this.entities.splice( index, 1 );
-
-			this._entityMap.delete( entity.id );
 
 			entity.manager = null;
 
@@ -382,24 +378,9 @@
 			this.entities.length = 0;
 			this.triggers.length = 0;
 
-			this._entityMap.clear();
-
 			this._messageDispatcher.clear();
 
 			return this;
-
-		}
-
-		/**
-		* Returns an entity by the given ID. If no game entity is found, *null*
-		* is returned.
-		*
-		* @param {Number} id - The id of the game entity.
-		* @return {GameEntity} The found game entity.
-		*/
-		getEntityById( id ) {
-
-			return this._entityMap.get( id ) || null;
 
 		}
 
@@ -2868,8 +2849,6 @@
 
 	}
 
-	let nextId = 0;
-
 	const targetRotation = new Quaternion();
 	const targetDirection = new Vector3();
 
@@ -2884,12 +2863,6 @@
 		* Constructs a new game entity.
 		*/
 		constructor() {
-
-			/**
-			* The unique ID of this game entity.
-			* @type Number
-			*/
-			this.id = nextId ++;
 
 			/**
 			* The name of this game entity.
@@ -10459,7 +10432,7 @@
 			this.owner = owner;
 
 			/**
-			* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory record}
+			* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory records}
 			* of all relevant game entities in the environment. The records are usually update by
 			* the owner of the memory system.
 			* @type Array
@@ -10467,8 +10440,7 @@
 			this.records = new Array();
 
 			/**
-			* Same as {@link MemorySystem#records} but used for fast access via the ID
-			* of the game entity.
+			* Same as {@link MemorySystem#records} but used for fast access via the game entity.
 			* @type Map
 			*/
 			this.recordsMap = new Map();
@@ -10492,7 +10464,7 @@
 		*/
 		getRecord( entity ) {
 
-			return this.recordsMap.get( entity.id );
+			return this.recordsMap.get( entity );
 
 		}
 
@@ -10507,7 +10479,7 @@
 			const record = new MemoryRecord( entity );
 
 			this.records.push( record );
-			this.recordsMap.set( entity.id, record );
+			this.recordsMap.set( entity, record );
 
 			return this;
 
@@ -10525,7 +10497,7 @@
 			const index = this.records.indexOf( record );
 
 			this.records.splice( index, 1 );
-			this.recordsMap.delete( entity.id );
+			this.recordsMap.delete( entity );
 
 			return this;
 
@@ -10539,7 +10511,7 @@
 		*/
 		hasRecord( entity ) {
 
-			return this.recordsMap.has( entity.id );
+			return this.recordsMap.has( entity );
 
 		}
 

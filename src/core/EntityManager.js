@@ -34,7 +34,6 @@ class EntityManager {
 		*/
 		this.spatialIndex = null;
 
-		this._entityMap = new Map(); // for fast ID access
 		this._indexMap = new Map(); // used by spatial indices
 		this._messageDispatcher = new MessageDispatcher();
 
@@ -49,7 +48,6 @@ class EntityManager {
 	add( entity ) {
 
 		this.entities.push( entity );
-		this._entityMap.set( entity.id, entity );
 
 		entity.manager = this;
 
@@ -67,8 +65,6 @@ class EntityManager {
 
 		const index = this.entities.indexOf( entity );
 		this.entities.splice( index, 1 );
-
-		this._entityMap.delete( entity.id );
 
 		entity.manager = null;
 
@@ -115,24 +111,9 @@ class EntityManager {
 		this.entities.length = 0;
 		this.triggers.length = 0;
 
-		this._entityMap.clear();
-
 		this._messageDispatcher.clear();
 
 		return this;
-
-	}
-
-	/**
-	* Returns an entity by the given ID. If no game entity is found, *null*
-	* is returned.
-	*
-	* @param {Number} id - The id of the game entity.
-	* @return {GameEntity} The found game entity.
-	*/
-	getEntityById( id ) {
-
-		return this._entityMap.get( id ) || null;
 
 	}
 

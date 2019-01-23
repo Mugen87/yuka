@@ -18,7 +18,6 @@ describe( 'GameEntity', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const entity = new GameEntity();
-			expect( entity ).to.have.a.property( 'id' ).that.is.a( 'number' );
 			expect( entity ).to.have.a.property( 'name' ).that.is.equal( '' );
 			expect( entity ).to.have.a.property( 'active' ).that.is.true;
 

@@ -41,9 +41,9 @@ describe( 'MemorySystem', function () {
 			const entity = new GameEntity();
 
 			memorySystem.createRecord( entity );
-			expect( memorySystem.recordsMap.has( entity.id ) ).to.be.true;
+			expect( memorySystem.recordsMap.has( entity ) ).to.be.true;
 
-			const record = memorySystem.recordsMap.get( entity.id );
+			const record = memorySystem.recordsMap.get( entity );
 			expect( memorySystem.records ).to.include( record );
 
 		} );
@@ -78,7 +78,7 @@ describe( 'MemorySystem', function () {
 
 			memorySystem.deleteRecord( entity );
 
-			expect( memorySystem.recordsMap.has( entity.id ) ).to.be.false;
+			expect( memorySystem.recordsMap.has( entity ) ).to.be.false;
 			expect( memorySystem.records ).to.not.include( record );
 
 		} );

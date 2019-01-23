@@ -22,7 +22,7 @@ class MemorySystem {
 		this.owner = owner;
 
 		/**
-		* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory record}
+		* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory records}
 		* of all relevant game entities in the environment. The records are usually update by
 		* the owner of the memory system.
 		* @type Array
@@ -30,8 +30,7 @@ class MemorySystem {
 		this.records = new Array();
 
 		/**
-		* Same as {@link MemorySystem#records} but used for fast access via the ID
-		* of the game entity.
+		* Same as {@link MemorySystem#records} but used for fast access via the game entity.
 		* @type Map
 		*/
 		this.recordsMap = new Map();
@@ -55,7 +54,7 @@ class MemorySystem {
 	*/
 	getRecord( entity ) {
 
-		return this.recordsMap.get( entity.id );
+		return this.recordsMap.get( entity );
 
 	}
 
@@ -70,7 +69,7 @@ class MemorySystem {
 		const record = new MemoryRecord( entity );
 
 		this.records.push( record );
-		this.recordsMap.set( entity.id, record );
+		this.recordsMap.set( entity, record );
 
 		return this;
 
@@ -88,7 +87,7 @@ class MemorySystem {
 		const index = this.records.indexOf( record );
 
 		this.records.splice( index, 1 );
-		this.recordsMap.delete( entity.id );
+		this.recordsMap.delete( entity );
 
 		return this;
 
@@ -102,7 +101,7 @@ class MemorySystem {
 	*/
 	hasRecord( entity ) {
 
-		return this.recordsMap.has( entity.id );
+		return this.recordsMap.has( entity );
 
 	}
 

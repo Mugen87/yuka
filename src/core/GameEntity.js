@@ -3,8 +3,6 @@ import { Quaternion } from '../math/Quaternion.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Logger } from './Logger.js';
 
-let nextId = 0;
-
 const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
 
@@ -19,12 +17,6 @@ class GameEntity {
 	* Constructs a new game entity.
 	*/
 	constructor() {
-
-		/**
-		* The unique ID of this game entity.
-		* @type Number
-		*/
-		this.id = nextId ++;
 
 		/**
 		* The name of this game entity.
