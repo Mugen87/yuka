@@ -295,9 +295,7 @@ class EntityManager {
 		*/
 		this.spatialIndex = null;
 
-		this._entityMap = new Map(); // for fast ID access
 		this._indexMap = new Map(); // used by spatial indices
-		this._started = new Set(); // used to control the call of GameEntity.start()
 		this._messageDispatcher = new MessageDispatcher();
 
 	}
@@ -311,7 +309,6 @@ class EntityManager {
 	add( entity ) {
 
 		this.entities.push( entity );
-		this._entityMap.set( entity.id, entity );
 
 		entity.manager = this;
 
@@ -329,9 +326,6 @@ class EntityManager {
 
 		const index = this.entities.indexOf( entity );
 		this.entities.splice( index, 1 );
-
-		this._entityMap.delete( entity.id );
-		this._started.delete( entity );
 
 		entity.manager = null;
 
@@ -378,25 +372,9 @@ class EntityManager {
 		this.entities.length = 0;
 		this.triggers.length = 0;
 
-		this._entityMap.clear();
-		this._started.clear();
-
 		this._messageDispatcher.clear();
 
 		return this;
-
-	}
-
-	/**
-	* Returns an entity by the given ID. If no game entity is found, *null*
-	* is returned.
-	*
-	* @param {Number} id - The id of the game entity.
-	* @return {GameEntity} The found game entity.
-	*/
-	getEntityById( id ) {
-
-		return this._entityMap.get( id ) || null;
 
 	}
 
@@ -480,11 +458,11 @@ class EntityManager {
 
 			//
 
-			if ( this._started.has( entity ) === false ) {
+			if ( entity._started === false ) {
 
 				entity.start();
 
-				this._started.add( entity );
+				entity._started = true;
 
 			}
 
@@ -2865,8 +2843,6 @@ class Matrix4 {
 
 }
 
-let nextId = 0;
-
 const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
 
@@ -2881,12 +2857,6 @@ class GameEntity {
 	* Constructs a new game entity.
 	*/
 	constructor() {
-
-		/**
-		* The unique ID of this game entity.
-		* @type Number
-		*/
-		this.id = nextId ++;
 
 		/**
 		* The name of this game entity.
@@ -3011,6 +2981,7 @@ class GameEntity {
 
 		this._renderComponent = null;
 		this._renderComponentCallback = null;
+		this._started = false;
 
 	}
 
@@ -10455,7 +10426,7 @@ class MemorySystem {
 		this.owner = owner;
 
 		/**
-		* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory record}
+		* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory records}
 		* of all relevant game entities in the environment. The records are usually update by
 		* the owner of the memory system.
 		* @type Array
@@ -10463,8 +10434,7 @@ class MemorySystem {
 		this.records = new Array();
 
 		/**
-		* Same as {@link MemorySystem#records} but used for fast access via the ID
-		* of the game entity.
+		* Same as {@link MemorySystem#records} but used for fast access via the game entity.
 		* @type Map
 		*/
 		this.recordsMap = new Map();
@@ -10488,7 +10458,7 @@ class MemorySystem {
 	*/
 	getRecord( entity ) {
 
-		return this.recordsMap.get( entity.id );
+		return this.recordsMap.get( entity );
 
 	}
 
@@ -10503,7 +10473,7 @@ class MemorySystem {
 		const record = new MemoryRecord( entity );
 
 		this.records.push( record );
-		this.recordsMap.set( entity.id, record );
+		this.recordsMap.set( entity, record );
 
 		return this;
 
@@ -10521,7 +10491,7 @@ class MemorySystem {
 		const index = this.records.indexOf( record );
 
 		this.records.splice( index, 1 );
-		this.recordsMap.delete( entity.id );
+		this.recordsMap.delete( entity );
 
 		return this;
 
@@ -10535,7 +10505,7 @@ class MemorySystem {
 	*/
 	hasRecord( entity ) {
 
-		return this.recordsMap.has( entity.id );
+		return this.recordsMap.has( entity );
 
 	}
 
