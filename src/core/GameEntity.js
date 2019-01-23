@@ -149,6 +149,7 @@ class GameEntity {
 
 		this._renderComponent = null;
 		this._renderComponentCallback = null;
+		this._started = false;
 
 	}
 

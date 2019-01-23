@@ -25,7 +25,6 @@ describe( 'EntityManager', function () {
 			expect( manager ).to.have.a.property( 'spatialIndex' ).that.is.null;
 			expect( manager ).to.have.a.property( '_entityMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_indexMap' ).that.is.a( 'map' );
-			expect( manager ).to.have.a.property( '_started' ).that.is.a( 'set' );
 			expect( manager ).to.have.a.property( '_messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
 
 		} );
@@ -129,14 +128,12 @@ describe( 'EntityManager', function () {
 			manager.entities.push( entity );
 			manager.triggers.push( trigger );
 			manager._entityMap.set( entity.id, entity );
-			manager._started.add( entity );
 			manager._messageDispatcher.delayedTelegrams.push( telegram );
 
 			manager.clear();
 
 			expect( manager.entities ).to.have.lengthOf( 0 );
 			expect( manager.triggers ).to.have.lengthOf( 0 );
-			expect( manager._started.size ).to.equal( 0 );
 			expect( manager._messageDispatcher.delayedTelegrams ).to.have.lengthOf( 0 );
 
 		} );

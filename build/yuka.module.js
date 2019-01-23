@@ -297,7 +297,6 @@ class EntityManager {
 
 		this._entityMap = new Map(); // for fast ID access
 		this._indexMap = new Map(); // used by spatial indices
-		this._started = new Set(); // used to control the call of GameEntity.start()
 		this._messageDispatcher = new MessageDispatcher();
 
 	}
@@ -331,7 +330,6 @@ class EntityManager {
 		this.entities.splice( index, 1 );
 
 		this._entityMap.delete( entity.id );
-		this._started.delete( entity );
 
 		entity.manager = null;
 
@@ -379,7 +377,6 @@ class EntityManager {
 		this.triggers.length = 0;
 
 		this._entityMap.clear();
-		this._started.clear();
 
 		this._messageDispatcher.clear();
 
@@ -480,11 +477,11 @@ class EntityManager {
 
 			//
 
-			if ( this._started.has( entity ) === false ) {
+			if ( entity._started === false ) {
 
 				entity.start();
 
-				this._started.add( entity );
+				entity._started = true;
 
 			}
 
@@ -3011,6 +3008,7 @@ class GameEntity {
 
 		this._renderComponent = null;
 		this._renderComponentCallback = null;
+		this._started = false;
 
 	}
 

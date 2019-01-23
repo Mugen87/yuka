@@ -44,6 +44,10 @@ describe( 'GameEntity', function () {
 
 			expect( entity ).to.have.a.property( 'manager' ).that.is.null;
 
+			expect( entity ).to.have.a.property( '_renderComponent' ).that.is.null;
+			expect( entity ).to.have.a.property( '_renderComponentCallback' ).that.is.null;
+			expect( entity ).to.have.a.property( '_started' ).that.is.false;
+
 		} );
 
 	} );
