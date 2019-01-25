@@ -7,33 +7,26 @@ const YUKA = require( '../../../../build/yuka.js' );
 
 const FuzzyVERY = YUKA.FuzzyVERY;
 const FuzzyTerm = YUKA.FuzzyTerm;
+const FuzzyCompositeTerm = YUKA.FuzzyCompositeTerm;
 
 describe( 'FuzzyVERY', function () {
 
 	describe( '#constructor()', function () {
-
-		it( 'should create an object with correct default values', function () {
-
-			const hedge = new FuzzyVERY();
-
-			expect( hedge ).to.have.a.property( 'fuzzyTerm' ).that.is.null;
-
-		} );
 
 		it( 'should apply the parameters to the new object', function () {
 
 			const fuzzyTerm = new FuzzyTerm();
 			const hedge = new FuzzyVERY( fuzzyTerm );
 
-			expect( hedge.fuzzyTerm ).to.equal( fuzzyTerm );
+			expect( hedge.terms ).to.include( fuzzyTerm );
 
 		} );
 
-		it( 'should inherit from FuzzyTerm', function () {
+		it( 'should inherit from FuzzyCompositeTerm', function () {
 
 			const hedge = new FuzzyVERY();
 
-			expect( hedge ).is.an.instanceof( FuzzyTerm );
+			expect( hedge ).is.an.instanceof( FuzzyCompositeTerm );
 
 		} );
 
@@ -49,7 +42,7 @@ describe( 'FuzzyVERY', function () {
 			const hedge = new FuzzyVERY( fuzzyTerm );
 			hedge.clearDegreeOfMembership();
 
-			expect( hedge.fuzzyTerm.degreeOfMembership ).to.equal( 0 );
+			expect( hedge.terms[ 0 ].degreeOfMembership ).to.equal( 0 );
 
 		} );
 

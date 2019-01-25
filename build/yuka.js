@@ -4340,9 +4340,9 @@
 	* of a fuzzy set. The FAIRLY fuzzy hedge widens the membership function.
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments FuzzyTerm
+	* @augments FuzzyCompositeTerm
 	*/
-	class FuzzyFAIRLY extends FuzzyTerm {
+	class FuzzyFAIRLY extends FuzzyCompositeTerm {
 
 		/**
 		* Constructs a new fuzzy FAIRLY hedge with the given values.
@@ -4351,14 +4351,7 @@
 		*/
 		constructor( fuzzyTerm = null ) {
 
-			super();
-
-			/**
-			* The fuzzy term this hedge is working on.
-			* @type FuzzyTerm
-			* @default null
-			*/
-			this.fuzzyTerm = fuzzyTerm;
+			super( [ fuzzyTerm ] );
 
 		}
 
@@ -4371,7 +4364,8 @@
 		*/
 		clearDegreeOfMembership() {
 
-			this.fuzzyTerm.clearDegreeOfMembership();
+			const fuzzyTerm = this.terms[ 0 ];
+			fuzzyTerm.clearDegreeOfMembership();
 
 			return this;
 
@@ -4384,7 +4378,8 @@
 		*/
 		getDegreeOfMembership() {
 
-			const dom = this.fuzzyTerm.getDegreeOfMembership();
+			const fuzzyTerm = this.terms[ 0 ];
+			const dom = fuzzyTerm.getDegreeOfMembership();
 
 			return Math.sqrt( dom );
 
@@ -4397,7 +4392,8 @@
 		*/
 		updateDegreeOfMembership( value ) {
 
-			this.fuzzyTerm.updateDegreeOfMembership( Math.sqrt( value ) );
+			const fuzzyTerm = this.terms[ 0 ];
+			fuzzyTerm.updateDegreeOfMembership( Math.sqrt( value ) );
 
 			return this;
 
@@ -4457,9 +4453,9 @@
 	* of a fuzzy set. The FAIRLY fuzzy hedge widens the membership function.
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments FuzzyTerm
+	* @augments FuzzyCompositeTerm
 	*/
-	class FuzzyVERY extends FuzzyTerm {
+	class FuzzyVERY extends FuzzyCompositeTerm {
 
 		/**
 		* Constructs a new fuzzy VERY hedge with the given values.
@@ -4468,14 +4464,7 @@
 		*/
 		constructor( fuzzyTerm = null ) {
 
-			super();
-
-			/**
-			* The fuzzy term this hedge is working on.
-			* @type FuzzyTerm
-			* @default null
-			*/
-			this.fuzzyTerm = fuzzyTerm;
+			super( [ fuzzyTerm ] );
 
 		}
 
@@ -4488,7 +4477,8 @@
 		*/
 		clearDegreeOfMembership() {
 
-			this.fuzzyTerm.clearDegreeOfMembership();
+			const fuzzyTerm = this.terms[ 0 ];
+			fuzzyTerm.clearDegreeOfMembership();
 
 			return this;
 
@@ -4501,7 +4491,8 @@
 		*/
 		getDegreeOfMembership() {
 
-			const dom = this.fuzzyTerm.getDegreeOfMembership();
+			const fuzzyTerm = this.terms[ 0 ];
+			const dom = fuzzyTerm.getDegreeOfMembership();
 
 			return dom * dom;
 
@@ -4514,7 +4505,8 @@
 		*/
 		updateDegreeOfMembership( value ) {
 
-			this.fuzzyTerm.updateDegreeOfMembership( value * value );
+			const fuzzyTerm = this.terms[ 0 ];
+			fuzzyTerm.updateDegreeOfMembership( value * value );
 
 			return this;
 
