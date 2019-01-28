@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const GoalJSONs = require( '../../files/GoalJSONs.js' );
 
 const GameEntity = YUKA.GameEntity;
 const CompositeGoal = YUKA.CompositeGoal;
@@ -260,15 +261,61 @@ describe( 'CompositeGoal', function () {
 
 	} );
 
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const compositeGoal = new CompositeGoal( owner );
+			const subgoal = new CustomGoalCompleted( owner );
+			subgoal.status = STATUS.COMPLETED;
+
+			compositeGoal.addSubgoal( subgoal );
+
+			expect( compositeGoal.toJSON() ).to.be.deep.equal( GoalJSONs.CompositeGoal );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the reference to the owner', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const entities = new Map();
+			entities.set( '4C06581E-448A-4557-835E-7A9D2CE20D30', owner );
+
+			const compositeGoal = new CompositeGoal();
+			compositeGoal.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			const subgoal = new CustomGoalCompleted();
+			subgoal.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			subgoal.status = STATUS.COMPLETED;
+
+			compositeGoal.addSubgoal( subgoal );
+
+			compositeGoal.resolveReferences( entities );
+
+			expect( compositeGoal.owner ).to.equal( owner );
+			expect( subgoal.owner ).to.equal( owner );
+
+		} );
+
+	} );
+
 } );
 
 //
 
 class CustomGoalCompleted extends Goal {
 
-	constructor() {
+	constructor( owner = null ) {
 
-		super();
+		super( owner );
 
 		this.activateCalled = false;
 		this.executeCalled = false;
@@ -306,9 +353,9 @@ class CustomGoalCompleted extends Goal {
 
 class CustomGoalFailed extends Goal {
 
-	constructor() {
+	constructor( owner = null ) {
 
-		super();
+		super( owner );
 
 		this.activateCalled = false;
 		this.executeCalled = false;

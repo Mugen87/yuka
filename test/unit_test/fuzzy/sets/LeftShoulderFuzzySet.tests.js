@@ -4,11 +4,12 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const FuzzyJSONs = require( '../../../files/FuzzyJSONs.js' );
 
 const LeftShoulderFuzzySet = YUKA.LeftShoulderFuzzySet;
 const FuzzySet = YUKA.FuzzySet;
 
-describe( 'FuzzySet', function () {
+describe( 'LeftShoulderFuzzySet', function () {
 
 	describe( '#constructor()', function () {
 
@@ -60,6 +61,34 @@ describe( 'FuzzySet', function () {
 
 			expect( fuzzySet.computeDegreeOfMembership( - 1 ) ).to.equal( 0 );
 			expect( fuzzySet.computeDegreeOfMembership( 101 ) ).to.equal( 0 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const fuzzySet = new LeftShoulderFuzzySet( 0, 50, 100 );
+			fuzzySet.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+
+			expect( fuzzySet.toJSON() ).to.be.deep.equal( FuzzyJSONs.LeftShoulderFuzzySet );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const fuzzySet1 = new LeftShoulderFuzzySet( 0, 50, 100 );
+			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+
+			const fuzzySet2 = new LeftShoulderFuzzySet().fromJSON( FuzzyJSONs.LeftShoulderFuzzySet );
+
+			expect( fuzzySet1 ).to.be.deep.equal( fuzzySet2 );
 
 		} );
 

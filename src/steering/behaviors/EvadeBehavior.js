@@ -85,6 +85,53 @@ class EvadeBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.pursuer = this.pursuer ? this.pursuer.uuid : null;
+		json.panicDistance = this.panicDistance;
+		json.predictionFactor = this.predictionFactor;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {EvadeBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.pursuer = json.pursuer;
+		this.panicDistance = json.panicDistance;
+		this.predictionFactor = json.predictionFactor;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {EvadeBehavior} A reference to this behavior.
+	*/
+	resolveReferences( entities ) {
+
+		this.pursuer = entities.get( this.pursuer ) || null;
+
+	}
+
 }
 
 export { EvadeBehavior };

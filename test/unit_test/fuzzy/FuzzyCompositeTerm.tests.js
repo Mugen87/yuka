@@ -4,9 +4,14 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const FuzzyJSONs = require( '../../files/FuzzyJSONs.js' );
 
 const FuzzyCompositeTerm = YUKA.FuzzyCompositeTerm;
 const FuzzyTerm = YUKA.FuzzyTerm;
+const FuzzyAND = YUKA.FuzzyAND;
+const FuzzyVERY = YUKA.FuzzyVERY;
+const LeftShoulderFuzzySet = YUKA.LeftShoulderFuzzySet;
+const RightShoulderFuzzySet = YUKA.RightShoulderFuzzySet;
 
 describe( 'FuzzyCompositeTerm', function () {
 
@@ -72,6 +77,30 @@ describe( 'FuzzyCompositeTerm', function () {
 
 			expect( atomicTerm1.degreeOfMembership ).to.equal( 0.75 );
 			expect( atomicTerm2.degreeOfMembership ).to.equal( 0.75 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const fuzzySet1 = new LeftShoulderFuzzySet();
+			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const fuzzySet2 = new RightShoulderFuzzySet();
+			fuzzySet2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+
+			const fuzzySet3 = new RightShoulderFuzzySet();
+			fuzzySet3.uuid = '34E1C456-E6C9-45EC-8AB2-F81D9121A223';
+
+			const term1 = new FuzzyAND( new FuzzyVERY( fuzzySet1 ), fuzzySet2 );
+			const term2 = fuzzySet3;
+
+			const compositeTerm = new FuzzyCompositeTerm( [ term1, term2 ] );
+
+			expect( compositeTerm.toJSON() ).to.be.deep.equal( FuzzyJSONs.FuzzyCompositeTerm );
 
 		} );
 

@@ -29,6 +29,29 @@ class State {
 	exit( /* owner */ ) {}
 
 	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {State} A reference to this state.
+	*/
+	fromJSON( /* json */ ) {}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {State} A reference to this state.
+	*/
+	resolveReferences( /* entities */ ) {}
+
+	/**
 	* This method is called when messaging between game entities occurs.
 	*
 	* @param {GameEntity} owner - The game entity that represents the execution context of this state.

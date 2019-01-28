@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const PartitioningJSONs = require( '../../files/PartitioningJSONs.js' );
 
 const CellSpacePartitioning = YUKA.CellSpacePartitioning;
 const GameEntity = YUKA.GameEntity;
@@ -189,6 +190,65 @@ describe( 'CellSpacePartitioning', function () {
 			spatialIndex.addPolygon( polygon );
 
 			expect( spatialIndex.cells[ 0 ].entries ).to.include( polygon );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const cellSpacePartitioning = new CellSpacePartitioning( 1, 1, 1, 1, 1, 1 );
+			cellSpacePartitioning.addEntityToPartition( entity, 0 );
+			const json = cellSpacePartitioning.toJSON();
+
+			expect( json ).to.deep.equal( PartitioningJSONs.CellSpacePartitioning );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const cellSpacePartitioning = new CellSpacePartitioning( 1, 1, 1, 1, 1, 1 );
+			cellSpacePartitioning.addEntityToPartition( entity, 0 );
+
+			const cellSpacePartitioning2 = new CellSpacePartitioning().fromJSON( PartitioningJSONs.CellSpacePartitioning );
+
+			const map = new Map();
+			map.set( entity.uuid, entity );
+			cellSpacePartitioning2.resolveReferences( map );
+
+			expect( cellSpacePartitioning2 ).to.deep.equal( cellSpacePartitioning );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const cellSpacePartitioning = new CellSpacePartitioning( 1, 1, 1, 1, 1, 1 );
+			cellSpacePartitioning.addEntityToPartition( entity.uuid, 0 );
+
+			const map = new Map();
+			map.set( entity.uuid, entity );
+			cellSpacePartitioning.resolveReferences( map );
+
+			expect( cellSpacePartitioning.cells[ 0 ].entries[ 0 ] ).to.deep.equal( entity );
 
 		} );
 

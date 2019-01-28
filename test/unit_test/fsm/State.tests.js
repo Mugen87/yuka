@@ -45,6 +45,42 @@ describe( 'State', function () {
 
 	} );
 
+	describe( '#toJSON()', function () {
+
+		it( 'should exist', function () {
+
+			const state = new State();
+			expect( state ).respondTo( 'toJSON' );
+			state.toJSON();
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should exist', function () {
+
+			const state = new State();
+			expect( state ).respondTo( 'fromJSON' );
+			state.fromJSON();
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should exist', function () {
+
+			const state = new State();
+			expect( state ).respondTo( 'resolveReferences' );
+			state.resolveReferences();
+
+		} );
+
+	} );
+
 	describe( '#onMessage()', function () {
 
 		it( 'should exist', function () {

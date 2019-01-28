@@ -66,6 +66,65 @@ class MeshGeometry {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			type: this.constructor.name
+		};
+
+		json.indices = {
+			type: this.indices ? this.indices.constructor.name : null,
+			data: this.indices ? Array.from( this.indices ) : null
+		};
+
+		json.vertices = Array.from( this.vertices );
+		json.backfaceCulling = this.backfaceCulling;
+		json.aabb = this.aabb.toJSON();
+		json.boundingSphere = this.boundingSphere.toJSON();
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {MeshGeometry} A reference to this mesh geometry.
+	*/
+	fromJSON( json ) {
+
+		this.aabb = new AABB().fromJSON( json.aabb );
+		this.boundingSphere = new BoundingSphere().fromJSON( json.boundingSphere );
+		this.backfaceCulling = json.backfaceCulling;
+
+		this.vertices = new Float32Array( json.vertices );
+
+		switch ( json.indices.type ) {
+
+			case 'Uint16Array':
+				this.indices = new Uint16Array( json.indices.data );
+				break;
+
+			case 'Uint32Array':
+				this.indices = new Uint32Array( json.indices.data );
+				break;
+
+			case 'null':
+				this.indices = null;
+				break;
+
+		}
+
+		return this;
+
+	}
+
 }
 
 export { MeshGeometry };

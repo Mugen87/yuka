@@ -102,6 +102,43 @@ class WanderBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.radius = this.radius;
+		json.distance = this.distance;
+		json.jitter = this.jitter;
+		json._targetLocal = this._targetLocal.toArray( new Array() );
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {WanderBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.radius = json.radius;
+		this.distance = json.distance;
+		this.jitter = json.jitter;
+		this._targetLocal.fromArray( json._targetLocal );
+
+		return this;
+
+	}
+
 }
 
 //

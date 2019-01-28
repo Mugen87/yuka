@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const CoreJSONs = require( '../../files/CoreJSONs.js' );
 
 const MovingEntity = YUKA.MovingEntity;
 const Vector3 = YUKA.Vector3;
@@ -103,6 +104,39 @@ describe( 'MovingEntity', function () {
 			const movingEntity = new MovingEntity();
 			movingEntity.velocity.set( 2, 2, 1 );
 			expect( movingEntity.getSpeedSquared() ).to.equal( 9 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const entity = new MovingEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			expect( entity.toJSON() ).to.be.deep.equal( CoreJSONs.MovingEntity );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const entity1 = new MovingEntity();
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+
+			const entity2 = new MovingEntity();
+			entity2.velocity = new Vector3( 0, 0, 1 );
+			entity2.maxSpeed = 2;
+			entity2.updateOrientation = false;
+			entity2.fromJSON( CoreJSONs.MovingEntity );
+
+			expect( entity2 ).to.be.deep.equal( entity1 );
 
 		} );
 

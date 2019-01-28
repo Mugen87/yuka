@@ -5,6 +5,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const GraphJSONs = require( "../../../files/GraphJSONs.js" );
 
 const Node = YUKA.Node;
 const Edge = YUKA.Edge;
@@ -446,6 +447,55 @@ describe( 'Graph', function () {
 
 			expect( graph.hasEdge( e0.from, e0.to ) ).to.be.false;
 			expect( graph.hasEdge( e1.from, e1.to ) ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const graph = new Graph();
+			graph.digraph = true;
+			const n0 = new Node( 0 );
+			const n1 = new Node( 1 );
+			const e0 = new Edge( 0, 1 );
+			const e1 = new Edge( 1, 0 );
+
+			graph.addNode( n0 );
+			graph.addNode( n1 );
+			graph.addEdge( e0 );
+			graph.addEdge( e1 );
+
+			const json = graph.toJSON();
+
+			expect( json ).to.deep.equal( GraphJSONs.Graph );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const graph = new Graph();
+			graph.digraph = true;
+			const n0 = new Node( 0 );
+			const n1 = new Node( 1 );
+			const e0 = new Edge( 0, 1 );
+			const e1 = new Edge( 1, 0 );
+
+			graph.addNode( n0 );
+			graph.addNode( n1 );
+			graph.addEdge( e0 );
+			graph.addEdge( e1 );
+
+			const graph2 = new Graph().fromJSON( GraphJSONs.Graph );
+
+
+			expect( graph2 ).to.deep.equal( graph );
 
 		} );
 

@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const CoreJSONs = require( '../../files/CoreJSONs.js' );
 
 const EntityManager = YUKA.EntityManager;
 const CellSpacePartitioning = YUKA.CellSpacePartitioning;
@@ -11,6 +12,8 @@ const GameEntity = YUKA.GameEntity;
 const MessageDispatcher = YUKA.MessageDispatcher;
 const Telegram = YUKA.Telegram;
 const Trigger = YUKA.Trigger;
+const MovingEntity = YUKA.MovingEntity;
+const Vehicle = YUKA.Vehicle;
 
 describe( 'EntityManager', function () {
 
@@ -24,6 +27,7 @@ describe( 'EntityManager', function () {
 			expect( manager ).to.have.a.property( 'triggers' ).that.is.an( 'array' );
 			expect( manager ).to.have.a.property( 'spatialIndex' ).that.is.null;
 			expect( manager ).to.have.a.property( '_indexMap' ).that.is.a( 'map' );
+			expect( manager ).to.have.a.property( '_typesMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
 
 		} );
@@ -461,6 +465,145 @@ describe( 'EntityManager', function () {
 			manager.sendMessage( sender, receiver, 'test', 0, {} );
 
 			expect( receiver.messageHandled ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const entity1 = new GameEntity();
+			const entity2 = new GameEntity();
+
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+
+			entity1.add( entity2 );
+
+			entity1.neighbors.push( entity2 );
+			entity2.neighbors.push( entity1 );
+
+			const manager = new EntityManager();
+			manager.add( entity1 );
+			manager.update();
+
+			expect( manager.toJSON() ).to.be.deep.equal( CoreJSONs.EntityManager );
+
+		} );
+
+		it( 'should serialize this instance to a JSON object, bigger test', function () {
+
+			const entity1 = new MovingEntity();
+			const entity2 = new Vehicle();
+			const entity3 = new CustomEntity();
+
+			const trigger1 = new Trigger();
+			const trigger2 = new CustomTrigger();
+
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			entity3.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
+
+			entity1.neighbors.push( entity2, entity3 );
+			entity2.neighbors.push( entity1 );
+			entity3.neighbors.push( entity1 );
+
+			const manager = new EntityManager();
+			manager.registerType( 'CustomEntity', CustomEntity );
+			manager.registerType( 'CustomTrigger', CustomTrigger );
+			manager.add( entity1 );
+			manager.add( entity2 );
+			manager.add( entity3 );
+
+			manager.addTrigger( trigger1 );
+			manager.addTrigger( trigger2 );
+
+			expect( manager.toJSON() ).to.be.deep.equal( CoreJSONs.EntityManager2 );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const entity1 = new GameEntity();
+			const entity2 = new GameEntity();
+
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+
+			entity1.add( entity2 );
+
+			entity1.neighbors.push( entity2 );
+			entity2.neighbors.push( entity1 );
+
+			const manager = new EntityManager();
+			manager.add( entity1 );
+			manager.update();
+
+			const managerRestored = new EntityManager().fromJSON( CoreJSONs.EntityManager );
+
+			expect( managerRestored ).to.be.deep.equal( manager );
+
+		} );
+
+		it( 'should deserialize this instance to a JSON object, bigger test', function () {
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			const entity1 = new MovingEntity();
+			const entity2 = new Vehicle();
+			const entity3 = new CustomEntity();
+
+			const trigger1 = new Trigger();
+			const trigger2 = new CustomTrigger();
+
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			entity3.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
+
+			entity1.neighbors.push( entity2, entity3 );
+			entity2.neighbors.push( entity1 );
+			entity3.neighbors.push( entity1 );
+
+			const manager = new EntityManager();
+			manager.registerType( 'CustomEntity', CustomEntity );
+			manager.registerType( 'CustomTrigger', CustomTrigger );
+			manager.add( entity1 );
+			manager.add( entity2 );
+			manager.add( entity3 );
+
+			manager.addTrigger( trigger1 );
+			manager.addTrigger( trigger2 );
+
+			const manager2 = new EntityManager();
+			manager2.registerType( 'CustomEntity', CustomEntity );
+			manager2.registerType( 'CustomTrigger', CustomTrigger );
+			manager2.fromJSON( CoreJSONs.EntityManager2 );
+
+			const manager3 = new EntityManager().fromJSON( CoreJSONs.EntityManager2 );
+
+			expect( manager2 ).to.be.deep.equal( manager );
+			expect( manager3.entities.length + 1 ).to.be.equal( manager2.entities.length );
+			expect( manager3.triggers.length + 1 ).to.be.equal( manager2.triggers.length );
+
+		} );
+
+	} );
+
+	describe( '#registerType()', function () {
+
+		it( 'should register a custom type for deserialization', function () {
+
+			const manager = new EntityManager();
+
+			manager.registerType( 'CustomEntity', CustomEntity );
+
+			expect( manager._typesMap.get( 'CustomEntity' ) ).to.equal( CustomEntity );
 
 		} );
 

@@ -43,6 +43,54 @@ class MemoryRecord {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			entity: this.entity.uuid,
+			timeLastSensed: this.timeLastSensed,
+			lastSensedPosition: this.lastSensedPosition.toArray( new Array() ),
+			visible: this.visible
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {MemoryRecord} A reference to this memory record.
+	*/
+	fromJSON( json ) {
+
+		this.entity = json.entity; // uuid
+		this.timeLastSensed = json.timeLastSensed;
+		this.lastSensedPosition.fromArray( json.lastSensedPosition );
+		this.visible = json.visible;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {MemoryRecord} A reference to this memory record.
+	*/
+	resolveReferences( entities ) {
+
+		this.entity = entities.get( this.entity ) || null;
+
+		return this;
+
+	}
+
 }
 
 export { MemoryRecord };

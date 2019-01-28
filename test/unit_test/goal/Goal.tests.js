@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const GoalJSONs = require( '../../files/GoalJSONs.js' );
 
 const GameEntity = YUKA.GameEntity;
 const Goal = YUKA.Goal;
@@ -215,6 +216,71 @@ describe( 'Goal', function () {
 			goal.activateIfInactive();
 
 			expect( goal.completed() ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const goal = new Goal( owner );
+			goal.status = STATUS.COMPLETED;
+
+			expect( goal.toJSON() ).to.be.deep.equal( GoalJSONs.Goal );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const goal1 = new Goal();
+
+			goal1.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			goal1.status = STATUS.COMPLETED;
+
+			const goal2 = new Goal().fromJSON( GoalJSONs.Goal );
+
+			expect( goal1 ).to.be.deep.equal( goal2 );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the reference to the owner', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const entities = new Map();
+			entities.set( '4C06581E-448A-4557-835E-7A9D2CE20D30', owner );
+
+			const goal = new Goal();
+			goal.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			goal.resolveReferences( entities );
+
+			expect( goal.owner ).to.equal( owner );
+
+		} );
+
+		it( 'should set the owner to null if the mapping is missing', function () {
+
+			const goal = new Goal();
+			goal.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			goal.resolveReferences( new Map() );
+
+			expect( goal.owner ).to.be.null;
 
 		} );
 

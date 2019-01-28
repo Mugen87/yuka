@@ -44,6 +44,34 @@ class GoalEvaluator {
 	*/
 	setGoal( /* owner */ ) {}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			characterBias: this.characterBias
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {GoalEvaluator} A reference to this goal evaluator.
+	*/
+	fromJSON( json ) {
+
+		this.characterBias = json.characterBias;
+
+		return this;
+
+	}
+
 }
 
 

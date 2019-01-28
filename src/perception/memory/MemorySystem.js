@@ -148,6 +148,86 @@ class MemorySystem {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			type: this.constructor.name,
+			owner: this.owner.uuid,
+			records: new Array(),
+			memorySpan: this.memorySpan
+		};
+
+		const records = this.records;
+
+		for ( let i = 0, l = records.length; i < l; i ++ ) {
+
+			const record = records[ i ];
+			json.records.push( record.toJSON() );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {MemorySystem} A reference to this memory system.
+	*/
+	fromJSON( json ) {
+
+		this.owner = json.owner; // uuid
+		this.memorySpan = json.memorySpan;
+
+		const recordsJSON = json.records;
+
+		for ( let i = 0, l = recordsJSON.length; i < l; i ++ ) {
+
+			const recordJSON = recordsJSON[ i ];
+			const record = new MemoryRecord().fromJSON( recordJSON );
+
+			this.records.push( record );
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {MemorySystem} A reference to this memory system.
+	*/
+	resolveReferences( entities ) {
+
+		this.owner = entities.get( this.owner ) || null;
+
+		// records
+
+		const records = this.records;
+
+		for ( let i = 0, l = records.length; i < l; i ++ ) {
+
+			const record = 	records[ i ];
+
+			record.resolveReferences( entities );
+			this.recordsMap.set( record.entity, record );
+
+		}
+
+		return this;
+
+	}
+
 }
 
 export { MemorySystem };

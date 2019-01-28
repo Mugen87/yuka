@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const CoreJSONs = require( '../../files/CoreJSONs.js' );
 
 const GameEntity = YUKA.GameEntity;
 const Vector3 = YUKA.Vector3;
@@ -18,6 +19,8 @@ describe( 'GameEntity', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const entity = new GameEntity();
+
+			expect( entity ).to.have.a.property( 'uuid' ).that.is.a( 'string' );
 			expect( entity ).to.have.a.property( 'name' ).that.is.equal( '' );
 			expect( entity ).to.have.a.property( 'active' ).that.is.true;
 
@@ -297,6 +300,78 @@ describe( 'GameEntity', function () {
 			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
 
 			sender.sendMessage( receiver, 'test' );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			expect( entity.toJSON() ).to.be.deep.equal( CoreJSONs.GameEntity );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const entity1 = new GameEntity();
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const entity2 = new GameEntity().fromJSON( CoreJSONs.GameEntity );
+
+			expect( entity2 ).to.be.deep.equal( entity1 );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const entity1 = new GameEntity();
+			const entity2 = new GameEntity();
+			const entity1a = new GameEntity();
+
+			//set ids
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			entity1a.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			//set references
+			entity1.add( entity2 );
+			entity2.add( entity1 );
+			entity1.neighbors.push( entity2 );
+
+			entity1a.children.push( entity2.uuid );
+			entity1a.parent = entity2.uuid;
+			entity1a.neighbors.push( entity2.uuid );
+
+			const map = new Map();
+			map.set( entity2.uuid, entity2 );
+
+			entity1a.resolveReferences( map );
+
+			expect( entity1a ).to.deep.equal( entity1 );
+
+		} );
+
+		it( 'should set the parent to null if the mapping is missing', function () {
+
+			const entity = new GameEntity();
+			entity.parent = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			entity.resolveReferences( new Map() );
+
+			expect( entity.parent ).to.be.null;
 
 		} );
 

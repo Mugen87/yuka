@@ -66,6 +66,37 @@ class FuzzyCompositeTerm extends FuzzyTerm {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.terms = new Array();
+
+		for ( let i = 0, l = this.terms.length; i < l; i ++ ) {
+
+			const term = this.terms[ i ];
+
+			if ( term instanceof FuzzyCompositeTerm ) {
+
+				json.terms.push( term.toJSON() );
+
+			} else {
+
+				json.terms.push( term.uuid );
+
+			}
+
+		}
+
+		return json;
+
+	}
+
 }
 
 export { FuzzyCompositeTerm };

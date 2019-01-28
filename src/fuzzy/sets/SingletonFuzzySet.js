@@ -60,6 +60,37 @@ class SingletonFuzzySet extends FuzzySet {
 
 	}
 
+	/**
+	 * Transforms this instance into a JSON object.
+	 *
+	 * @return {Object} The JSON object.
+	 */
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.midpoint = this.midpoint;
+
+		return json;
+
+	}
+
+	/**
+	 * Restores this instance from the given JSON object.
+	 *
+	 * @param {Object} json - The JSON object.
+	 * @return {SingletonFuzzySet} A reference to this fuzzy set.
+	 */
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.midpoint = json.midpoint;
+
+		return this;
+
+	}
+
 }
 
 export { SingletonFuzzySet };

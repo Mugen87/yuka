@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const CoreJSONs = require( '../../files/CoreJSONs.js' );
 
 const MeshGeometry = YUKA.MeshGeometry;
 const AABB = YUKA.AABB;
@@ -54,6 +55,40 @@ describe( 'MeshGeometry', function () {
 			expect( geometry.boundingSphere.center ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
 			expect( geometry.boundingSphere.radius ).to.closeTo( 0.7071067811865476, Number.EPSILON );
 
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const vertices = new Float32Array( [ 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const indices = new Uint16Array( [ 0, 1, 2 ] );
+
+			const geometry = new MeshGeometry( vertices, indices );
+
+			const json = geometry.toJSON();
+
+			expect( json ).to.be.deep.equal( CoreJSONs.MeshGeometry );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const vertices = new Float32Array( [ 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const indices = new Uint16Array( [ 0, 1, 2 ] );
+
+			const geometry = new MeshGeometry( vertices, indices );
+
+			const geometry2 = new MeshGeometry().fromJSON( CoreJSONs.MeshGeometry );
+
+			expect( geometry2 ).to.be.deep.equal( geometry );
 
 		} );
 

@@ -78,6 +78,39 @@ class FleeBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.target = this.target.toArray( new Array() );
+		json.panicDistance = this.panicDistance;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {FleeBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.target.fromArray( json.target );
+		this.panicDistance = json.panicDistance;
+
+		return this;
+
+	}
+
 }
 
 export { FleeBehavior };

@@ -1,3 +1,6 @@
+import { Edge } from './Edge.js';
+import { Node }	from './Node.js';
+
 /**
 * Class representing a sparse graph implementation based on adjacency lists.
 * A sparse graph can be used to model many different types of graphs like navigation
@@ -357,6 +360,70 @@ class Graph {
 
 		this._nodes.clear();
 		this._edges.clear();
+
+		return this;
+
+	}
+
+	/**
+	 * Transforms this instance into a JSON object.
+	 *
+	 * @return {Object} The JSON object.
+	 */
+	toJSON() {
+
+		const json = {
+			type: this.constructor.name,
+			digraph: this.digraph
+		};
+
+		const edges = [];
+		const nodes = [];
+
+		for ( let [ key, value ] of this._nodes.entries() ) {
+
+			const adjacencyList = [];
+
+			this.getEdgesOfNode( key, adjacencyList );
+
+			for ( let i = 0, l = adjacencyList.length; i < l; i ++ ) {
+
+				edges.push( adjacencyList[ i ].toJSON() );
+
+			}
+
+			nodes.push( value.toJSON() );
+
+		}
+
+		json._edges = edges;
+		json._nodes = nodes;
+
+		return json;
+
+	}
+
+	/**
+	 * Restores this instance from the given JSON object.
+	 *
+	 * @param {Object} json - The JSON object.
+	 * @return {Graph} A reference to this graph.
+	 */
+	fromJSON( json ) {
+
+		this.digraph = json.digraph;
+
+		for ( let i = 0, l = json._nodes.length; i < l; i ++ ) {
+
+			this.addNode( new Node().fromJSON( json._nodes[ i ] ) );
+
+		}
+
+		for ( let i = 0, l = json._edges.length; i < l; i ++ ) {
+
+			this.addEdge( new Edge().fromJSON( json._edges[ i ] ) );
+
+		}
 
 		return this;
 

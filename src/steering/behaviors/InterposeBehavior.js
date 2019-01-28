@@ -97,6 +97,54 @@ class InterposeBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.entity1 = this.entity1 ? this.entity1.uuid : null;
+		json.entity2 = this.entity2 ? this.entity2.uuid : null;
+		json.deceleration = this.deceleration;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {InterposeBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.entity1 = json.entity1;
+		this.entity2 = json.entity2;
+		this.deceleration = json.deceleration;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {InterposeBehavior} A reference to this behavior.
+	*/
+	resolveReferences( entities ) {
+
+		this.entity1 = entities.get( this.entity1 ) || null;
+		this.entity2 = entities.get( this.entity2 ) || null;
+
+	}
+
 }
 
 export { InterposeBehavior };

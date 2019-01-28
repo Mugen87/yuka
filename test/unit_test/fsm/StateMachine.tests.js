@@ -9,6 +9,8 @@ const State = YUKA.State;
 const StateMachine = YUKA.StateMachine;
 const GameEntity = YUKA.GameEntity;
 
+const StateJSONs = require( '../../files/StateJSONs.js' );
+
 describe( 'StateMachine', function () {
 
 	describe( '#constructor()', function () {
@@ -232,6 +234,133 @@ describe( 'StateMachine', function () {
 
 	} );
 
+	describe( '#toJSON', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const stateMachine = new StateMachine( owner );
+
+			const state1 = new CustomState();
+			stateMachine.add( 'STATE', state1 );
+
+			const state2 = new MessageCustomState();
+			stateMachine.add( 'MESSAGE_STATE', state2 );
+
+			stateMachine.currentState = state1;
+			stateMachine.previousState = state2;
+
+			expect( stateMachine.toJSON() ).to.be.deep.equal( StateJSONs.StateMachine );
+
+		} );
+
+		it( 'should set current, previous and global state to null if no states are defined', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const stateMachine = new StateMachine( owner );
+
+			expect( stateMachine.toJSON() ).to.be.deep.equal( StateJSONs.StateMachineEmpty );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const entities = new Map();
+			entities.set( owner.uuid, owner );
+
+			const stateMachine1 = new StateMachine( owner );
+			stateMachine1.registerType( 'CustomState', CustomState ); // so deep equal works
+
+			const state = new CustomState();
+			stateMachine1.add( 'STATE', state );
+			state.resolveReferencesCalled = true; // so deep equal works
+
+			stateMachine1.currentState = state;
+
+			const stateMachine2 = new StateMachine();
+			stateMachine2.registerType( 'CustomState', CustomState );
+			stateMachine2.fromJSON( StateJSONs.StateMachine );
+			stateMachine2.resolveReferences( entities );
+
+			expect( stateMachine1 ).to.be.deep.equal( stateMachine2 );
+
+		} );
+
+		it( 'should set current, previous and global state to null if no states are defined', function () {
+
+			const stateMachine = new StateMachine().fromJSON( StateJSONs.StateMachineEmpty );
+
+			expect( stateMachine.currentState ).to.be.null;
+			expect( stateMachine.previousState ).to.be.null;
+			expect( stateMachine.globalState ).to.be.null;
+			expect( stateMachine.states ).to.be.empty;
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const stateMachine = new StateMachine();
+			stateMachine.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const state = new CustomState();
+			stateMachine.add( 'STATE', state );
+
+			const entities = new Map();
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entities.set( entity.uuid, entity );
+
+			stateMachine.resolveReferences( entities );
+
+			expect( stateMachine.owner ).to.equal( entity );
+			expect( state.resolveReferencesCalled ).to.be.true;
+
+		} );
+
+		it( 'should set the owner to null if the mapping is missing', function () {
+
+			const stateMachine = new StateMachine();
+			stateMachine.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			stateMachine.resolveReferences( new Map() );
+
+			expect( stateMachine.owner ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#registerType()', function () {
+
+		it( 'should register a custom type for deserialization', function () {
+
+			const stateMachine = new StateMachine();
+
+			stateMachine.registerType( 'CustomState', CustomState );
+
+			expect( stateMachine._typesMap.get( 'CustomState' ) ).to.equal( CustomState );
+
+		} );
+
+	} );
+
 } );
 
 //
@@ -245,6 +374,7 @@ class CustomState extends State {
 		this.enterCalled = false;
 		this.executeCalled = false;
 		this.exitCalled = false;
+		this.resolveReferencesCalled = false;
 
 	}
 
@@ -266,9 +396,39 @@ class CustomState extends State {
 
 	}
 
+	toJSON() {
+
+		return {};
+
+	}
+
+	fromJSON() {
+
+		return this;
+
+	}
+
+	resolveReferences() {
+
+		this.resolveReferencesCalled = true;
+
+	}
+
 }
 
 class MessageCustomState extends CustomState {
+
+	toJSON() {
+
+		return {};
+
+	}
+
+	fromJSON() {
+
+		return this;
+
+	}
 
 	onMessage() {
 

@@ -19,6 +19,31 @@ class TriggerRegion {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {TriggerRegion} A reference to this trigger region.
+	*/
+	fromJSON( /* json */ ) {
+
+		return this;
+
+	}
+
 }
 
 export { TriggerRegion };

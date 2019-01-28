@@ -80,6 +80,63 @@ class Smoother {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const data = {
+			type: this.constructor.name,
+			count: this.count,
+			_history: new Array(),
+			_slot: this._slot
+		};
+
+		// history
+
+		const history = this._history;
+
+		for ( let i = 0, l = history.length; i < l; i ++ ) {
+
+			const value = history[ i ];
+			data._history.push( value.toArray( new Array() ) );
+
+		}
+
+		return data;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Smoother} A reference to this smoother.
+	*/
+	fromJSON( json ) {
+
+		this.count = json.count;
+		this._slot = json._slot;
+
+		// history
+
+		const historyJSON = json._history;
+		this._history.length = 0;
+
+		for ( let i = 0, l = historyJSON.length; i < l; i ++ ) {
+
+			const valueJSON = historyJSON[ i ];
+			this._history.push( new Vector3().fromArray( valueJSON ) );
+
+		}
+
+
+		return this;
+
+	}
+
 }
 
 export { Smoother };

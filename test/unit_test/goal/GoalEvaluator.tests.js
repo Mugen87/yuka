@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const GoalJSONs = require( '../../files/GoalJSONs.js' );
 
 const GoalEvaluator = YUKA.GoalEvaluator;
 
@@ -53,6 +54,32 @@ describe( 'GoalEvaluator', function () {
 			const goalEvaluator = new GoalEvaluator();
 			expect( goalEvaluator ).respondTo( 'setGoal' );
 			goalEvaluator.setGoal();
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const goalEvaluator = new GoalEvaluator( 0.5 );
+
+			expect( goalEvaluator.toJSON() ).to.be.deep.equal( GoalJSONs.GoalEvaluator );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const goalEvaluator1 = new GoalEvaluator( 0.5 );
+
+			const goalEvaluator2 = new GoalEvaluator().fromJSON( GoalJSONs.GoalEvaluator );
+
+			expect( goalEvaluator1 ).to.be.deep.equal( goalEvaluator2 );
 
 		} );
 

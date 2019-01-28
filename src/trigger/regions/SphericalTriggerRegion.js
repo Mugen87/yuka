@@ -65,6 +65,37 @@ class SphericalTriggerRegion extends TriggerRegion {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json._boundingSphere = this._boundingSphere.toJSON();
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {SphericalTriggerRegion} A reference to this trigger region.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this._boundingSphere.fromJSON( json._boundingSphere );
+
+		return this;
+
+	}
+
 }
 
 export { SphericalTriggerRegion };

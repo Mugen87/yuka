@@ -16,7 +16,9 @@ class FuzzyFAIRLY extends FuzzyCompositeTerm {
 	*/
 	constructor( fuzzyTerm = null ) {
 
-		super( [ fuzzyTerm ] );
+		const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : [];
+
+		super( terms );
 
 	}
 

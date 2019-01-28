@@ -4,6 +4,8 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
 
 const ObstacleAvoidanceBehavior = YUKA.ObstacleAvoidanceBehavior;
 const GameEntity = YUKA.GameEntity;
@@ -87,6 +89,64 @@ describe( 'ObstacleAvoidanceBehavior', function () {
 			obstacleAvoidanceBehavior.calculate( vehicle, force );
 
 			expect( force ).to.deep.equal( { x: 0, y: 0, z: 0 } );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const obstacleAvoidanceBehavior = new ObstacleAvoidanceBehavior();
+			obstacleAvoidanceBehavior.brakingWeight = 1;
+			obstacleAvoidanceBehavior.dBoxMinLength = 1;
+			const json = obstacleAvoidanceBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.ObstacleAvoidanceBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const obstacleAvoidanceBehavior1 = new ObstacleAvoidanceBehavior();
+			obstacleAvoidanceBehavior1.brakingWeight = 1;
+			obstacleAvoidanceBehavior1.dBoxMinLength = 1;
+			const obstacleAvoidanceBehavior2 = new ObstacleAvoidanceBehavior().fromJSON( SteeringJSONs.ObstacleAvoidanceBehavior );
+
+			expect( obstacleAvoidanceBehavior1 ).to.deep.equal( obstacleAvoidanceBehavior2 );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const entity1 = new Vehicle();
+
+			const behavior1 = new ObstacleAvoidanceBehavior( );
+			const behavior2 = new ObstacleAvoidanceBehavior( );
+
+			//set ids
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			//set references
+			behavior1.obstacles.push( entity1 );
+			behavior2.obstacles.push( entity1.uuid );
+
+			const map = new Map();
+			map.set( entity1.uuid, entity1 );
+
+
+			behavior2.resolveReferences( map );
+
+			expect( behavior2 ).to.deep.equal( behavior1 );
 
 		} );
 

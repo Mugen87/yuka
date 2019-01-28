@@ -93,6 +93,66 @@ class Cell {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			type: this.constructor.name,
+			aabb: this.aabb.toJSON(),
+			entries: new Array()
+		};
+
+		const entries = this.entries;
+
+		for ( let i = 0, l = entries.length; i < l; i ++ ) {
+
+			json.entries.push( entries[ i ].uuid );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Cell} A reference to this game entity.
+	*/
+	fromJSON( json ) {
+
+		this.aabb.fromJSON( json.aabb );
+		this.entries = json.entries.slice();
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {Cell} A reference to this cell.
+	*/
+	resolveReferences( entities ) {
+
+		const entries = this.entries;
+
+		for ( let i = 0, l = entries.length; i < l; i ++ ) {
+
+			entries[ i ] = entities.get( entries[ i ] );
+
+		}
+
+		return this;
+
+	}
+
 }
 
 export { Cell };

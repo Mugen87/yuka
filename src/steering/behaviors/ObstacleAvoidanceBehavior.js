@@ -157,6 +157,68 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.obstacles = new Array();
+		json.brakingWeight = this.brakingWeight;
+		json.dBoxMinLength = this.dBoxMinLength;
+
+		// obstacles
+
+		for ( let i = 0, l = this.obstacles.length; i < l; i ++ ) {
+
+			json.obstacles.push( this.obstacles[ i ].uuid );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {ObstacleAvoidanceBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.obstacles = json.obstacles;
+		this.brakingWeight = json.brakingWeight;
+		this.dBoxMinLength = json.dBoxMinLength;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {ObstacleAvoidanceBehavior} A reference to this behavior.
+	*/
+	resolveReferences( entities ) {
+
+		const obstacles = this.obstacles;
+
+		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
+
+			obstacles[ i ] = entities.get( obstacles[ i ] );
+
+		}
+
+
+	}
+
 }
 
 export { ObstacleAvoidanceBehavior };

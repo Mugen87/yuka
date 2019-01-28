@@ -1,4 +1,9 @@
 import { MessageDispatcher } from './MessageDispatcher.js';
+import { GameEntity } from './GameEntity';
+import { MovingEntity } from './MovingEntity';
+import { Vehicle } from '../steering/Vehicle';
+import { Trigger } from '../trigger/Trigger.js';
+import { Logger } from './Logger.js';
 
 const candidates = [];
 
@@ -35,6 +40,7 @@ class EntityManager {
 		this.spatialIndex = null;
 
 		this._indexMap = new Map(); // used by spatial indices
+		this._typesMap = new Map(); // used for deserialization of custom entities
 		this._messageDispatcher = new MessageDispatcher();
 
 	}
@@ -348,6 +354,188 @@ class EntityManager {
 	sendMessage( sender, receiver, message, delay, data ) {
 
 		this._messageDispatcher.dispatch( sender, receiver, message, delay, data );
+
+		return this;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const data = {
+			type: this.constructor.name,
+			entities: new Array(),
+			triggers: new Array(),
+			_messageDispatcher: this._messageDispatcher.toJSON()
+		};
+
+		// entities
+
+		function processEntity( entity ) {
+
+			data.entities.push( entity.toJSON() );
+
+			for ( let i = 0, l = entity.children.length; i < l; i ++ ) {
+
+				processEntity( entity.children[ i ] );
+
+			}
+
+		}
+
+		for ( let i = 0, l = this.entities.length; i < l; i ++ ) {
+
+			// recursively process all entities
+
+			processEntity( this.entities[ i ] );
+
+		}
+
+		// triggers
+
+		for ( let i = 0, l = this.triggers.length; i < l; i ++ ) {
+
+			const trigger = this.triggers[ i ];
+			data.triggers.push( trigger.toJSON() );
+
+		}
+
+		return data;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
+	fromJSON( json ) {
+
+		this.clear();
+
+		const entitiesJSON = json.entities;
+		const triggersJSON = json.triggers;
+		const _messageDispatcherJSON = json._messageDispatcher;
+
+		// entities
+
+		const entitiesMap = new Map();
+
+		for ( let i = 0, l = entitiesJSON.length; i < l; i ++ ) {
+
+			const entityJSON = entitiesJSON[ i ];
+			const type = entityJSON.type;
+
+			let entity;
+
+			switch ( type ) {
+
+				case 'GameEntity':
+					entity = new GameEntity().fromJSON( entityJSON );
+					break;
+
+				case 'MovingEntity':
+					entity = new MovingEntity().fromJSON( entityJSON );
+					break;
+
+				case 'Vehicle':
+					entity = new Vehicle().fromJSON( entityJSON );
+					break;
+
+				default:
+
+					// handle custom type
+
+					const ctor = this._typesMap.get( type );
+
+					if ( ctor !== undefined ) {
+
+						entity = new ctor().fromJSON( entityJSON );
+
+					} else {
+
+						Logger.warn( 'YUKA.EntityManager: Unsupported entity type:', type );
+						continue;
+
+					}
+
+			}
+
+			entitiesMap.set( entity.uuid, entity );
+
+			if ( entity.parent === null ) this.add( entity );
+
+		}
+
+		// resolve UUIDs to game entity objects
+
+		for ( let entity of entitiesMap.values() ) {
+
+			entity.resolveReferences( entitiesMap );
+
+		}
+
+		// triggers
+
+		for ( let i = 0, l = triggersJSON.length; i < l; i ++ ) {
+
+			const triggerJSON = triggersJSON[ i ];
+			const type = triggerJSON.type;
+
+			let trigger;
+
+			if ( type === 'Trigger' ) {
+
+				trigger = new Trigger().fromJSON( triggerJSON );
+
+			} else {
+
+				// handle custom type
+
+				const ctor = this._typesMap.get( type );
+
+				if ( ctor !== undefined ) {
+
+					trigger = new ctor().fromJSON( triggerJSON );
+
+				} else {
+
+					Logger.warn( 'YUKA.EntityManager: Unsupported trigger type:', type );
+					continue;
+
+				}
+
+			}
+
+			this.addTrigger( trigger );
+
+		}
+
+		// restore delayed messages
+
+		this._messageDispatcher.fromJSON( _messageDispatcherJSON );
+
+		return this;
+
+	}
+
+	/**
+	* Registers a custom type for deserialization. When calling {@link EntityManager#fromJSON}
+	* the entity manager is able to pick the correct constructor in order to create custom
+	* game entities or triggers.
+	*
+	* @param {String} type - The name of the entity or trigger type.
+	* @param {Function} constructor -  The constructor function.
+	* @return {EntityManager} A reference to this entity manager.
+	*/
+	registerType( type, constructor ) {
+
+		this._typesMap.set( type, constructor );
 
 		return this;
 

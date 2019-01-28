@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const PartitioningJSONs = require( '../../files/PartitioningJSONs.js' );
 
 const Cell = YUKA.Cell;
 const AABB = YUKA.AABB;
@@ -111,6 +112,62 @@ describe( 'Cell', function () {
 
 			expect( cell.intersects( aabb1 ) ).to.be.true;
 			expect( cell.intersects( aabb2 ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const cell = new Cell();
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			cell.add( entity );
+			const json = cell.toJSON();
+
+			expect( json ).to.deep.equal( PartitioningJSONs.Cell );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const cell = new Cell();
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			cell.add( entity );
+
+			const cell2 = new Cell( new AABB( new Vector3( 1, 1, 1 ), new Vector3( 1, 1, 1 ) ) ).fromJSON( PartitioningJSONs.Cell );
+
+			const map = new Map();
+			map.set( entity.uuid, entity );
+			cell2.resolveReferences( map );
+
+			expect( cell2 ).to.deep.equal( cell );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const cell = new Cell();
+			const entity = new GameEntity();
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			cell.add( entity.uuid );
+
+			const map = new Map();
+			map.set( entity.uuid, entity );
+			cell.resolveReferences( map );
+
+			expect( cell.entries[ 0 ] ).to.deep.equal( entity );
 
 		} );
 

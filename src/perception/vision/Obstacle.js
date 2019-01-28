@@ -152,6 +152,37 @@ class Obstacle extends GameEntity {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.geometry = this.geometry.toJSON();
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Obstacle} A reference to this obstacle.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.geometry.fromJSON( json.geometry );
+
+		return this;
+
+	}
+
 }
 
 export { Obstacle };

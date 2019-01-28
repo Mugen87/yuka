@@ -4,6 +4,8 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
 
 const FollowPathBehavior = YUKA.FollowPathBehavior;
 const ArriveBehavior = YUKA.ArriveBehavior;
@@ -32,7 +34,6 @@ describe( 'FollowPathBehavior', function () {
 			const followPathBehavior = new FollowPathBehavior( path, 2 );
 			expect( followPathBehavior.path ).to.equal( path );
 			expect( followPathBehavior.nextWaypointDistance ).to.equal( 2 );
-
 
 		} );
 
@@ -103,6 +104,34 @@ describe( 'FollowPathBehavior', function () {
 			expect( force.x ).to.closeTo( 0, 0 );
 			expect( force.y ).to.closeTo( 0.33, 0.01 );
 			expect( force.z ).to.closeTo( 0, 0 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const path = new Path();
+			const followPathBehavior = new FollowPathBehavior( path, 2 );
+			const json = followPathBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.FollowPathBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const path = new Path();
+			const followPathBehavior1 = new FollowPathBehavior( path, 2 );
+			const followPathBehavior2 = new FollowPathBehavior().fromJSON( SteeringJSONs.FollowPathBehavior );
+
+			expect( followPathBehavior1 ).to.deep.equal( followPathBehavior2 );
 
 		} );
 

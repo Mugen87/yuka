@@ -28,6 +28,19 @@ class FuzzyTerm {
 	*/
 	updateDegreeOfMembership( /* value */ ) {}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name
+		};
+
+	}
+
 }
 
 export { FuzzyTerm };

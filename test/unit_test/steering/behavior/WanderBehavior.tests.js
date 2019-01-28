@@ -1,9 +1,10 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
-
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
 
 const WanderBehavior = YUKA.WanderBehavior;
 const Vehicle = YUKA.Vehicle;
@@ -53,6 +54,34 @@ describe( 'WanderBehavior', function () {
 			expect( force.length() ).not.equal( 0 );
 			expect( force.y ).to.equal( 0 );
 
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const wanderBehavior = new WanderBehavior( 2, 2, 2 );
+			wanderBehavior._targetLocal.set( 0.9171491244303018, 0, 1.7773118700882888 );
+			const json = wanderBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.WanderBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const wanderBehavior1 = new WanderBehavior( 2, 2, 2 );
+			wanderBehavior1._targetLocal.set( 0.9171491244303018, 0, 1.7773118700882888 );
+			const wanderBehavior2 = new WanderBehavior().fromJSON( SteeringJSONs.WanderBehavior );
+
+			expect( wanderBehavior1 ).to.deep.equal( wanderBehavior2 );
 
 		} );
 

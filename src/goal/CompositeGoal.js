@@ -198,6 +198,49 @@ class CompositeGoal extends Goal {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.subgoals = new Array();
+
+		for ( let i = 0, l = this.subgoals.length; i < l; i ++ ) {
+
+			const subgoal = this.subgoals[ i ];
+			json.subgoals.push( subgoal.toJSON() );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {CompositeGoal} A reference to this composite goal.
+	*/
+	resolveReferences( entities ) {
+
+		super.resolveReferences( entities );
+
+		for ( let i = 0, l = this.subgoals.length; i < l; i ++ ) {
+
+			const subgoal = this.subgoals[ i ];
+			subgoal.resolveReferences( entities );
+
+		}
+
+		return this;
+
+	}
+
 }
 
 

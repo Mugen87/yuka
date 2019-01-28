@@ -71,28 +71,28 @@ class CellSpacePartitioning {
 		*/
 		this.cellsZ = cellsZ;
 
-		this._halfWidth = width / 2;
-		this._halfHeight = height / 2;
-		this._halfDepth = depth / 2;
+		this._halfWidth = this.width / 2;
+		this._halfHeight = this.height / 2;
+		this._halfDepth = this.depth / 2;
 
 		this._min = new Vector3( - this._halfWidth, - this._halfHeight, - this._halfDepth );
 		this._max = new Vector3( this._halfWidth, this._halfHeight, this._halfDepth );
 
 		//
 
-		const cellSizeX = width / cellsX;
-		const cellSizeY = height / cellsY;
-		const cellSizeZ = depth / cellsZ;
+		const cellSizeX = this.width / this.cellsX;
+		const cellSizeY = this.height / this.cellsY;
+		const cellSizeZ = this.depth / this.cellsZ;
 
-		for ( let i = 0; i < cellsX; i ++ ) {
+		for ( let i = 0; i < this.cellsX; i ++ ) {
 
 			const x = ( i * cellSizeX ) - this._halfWidth;
 
-			for ( let j = 0; j < cellsY; j ++ ) {
+			for ( let j = 0; j < this.cellsY; j ++ ) {
 
 				const y = ( j * cellSizeY ) - this._halfHeight;
 
-				for ( let k = 0; k < cellsZ; k ++ ) {
+				for ( let k = 0; k < this.cellsZ; k ++ ) {
 
 					const z = ( k * cellSizeZ ) - this._halfDepth;
 
@@ -289,6 +289,89 @@ class CellSpacePartitioning {
 		}
 
 		return this;
+
+	}
+
+	/**
+	 * Transforms this instance into a JSON object.
+	 *
+	 * @return {Object} The JSON object.
+	 */
+	toJSON() {
+
+		const json = {
+			type: this.constructor.name,
+			cells: new Array(),
+			width: this.width,
+			height: this.height,
+			depth: this.depth,
+			cellsX: this.cellsX,
+			cellsY: this.cellsY,
+			cellsZ: this.cellsZ,
+			_halfWidth: this._halfWidth,
+			_halfHeight: this._halfHeight,
+			_halfDepth: this._halfDepth,
+			_min: this._min.toArray( new Array() ),
+			_max: this._max.toArray( new Array() )
+		};
+
+		for ( let i = 0, l = this.cells.length; i < l; i ++ ) {
+
+			json.cells.push( this.cells[ i ].toJSON() );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	 * Restores this instance from the given JSON object.
+	 *
+	 * @param {Object} json - The JSON object.
+	 * @return {CellSpacePartitioning} A reference to this spatial index.
+	 */
+	fromJSON( json ) {
+
+		this.cells.length = 0;
+
+		this.width = json.width;
+		this.height = json.height;
+		this.depth = json.depth;
+		this.cellsX = json.cellsX;
+		this.cellsY = json.cellsY;
+		this.cellsZ = json.cellsZ;
+
+		this._halfWidth = json._halfWidth;
+		this._halfHeight = json._halfHeight;
+		this._halfDepth = json._halfHeight;
+
+		this._min.fromArray( json._min );
+		this._max.fromArray( json._max );
+
+		for ( let i = 0, l = json.cells.length; i < l; i ++ ) {
+
+			this.cells.push( new Cell().fromJSON( json.cells[ i ] ) );
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {CellSpacePartitioning} A reference to this cell space portioning.
+	*/
+	resolveReferences( entities ) {
+
+		for ( let i = 0, l = this.cells.length; i < l; i ++ ) {
+
+			this.cells[ i ].resolveReferences( entities );
+
+		}
 
 	}
 

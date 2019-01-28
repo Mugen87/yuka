@@ -4,6 +4,8 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const PerceptionJSONs = require( '../../../files/PerceptionJSONs.js' );
+
 
 const Vision = YUKA.Vision;
 const GameEntity = YUKA.GameEntity;
@@ -123,6 +125,104 @@ describe( 'Vision', function () {
 			entity.lookAt( point );
 
 			expect( vision.visible( point ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 0.5, 2, 0.5 );
+			const vision = new Vision( entity );
+			vision.range = 3;
+			vision.fieldOfView = Math.PI * 0.25;
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const geometry = new MeshGeometry( vertices );
+			const obstacle = new Obstacle( geometry );
+			vision.addObstacle( obstacle );
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
+
+			const json = vision.toJSON();
+
+
+			expect( json ).to.be.deep.equal( PerceptionJSONs.Vision );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 0.5, 2, 0.5 );
+			const vision = new Vision( entity );
+			vision.range = 3;
+			vision.fieldOfView = Math.PI * 0.25;
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const geometry = new MeshGeometry( vertices );
+			const obstacle = new Obstacle( geometry );
+			vision.addObstacle( obstacle );
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
+
+			const map = new Map();
+			map.set( entity.uuid, entity );
+			map.set( obstacle.uuid, obstacle );
+
+			const vision2 = new Vision().fromJSON( PerceptionJSONs.Vision );
+			vision2.resolveReferences( map );
+
+			expect( vision2 ).to.be.deep.equal( vision );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the reference to the owner and obstacle entities', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 0.5, 2, 0.5 );
+			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const geometry = new MeshGeometry( vertices );
+
+			const vision = new Vision( entity.uuid );
+			vision.range = 3;
+			vision.fieldOfView = Math.PI * 0.25;
+			const obstacle = new Obstacle( geometry );
+
+			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
+			vision.addObstacle( obstacle.uuid );
+
+			const map = new Map();
+			map.set( entity.uuid, entity );
+			map.set( obstacle.uuid, obstacle );
+			vision.resolveReferences( map );
+
+			expect( vision.owner ).to.equal( entity );
+			expect( vision.obstacles[ 0 ] ).to.equal( obstacle );
+
+		} );
+
+		it( 'should set the owner to null if the mapping is missing', function () {
+
+			const vision = new Vision();
+			vision.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			vision.resolveReferences( new Map() );
+
+			expect( vision.owner ).to.be.null;
 
 		} );
 

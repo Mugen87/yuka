@@ -249,6 +249,36 @@ class AABB {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			min: this.min.toArray( new Array() ),
+			max: this.max.toArray( new Array() )
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {AABB} A reference to this AABB.
+	*/
+	fromJSON( json ) {
+
+		this.min.fromArray( json.min );
+		this.max.fromArray( json.max );
+
+		return this;
+
+	}
+
 }
 
 export { AABB };

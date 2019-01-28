@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const TriggerJSONs = require( '../../../files/TriggerJSONs.js' );
 
 const BoundingSphere = YUKA.BoundingSphere;
 const SphericalTriggerRegion = YUKA.SphericalTriggerRegion;
@@ -112,6 +113,33 @@ describe( 'SphericalTriggerRegion', function () {
 			const region = new SphericalTriggerRegion( new Vector3( 3, 0, 0 ), 1 );
 
 			expect( region.touching( entity ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const region = new SphericalTriggerRegion();
+
+			const json = region.toJSON();
+
+			expect( json ).to.be.deep.equal( TriggerJSONs.SphericalTriggerRegion );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const region = new SphericalTriggerRegion();
+			const region2 = new SphericalTriggerRegion( new Vector3( 1, 1, 1 ), 1 ).fromJSON( TriggerJSONs.SphericalTriggerRegion );
+
+			expect( region2 ).to.be.deep.equal( region );
 
 		} );
 

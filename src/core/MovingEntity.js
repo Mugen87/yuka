@@ -103,6 +103,41 @@ class MovingEntity extends GameEntity {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.velocity = this.velocity.toArray( new Array() );
+		json.maxSpeed = this.maxSpeed;
+		json.updateOrientation = this.updateOrientation;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {MovingEntity} A reference to this moving entity.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.velocity.fromArray( json.velocity );
+		this.maxSpeed = json.maxSpeed;
+		this.updateOrientation = json.updateOrientation;
+
+		return this;
+
+	}
+
 }
 
 export { MovingEntity };

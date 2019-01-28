@@ -4,6 +4,8 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
 
 const EvadeBehavior = YUKA.EvadeBehavior;
 const FleeBehavior = YUKA.FleeBehavior;
@@ -90,6 +92,68 @@ describe( 'EvadeBehavior', function () {
 			expect( force.x ).to.closeTo( 0, Number.EPSILON );
 			expect( force.y ).to.closeTo( - 0.7071067811865475, Number.EPSILON );
 			expect( force.z ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const evadeBehavior = new EvadeBehavior( null, 1, 2 );
+			const json = evadeBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.EvadeBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const evadeBehavior1 = new EvadeBehavior( null, 1, 2 );
+			const evadeBehavior2 = new EvadeBehavior().fromJSON( SteeringJSONs.EvadeBehavior );
+
+			expect( evadeBehavior1 ).to.deep.equal( evadeBehavior2 );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const entity1 = new Vehicle();
+			const behavior1 = new EvadeBehavior( entity1 );
+			const behavior2 = new EvadeBehavior( );
+
+			//set ids
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			//set references
+			behavior2.pursuer = entity1.uuid;
+
+			const map = new Map();
+			map.set( entity1.uuid, entity1 );
+
+			behavior2.resolveReferences( map );
+
+			expect( behavior2 ).to.deep.equal( behavior1 );
+
+		} );
+
+		it( 'should set the pursuer to null if the mapping is missing', function () {
+
+			const behavior = new EvadeBehavior();
+			behavior.pursuer = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			behavior.resolveReferences( new Map() );
+
+			expect( behavior.pursuer ).to.be.null;
 
 		} );
 

@@ -104,6 +104,51 @@ class PursuitBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.evader = this.evader ? this.evader.uuid : null;
+		json.predictionFactor = this.predictionFactor;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {PursuitBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.evader = json.evader;
+		this.predictionFactor = json.predictionFactor;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {PursuitBehavior} A reference to this behavior.
+	*/
+	resolveReferences( entities ) {
+
+		this.evader = entities.get( this.evader ) || null;
+
+	}
+
 }
 
 export { PursuitBehavior };

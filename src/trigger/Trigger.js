@@ -1,4 +1,7 @@
 import { TriggerRegion } from './TriggerRegion.js';
+import { RectangularTriggerRegion } from './regions/RectangularTriggerRegion.js';
+import { SphericalTriggerRegion } from './regions/SphericalTriggerRegion.js';
+import { Logger } from '../core/Logger.js';
 
 /**
 * Base class for representing triggers. A trigger generates an action if a game entity
@@ -27,6 +30,10 @@ class Trigger {
 		* @type TriggerRegion
 		*/
 		this.region = region;
+
+		//
+
+		this._typesMap = new Map(); // used for deserialization of custom triggerRegions
 
 	}
 
@@ -66,6 +73,86 @@ class Trigger {
 	* @return {Trigger} A reference to this trigger.
 	*/
 	update( /* delta */ ) {}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			active: this.active,
+			region: this.region.toJSON()
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Trigger} A reference to this trigger.
+	*/
+	fromJSON( json ) {
+
+		this.active = json.active;
+
+		const regionJSON = json.region;
+		let type = regionJSON.type;
+
+		switch ( type ) {
+
+			case 'TriggerRegion':
+				this.region = new TriggerRegion().fromJSON( regionJSON );
+				break;
+
+			case 'RectangularTriggerRegion':
+				this.region = new RectangularTriggerRegion().fromJSON( regionJSON );
+				break;
+
+			case 'SphericalTriggerRegion':
+				this.region = new SphericalTriggerRegion().fromJSON( regionJSON );
+				break;
+
+			default:
+				// handle custom type
+
+				const ctor = this._typesMap.get( type );
+
+				if ( ctor !== undefined ) {
+
+					this.region = new ctor().fromJSON( regionJSON );
+
+				} else {
+
+					Logger.warn( 'YUKA.Trigger: Unsupported trigger region type:', regionJSON.type );
+
+				}
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	 * Registers a custom type for deserialization. When calling {@link Trigger#fromJSON}
+	 * the trigger is able to pick the correct constructor in order to create custom
+	 * trigger regions.
+	 *
+	 * @param {String} type - The name of the trigger region.
+	 * @param {Function} constructor -  The constructor function.
+	 * @return {Trigger} A reference to this trigger.
+	 */
+	registerType( type, constructor ) {
+
+		this._typesMap.set( type, constructor );
+
+		return this;
+
+	}
 
 }
 

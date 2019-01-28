@@ -7,6 +7,7 @@ const YUKA = require( '../../../build/yuka.js' );
 
 const Path = YUKA.Path;
 const Vector3 = YUKA.Vector3;
+const SteeringJSONs = require( '../../files/SteeringJSONs.js' );
 
 describe( 'Path', function () {
 
@@ -167,6 +168,35 @@ describe( 'Path', function () {
 			expect( path.current() ).to.equal( waypoint2 );
 
 		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const path = new Path();
+			const waypoint = new Vector3();
+
+			path.add( waypoint );
+
+			expect( path.toJSON() ).to.deep.equal( SteeringJSONs.Path );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {} );
+
+		const path = new Path();
+		const path2 = new Path().fromJSON( SteeringJSONs.Path );
+		const waypoint = new Vector3();
+
+		path.add( waypoint );
+
+		expect( path2 ).to.deep.equal( path );
 
 	} );
 

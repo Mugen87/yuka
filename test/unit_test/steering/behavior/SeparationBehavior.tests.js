@@ -1,9 +1,10 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
-
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
 
 const SeparationBehavior = YUKA.SeparationBehavior;
 const Vector3 = YUKA.Vector3;
@@ -43,6 +44,32 @@ describe( 'SeparationBehavior', function () {
 			separationBehavior.calculate( vehicle, force );
 
 			expect( force.length() ).to.equal( 0 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const separationBehavior = new SeparationBehavior();
+			const json = separationBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.SeparationBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const separationBehavior1 = new SeparationBehavior();
+			const separationBehavior2 = new SeparationBehavior().fromJSON( SteeringJSONs.SeparationBehavior );
+
+			expect( separationBehavior1 ).to.deep.equal( separationBehavior2 );
 
 		} );
 

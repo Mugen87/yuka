@@ -2,7 +2,10 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-const expect = require( 'chai' ).expect;
+const chai = require( 'chai' );
+chai.use( require( 'chai-uuid' ) );
+const expect = chai.expect;
+
 const YUKA = require( '../../../build/yuka.js' );
 
 const MathUtils = YUKA.MathUtils;
@@ -60,6 +63,18 @@ describe( 'Math', function () {
 			const v3 = new Vector3( 2, 0, - 2 );
 
 			expect( MathUtils.area( v1, v2, v3 ) ).to.equal( 4 );
+
+		} );
+
+	} );
+
+	describe( '#generateUUID()', function () {
+
+		it( 'should return a RFC4122 Version 4 complied Universally Unique Identifier (UUID)', function () {
+
+			const uuid = MathUtils.generateUUID();
+
+			expect( uuid ).to.be.a.uuid( 'v4' );
 
 		} );
 

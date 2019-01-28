@@ -1,6 +1,7 @@
 import { MovingEntity } from '../core/MovingEntity.js';
 import { SteeringManager } from './SteeringManager.js';
 import { Vector3 } from '../math/Vector3.js';
+import { Smoother } from './Smoother.js';
 
 const steeringForce = new Vector3();
 const displacement = new Vector3();
@@ -120,6 +121,57 @@ class Vehicle extends MovingEntity {
 		}
 
 		return this;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.mass = this.mass;
+		json.maxForce = this.maxForce;
+		json.steering = this.steering.toJSON();
+		json.smoother = this.smoother ? this.smoother.toJSON() : null;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Vehicle} A reference to this vehicle.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.mass = json.mass;
+		this.maxForce = json.maxForce;
+		this.steering = new SteeringManager( this ).fromJSON( json.steering );
+		this.smoother = json.smoother ? new Smoother().fromJSON( json.smoother ) : null;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {Vehicle} A reference to this vehicle.
+	*/
+	resolveReferences( entities ) {
+
+		super.resolveReferences( entities );
+
+		this.steering.resolveReferences( entities );
 
 	}
 

@@ -64,6 +64,38 @@ class Edge {
 
 	}
 
+	/**
+	 * Transforms this instance into a JSON object.
+	 *
+	 * @return {Object} The JSON object.
+	 */
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			from: this.from,
+			to: this.to,
+			cost: this.cost
+		};
+
+	}
+
+	/**
+	 * Restores this instance from the given JSON object.
+	 *
+	 * @param {Object} json - The JSON object.
+	 * @return {Edge} A reference to this edge.
+	 */
+	fromJSON( json ) {
+
+		this.from = json.from;
+		this.to = json.to;
+		this.cost = json.cost;
+
+		return this;
+
+	}
+
 }
 
 export { Edge };

@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const FuzzyJSONs = require( '../../files/FuzzyJSONs.js' );
 
 const FuzzySet = YUKA.FuzzySet;
 const FuzzyTerm = YUKA.FuzzyTerm;
@@ -16,6 +17,7 @@ describe( 'FuzzySet', function () {
 
 			const fuzzySet = new FuzzySet();
 
+			expect( fuzzySet ).to.have.a.property( 'uuid' ).that.is.a( 'string' );
 			expect( fuzzySet ).to.have.a.property( 'degreeOfMembership' ).that.is.equal( 0 );
 			expect( fuzzySet ).to.have.a.property( 'representativeValue' ).that.is.equal( 0 );
 			expect( fuzzySet ).to.have.a.property( 'left' ).that.is.equal( 0 );
@@ -92,6 +94,44 @@ describe( 'FuzzySet', function () {
 
 			fuzzySet.updateDegreeOfMembership( 0.75 );
 			expect( fuzzySet.getDegreeOfMembership() ).to.equal( 0.75 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const fuzzySet = new FuzzySet();
+			fuzzySet.degreeOfMembership = 0.5;
+			fuzzySet.representativeValue = 10;
+			fuzzySet.left = 1;
+			fuzzySet.right = 20;
+
+			fuzzySet.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+
+			expect( fuzzySet.toJSON() ).to.be.deep.equal( FuzzyJSONs.FuzzySet );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const fuzzySet1 = new FuzzySet();
+			fuzzySet1.degreeOfMembership = 0.5;
+			fuzzySet1.representativeValue = 10;
+			fuzzySet1.left = 1;
+			fuzzySet1.right = 20;
+
+			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+
+			const fuzzySet2 = new FuzzySet().fromJSON( FuzzyJSONs.FuzzySet );
+
+			expect( fuzzySet1 ).to.be.deep.equal( fuzzySet2 );
 
 		} );
 

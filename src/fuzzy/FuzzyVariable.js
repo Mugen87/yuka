@@ -1,4 +1,8 @@
 import { Logger } from '../core/Logger.js';
+import { LeftShoulderFuzzySet } from './sets/LeftShoulderFuzzySet.js';
+import { RightShoulderFuzzySet } from './sets/RightShoulderFuzzySet.js';
+import { SingletonFuzzySet } from './sets/SingletonFuzzySet.js';
+import { TriangularFuzzySet } from './sets/TriangularFuzzySet.js';
 
 /**
 * Class for representing a fuzzy linguistic variable (FLV). A FLV is the
@@ -181,6 +185,77 @@ class FuzzyVariable {
 		}
 
 		return ( totalArea === 0 ) ? 0 : ( sumOfMoments / totalArea );
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			type: this.constructor.name,
+			fuzzySets: new Array(),
+			minRange: this.minRange.toString(),
+			maxRange: this.maxRange.toString(),
+		};
+
+		for ( let i = 0, l = this.fuzzySets.length; i < l; i ++ ) {
+
+			const fuzzySet = this.fuzzySets[ i ];
+			json.fuzzySets.push( fuzzySet.toJSON() );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {FuzzyVariable} A reference to this fuzzy variable.
+	*/
+	fromJSON( json ) {
+
+		this.minRange = parseFloat( json.minRange );
+		this.maxRange = parseFloat( json.maxRange );
+
+		for ( let i = 0, l = json.fuzzySets.length; i < l; i ++ ) {
+
+			const fuzzySetJson = json.fuzzySets[ i ];
+
+			let type = fuzzySetJson.type;
+
+			switch ( type ) {
+
+				case 'LeftShoulderFuzzySet':
+					this.fuzzySets.push( new LeftShoulderFuzzySet().fromJSON( fuzzySetJson ) );
+					break;
+
+				case 'RightShoulderFuzzySet':
+					this.fuzzySets.push( new RightShoulderFuzzySet().fromJSON( fuzzySetJson ) );
+					break;
+
+				case 'SingletonFuzzySet':
+					this.fuzzySets.push( new SingletonFuzzySet().fromJSON( fuzzySetJson ) );
+					break;
+
+				case 'TriangularFuzzySet':
+					this.fuzzySets.push( new TriangularFuzzySet().fromJSON( fuzzySetJson ) );
+					break;
+
+				default:
+					Logger.error( 'YUKA.FuzzyVariable: Unsupported fuzzy set type:', fuzzySetJson.type );
+
+			}
+
+		}
+
+		return this;
 
 	}
 

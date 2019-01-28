@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const GraphJSONs = require( "../../../files/GraphJSONs.js" );
 
 const Edge = YUKA.Edge;
 
@@ -55,6 +56,34 @@ describe( 'Edge', function () {
 
 			expect( edge1 ).to.not.equal( edge2 ); // true clone
 			expect( edge1 ).to.deep.equal( edge2 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const edge = new Edge();
+
+			const json = edge.toJSON();
+
+			expect( json ).to.deep.equal( GraphJSONs.Edge );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const edge = new Edge();
+			const edge2 = new Edge( 1, 1, 1 ).fromJSON( GraphJSONs.Edge );
+
+
+			expect( edge2 ).to.deep.equal( edge );
 
 		} );
 

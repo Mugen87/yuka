@@ -1,4 +1,5 @@
 import { FuzzyTerm } from './FuzzyTerm.js';
+import { MathUtils } from '../math/MathUtils.js';
 
 /**
 * Base class for fuzzy sets. This type of sets are defined by a membership function
@@ -54,6 +55,28 @@ class FuzzySet extends FuzzyTerm {
 		*/
 		this.right = 0;
 
+		//
+
+		this._uuid = null;
+
+	}
+
+	get uuid() {
+
+		if ( this._uuid === null ) {
+
+			this._uuid = MathUtils.generateUUID();
+
+		}
+
+		return this._uuid;
+
+	}
+
+	set uuid( uuid ) {
+
+		this._uuid = uuid;
+
 	}
 
 	/**
@@ -105,6 +128,43 @@ class FuzzySet extends FuzzyTerm {
 		// existing one
 
 		if ( value > this.degreeOfMembership ) this.degreeOfMembership = value;
+
+		return this;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.degreeOfMembership = this.degreeOfMembership;
+		json.representativeValue = this.representativeValue;
+		json.left = this.left;
+		json.right = this.right;
+		json.uuid = this.uuid;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {FuzzySet} A reference to this fuzzy set.
+	*/
+	fromJSON( json ) {
+
+		this.degreeOfMembership = json.degreeOfMembership;
+		this.representativeValue = json.representativeValue;
+		this.left = json.left;
+		this.right = json.right;
+		this.uuid = json.uuid;
 
 		return this;
 

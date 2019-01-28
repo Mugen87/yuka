@@ -4,6 +4,9 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
+
 
 const ArriveBehavior = YUKA.ArriveBehavior;
 const Vector3 = YUKA.Vector3;
@@ -103,6 +106,32 @@ describe( 'ArriveBehavior', function () {
 			arriveBehavior.calculate( vehicle, force );
 
 			expect( force ).to.deep.equal( { x: 0, y: 0, z: 0 } );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const arriveBehavior = new ArriveBehavior( new Vector3( 0, 0, 1 ), 2 );
+			const json = arriveBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.ArriveBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const arriveBehavior1 = new ArriveBehavior( new Vector3( 0, 0, 1 ), 2 );
+			const arriveBehavior2 = new ArriveBehavior().fromJSON( SteeringJSONs.ArriveBehavior );
+
+			expect( arriveBehavior1 ).to.deep.equal( arriveBehavior2 );
 
 		} );
 

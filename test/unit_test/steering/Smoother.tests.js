@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const SteeringJSONs = require( '../../files/SteeringJSONs.js' );
 
 const Smoother = YUKA.Smoother;
 const Vector3 = YUKA.Vector3;
@@ -49,6 +50,35 @@ describe( 'Smoother', function () {
 
 			smoother.calculate( new Vector3( 0, 0, 9 ), result ); // the first calculate (0,0,3) will be overwritten
 			expect( result ).to.deep.equal( new Vector3( 0, 0, 6 ) );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const smoother = new Smoother();
+			const json = smoother.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.Smoother );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const smoother = new Smoother();
+			const smoother2 = new Smoother( 2 );
+			smoother2._slot = 1;
+
+			smoother2.fromJSON( SteeringJSONs.Smoother );
+
+			expect( smoother2 ).to.deep.equal( smoother );
 
 		} );
 

@@ -37,6 +37,44 @@ class SteeringBehavior {
 	*/
 	calculate( /* vehicle, force, delta */ ) {}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			active: this.active,
+			weight: this.weight
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {SteeringBehavior} A reference to this steering behavior.
+	*/
+	fromJSON( json ) {
+
+		this.active = json.active;
+		this.weight = json.weight;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {SteeringBehavior} A reference to this steering behavior.
+	*/
+	resolveReferences( /* entities */ ) {}
+
 }
 
 export { SteeringBehavior };

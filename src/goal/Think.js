@@ -25,6 +25,10 @@ class Think extends CompositeGoal {
 		*/
 		this.evaluators = new Array();
 
+		//
+
+		this._typesMap = new Map();
+
 	}
 
 	/**
@@ -134,6 +138,134 @@ class Think extends CompositeGoal {
 			Logger.error( 'YUKA.Think: Unable to determine goal evaluator for game entity:', this.owner );
 
 		}
+
+		return this;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.evaluators = new Array();
+
+		for ( let i = 0, l = this.evaluators.length; i < l; i ++ ) {
+
+			const evaluator = this.evaluators[ i ];
+			json.evaluators.push( evaluator.toJSON() );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+  * @return {Think} A reference to this instance.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		const typesMap = this._typesMap;
+
+		this.evaluators.length = 0;
+		this.terminate();
+
+		// evaluators
+
+		for ( let i = 0, l = json.evaluators.length; i < l; i ++ ) {
+
+			const evaluatorJSON = json.evaluators[ i ];
+			const type = evaluatorJSON.type;
+
+			const ctor = typesMap.get( type );
+
+			if ( ctor !== undefined ) {
+
+				const evaluator = new ctor().fromJSON( evaluatorJSON );
+				this.evaluators.push( evaluator );
+
+			} else {
+
+				Logger.warn( 'YUKA.Think: Unsupported goal evaluator type:', type );
+				continue;
+
+			}
+
+		}
+
+		// goals
+
+		function parseGoal( goalJSON ) {
+
+			const type = goalJSON.type;
+
+			const ctor = typesMap.get( type );
+
+			if ( ctor !== undefined ) {
+
+				const goal = new ctor().fromJSON( goalJSON );
+
+				const subgoalsJSON = goalJSON.subgoals;
+
+				if ( subgoalsJSON !== undefined ) {
+
+					// composite goal
+
+					for ( let i = 0, l = subgoalsJSON.length; i < l; i ++ ) {
+
+						const subgoal = parseGoal( subgoalsJSON[ i ] );
+
+						if ( subgoal ) goal.subgoals.push( subgoal );
+
+					}
+
+				}
+
+				return goal;
+
+			} else {
+
+				Logger.warn( 'YUKA.Think: Unsupported goal evaluator type:', type );
+				return;
+
+			}
+
+		}
+
+		for ( let i = 0, l = json.subgoals.length; i < l; i ++ ) {
+
+			const subgoal = parseGoal( json.subgoals[ i ] );
+
+			if ( subgoal ) this.subgoals.push( subgoal );
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Registers a custom type for deserialization. When calling {@link Think#fromJSON}
+	* this instance is able to pick the correct constructor in order to create custom
+	* goals or goal evaluators.
+	*
+	* @param {String} type - The name of the goal or goal evaluator.
+	* @param {Function} constructor -  The constructor function.
+	* @return {Think} A reference to this instance.
+	*/
+	registerType( type, constructor ) {
+
+		this._typesMap.set( type, constructor );
 
 		return this;
 

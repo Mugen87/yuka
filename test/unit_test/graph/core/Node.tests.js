@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const GraphJSONs = require( "../../../files/GraphJSONs.js" );
 
 const Node = YUKA.Node;
 
@@ -22,6 +23,34 @@ describe( 'Node', function () {
 
 			const node = new Node( 1 );
 			expect( node.index ).to.equal( 1 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const node = new Node();
+
+			const json = node.toJSON();
+
+			expect( json ).to.deep.equal( GraphJSONs.Node );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const node = new Node();
+			const node2 = new Node( 1 ).fromJSON( GraphJSONs.Node );
+
+
+			expect( node2 ).to.deep.equal( node );
 
 		} );
 

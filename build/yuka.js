@@ -82,6 +82,57 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				sender: this.sender ? this.sender.uuid : null,
+				receiver: this.receiver ? this.receiver.uuid : null,
+				message: this.message,
+				delay: this.delay,
+				data: this.data
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Telegram} A reference to this telegram.
+		*/
+		fromJSON( json ) {
+
+			this.sender = json.sender;
+			this.receiver = json.receiver;
+			this.message = json.message;
+			this.delay = json.delay;
+			this.data = json.data;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {Telegram} A reference to this telegram.
+		*/
+		resolveReferences( entities ) {
+
+			this.sender = entities.get( this.sender );
+			this.receiver = entities.get( this.receiver );
+
+			return this;
+
+		}
+
 	}
 
 	/* istanbul ignore next */
@@ -265,249 +316,49 @@
 
 		}
 
-	}
-
-	const candidates = [];
-
-	/**
-	* This class is used for managing all central objects of a game like
-	* game entities and triggers.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class EntityManager {
-
 		/**
-		* Constructs a new entity manager.
-		*/
-		constructor() {
-
-			/**
-			* A list of {@link GameEntity game entities }.
-			* @type Array
-			*/
-			this.entities = new Array();
-
-			/**
-			* A list of {@link Trigger triggers }.
-			* @type Array
-			*/
-			this.triggers = new Array();
-
-			/**
-			* A reference to a spatial index.
-			* @type CellSpacePartitioning
-			* @default null
-			*/
-			this.spatialIndex = null;
-
-			this._indexMap = new Map(); // used by spatial indices
-			this._messageDispatcher = new MessageDispatcher();
-
-		}
-
-		/**
-		* Adds a game entity to this entity manager.
+		* Transforms this instance into a JSON object.
 		*
-		* @param {GameEntity} entity - The game entity to add.
-		* @return {EntityManager} A reference to this entity manager.
+		* @return {Object} The JSON object.
 		*/
-		add( entity ) {
+		toJSON() {
 
-			this.entities.push( entity );
+			const data = {
+				type: this.constructor.name,
+				delayedTelegrams: new Array()
+			};
 
-			entity.manager = this;
+			// delayed telegrams
 
-			return this;
+			for ( let i = 0, l = this.delayedTelegrams.length; i < l; i ++ ) {
 
-		}
-
-		/**
-		* Removes a game entity from this entity manager.
-		*
-		* @param {GameEntity} entity - The game entity to remove.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		remove( entity ) {
-
-			const index = this.entities.indexOf( entity );
-			this.entities.splice( index, 1 );
-
-			entity.manager = null;
-
-			return this;
-
-		}
-
-		/**
-		* Adds a trigger to this entity manager.
-		*
-		* @param {Trigger} trigger - The trigger to add.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		addTrigger( trigger ) {
-
-			this.triggers.push( trigger );
-
-			return this;
-
-		}
-
-		/**
-		* Removes a trigger to this entity manager.
-		*
-		* @param {Trigger} trigger - The trigger to remove.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		removeTrigger( trigger ) {
-
-			const index = this.triggers.indexOf( trigger );
-			this.triggers.splice( index, 1 );
-
-			return this;
-
-		}
-
-		/**
-		* Clears the internal state of this entity manager.
-		*
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		clear() {
-
-			this.entities.length = 0;
-			this.triggers.length = 0;
-
-			this._messageDispatcher.clear();
-
-			return this;
-
-		}
-
-		/**
-		* Returns an entity by the given name. If no game entity is found, *null*
-		* is returned. This method should be used once (e.g. at {@link GameEntity#start})
-		* and the result should be cached for later use.
-		*
-		* @param {String} name - The name of the game entity.
-		* @return {GameEntity} The found game entity.
-		*/
-		getEntityByName( name ) {
-
-			const entities = this.entities;
-
-			for ( let i = 0, l = entities.length; i < l; i ++ ) {
-
-				const entity = entities[ i ];
-
-				if ( entity.name === name ) return entity;
+				const delayedTelegram = this.delayedTelegrams[ i ];
+				data.delayedTelegrams.push( delayedTelegram.toJSON() );
 
 			}
 
-			return null;
+			return data;
 
 		}
 
 		/**
-		* The central update method of this entity manager. Updates all
-		* game entities, triggers and delayed messages.
+		* Restores this instance from the given JSON object.
 		*
-		* @param {Number} delta - The time delta.
-		* @return {EntityManager} A reference to this entity manager.
+		* @param {Object} json - The JSON object.
+		* @return {MessageDispatcher} A reference to this message dispatcher.
 		*/
-		update( delta ) {
+		fromJSON( json ) {
 
-			const entities = this.entities;
-			const triggers = this.triggers;
+			this.clear();
 
-			// update entities
+			const telegramsJSON = json.delayedTelegrams;
 
-			for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
+			for ( let i = 0, l = telegramsJSON.length; i < l; i ++ ) {
 
-				const entity = entities[ i ];
+				const telegramJSON = telegramsJSON[ i ];
+				const telegram = new Telegram().fromJSON( telegramJSON );
 
-				this.updateEntity( entity, delta );
-
-			}
-
-			// update triggers
-
-			for ( let i = ( triggers.length - 1 ); i >= 0; i -- ) {
-
-				const trigger = triggers[ i ];
-
-				this.updateTrigger( trigger, delta );
-
-			}
-
-			// handle messaging
-
-			this._messageDispatcher.dispatchDelayedMessages( delta );
-
-			return this;
-
-		}
-
-		/**
-		* Updates a single entity.
-		*
-		* @param {GameEntity} entity - The game entity to update.
-		* @param {Number} delta - The time delta.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		updateEntity( entity, delta ) {
-
-			if ( entity.active === true ) {
-
-				this.updateNeighborhood( entity );
-
-				//
-
-				if ( entity._started === false ) {
-
-					entity.start();
-
-					entity._started = true;
-
-				}
-
-				//
-
-				entity.update( delta );
-				entity.updateWorldMatrix();
-
-				//
-
-				const children = entity.children;
-
-				for ( let i = ( children.length - 1 ); i >= 0; i -- ) {
-
-					const child = children[ i ];
-
-					this.updateEntity( child, delta );
-
-				}
-
-				//
-
-				if ( this.spatialIndex !== null ) {
-
-					let currentIndex = this._indexMap.get( entity ) || - 1;
-					currentIndex = this.spatialIndex.updateEntity( entity, currentIndex );
-					this._indexMap.set( entity, currentIndex );
-
-				}
-
-				//
-
-				const renderComponent = entity._renderComponent;
-				const renderComponentCallback = entity._renderComponentCallback;
-
-				if ( renderComponent !== null && renderComponentCallback !== null ) {
-
-					renderComponentCallback( entity, renderComponent );
-
-				}
+				this.delayedTelegrams.push( telegram );
 
 			}
 
@@ -515,106 +366,23 @@
 
 		}
 
+
 		/**
-		* Updates the neighborhood of a single game entity.
+		* Restores UUIDs with references to GameEntity objects.
 		*
-		* @param {GameEntity} entity - The game entity to update.
-		* @return {EntityManager} A reference to this entity manager.
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {MessageDispatcher} A reference to this message dispatcher.
 		*/
-		updateNeighborhood( entity ) {
+		resolveReferences( entities ) {
 
-			if ( entity.updateNeighborhood === true ) {
+			const delayedTelegrams = this.delayedTelegrams;
 
-				entity.neighbors.length = 0;
+			for ( let i = 0, l = delayedTelegrams.length; i < l; i ++ ) {
 
-				// determine candidates
-
-				if ( this.spatialIndex !== null ) {
-
-					this.spatialIndex.query( entity.position, entity.neighborhoodRadius, candidates );
-
-				} else {
-
-					// worst case runtime complexity with O(n²)
-
-					candidates.length = 0;
-					candidates.push( ...this.entities );
-
-				}
-
-				// verify if candidates are within the predefined range
-
-				const neighborhoodRadiusSq = ( entity.neighborhoodRadius * entity.neighborhoodRadius );
-
-				for ( let i = 0, l = candidates.length; i < l; i ++ ) {
-
-					const candidate = candidates[ i ];
-
-					if ( entity !== candidate && candidate.active === true ) {
-
-						const distanceSq = entity.position.squaredDistanceTo( candidate.position );
-
-						if ( distanceSq <= neighborhoodRadiusSq ) {
-
-							entity.neighbors.push( candidate );
-
-						}
-
-					}
-
-				}
+				const delayedTelegram = delayedTelegrams[ i ];
+				delayedTelegram.resolveReferences( entities );
 
 			}
-
-			return this;
-
-		}
-
-		/**
-		* Updates a single trigger.
-		*
-		* @param {Trigger} trigger - The trigger to update.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		updateTrigger( trigger, delta ) {
-
-			if ( trigger.active === true ) {
-
-				trigger.update( delta );
-
-				const entities = this.entities;
-
-				for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
-
-					const entity = entities[ i ];
-
-					if ( entity.active === true ) {
-
-						trigger.check( entity );
-
-					}
-
-				}
-
-			}
-
-			return this;
-
-		}
-
-		/**
-		* Interface for game entities so they can send messages to other game entities.
-		*
-		* @param {GameEntity} sender - The sender.
-		* @param {GameEntity} receiver - The receiver.
-		* @param {String} message - The actual message.
-		* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
-		* @param {Object} data - An object for custom data.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		sendMessage( sender, receiver, message, delay, data ) {
-
-			this._messageDispatcher.dispatch( sender, receiver, message, delay, data );
 
 			return this;
 
@@ -622,110 +390,11 @@
 
 	}
 
-	/**
-	* Other classes can inherit from this class in order to provide an
-	* event based API. Useful for controls development.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
+	const lut = [];
 
-	class EventDispatcher {
+	for ( let i = 0; i < 256; i ++ ) {
 
-		/**
-		* Constructs a new event dispatcher.
-		*/
-		constructor() {
-
-			this._events = new Map();
-
-		}
-
-		/**
-		* Adds an event listener for the given event type.
-		*
-		* @param {String} type - The event type.
-		* @param {Function} listener - The event listener to add.
-		*/
-		addEventListener( type, listener ) {
-
-			const events = this._events;
-
-			if ( events.has( type ) === false ) {
-
-				events.set( type, new Array() );
-
-			}
-
-			const listeners = events.get( type );
-
-			if ( listeners.indexOf( listener ) === - 1 ) {
-
-				listeners.push( listener );
-
-			}
-
-		}
-
-		/**
-		* Removes the given event listener for the given event type.
-		*
-		* @param {String} type - The event type.
-		* @param {Function} listener - The event listener to remove.
-		*/
-		removeEventListener( type, listener ) {
-
-			const events = this._events;
-			const listeners = events.get( type );
-
-			if ( listeners !== undefined ) {
-
-				const index = listeners.indexOf( listener );
-
-				if ( index !== - 1 ) listeners.splice( index, 1 );
-
-			}
-
-		}
-
-		/**
-		* Returns true if the given event listener is set for the given event type.
-		*
-		* @param {String} type - The event type.
-		* @param {Function} listener - The event listener to add.
-		* @return {Boolean} Whether the given event listener is set for the given event type or not.
-		*/
-		hasEventListener( type, listener ) {
-
-			const events = this._events;
-			const listeners = events.get( type );
-
-			return ( listeners !== undefined ) && ( listeners.indexOf( listener ) !== - 1 );
-
-		}
-
-		/**
-		* Dispatches an event to all respective event listeners.
-		*
-		* @param {Object} event - The event object.
-		*/
-		dispatchEvent( event ) {
-
-			const events = this._events;
-			const listeners = events.get( event.type );
-
-			if ( listeners !== undefined ) {
-
-				event.target = this;
-
-				for ( let i = 0, l = listeners.length; i < l; i ++ ) {
-
-					listeners[ i ].call( this, event );
-
-				}
-
-			}
-
-		}
+		lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 	}
 
@@ -788,6 +457,28 @@
 		static area( a, b, c ) {
 
 			return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
+
+		}
+
+		/**
+		* Computes a RFC4122 Version 4 complied Universally Unique Identifier (UUID).
+		*
+		* @return {String} The UUID.
+		*/
+		static generateUUID() {
+
+			// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/21963136#21963136
+
+			const d0 = Math.random() * 0xffffffff | 0;
+			const d1 = Math.random() * 0xffffffff | 0;
+			const d2 = Math.random() * 0xffffffff | 0;
+			const d3 = Math.random() * 0xffffffff | 0;
+			const uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+				lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+				lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+			return uuid.toUpperCase();
 
 		}
 
@@ -2987,6 +2678,25 @@
 			this._renderComponent = null;
 			this._renderComponentCallback = null;
 			this._started = false;
+			this._uuid = null;
+
+		}
+
+		get uuid() {
+
+			if ( this._uuid === null ) {
+
+				this._uuid = MathUtils.generateUUID();
+
+			}
+
+			return this._uuid;
+
+		}
+
+		set uuid( uuid ) {
+
+			this._uuid = uuid;
 
 		}
 
@@ -3218,6 +2928,3225 @@
 				Logger.error( 'YUKA.GameEntity: The game entity must be added to a manager in order to send a message.' );
 
 			}
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				uuid: this.uuid,
+				name: this.name,
+				active: this.active,
+				children: entitiesToIds( this.children ),
+				parent: ( this.parent !== null ) ? this.parent.uuid : null,
+				neighbors: entitiesToIds( this.neighbors ),
+				neighborhoodRadius: this.neighborhoodRadius,
+				updateNeighborhood: this.updateNeighborhood,
+				position: this.position.toArray( new Array() ),
+				rotation: this.rotation.toArray( new Array() ),
+				scale: this.scale.toArray( new Array() ),
+				forward: this.forward.toArray( new Array() ),
+				up: this.up.toArray( new Array() ),
+				boundingRadius: this.boundingRadius,
+				maxTurnRate: this.maxTurnRate,
+				matrix: this.matrix.toArray( new Array() ),
+				worldMatrix: this.worldMatrix.toArray( new Array() ),
+				_cache: {
+					position: this._cache.position.toArray( new Array() ),
+					rotation: this._cache.rotation.toArray( new Array() ),
+					scale: this._cache.scale.toArray( new Array() ),
+				},
+				_started: this._started
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {GameEntity} A reference to this game entity.
+		*/
+		fromJSON( json ) {
+
+			this.uuid = json.uuid;
+			this.name = json.name;
+			this.active = json.active;
+			this.neighborhoodRadius = json.neighborhoodRadius;
+			this.updateNeighborhood = json.updateNeighborhood;
+			this.position.fromArray( json.position );
+			this.rotation.fromArray( json.rotation );
+			this.scale.fromArray( json.scale );
+			this.forward.fromArray( json.forward );
+			this.up.fromArray( json.up );
+			this.boundingRadius = json.boundingRadius;
+			this.maxTurnRate = json.maxTurnRate;
+			this.matrix.fromArray( json.matrix );
+			this.worldMatrix.fromArray( json.worldMatrix );
+
+			this.children = json.children.slice();
+			this.neighbors = json.neighbors.slice();
+			this.parent = json.parent;
+
+			this._cache.position.fromArray( json._cache.position );
+			this._cache.rotation.fromArray( json._cache.rotation );
+			this._cache.scale.fromArray( json._cache.scale );
+
+			this._started = json._started;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {GameEntity} A reference to this game entity.
+		*/
+		resolveReferences( entities ) {
+
+			//
+
+			const neighbors = this.neighbors;
+
+			for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+				neighbors[ i ] = entities.get( neighbors[ i ] );
+
+			}
+
+			//
+
+			const children = this.children;
+
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				children[ i ] = entities.get( children[ i ] );
+
+			}
+
+			//
+
+			this.parent = entities.get( this.parent ) || null;
+
+			return this;
+
+		}
+
+	}
+
+	function entitiesToIds( array ) {
+
+		const ids = new Array();
+
+		for ( let i = 0, l = array.length; i < l; i ++ ) {
+
+			ids.push( array[ i ].uuid );
+
+		}
+
+		return ids;
+
+	}
+
+	const displacement = new Vector3();
+	const target = new Vector3();
+
+	/**
+	* Class representing moving game entities.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments GameEntity
+	*/
+	class MovingEntity extends GameEntity {
+
+		/**
+		* Constructs a new moving entity.
+		*/
+		constructor() {
+
+			super();
+
+			/**
+			* The velocity of this game entity.
+			* @type Vector3
+			*/
+			this.velocity = new Vector3();
+
+			/**
+			* The maximum speed at which this game entity may travel.
+			* @type Number
+			*/
+			this.maxSpeed = 1;
+
+			/**
+			* Whether the orientation of this game entity will be updated based on the velocity or not.
+			* @type Boolean
+			* @default true
+			*/
+			this.updateOrientation = true;
+
+		}
+
+		/**
+		* Updates the internal state of this game entity.
+		*
+		* @param {Number} delta - The time delta.
+		* @return {MovingEntity} A reference to this moving entity.
+		*/
+		update( delta ) {
+
+			// make sure vehicle does not exceed maximum speed
+
+			if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
+
+				this.velocity.normalize();
+				this.velocity.multiplyScalar( this.maxSpeed );
+
+			}
+
+			// calculate displacement
+
+			displacement.copy( this.velocity ).multiplyScalar( delta );
+
+			// calculate target position
+
+			target.copy( this.position ).add( displacement );
+
+			// update the orientation if the vehicle has a non zero velocity
+
+			if ( this.updateOrientation && this.getSpeedSquared() > 0.00000001 ) {
+
+				this.lookAt( target );
+
+			}
+
+			// update position
+
+			this.position.copy( target );
+
+			return this;
+
+		}
+
+		/**
+		* Returns the current speed of this game entity.
+		*
+		* @return {Number} The current speed.
+		*/
+		getSpeed() {
+
+			return this.velocity.length();
+
+		}
+
+		/**
+		* Returns the current speed in squared space of this game entity.
+		*
+		* @return {Number} The current speed in squared space.
+		*/
+		getSpeedSquared() {
+
+			return this.velocity.squaredLength();
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.velocity = this.velocity.toArray( new Array() );
+			json.maxSpeed = this.maxSpeed;
+			json.updateOrientation = this.updateOrientation;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {MovingEntity} A reference to this moving entity.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.velocity.fromArray( json.velocity );
+			this.maxSpeed = json.maxSpeed;
+			this.updateOrientation = json.updateOrientation;
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* Base class for all concrete steering behaviors. They produce a force that describes
+	* where an agent should move and how fast it should travel to get there.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class SteeringBehavior {
+
+		/**
+		* Constructs a new steering behavior.
+		*/
+		constructor() {
+
+			/**
+			* Whether this steering behavior is active or not.
+			* @type Boolean
+			* @default true
+			*/
+			this.active = true;
+
+			/**
+			* Can be used to tweak the amount that a steering force contributes to the total steering force.
+			* @type Number
+			* @default 1
+			*/
+			this.weight = 1;
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( /* vehicle, force, delta */ ) {}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				active: this.active,
+				weight: this.weight
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {SteeringBehavior} A reference to this steering behavior.
+		*/
+		fromJSON( json ) {
+
+			this.active = json.active;
+			this.weight = json.weight;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {SteeringBehavior} A reference to this steering behavior.
+		*/
+		resolveReferences( /* entities */ ) {}
+
+	}
+
+	const averageDirection = new Vector3();
+	const direction = new Vector3();
+
+	/**
+	* This steering behavior produces a force that keeps a vehicle’s heading aligned with its neighbors.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class AlignmentBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new alignment behavior.
+		*/
+		constructor() {
+
+			super();
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			averageDirection.set( 0, 0, 0 );
+
+			const neighbors = vehicle.neighbors;
+
+			// iterate over all neighbors to calculate the average direction vector
+
+			for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+				const neighbor = neighbors[ i ];
+
+				neighbor.getDirection( direction );
+
+				averageDirection.add( direction );
+
+			}
+
+			if ( neighbors.length > 0 ) {
+
+				averageDirection.divideScalar( neighbors.length );
+
+				// produce a force to align the vehicle's heading
+
+				vehicle.getDirection( direction );
+				force.subVectors( averageDirection, direction );
+
+			}
+
+			return force;
+
+		}
+
+	}
+
+	const desiredVelocity = new Vector3();
+	const displacement$1 = new Vector3();
+
+	/**
+	* This steering behavior produces a force that directs an agent toward a target position.
+	* Unlike {@link SeekBehavior}, it decelerates so the agent comes to a gentle halt at the target position.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class ArriveBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new arrive behavior.
+		*
+		* @param {Vector3} target - The target vector.
+		* @param {Number} deceleration - The amount of deceleration.
+		*/
+		constructor( target = new Vector3(), deceleration = 3 ) {
+
+			super();
+
+			/**
+			* The target vector.
+			* @type Vector3
+			*/
+			this.target = target;
+
+			/**
+			* The amount of deceleration.
+			* @type Number
+			* @default 3
+			*/
+			this.deceleration = deceleration;
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const target = this.target;
+			const deceleration = this.deceleration;
+
+			displacement$1.subVectors( target, vehicle.position );
+
+			const distance = displacement$1.length();
+
+			if ( distance > 0 ) {
+
+				// calculate the speed required to reach the target given the desired deceleration
+
+				let speed = distance / deceleration;
+
+				// make sure the speed does not exceed the max
+
+				speed = Math.min( speed, vehicle.maxSpeed );
+
+				// from here proceed just like "seek" except we don't need to normalize
+				// the "displacement" vector because we have already gone to the trouble
+				// of calculating its length.
+
+				desiredVelocity.copy( displacement$1 ).multiplyScalar( speed / distance );
+
+				force.subVectors( desiredVelocity, vehicle.velocity );
+
+			}
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.target = this.target.toArray( new Array() );
+			json.deceleration = this.deceleration;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {ArriveBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.target.fromArray( json.target );
+			this.deceleration = json.deceleration;
+
+			return this;
+
+		}
+
+	}
+
+	const desiredVelocity$1 = new Vector3();
+
+	/**
+	* This steering behavior produces a force that directs an agent toward a target position.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class SeekBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new seek behavior.
+		*
+		* @param {Vector3} target - The target vector.
+		*/
+		constructor( target = new Vector3() ) {
+
+			super();
+
+			/**
+			* The target vector.
+			* @type Vector3
+			*/
+			this.target = target;
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const target = this.target;
+
+			// First the desired velocity is calculated.
+			// This is the velocity the agent would need to reach the target position in an ideal world.
+			// It represents the vector from the agent to the target,
+			// scaled to be the length of the maximum possible speed of the agent.
+
+			desiredVelocity$1.subVectors( target, vehicle.position ).normalize();
+			desiredVelocity$1.multiplyScalar( vehicle.maxSpeed );
+
+			// The steering force returned by this method is the force required,
+			// which when added to the agent’s current velocity vector gives the desired velocity.
+			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
+
+			return force.subVectors( desiredVelocity$1, vehicle.velocity );
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.target = this.target.toArray( new Array() );
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {SeekBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.target.fromArray( json.target );
+
+			return this;
+
+		}
+
+	}
+
+	const centerOfMass = new Vector3();
+
+	/**
+	* This steering produces a steering force that moves a vehicle toward the center of mass of its neighbors.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class CohesionBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new cohesion behavior.
+		*/
+		constructor() {
+
+			super();
+
+			// internal behaviors
+
+			this._seek = new SeekBehavior();
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			centerOfMass.set( 0, 0, 0 );
+
+			const neighbors = vehicle.neighbors;
+
+			// iterate over all neighbors to calculate the center of mass
+
+			for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+				const neighbor = neighbors[ i ];
+
+				centerOfMass.add( neighbor.position );
+
+			}
+
+			if ( neighbors.length > 0 ) {
+
+				centerOfMass.divideScalar( neighbors.length );
+
+				// seek to it
+
+				this._seek.target = centerOfMass;
+				this._seek.calculate( vehicle, force );
+
+				// the magnitude of cohesion is usually much larger than separation
+				// or alignment so it usually helps to normalize it
+
+				force.normalize();
+
+			}
+
+			return force;
+
+		}
+
+	}
+
+	const desiredVelocity$2 = new Vector3();
+
+	/**
+	* This steering behavior produces a force that steers an agent away from a target position.
+	* It's the opposite of {@link SeekBehavior}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class FleeBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new flee behavior.
+		*
+		* @param {Vector3} target - The target vector.
+		* @param {Number} panicDistance - The agent only flees from the target if it is inside this radius.
+		*/
+		constructor( target = new Vector3(), panicDistance = 10 ) {
+
+			super();
+
+			/**
+			* The target vector.
+			* @type Vector3
+			*/
+			this.target = target;
+
+			/**
+			* The agent only flees from the target if it is inside this radius.
+			* @type Number
+			* @default 10
+			*/
+			this.panicDistance = panicDistance;
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const target = this.target;
+
+			// only flee if the target is within panic distance
+
+			const distanceToTargetSq = vehicle.position.squaredDistanceTo( target );
+
+			if ( distanceToTargetSq <= ( this.panicDistance * this.panicDistance ) ) {
+
+				// from here, the only difference compared to seek is that the desired
+				// velocity is calculated using a vector pointing in the opposite direction
+
+				desiredVelocity$2.subVectors( vehicle.position, target ).normalize();
+
+				// if target and vehicle position are identical, choose default velocity
+
+				if ( desiredVelocity$2.squaredLength() === 0 ) {
+
+					desiredVelocity$2.set( 0, 0, 1 );
+
+				}
+
+				desiredVelocity$2.multiplyScalar( vehicle.maxSpeed );
+
+				force.subVectors( desiredVelocity$2, vehicle.velocity );
+
+			}
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.target = this.target.toArray( new Array() );
+			json.panicDistance = this.panicDistance;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {FleeBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.target.fromArray( json.target );
+			this.panicDistance = json.panicDistance;
+
+			return this;
+
+		}
+
+	}
+
+	const displacement$2 = new Vector3();
+	const newPursuerVelocity = new Vector3();
+	const predictedPosition = new Vector3();
+
+	/**
+	* This steering behavior is is almost the same as {@link PursuitBehavior} except that
+	* the agent flees from the estimated future position of the pursuer.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class EvadeBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new evade behavior.
+		*
+		* @param {MovingEntity} pursuer - The agent to evade from.
+		* @param {Number} panicDistance -  The agent only flees from the pursuer if it is inside this radius.
+		* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the pursuer.
+		*/
+		constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
+
+			super();
+
+			/**
+			* The agent to evade from.
+			* @type MovingEntity
+			* @default null
+			*/
+			this.pursuer = pursuer;
+
+			/**
+			* The agent only flees from the pursuer if it is inside this radius.
+			* @type Number
+			* @default 10
+			*/
+			this.panicDistance = panicDistance;
+
+			/**
+			* This factor determines how far the vehicle predicts the movement of the pursuer.
+			* @type Number
+			* @default 1
+			*/
+			this.predictionFactor = predictionFactor;
+
+			// internal behaviors
+
+			this._flee = new FleeBehavior();
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const pursuer = this.pursuer;
+
+			displacement$2.subVectors( pursuer.position, vehicle.position );
+
+			let lookAheadTime = displacement$2.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
+			lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
+
+			// calculate new velocity and predicted future position
+
+			newPursuerVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
+			predictedPosition.addVectors( pursuer.position, newPursuerVelocity );
+
+			// now flee away from predicted future position of the pursuer
+
+			this._flee.target = predictedPosition;
+			this._flee.panicDistance = this.panicDistance;
+			this._flee.calculate( vehicle, force );
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.pursuer = this.pursuer ? this.pursuer.uuid : null;
+			json.panicDistance = this.panicDistance;
+			json.predictionFactor = this.predictionFactor;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {EvadeBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.pursuer = json.pursuer;
+			this.panicDistance = json.panicDistance;
+			this.predictionFactor = json.predictionFactor;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {EvadeBehavior} A reference to this behavior.
+		*/
+		resolveReferences( entities ) {
+
+			this.pursuer = entities.get( this.pursuer ) || null;
+
+		}
+
+	}
+
+	/**
+	* Class for representing a walkable path.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class Path {
+
+		/**
+		* Constructs a new path.
+		*/
+		constructor() {
+
+			/**
+			* Whether this path is looped or not.
+			* @type Boolean
+			*/
+			this.loop = false;
+
+			this._waypoints = new Array();
+			this._index = 0;
+
+		}
+
+		/**
+		* Adds the given waypoint to this path.
+		*
+		* @param {Vector3} waypoint - The waypoint to add.
+		* @return {Path} A reference to this path.
+		*/
+		add( waypoint ) {
+
+			this._waypoints.push( waypoint );
+
+			return this;
+
+		}
+
+		/**
+		* Clears the internal state of this path.
+		*
+		* @return {Path} A reference to this path.
+		*/
+		clear() {
+
+			this._waypoints.length = 0;
+			this._index = 0;
+
+			return this;
+
+		}
+
+		/**
+		* Returns the current active waypoint of this path.
+		*
+		* @return {Vector3} The current active waypoint.
+		*/
+		current() {
+
+			return this._waypoints[ this._index ];
+
+		}
+
+		/**
+		* Returns true if this path is not looped and the last waypoint is active.
+		*
+		* @return {Boolean} Whether this path is finished or not.
+		*/
+		finished() {
+
+			const lastIndex = this._waypoints.length - 1;
+
+			return ( this.loop === true ) ? false : ( this._index === lastIndex );
+
+		}
+
+		/**
+		* Makes the next waypoint of this path active. If the path is looped and
+		* {@link Path#finished} returns true, the path starts from the beginning.
+		*
+		* @return {Path} A reference to this path.
+		*/
+		advance() {
+
+			this._index ++;
+
+			if ( ( this._index === this._waypoints.length ) ) {
+
+				if ( this.loop === true ) {
+
+					this._index = 0;
+
+				} else {
+
+					this._index --;
+
+				}
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const data = {
+				type: this.constructor.name,
+				loop: this.loop,
+				_waypoints: new Array(),
+				_index: this._index
+			};
+
+			// waypoints
+
+			const waypoints = this._waypoints;
+
+			for ( let i = 0, l = waypoints.length; i < l; i ++ ) {
+
+				const waypoint = waypoints[ i ];
+				data._waypoints.push( waypoint.toArray( new Array() ) );
+
+			}
+
+			return data;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Path} A reference to this path.
+		*/
+		fromJSON( json ) {
+
+			this.loop = json.loop;
+			this._index = json._index;
+
+			// waypoints
+
+			const waypointsJSON = json._waypoints;
+
+			for ( let i = 0, l = waypointsJSON.length; i < l; i ++ ) {
+
+				const waypointJSON = waypointsJSON[ i ];
+				this._waypoints.push( new Vector3().fromArray( waypointJSON ) );
+
+			}
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* This steering behavior produces a force that moves a vehicle along a series of waypoints forming a path.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class FollowPathBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new follow path behavior.
+		*
+		* @param {Path} path - The path to follow.
+		* @param {Number} nextWaypointDistance - The distance the agent seeks for the next waypoint.
+		*/
+		constructor( path = new Path(), nextWaypointDistance = 1 ) {
+
+			super();
+
+			/**
+			* The path to follow.
+			* @type Path
+			*/
+			this.path = path;
+
+			/**
+			* The distance the agent seeks for the next waypoint.
+			* @type Number
+			* @default 1
+			*/
+			this.nextWaypointDistance = nextWaypointDistance;
+
+			// internal behaviors
+
+			this._arrive = new ArriveBehavior();
+			this._seek = new SeekBehavior();
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const path = this.path;
+
+			// calculate distance in square space from current waypoint to vehicle
+
+			const distanceSq = path.current().squaredDistanceTo( vehicle.position );
+
+			// move to next waypoint if close enough to current target
+
+			if ( distanceSq < ( this.nextWaypointDistance * this.nextWaypointDistance ) ) {
+
+				path.advance();
+
+			}
+
+			const target = path.current();
+
+			if ( path.finished() === true ) {
+
+				this._arrive.target = target;
+				this._arrive.calculate( vehicle, force );
+
+			} else {
+
+				this._seek.target = target;
+				this._seek.calculate( vehicle, force );
+
+			}
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.path = this.path.toJSON();
+			json.nextWaypointDistance = this.nextWaypointDistance;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {FollowPathBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.path.fromJSON( json.path );
+			this.nextWaypointDistance = json.nextWaypointDistance;
+
+			return this;
+
+		}
+
+	}
+
+	const midPoint = new Vector3();
+	const translation = new Vector3();
+	const predictedPosition1 = new Vector3();
+	const predictedPosition2 = new Vector3();
+
+	/**
+	* This steering behavior produces a force that moves a vehicle to the midpoint
+	* of the imaginary line connecting two other agents.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class InterposeBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new interpose behavior.
+		*
+		* @param {MovingEntity} entity1 - The first agent.
+		* @param {MovingEntity} entity2 - The second agent.
+		* @param {Number} deceleration - The amount of deceleration.
+		*/
+		constructor( entity1 = null, entity2 = null, deceleration = 3 ) {
+
+			super();
+
+			/**
+			* The first agent.
+			* @type MovingEntity
+			* @default null
+			*/
+			this.entity1 = entity1;
+
+			/**
+			* The second agent.
+			* @type MovingEntity
+			* @default null
+			*/
+			this.entity2 = entity2;
+
+			/**
+			* The amount of deceleration.
+			* @type Number
+			* @default 3
+			*/
+			this.deceleration = deceleration;
+
+			// internal behaviors
+
+			this._arrive = new ArriveBehavior();
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const entity1 = this.entity1;
+			const entity2 = this.entity2;
+
+			// first we need to figure out where the two entities are going to be
+			// in the future. This is approximated by determining the time
+			// taken to reach the mid way point at the current time at max speed
+
+			midPoint.addVectors( entity1.position, entity2.position ).multiplyScalar( 0.5 );
+			const time = vehicle.position.distanceTo( midPoint ) / vehicle.maxSpeed;
+
+			// now we have the time, we assume that entity 1 and entity 2 will
+			// continue on a straight trajectory and extrapolate to get their future positions
+
+			translation.copy( entity1.velocity ).multiplyScalar( time );
+			predictedPosition1.addVectors( entity1.position, translation );
+
+			translation.copy( entity2.velocity ).multiplyScalar( time );
+			predictedPosition2.addVectors( entity2.position, translation );
+
+			// calculate the mid point of these predicted positions
+
+			midPoint.addVectors( predictedPosition1, predictedPosition2 ).multiplyScalar( 0.5 );
+
+			// then steer to arrive at it
+
+			this._arrive.deceleration = this.deceleration;
+			this._arrive.target = midPoint;
+			this._arrive.calculate( vehicle, force );
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.entity1 = this.entity1 ? this.entity1.uuid : null;
+			json.entity2 = this.entity2 ? this.entity2.uuid : null;
+			json.deceleration = this.deceleration;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {InterposeBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.entity1 = json.entity1;
+			this.entity2 = json.entity2;
+			this.deceleration = json.deceleration;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {InterposeBehavior} A reference to this behavior.
+		*/
+		resolveReferences( entities ) {
+
+			this.entity1 = entities.get( this.entity1 ) || null;
+			this.entity2 = entities.get( this.entity2 ) || null;
+
+		}
+
+	}
+
+	/**
+	* Class representing a bounding sphere.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class BoundingSphere {
+
+		/**
+		* Constructs a new bounding sphere with the given values.
+		*
+		* @param {Vector3} center - The center position of the bounding sphere.
+		* @param {Number} radius - The radius of the bounding sphere.
+		*/
+		constructor( center = new Vector3(), radius = 0 ) {
+
+			/**
+			* The center position of the bounding sphere.
+			* @type Vector3
+			*/
+			this.center = center;
+
+			/**
+			*  The radius of the bounding sphere.
+			* @type Number
+			*/
+			this.radius = radius;
+
+		}
+
+		/**
+		* Sets the given values to this bounding sphere.
+		*
+		* @param {Vector3} center - The center position of the bounding sphere.
+		* @param {Number} radius - The radius of the bounding sphere.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		set( center, radius ) {
+
+			this.center = center;
+			this.radius = radius;
+
+			return this;
+
+		}
+
+		/**
+		* Copies all values from the given bounding sphere to this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to copy.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		copy( sphere ) {
+
+			this.center.copy( sphere.center );
+			this.radius = sphere.radius;
+
+			return this;
+
+		}
+
+		/**
+		* Creates a new bounding sphere and copies all values from this bounding sphere.
+		*
+		* @return {BoundingSphere} A new bounding sphere.
+		*/
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		/**
+		* Returns true if the given point is inside this bounding sphere.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {Boolean} The result of the containments test.
+		*/
+		containsPoint( point ) {
+
+			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
+
+		}
+
+		/**
+		* Returns true if the given bounding sphere intersects this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {Boolean} The result of the intersection test.
+		*/
+		intersectsBoundingSphere( sphere ) {
+
+			const radius = this.radius + sphere.radius;
+
+			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+		}
+
+		/**
+		* Transforms this bounding sphere with the given 4x4 transformation matrix.
+		*
+		* @param {Matrix4} matrix - The 4x4 transformation matrix.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		applyMatrix4( matrix ) {
+
+			this.center.applyMatrix4( matrix );
+			this.radius = this.radius * matrix.getMaxScale();
+
+			return this;
+
+		}
+
+		/**
+		* Returns true if the given bounding sphere is deep equal with this bounding sphere.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {Boolean} The result of the equality test.
+		*/
+		equals( sphere ) {
+
+			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				center: this.center.toArray( new Array() ),
+				radius: this.radius
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {BoundingSphere} A reference to this bounding sphere.
+		*/
+		fromJSON( json ) {
+
+			this.center.fromArray( json.center );
+			this.radius = json.radius;
+
+			return this;
+
+		}
+
+	}
+
+	const v1 = new Vector3();
+	const edge1 = new Vector3();
+	const edge2 = new Vector3();
+	const normal = new Vector3();
+
+	/**
+	* Class representing a ray in 3D space.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class Ray {
+
+		/**
+		* Constructs a new ray with the given values.
+		*
+		* @param {Vector3} origin - The origin of the ray.
+		* @param {Vector3} direction - The direction of the ray.
+		*/
+		constructor( origin = new Vector3(), direction = new Vector3() ) {
+
+			/**
+			* The origin of the ray.
+			* @type Vector3
+			*/
+			this.origin = origin;
+
+			/**
+			* The direction of the ray.
+			* @type Vector3
+			*/
+			this.direction = direction;
+
+		}
+
+		/**
+		* Sets the given values to this ray.
+		*
+		* @param {Vector3} origin - The origin of the ray.
+		* @param {Vector3} direction - The direction of the ray.
+		* @return {Ray} A reference to this ray.
+		*/
+		set( origin, direction ) {
+
+			this.origin = origin;
+			this.direction = direction;
+
+			return this;
+
+		}
+
+		/**
+		* Copies all values from the given ray to this ray.
+		*
+		* @param {Ray} ray - The ray to copy.
+		* @return {Ray} A reference to this ray.
+		*/
+		copy( ray ) {
+
+			this.origin.copy( ray.origin );
+			this.direction.copy( ray.direction );
+
+			return this;
+
+		}
+
+		/**
+		* Creates a new ray and copies all values from this ray.
+		*
+		* @return {Ray} A new ray.
+		*/
+		clone() {
+
+			return new this.constructor().copy( this );
+
+		}
+
+		/**
+		* Computes a position on the ray according to the given t value
+		* and stores the result in the given 3D vector. The t value has a range of
+		* [0, Infinity] where 0 means the position is equal with the origin of the ray.
+		*
+		* @param {Number} t - A scalar value representing a position on the ray.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		at( t, result ) {
+
+			// t has to be zero or positive
+			return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
+
+		}
+
+		/**
+		* Performs a ray/sphere intersection test and stores the intersection point
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
+		*
+		* @param {BoundingSphere} sphere - A bounding sphere.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		intersectBoundingSphere( sphere, result ) {
+
+			v1.subVectors( sphere.center, this.origin );
+			const tca = v1.dot( this.direction );
+			const d2 = v1.dot( v1 ) - tca * tca;
+			const radius2 = sphere.radius * sphere.radius;
+
+			if ( d2 > radius2 ) return null;
+
+			const thc = Math.sqrt( radius2 - d2 );
+
+			// t0 = first intersect point - entrance on front of sphere
+
+			const t0 = tca - thc;
+
+			// t1 = second intersect point - exit point on back of sphere
+
+			const t1 = tca + thc;
+
+			// test to see if both t0 and t1 are behind the ray - if so, return null
+
+			if ( t0 < 0 && t1 < 0 ) return null;
+
+			// test to see if t0 is behind the ray:
+			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
+			// in order to always return an intersect point that is in front of the ray.
+
+			if ( t0 < 0 ) return this.at( t1, result );
+
+			// else t0 is in front of the ray, so return the first collision point scaled by t0
+
+			return this.at( t0, result );
+
+		}
+
+		/**
+		* Performs a ray/AABB intersection test and stores the intersection point
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
+		*
+		* @param {BoundingSphere} sphere - A bounding sphere.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		intersectAABB( aabb, result ) {
+
+			let tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+			const invdirx = 1 / this.direction.x,
+				invdiry = 1 / this.direction.y,
+				invdirz = 1 / this.direction.z;
+
+			const origin = this.origin;
+
+			if ( invdirx >= 0 ) {
+
+				tmin = ( aabb.min.x - origin.x ) * invdirx;
+				tmax = ( aabb.max.x - origin.x ) * invdirx;
+
+			} else {
+
+				tmin = ( aabb.max.x - origin.x ) * invdirx;
+				tmax = ( aabb.min.x - origin.x ) * invdirx;
+
+			}
+
+			if ( invdiry >= 0 ) {
+
+				tymin = ( aabb.min.y - origin.y ) * invdiry;
+				tymax = ( aabb.max.y - origin.y ) * invdiry;
+
+			} else {
+
+				tymin = ( aabb.max.y - origin.y ) * invdiry;
+				tymax = ( aabb.min.y - origin.y ) * invdiry;
+
+			}
+
+			if ( ( tmin > tymax ) || ( tymin > tmax ) ) return null;
+
+			// these lines also handle the case where tmin or tmax is NaN
+			// (result of 0 * Infinity). x !== x returns true if x is NaN
+
+			if ( tymin > tmin || tmin !== tmin ) tmin = tymin;
+
+			if ( tymax < tmax || tmax !== tmax ) tmax = tymax;
+
+			if ( invdirz >= 0 ) {
+
+				tzmin = ( aabb.min.z - origin.z ) * invdirz;
+				tzmax = ( aabb.max.z - origin.z ) * invdirz;
+
+			} else {
+
+				tzmin = ( aabb.max.z - origin.z ) * invdirz;
+				tzmax = ( aabb.min.z - origin.z ) * invdirz;
+
+			}
+
+			if ( ( tmin > tzmax ) || ( tzmin > tmax ) ) return null;
+
+			if ( tzmin > tmin || tmin !== tmin ) tmin = tzmin;
+
+			if ( tzmax < tmax || tmax !== tmax ) tmax = tzmax;
+
+			// return point closest to the ray (positive side)
+
+			if ( tmax < 0 ) return null;
+
+			return this.at( tmin >= 0 ? tmin : tmax, result );
+
+		}
+
+		/**
+		* Performs a ray/triangle intersection test and stores the intersection point
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
+		*
+		* @param {Triangle} triangle - A triangle.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		intersectTriangle( triangle, backfaceCulling, result ) {
+
+			// reference: https://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
+
+			const a = triangle.a;
+			const b = triangle.b;
+			const c = triangle.c;
+
+			edge1.subVectors( b, a );
+			edge2.subVectors( c, a );
+			normal.crossVectors( edge1, edge2 );
+
+			let DdN = this.direction.dot( normal );
+			let sign;
+
+			if ( DdN > 0 ) {
+
+				if ( backfaceCulling ) return null;
+				sign = 1;
+
+			} else if ( DdN < 0 ) {
+
+				sign = - 1;
+				DdN = - DdN;
+
+			} else {
+
+				return null;
+
+			}
+
+			v1.subVectors( this.origin, a );
+			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1, edge2 ) );
+
+			// b1 < 0, no intersection
+
+			if ( DdQxE2 < 0 ) {
+
+				return null;
+
+			}
+
+			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1 ) );
+
+			// b2 < 0, no intersection
+
+			if ( DdE1xQ < 0 ) {
+
+				return null;
+
+			}
+
+			// b1 + b2 > 1, no intersection
+
+			if ( DdQxE2 + DdE1xQ > DdN ) {
+
+				return null;
+
+			}
+
+			// line intersects triangle, check if ray does
+
+			const QdN = - sign * v1.dot( normal );
+
+			// t < 0, no intersection
+
+			if ( QdN < 0 ) {
+
+				return null;
+
+			}
+
+			// ray intersects triangle
+
+			return this.at( QdN / DdN, result );
+
+		}
+
+		/**
+		* Transforms this ray by the given 4x4 matrix.
+		*
+		* @param {Matrix4} m - The 4x4 matrix.
+		* @return {Ray} A reference to this ray.
+		*/
+		applyMatrix4( m ) {
+
+			this.origin.applyMatrix4( m );
+			this.direction.transformDirection( m );
+
+			return this;
+
+		}
+
+		/**
+		* Returns true if the given ray is deep equal with this ray.
+		*
+		* @param {Ray} ray - The ray to test.
+		* @return {Boolean} The result of the equality test.
+		*/
+		equals( ray ) {
+
+			return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
+
+		}
+
+	}
+
+	const inverse = new Matrix4();
+	const localPositionOfObstacle = new Vector3();
+	const localPositionOfClosestObstacle = new Vector3();
+	const intersectionPoint = new Vector3();
+	const boundingSphere = new BoundingSphere();
+
+	const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
+
+	/**
+	* This steering behavior produces a force so a vehicle avoids obstacles lying in its path.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	* @augments SteeringBehavior
+	*/
+	class ObstacleAvoidanceBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new obstacle avoidance behavior.
+		*
+		* @param {Array} obstacles - An Array with obstacle of type {@link GameEntity}.
+		*/
+		constructor( obstacles = new Array() ) {
+
+			super();
+
+			/**
+			* An Array with obstacle of type {@link GameEntity}.
+			* @type Array
+			*/
+			this.obstacles = obstacles;
+
+			/**
+			* This factor determines how much the vehicle decelerates if an intersection occurs.
+			* @type Number
+			* @default 0.2
+			*/
+			this.brakingWeight = 0.2;
+
+			/**
+			* Minimum length of the detection box used for intersection tests.
+			* @type Number
+			* @default 4
+			*/
+			this.dBoxMinLength = 4; //
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const obstacles = this.obstacles;
+
+			// this will keep track of the closest intersecting obstacle
+
+			let closestObstacle = null;
+
+			// this will be used to track the distance to the closest obstacle
+
+			let distanceToClosestObstacle = Infinity;
+
+			// the detection box length is proportional to the agent's velocity
+
+			const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
+
+			vehicle.matrix.getInverse( inverse );
+
+			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
+
+				const obstacle = obstacles[ i ];
+
+				if ( obstacle === vehicle ) continue;
+
+				// calculate this obstacle's position in local space of the vehicle
+
+				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
+
+				// if the local position has a positive z value then it must lay behind the agent.
+				// besides the absolute z value must be smaller than the length of the detection box
+
+				if ( localPositionOfObstacle.z > 0 && Math.abs( localPositionOfObstacle.z ) < dBoxLength ) {
+
+					// if the distance from the x axis to the object's position is less
+					// than its radius + half the width of the detection box then there is a potential intersection
+
+					const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
+
+					if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
+
+						// do intersection test in local space of the vehicle
+
+						boundingSphere.center.copy( localPositionOfObstacle );
+						boundingSphere.radius = expandedRadius;
+
+						ray.intersectBoundingSphere( boundingSphere, intersectionPoint );
+
+						// compare distances
+
+						if ( intersectionPoint.z < distanceToClosestObstacle ) {
+
+							// save new minimum distance
+
+							distanceToClosestObstacle = intersectionPoint.z;
+
+							// save closest obstacle
+
+							closestObstacle = obstacle;
+
+							// save local position for force calculation
+
+							localPositionOfClosestObstacle.copy( localPositionOfObstacle );
+
+						}
+
+					}
+
+				}
+
+			}
+
+			// if we have found an intersecting obstacle, calculate a steering force away from it
+
+			if ( closestObstacle !== null ) {
+
+				// the closer the agent is to an object, the stronger the steering force should be
+
+				const multiplier = 1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
+
+				// calculate the lateral force
+
+				force.x = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.x ) * multiplier;
+
+				// apply a braking force proportional to the obstacles distance from the vehicle
+
+				force.z = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.z ) * this.brakingWeight;
+
+				// finally, convert the steering vector from local to world space (just apply the rotation)
+
+				force.applyRotation( vehicle.rotation );
+
+			}
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.obstacles = new Array();
+			json.brakingWeight = this.brakingWeight;
+			json.dBoxMinLength = this.dBoxMinLength;
+
+			// obstacles
+
+			for ( let i = 0, l = this.obstacles.length; i < l; i ++ ) {
+
+				json.obstacles.push( this.obstacles[ i ].uuid );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {ObstacleAvoidanceBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.obstacles = json.obstacles;
+			this.brakingWeight = json.brakingWeight;
+			this.dBoxMinLength = json.dBoxMinLength;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {ObstacleAvoidanceBehavior} A reference to this behavior.
+		*/
+		resolveReferences( entities ) {
+
+			const obstacles = this.obstacles;
+
+			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
+
+				obstacles[ i ] = entities.get( obstacles[ i ] );
+
+			}
+
+
+		}
+
+	}
+
+	const offsetWorld = new Vector3();
+	const toOffset = new Vector3();
+	const newLeaderVelocity = new Vector3();
+	const predictedPosition$1 = new Vector3();
+
+	/**
+	* This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
+	* Useful for creating formations.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class OffsetPursuitBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new offset pursuit behavior.
+		*
+		* @param {Vehicle} leader - The leader vehicle.
+		* @param {Vector3} offset - The offset from the leader.
+		*/
+		constructor( leader = null, offset = new Vector3() ) {
+
+			super();
+
+			/**
+			* The leader vehicle.
+			* @type Vehicle
+			*/
+			this.leader = leader;
+
+			/**
+			* The offset from the leader.
+			* @type Vector3
+			*/
+			this.offset = offset;
+
+			// internal behaviors
+
+			this._arrive = new ArriveBehavior();
+			this._arrive.deceleration = 1.5;
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const leader = this.leader;
+			const offset = this.offset;
+
+			// calculate the offset's position in world space
+
+			offsetWorld.copy( offset ).applyMatrix4( leader.matrix );
+
+			// calculate the vector that points from the vehicle to the offset position
+
+			toOffset.subVectors( offsetWorld, vehicle.position );
+
+			// the lookahead time is proportional to the distance between the leader
+			// and the pursuer and is inversely proportional to the sum of both
+			// agent's velocities
+
+			const lookAheadTime = toOffset.length() / ( vehicle.maxSpeed + leader.getSpeed() );
+
+			// calculate new velocity and predicted future position
+
+			newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
+
+			predictedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
+
+			// now arrive at the predicted future position of the offset
+
+			this._arrive.target = predictedPosition$1;
+			this._arrive.calculate( vehicle, force );
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.leader = this.leader ? this.leader.uuid : null;
+			json.offset = this.offset;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {OffsetPursuitBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.leader = json.leader;
+			this.offset = json.offset;
+
+			return this;
+
+		}
+
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {OffsetPursuitBehavior} A reference to this behavior.
+		*/
+		resolveReferences( entities ) {
+
+			this.leader = entities.get( this.leader ) || null;
+
+		}
+
+	}
+
+	const displacement$3 = new Vector3();
+	const vehicleDirection = new Vector3();
+	const evaderDirection = new Vector3();
+	const newEvaderVelocity = new Vector3();
+	const predictedPosition$2 = new Vector3();
+
+	/**
+	* This steering behavior is useful when an agent is required to intercept a moving agent.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class PursuitBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new pursuit behavior.
+		*
+		* @param {MovingEntity} evader - The agent to pursue.
+		* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the evader.
+		*/
+		constructor( evader = null, predictionFactor = 1 ) {
+
+			super();
+
+			/**
+			* The agent to pursue.
+			* @type MovingEntity
+			* @default null
+			*/
+			this.evader = evader;
+
+			/**
+			* This factor determines how far the vehicle predicts the movement of the evader.
+			* @type Number
+			* @default 1
+			*/
+			this.predictionFactor = predictionFactor;
+
+			// internal behaviors
+
+			this._seek = new SeekBehavior();
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const evader = this.evader;
+
+			displacement$3.subVectors( evader.position, vehicle.position );
+
+			// 1. if the evader is ahead and facing the agent then we can just seek for the evader's current position
+
+			vehicle.getDirection( vehicleDirection );
+			evader.getDirection( evaderDirection );
+
+			// first condition: evader must be in front of the pursuer
+
+			const evaderAhead = displacement$3.dot( vehicleDirection ) > 0;
+
+			// second condition: evader must almost directly facing the agent
+
+			const facing = vehicleDirection.dot( evaderDirection ) < - 0.95;
+
+			if ( evaderAhead === true && facing === true ) {
+
+				this._seek.target = evader.position;
+				this._seek.calculate( vehicle, force );
+				return force;
+
+			}
+
+			// 2. evader not considered ahead so we predict where the evader will be
+
+			// the lookahead time is proportional to the distance between the evader
+			// and the pursuer. and is inversely proportional to the sum of the
+			// agent's velocities
+
+			let lookAheadTime = displacement$3.length() / ( vehicle.maxSpeed + evader.getSpeed() );
+			lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
+
+			// calculate new velocity and predicted future position
+
+			newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
+			predictedPosition$2.addVectors( evader.position, newEvaderVelocity );
+
+			// now seek to the predicted future position of the evader
+
+			this._seek.target = predictedPosition$2;
+			this._seek.calculate( vehicle, force );
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.evader = this.evader ? this.evader.uuid : null;
+			json.predictionFactor = this.predictionFactor;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {PursuitBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.evader = json.evader;
+			this.predictionFactor = json.predictionFactor;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {PursuitBehavior} A reference to this behavior.
+		*/
+		resolveReferences( entities ) {
+
+			this.evader = entities.get( this.evader ) || null;
+
+		}
+
+	}
+
+	const toAgent = new Vector3();
+
+	/**
+	* This steering produces a force that steers a vehicle away from those in its neighborhood region.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class SeparationBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new separation behavior.
+		*/
+		constructor() {
+
+			super();
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force /*, delta */ ) {
+
+			const neighbors = vehicle.neighbors;
+
+			for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+				const neighbor = neighbors[ i ];
+
+				toAgent.subVectors( vehicle.position, neighbor.position );
+
+				let length = toAgent.length();
+
+				// handle zero length if both vehicles have the same position
+
+				if ( length === 0 ) length = 0.0001;
+
+				// scale the force inversely proportional to the agents distance from its neighbor
+
+				toAgent.normalize().divideScalar( length );
+
+				force.add( toAgent );
+
+			}
+
+			return force;
+
+		}
+
+	}
+
+	const targetWorld = new Vector3();
+	const randomDisplacement = new Vector3();
+
+	/**
+	* This steering behavior produces a steering force that will give the
+	* impression of a random walk through the agent’s environment. The behavior only
+	* produces a 2D force (XZ).
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments SteeringBehavior
+	*/
+	class WanderBehavior extends SteeringBehavior {
+
+		/**
+		* Constructs a new wander behavior.
+		*
+		* @param {Number} radius - The radius of the wander circle for the wander behavior.
+		* @param {Number} distance - The distance the wander circle is projected in front of the agent.
+		* @param {Number} jitter - The maximum amount of displacement along the sphere each frame.
+		*/
+		constructor( radius = 1, distance = 5, jitter = 5 ) {
+
+			super();
+
+			/**
+			* The radius of the constraining circle for the wander behavior.
+			* @type Number
+			* @default 1
+			*/
+			this.radius = radius;
+
+			/**
+			* The distance the wander sphere is projected in front of the agent.
+			* @type Number
+			* @default 5
+			*/
+			this.distance = distance;
+
+			/**
+			* The maximum amount of displacement along the sphere each frame.
+			* @type Number
+			* @default 5
+			*/
+			this.jitter = jitter;
+
+			this._targetLocal = new Vector3();
+
+			generateRandomPointOnCircle( this.radius, this._targetLocal );
+
+		}
+
+		/**
+		* Calculates the steering force for a single simulation step.
+		*
+		* @param {Vehicle} vehicle - The game entity the force is produced for.
+		* @param {Vector3} force - The force/result vector.
+		* @param {Number} delta - The time delta.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( vehicle, force, delta ) {
+
+			// this behavior is dependent on the update rate, so this line must be
+			// included when using time independent frame rate
+
+			const jitterThisTimeSlice = this.jitter * delta;
+
+			// prepare random vector
+
+			randomDisplacement.x = MathUtils.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+			randomDisplacement.z = MathUtils.randFloat( - 1, 1 ) * jitterThisTimeSlice;
+
+			// add random vector to the target's position
+
+			this._targetLocal.add( randomDisplacement );
+
+			// re-project this new vector back onto a unit sphere
+
+			this._targetLocal.normalize();
+
+			// increase the length of the vector to the same as the radius of the wander sphere
+
+			this._targetLocal.multiplyScalar( this.radius );
+
+			// move the target into a position wanderDist in front of the agent
+
+			targetWorld.copy( this._targetLocal );
+			targetWorld.z += this.distance;
+
+			// project the target into world space
+
+			targetWorld.applyMatrix4( vehicle.worldMatrix );
+
+			// and steer towards it
+
+			force.subVectors( targetWorld, vehicle.position );
+
+			return force;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.radius = this.radius;
+			json.distance = this.distance;
+			json.jitter = this.jitter;
+			json._targetLocal = this._targetLocal.toArray( new Array() );
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {WanderBehavior} A reference to this behavior.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.radius = json.radius;
+			this.distance = json.distance;
+			this.jitter = json.jitter;
+			this._targetLocal.fromArray( json._targetLocal );
+
+			return this;
+
+		}
+
+	}
+
+	//
+
+	function generateRandomPointOnCircle( radius, target ) {
+
+		const theta = Math.random() * Math.PI * 2;
+
+		target.x = radius * Math.cos( theta );
+		target.z = radius * Math.sin( theta );
+
+	}
+
+	const force = new Vector3();
+
+	/**
+	* This class is responsible for managing the steering of a single vehicle. The steering manager
+	* can manage multiple steering behaviors and combine their produced force into a single one used
+	* by the vehicle.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class SteeringManager {
+
+		/**
+		* Constructs a new steering manager.
+		*
+		* @param  {Vehicle} vehicle - The vehicle that owns this steering manager.
+		*/
+		constructor( vehicle ) {
+
+			/**
+			* The vehicle that owns this steering manager.
+			* @type Vehicle
+			*/
+			this.vehicle = vehicle;
+
+			/**
+			* A list of all steering behaviors.
+			* @type Array
+			*/
+			this.behaviors = new Array();
+
+			this._steeringForce = new Vector3(); // the calculated steering force per simulation step
+			this._typesMap = new Map(); // used for deserialization of custom behaviors
+
+		}
+
+		/**
+		* Adds the given steering behavior to this steering manager.
+		*
+		* @param {SteeringBehavior} behavior - The steering behavior to add.
+		* @return {SteeringManager} A reference to this steering manager.
+		*/
+		add( behavior ) {
+
+			this.behaviors.push( behavior );
+
+			return this;
+
+		}
+
+		/**
+		* Removes the given steering behavior from this steering manager.
+		*
+		* @param {SteeringBehavior} behavior - The steering behavior to remove.
+		* @return {SteeringManager} A reference to this steering manager.
+		*/
+		remove( behavior ) {
+
+			const index = this.behaviors.indexOf( behavior );
+			this.behaviors.splice( index, 1 );
+
+			return this;
+
+		}
+
+		/**
+		* Clears the internal state of this steering manager.
+		*
+		* @return {SteeringManager} A reference to this steering manager.
+		*/
+		clear() {
+
+			this.behaviors.length = 0;
+
+			return this;
+
+		}
+
+		/**
+		* Calculates the steering forces for all active steering behaviors and
+		* combines it into a single result force. This method is called in
+		* {@link Vehicle#update}.
+		*
+		* @param {Number} delta - The time delta.
+		* @param {Vector3} result - The force/result vector.
+		* @return {Vector3} The force/result vector.
+		*/
+		calculate( delta, result ) {
+
+			this._calculateByOrder( delta );
+
+			return result.copy( this._steeringForce );
+
+		}
+
+		// this method calculates how much of its max steering force the vehicle has
+		// left to apply and then applies that amount of the force to add
+
+		_accumulate( forceToAdd ) {
+
+			// calculate how much steering force the vehicle has used so far
+
+			const magnitudeSoFar = this._steeringForce.length();
+
+			// calculate how much steering force remains to be used by this vehicle
+
+			const magnitudeRemaining = this.vehicle.maxForce - magnitudeSoFar;
+
+			// return false if there is no more force left to use
+
+			if ( magnitudeRemaining <= 0 ) return false;
+
+			// calculate the magnitude of the force we want to add
+
+			const magnitudeToAdd = forceToAdd.length();
+
+			// restrict the magnitude of forceToAdd, so we don't exceed the max force of the vehicle
+
+			if ( magnitudeToAdd > magnitudeRemaining ) {
+
+				forceToAdd.normalize().multiplyScalar( magnitudeRemaining );
+
+			}
+
+			// add force
+
+			this._steeringForce.add( forceToAdd );
+
+			return true;
+
+		}
+
+		_calculateByOrder( delta ) {
+
+			const behaviors = this.behaviors;
+
+			// reset steering force
+
+			this._steeringForce.set( 0, 0, 0 );
+
+			// calculate for each behavior the respective force
+
+			for ( let i = 0, l = behaviors.length; i < l; i ++ ) {
+
+				const behavior = behaviors[ i ];
+
+				if ( behavior.active === true ) {
+
+					force.set( 0, 0, 0 );
+
+					behavior.calculate( this.vehicle, force, delta );
+
+					force.multiplyScalar( behavior.weight );
+
+					if ( this._accumulate( force ) === false ) return;
+
+				}
+
+			}
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const data = {
+				type: 'SteeringManager',
+				behaviors: new Array()
+			};
+
+			const behaviors = this.behaviors;
+
+			for ( let i = 0, l = behaviors.length; i < l; i ++ ) {
+
+				const behavior = behaviors[ i ];
+				data.behaviors.push( behavior.toJSON() );
+
+			}
+
+			return data;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {SteeringManager} A reference to this steering manager.
+		*/
+		fromJSON( json ) {
+
+			this.clear();
+
+			const behaviorsJSON = json.behaviors;
+
+			for ( let i = 0, l = behaviorsJSON.length; i < l; i ++ ) {
+
+				const behaviorJSON = behaviorsJSON[ i ];
+				const type = behaviorJSON.type;
+
+				let behavior;
+
+				switch ( type ) {
+
+					case 'SteeringBehavior':
+						behavior = new SteeringBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'AlignmentBehavior':
+						behavior = new AlignmentBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'ArriveBehavior':
+						behavior = new ArriveBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'CohesionBehavior':
+						behavior = new CohesionBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'EvadeBehavior':
+						behavior = new EvadeBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'FleeBehavior':
+						behavior = new FleeBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'FollowPathBehavior':
+						behavior = new FollowPathBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'InterposeBehavior':
+						behavior = new InterposeBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'ObstacleAvoidanceBehavior':
+						behavior = new ObstacleAvoidanceBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'OffsetPursuitBehavior':
+						behavior = new OffsetPursuitBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'PursuitBehavior':
+						behavior = new PursuitBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'SeekBehavior':
+						behavior = new SeekBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'SeparationBehavior':
+						behavior = new SeparationBehavior().fromJSON( behaviorJSON );
+						break;
+
+					case 'WanderBehavior':
+						behavior = new WanderBehavior().fromJSON( behaviorJSON );
+						break;
+
+					default:
+
+						// handle custom type
+
+						const ctor = this._typesMap.get( type );
+
+						if ( ctor !== undefined ) {
+
+							behavior = new ctor().fromJSON( behaviorJSON );
+
+						} else {
+
+							Logger.warn( 'YUKA.SteeringManager: Unsupported steering behavior type:', type );
+							continue;
+
+						}
+
+				}
+
+				this.add( behavior );
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		 * Registers a custom type for deserialization. When calling {@link SteeringManager#fromJSON}
+		 * the steering manager is able to pick the correct constructor in order to create custom
+		 * steering behavior.
+		 *
+		 * @param {String} type - The name of the behavior type.
+		 * @param {Function} constructor -  The constructor function.
+		 * @return {SteeringManager} A reference to this steering manager.
+		 */
+		registerType( type, constructor ) {
+
+			this._typesMap.set( type, constructor );
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {SteeringManager} A reference to this steering manager.
+		*/
+		resolveReferences( entities ) {
+
+			const behaviors = this.behaviors;
+
+			for ( let i = 0, l = behaviors.length; i < l; i ++ ) {
+
+				const behavior = behaviors[ i ];
+				behavior.resolveReferences( entities );
+
+
+			}
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* This class can be used to smooth the result of a vector calculation. One use case
+	* is the smoothing of the velocity vector of game entities in order to avoid a shaky
+	* movements du to conflicting forces.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	*/
+	class Smoother {
+
+		/**
+		* Constructs a new smoother.
+		*
+		* @param  {Number} count - The amount of samples the smoother will use to average a vector.
+		*/
+		constructor( count = 10 ) {
+
+			/**
+			* The amount of samples the smoother will use to average a vector.
+			* @type Number
+			* @default 10
+			*/
+			this.count = count;
+
+			this._history = []; // this holds the history
+			this._slot = 0; // the current sample slot
+
+			// initialize history with Vector3s
+
+			for ( let i = 0; i < this.count; i ++ ) {
+
+				this._history[ i ] = new Vector3();
+
+			}
+
+		}
+
+		/**
+		* Calculates for the given value a smooth average.
+		*
+		* @param {Vector3} value - The value to smooth.
+		* @param {Vector3} average - The calculated average.
+		* @return {Vector3} The calculated average.
+		*/
+		calculate( value, average ) {
+
+			// ensure, average is a zero vector
+
+			average.set( 0, 0, 0 );
+
+			// make sure the slot index wraps around
+
+			if ( this._slot === this.count ) {
+
+				this._slot = 0;
+
+			}
+
+			// overwrite the oldest value with the newest
+
+			this._history[ this._slot ].copy( value );
+
+			// increase slot index
+
+			this._slot ++;
+
+			// now calculate the average of the history array
+
+			for ( let i = 0; i < this.count; i ++ ) {
+
+				average.add( this._history[ i ] );
+
+			}
+
+			average.divideScalar( this.count );
+
+			return average;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const data = {
+				type: this.constructor.name,
+				count: this.count,
+				_history: new Array(),
+				_slot: this._slot
+			};
+
+			// history
+
+			const history = this._history;
+
+			for ( let i = 0, l = history.length; i < l; i ++ ) {
+
+				const value = history[ i ];
+				data._history.push( value.toArray( new Array() ) );
+
+			}
+
+			return data;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Smoother} A reference to this smoother.
+		*/
+		fromJSON( json ) {
+
+			this.count = json.count;
+			this._slot = json._slot;
+
+			// history
+
+			const historyJSON = json._history;
+			this._history.length = 0;
+
+			for ( let i = 0, l = historyJSON.length; i < l; i ++ ) {
+
+				const valueJSON = historyJSON[ i ];
+				this._history.push( new Vector3().fromArray( valueJSON ) );
+
+			}
+
+
+			return this;
+
+		}
+
+	}
+
+	const steeringForce = new Vector3();
+	const displacement$4 = new Vector3();
+	const acceleration = new Vector3();
+	const target$1 = new Vector3();
+	const velocitySmooth = new Vector3();
+
+	/**
+	* This type of game entity implements a special type of locomotion, the so called
+	* *Vehicle Model*. The class uses basic physical metrics in order to implement a
+	* realistic movement.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @author {@link https://github.com/robp94|robp94}
+	* @augments MovingEntity
+	*/
+	class Vehicle extends MovingEntity {
+
+		/**
+		* Constructs a new vehicle.
+		*/
+		constructor() {
+
+			super();
+
+			/**
+			* The mass if the vehicle in kilogram.
+			* @type Number
+			* @default 1
+			*/
+			this.mass = 1;
+
+			/**
+			* The maximum force this entity can produce to power itself.
+			* @type Number
+			* @default 100
+			*/
+			this.maxForce = 100;
+
+			/**
+			* The steering manager of this vehicle.
+			* @type SteeringManager
+			*/
+			this.steering = new SteeringManager( this );
+
+			/**
+			* An optional smoother to avoid shakiness due to conflicting steering behaviors.
+			* @type Smoother
+			* @default null
+			*/
+			this.smoother = null;
+
+		}
+
+		/**
+		* This method is responsible for updating the position based on the force produced
+		* by the internal steering manager.
+		*
+		* @param {Number} delta - The time delta.
+		* @return {Vehicle} A reference to this vehicle.
+		*/
+		update( delta ) {
+
+			// calculate steering force
+
+			this.steering.calculate( delta, steeringForce );
+
+			// acceleration = force / mass
+
+			acceleration.copy( steeringForce ).divideScalar( this.mass );
+
+			// update velocity
+
+			this.velocity.add( acceleration.multiplyScalar( delta ) );
+
+			// make sure vehicle does not exceed maximum speed
+
+			if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
+
+				this.velocity.normalize();
+				this.velocity.multiplyScalar( this.maxSpeed );
+
+			}
+
+			// calculate displacement
+
+			displacement$4.copy( this.velocity ).multiplyScalar( delta );
+
+			// calculate target position
+
+			target$1.copy( this.position ).add( displacement$4 );
+
+			// update the orientation if the vehicle has a non zero velocity
+
+			if ( this.updateOrientation === true && this.smoother === null && this.getSpeedSquared() > 0.00000001 ) {
+
+				this.lookAt( target$1 );
+
+			}
+
+			// update position
+
+			this.position.copy( target$1 );
+
+			// if smoothing is enabled, the orientation (not the position!) of the vehicle is
+			// changed based on a post-processed velocity vector
+
+			if ( this.updateOrientation === true && this.smoother !== null ) {
+
+				this.smoother.calculate( this.velocity, velocitySmooth );
+
+				displacement$4.copy( velocitySmooth ).multiplyScalar( delta );
+				target$1.copy( this.position ).add( displacement$4 );
+
+				this.lookAt( target$1 );
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.mass = this.mass;
+			json.maxForce = this.maxForce;
+			json.steering = this.steering.toJSON();
+			json.smoother = this.smoother ? this.smoother.toJSON() : null;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Vehicle} A reference to this vehicle.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.mass = json.mass;
+			this.maxForce = json.maxForce;
+			this.steering = new SteeringManager( this ).fromJSON( json.steering );
+			this.smoother = json.smoother ? new Smoother().fromJSON( json.smoother ) : null;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {Vehicle} A reference to this vehicle.
+		*/
+		resolveReferences( entities ) {
+
+			super.resolveReferences( entities );
+
+			this.steering.resolveReferences( entities );
+
+		}
+
+	}
+
+	/**
+	* Base class for representing trigger regions. It's a predefine region in 3D space,
+	* owned by one or more triggers. The shape of the trigger can be arbitrary.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class TriggerRegion {
+
+		/**
+		* Returns true if the bounding volume of the given game entity touches/intersects
+		* the trigger region. Must be implemented by all concrete trigger regions.
+		*
+		* @param {GameEntity} entity - The entity to test.
+		* @return {Boolean} Whether this trigger touches the given game entity or not.
+		*/
+		touching( /* entity */ ) {
+
+			return false;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {TriggerRegion} A reference to this trigger region.
+		*/
+		fromJSON( /* json */ ) {
 
 			return this;
 
@@ -3474,129 +6403,1038 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				min: this.min.toArray( new Array() ),
+				max: this.max.toArray( new Array() )
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {AABB} A reference to this AABB.
+		*/
+		fromJSON( json ) {
+
+			this.min.fromArray( json.min );
+			this.max.fromArray( json.max );
+
+			return this;
+
+		}
+
+	}
+
+	const boundingSphereEntity = new BoundingSphere();
+
+	/**
+	* Class for representing a rectangular trigger region as an AABB.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments TriggerRegion
+	*/
+	class RectangularTriggerRegion extends TriggerRegion {
+
+		/**
+		* Constructs a new rectangular trigger region with the given values.
+		*
+		* @param {Vector3} min - The minimum bounds of the region.
+		* @param {Vector3} max - The maximum bounds of the region.
+		*/
+		constructor( min = new Vector3(), max = new Vector3() ) {
+
+			super();
+
+			this._aabb = new AABB( min, max );
+
+		}
+
+		get min() {
+
+			return this._aabb.min;
+
+		}
+
+		set min( min ) {
+
+			this._aabb.min = min;
+
+		}
+
+		get max() {
+
+			return this._aabb.max;
+
+		}
+
+		set max( max ) {
+
+			this._aabb.max = max;
+
+		}
+
+		/**
+		* Creates the new rectangular trigger region from a given position and size.
+		*
+		* @param {Vector3} position - The center position of the trigger region.
+		* @param {Vector3} size - The size of the trigger region per axis.
+		* @return {RectangularTriggerRegion} A reference to this trigger region.
+		*/
+		fromPositionAndSize( position, size ) {
+
+			this._aabb.fromCenterAndSize( position, size );
+
+			return this;
+
+		}
+
+		/**
+		* Returns true if the bounding volume of the given game entity touches/intersects
+		* the trigger region.
+		*
+		* @param {GameEntity} entity - The entity to test.
+		* @return {Boolean} Whether this trigger touches the given game entity or not.
+		*/
+		touching( entity ) {
+
+			boundingSphereEntity.set( entity.position, entity.boundingRadius );
+
+			return this._aabb.intersectsBoundingSphere( boundingSphereEntity );
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json._aabb = this._aabb.toJSON();
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {RectangularTriggerRegion} A reference to this trigger region.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this._aabb.fromJSON( json._aabb );
+
+			return this;
+
+		}
+
+	}
+
+	const boundingSphereEntity$1 = new BoundingSphere();
+
+	/**
+	* Class for representing a spherical trigger region as a bounding sphere.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments TriggerRegion
+	*/
+	class SphericalTriggerRegion extends TriggerRegion {
+
+		/**
+		* Constructs a new spherical trigger region with the given values.
+		*
+		* @param {Vector3} position - The center position of the region.
+		* @param {Number} radius - The radius of the region.
+		*/
+		constructor( position = new Vector3(), radius = 0 ) {
+
+			super();
+
+			this._boundingSphere = new BoundingSphere( position, radius );
+
+		}
+
+		get position() {
+
+			return this._boundingSphere.center;
+
+		}
+
+		set position( position ) {
+
+			this._boundingSphere.center = position;
+
+		}
+
+		get radius() {
+
+			return this._boundingSphere.radius;
+
+		}
+
+		set radius( radius ) {
+
+			this._boundingSphere.radius = radius;
+
+		}
+
+		/**
+		* Returns true if the bounding volume of the given game entity touches/intersects
+		* the trigger region.
+		*
+		* @param {GameEntity} entity - The entity to test.
+		* @return {Boolean} Whether this trigger touches the given game entity or not.
+		*/
+		touching( entity ) {
+
+			boundingSphereEntity$1.set( entity.position, entity.boundingRadius );
+
+			return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity$1 );
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json._boundingSphere = this._boundingSphere.toJSON();
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {SphericalTriggerRegion} A reference to this trigger region.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this._boundingSphere.fromJSON( json._boundingSphere );
+
+			return this;
+
+		}
+
 	}
 
 	/**
-	* Class representing a bounding sphere.
+	* Base class for representing triggers. A trigger generates an action if a game entity
+	* touches its trigger region, a predefine region in 3D space.
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
 	*/
-	class BoundingSphere {
+	class Trigger {
 
 		/**
-		* Constructs a new bounding sphere with the given values.
+		* Constructs a new trigger with the given values.
 		*
-		* @param {Vector3} center - The center position of the bounding sphere.
-		* @param {Number} radius - The radius of the bounding sphere.
+		* @param {TriggerRegion} region - The region of the trigger.
 		*/
-		constructor( center = new Vector3(), radius = 0 ) {
+		constructor( region = new TriggerRegion() ) {
 
 			/**
-			* The center position of the bounding sphere.
-			* @type Vector3
+			* Whether this trigger is active or not.
+			* @type Boolean
+			* @default true
 			*/
-			this.center = center;
+			this.active = true;
 
 			/**
-			*  The radius of the bounding sphere.
-			* @type Number
+			* The region of the trigger.
+			* @type TriggerRegion
 			*/
-			this.radius = radius;
+			this.region = region;
+
+			//
+
+			this._typesMap = new Map(); // used for deserialization of custom triggerRegions
 
 		}
 
 		/**
-		* Sets the given values to this bounding sphere.
+		* This method is called per simulation step for all game entities. If the game
+		* entity touches the region of the trigger, the respective action is executed.
 		*
-		* @param {Vector3} center - The center position of the bounding sphere.
-		* @param {Number} radius - The radius of the bounding sphere.
-		* @return {BoundingSphere} A reference to this bounding sphere.
+		* @param {GameEntity} entity - The entity to test
+		* @return {Trigger} A reference to this trigger.
 		*/
-		set( center, radius ) {
+		check( entity ) {
 
-			this.center = center;
-			this.radius = radius;
+			if ( ( this.active === true ) && ( this.region.touching( entity ) === true ) ) {
+
+				this.execute( entity );
+
+			}
 
 			return this;
 
 		}
 
 		/**
-		* Copies all values from the given bounding sphere to this bounding sphere.
+		* This method is called when the trigger should execute its action.
+		* Must be implemented by all concrete triggers.
 		*
-		* @param {BoundingSphere} sphere - The bounding sphere to copy.
-		* @return {BoundingSphere} A reference to this bounding sphere.
+		* @param {GameEntity} entity - The entity that touched the trigger region.
+		* @return {Trigger} A reference to this trigger.
 		*/
-		copy( sphere ) {
+		execute( /* entity */ ) {}
 
-			this.center.copy( sphere.center );
-			this.radius = sphere.radius;
+		/**
+		* Triggers can have internal states. This method is called per simulation step
+		* and can be used to update the trigger.
+		*
+		* @param {Number} delta - The time delta value.
+		* @return {Trigger} A reference to this trigger.
+		*/
+		update( /* delta */ ) {}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				active: this.active,
+				region: this.region.toJSON()
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Trigger} A reference to this trigger.
+		*/
+		fromJSON( json ) {
+
+			this.active = json.active;
+
+			const regionJSON = json.region;
+			let type = regionJSON.type;
+
+			switch ( type ) {
+
+				case 'TriggerRegion':
+					this.region = new TriggerRegion().fromJSON( regionJSON );
+					break;
+
+				case 'RectangularTriggerRegion':
+					this.region = new RectangularTriggerRegion().fromJSON( regionJSON );
+					break;
+
+				case 'SphericalTriggerRegion':
+					this.region = new SphericalTriggerRegion().fromJSON( regionJSON );
+					break;
+
+				default:
+					// handle custom type
+
+					const ctor = this._typesMap.get( type );
+
+					if ( ctor !== undefined ) {
+
+						this.region = new ctor().fromJSON( regionJSON );
+
+					} else {
+
+						Logger.warn( 'YUKA.Trigger: Unsupported trigger region type:', regionJSON.type );
+
+					}
+
+			}
 
 			return this;
 
 		}
 
 		/**
-		* Creates a new bounding sphere and copies all values from this bounding sphere.
-		*
-		* @return {BoundingSphere} A new bounding sphere.
-		*/
-		clone() {
+		 * Registers a custom type for deserialization. When calling {@link Trigger#fromJSON}
+		 * the trigger is able to pick the correct constructor in order to create custom
+		 * trigger regions.
+		 *
+		 * @param {String} type - The name of the trigger region.
+		 * @param {Function} constructor -  The constructor function.
+		 * @return {Trigger} A reference to this trigger.
+		 */
+		registerType( type, constructor ) {
 
-			return new this.constructor().copy( this );
+			this._typesMap.set( type, constructor );
+
+			return this;
+
+		}
+
+	}
+
+	const candidates = [];
+
+	/**
+	* This class is used for managing all central objects of a game like
+	* game entities and triggers.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class EntityManager {
+
+		/**
+		* Constructs a new entity manager.
+		*/
+		constructor() {
+
+			/**
+			* A list of {@link GameEntity game entities }.
+			* @type Array
+			*/
+			this.entities = new Array();
+
+			/**
+			* A list of {@link Trigger triggers }.
+			* @type Array
+			*/
+			this.triggers = new Array();
+
+			/**
+			* A reference to a spatial index.
+			* @type CellSpacePartitioning
+			* @default null
+			*/
+			this.spatialIndex = null;
+
+			this._indexMap = new Map(); // used by spatial indices
+			this._typesMap = new Map(); // used for deserialization of custom entities
+			this._messageDispatcher = new MessageDispatcher();
 
 		}
 
 		/**
-		* Returns true if the given point is inside this bounding sphere.
+		* Adds a game entity to this entity manager.
 		*
-		* @param {Vector3} point - A point in 3D space.
-		* @return {Boolean} The result of the containments test.
+		* @param {GameEntity} entity - The game entity to add.
+		* @return {EntityManager} A reference to this entity manager.
 		*/
-		containsPoint( point ) {
+		add( entity ) {
 
-			return ( point.squaredDistanceTo( this.center ) <= ( this.radius * this.radius ) );
+			this.entities.push( entity );
 
-		}
-
-		/**
-		* Returns true if the given bounding sphere intersects this bounding sphere.
-		*
-		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {Boolean} The result of the intersection test.
-		*/
-		intersectsBoundingSphere( sphere ) {
-
-			const radius = this.radius + sphere.radius;
-
-			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
-
-		}
-
-		/**
-		* Transforms this bounding sphere with the given 4x4 transformation matrix.
-		*
-		* @param {Matrix4} matrix - The 4x4 transformation matrix.
-		* @return {BoundingSphere} A reference to this bounding sphere.
-		*/
-		applyMatrix4( matrix ) {
-
-			this.center.applyMatrix4( matrix );
-			this.radius = this.radius * matrix.getMaxScale();
+			entity.manager = this;
 
 			return this;
 
 		}
 
 		/**
-		* Returns true if the given bounding sphere is deep equal with this bounding sphere.
+		* Removes a game entity from this entity manager.
 		*
-		* @param {BoundingSphere} sphere - The bounding sphere to test.
-		* @return {Boolean} The result of the equality test.
+		* @param {GameEntity} entity - The game entity to remove.
+		* @return {EntityManager} A reference to this entity manager.
 		*/
-		equals( sphere ) {
+		remove( entity ) {
 
-			return ( sphere.center.equals( this.center ) ) && ( sphere.radius === this.radius );
+			const index = this.entities.indexOf( entity );
+			this.entities.splice( index, 1 );
+
+			entity.manager = null;
+
+			return this;
+
+		}
+
+		/**
+		* Adds a trigger to this entity manager.
+		*
+		* @param {Trigger} trigger - The trigger to add.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		addTrigger( trigger ) {
+
+			this.triggers.push( trigger );
+
+			return this;
+
+		}
+
+		/**
+		* Removes a trigger to this entity manager.
+		*
+		* @param {Trigger} trigger - The trigger to remove.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		removeTrigger( trigger ) {
+
+			const index = this.triggers.indexOf( trigger );
+			this.triggers.splice( index, 1 );
+
+			return this;
+
+		}
+
+		/**
+		* Clears the internal state of this entity manager.
+		*
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		clear() {
+
+			this.entities.length = 0;
+			this.triggers.length = 0;
+
+			this._messageDispatcher.clear();
+
+			return this;
+
+		}
+
+		/**
+		* Returns an entity by the given name. If no game entity is found, *null*
+		* is returned. This method should be used once (e.g. at {@link GameEntity#start})
+		* and the result should be cached for later use.
+		*
+		* @param {String} name - The name of the game entity.
+		* @return {GameEntity} The found game entity.
+		*/
+		getEntityByName( name ) {
+
+			const entities = this.entities;
+
+			for ( let i = 0, l = entities.length; i < l; i ++ ) {
+
+				const entity = entities[ i ];
+
+				if ( entity.name === name ) return entity;
+
+			}
+
+			return null;
+
+		}
+
+		/**
+		* The central update method of this entity manager. Updates all
+		* game entities, triggers and delayed messages.
+		*
+		* @param {Number} delta - The time delta.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		update( delta ) {
+
+			const entities = this.entities;
+			const triggers = this.triggers;
+
+			// update entities
+
+			for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
+
+				const entity = entities[ i ];
+
+				this.updateEntity( entity, delta );
+
+			}
+
+			// update triggers
+
+			for ( let i = ( triggers.length - 1 ); i >= 0; i -- ) {
+
+				const trigger = triggers[ i ];
+
+				this.updateTrigger( trigger, delta );
+
+			}
+
+			// handle messaging
+
+			this._messageDispatcher.dispatchDelayedMessages( delta );
+
+			return this;
+
+		}
+
+		/**
+		* Updates a single entity.
+		*
+		* @param {GameEntity} entity - The game entity to update.
+		* @param {Number} delta - The time delta.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		updateEntity( entity, delta ) {
+
+			if ( entity.active === true ) {
+
+				this.updateNeighborhood( entity );
+
+				//
+
+				if ( entity._started === false ) {
+
+					entity.start();
+
+					entity._started = true;
+
+				}
+
+				//
+
+				entity.update( delta );
+				entity.updateWorldMatrix();
+
+				//
+
+				const children = entity.children;
+
+				for ( let i = ( children.length - 1 ); i >= 0; i -- ) {
+
+					const child = children[ i ];
+
+					this.updateEntity( child, delta );
+
+				}
+
+				//
+
+				if ( this.spatialIndex !== null ) {
+
+					let currentIndex = this._indexMap.get( entity ) || - 1;
+					currentIndex = this.spatialIndex.updateEntity( entity, currentIndex );
+					this._indexMap.set( entity, currentIndex );
+
+				}
+
+				//
+
+				const renderComponent = entity._renderComponent;
+				const renderComponentCallback = entity._renderComponentCallback;
+
+				if ( renderComponent !== null && renderComponentCallback !== null ) {
+
+					renderComponentCallback( entity, renderComponent );
+
+				}
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Updates the neighborhood of a single game entity.
+		*
+		* @param {GameEntity} entity - The game entity to update.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		updateNeighborhood( entity ) {
+
+			if ( entity.updateNeighborhood === true ) {
+
+				entity.neighbors.length = 0;
+
+				// determine candidates
+
+				if ( this.spatialIndex !== null ) {
+
+					this.spatialIndex.query( entity.position, entity.neighborhoodRadius, candidates );
+
+				} else {
+
+					// worst case runtime complexity with O(n²)
+
+					candidates.length = 0;
+					candidates.push( ...this.entities );
+
+				}
+
+				// verify if candidates are within the predefined range
+
+				const neighborhoodRadiusSq = ( entity.neighborhoodRadius * entity.neighborhoodRadius );
+
+				for ( let i = 0, l = candidates.length; i < l; i ++ ) {
+
+					const candidate = candidates[ i ];
+
+					if ( entity !== candidate && candidate.active === true ) {
+
+						const distanceSq = entity.position.squaredDistanceTo( candidate.position );
+
+						if ( distanceSq <= neighborhoodRadiusSq ) {
+
+							entity.neighbors.push( candidate );
+
+						}
+
+					}
+
+				}
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Updates a single trigger.
+		*
+		* @param {Trigger} trigger - The trigger to update.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		updateTrigger( trigger, delta ) {
+
+			if ( trigger.active === true ) {
+
+				trigger.update( delta );
+
+				const entities = this.entities;
+
+				for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
+
+					const entity = entities[ i ];
+
+					if ( entity.active === true ) {
+
+						trigger.check( entity );
+
+					}
+
+				}
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Interface for game entities so they can send messages to other game entities.
+		*
+		* @param {GameEntity} sender - The sender.
+		* @param {GameEntity} receiver - The receiver.
+		* @param {String} message - The actual message.
+		* @param {Number} delay - A time value in millisecond used to delay the message dispatching.
+		* @param {Object} data - An object for custom data.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		sendMessage( sender, receiver, message, delay, data ) {
+
+			this._messageDispatcher.dispatch( sender, receiver, message, delay, data );
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const data = {
+				type: this.constructor.name,
+				entities: new Array(),
+				triggers: new Array(),
+				_messageDispatcher: this._messageDispatcher.toJSON()
+			};
+
+			// entities
+
+			function processEntity( entity ) {
+
+				data.entities.push( entity.toJSON() );
+
+				for ( let i = 0, l = entity.children.length; i < l; i ++ ) {
+
+					processEntity( entity.children[ i ] );
+
+				}
+
+			}
+
+			for ( let i = 0, l = this.entities.length; i < l; i ++ ) {
+
+				// recursively process all entities
+
+				processEntity( this.entities[ i ] );
+
+			}
+
+			// triggers
+
+			for ( let i = 0, l = this.triggers.length; i < l; i ++ ) {
+
+				const trigger = this.triggers[ i ];
+				data.triggers.push( trigger.toJSON() );
+
+			}
+
+			return data;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		fromJSON( json ) {
+
+			this.clear();
+
+			const entitiesJSON = json.entities;
+			const triggersJSON = json.triggers;
+			const _messageDispatcherJSON = json._messageDispatcher;
+
+			// entities
+
+			const entitiesMap = new Map();
+
+			for ( let i = 0, l = entitiesJSON.length; i < l; i ++ ) {
+
+				const entityJSON = entitiesJSON[ i ];
+				const type = entityJSON.type;
+
+				let entity;
+
+				switch ( type ) {
+
+					case 'GameEntity':
+						entity = new GameEntity().fromJSON( entityJSON );
+						break;
+
+					case 'MovingEntity':
+						entity = new MovingEntity().fromJSON( entityJSON );
+						break;
+
+					case 'Vehicle':
+						entity = new Vehicle().fromJSON( entityJSON );
+						break;
+
+					default:
+
+						// handle custom type
+
+						const ctor = this._typesMap.get( type );
+
+						if ( ctor !== undefined ) {
+
+							entity = new ctor().fromJSON( entityJSON );
+
+						} else {
+
+							Logger.warn( 'YUKA.EntityManager: Unsupported entity type:', type );
+							continue;
+
+						}
+
+				}
+
+				entitiesMap.set( entity.uuid, entity );
+
+				if ( entity.parent === null ) this.add( entity );
+
+			}
+
+			// resolve UUIDs to game entity objects
+
+			for ( let entity of entitiesMap.values() ) {
+
+				entity.resolveReferences( entitiesMap );
+
+			}
+
+			// triggers
+
+			for ( let i = 0, l = triggersJSON.length; i < l; i ++ ) {
+
+				const triggerJSON = triggersJSON[ i ];
+				const type = triggerJSON.type;
+
+				let trigger;
+
+				if ( type === 'Trigger' ) {
+
+					trigger = new Trigger().fromJSON( triggerJSON );
+
+				} else {
+
+					// handle custom type
+
+					const ctor = this._typesMap.get( type );
+
+					if ( ctor !== undefined ) {
+
+						trigger = new ctor().fromJSON( triggerJSON );
+
+					} else {
+
+						Logger.warn( 'YUKA.EntityManager: Unsupported trigger type:', type );
+						continue;
+
+					}
+
+				}
+
+				this.addTrigger( trigger );
+
+			}
+
+			// restore delayed messages
+
+			this._messageDispatcher.fromJSON( _messageDispatcherJSON );
+
+			return this;
+
+		}
+
+		/**
+		* Registers a custom type for deserialization. When calling {@link EntityManager#fromJSON}
+		* the entity manager is able to pick the correct constructor in order to create custom
+		* game entities or triggers.
+		*
+		* @param {String} type - The name of the entity or trigger type.
+		* @param {Function} constructor -  The constructor function.
+		* @return {EntityManager} A reference to this entity manager.
+		*/
+		registerType( type, constructor ) {
+
+			this._typesMap.set( type, constructor );
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* Other classes can inherit from this class in order to provide an
+	* event based API. Useful for controls development.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+
+	class EventDispatcher {
+
+		/**
+		* Constructs a new event dispatcher.
+		*/
+		constructor() {
+
+			this._events = new Map();
+
+		}
+
+		/**
+		* Adds an event listener for the given event type.
+		*
+		* @param {String} type - The event type.
+		* @param {Function} listener - The event listener to add.
+		*/
+		addEventListener( type, listener ) {
+
+			const events = this._events;
+
+			if ( events.has( type ) === false ) {
+
+				events.set( type, new Array() );
+
+			}
+
+			const listeners = events.get( type );
+
+			if ( listeners.indexOf( listener ) === - 1 ) {
+
+				listeners.push( listener );
+
+			}
+
+		}
+
+		/**
+		* Removes the given event listener for the given event type.
+		*
+		* @param {String} type - The event type.
+		* @param {Function} listener - The event listener to remove.
+		*/
+		removeEventListener( type, listener ) {
+
+			const events = this._events;
+			const listeners = events.get( type );
+
+			if ( listeners !== undefined ) {
+
+				const index = listeners.indexOf( listener );
+
+				if ( index !== - 1 ) listeners.splice( index, 1 );
+
+			}
+
+		}
+
+		/**
+		* Returns true if the given event listener is set for the given event type.
+		*
+		* @param {String} type - The event type.
+		* @param {Function} listener - The event listener to add.
+		* @return {Boolean} Whether the given event listener is set for the given event type or not.
+		*/
+		hasEventListener( type, listener ) {
+
+			const events = this._events;
+			const listeners = events.get( type );
+
+			return ( listeners !== undefined ) && ( listeners.indexOf( listener ) !== - 1 );
+
+		}
+
+		/**
+		* Dispatches an event to all respective event listeners.
+		*
+		* @param {Object} event - The event object.
+		*/
+		dispatchEvent( event ) {
+
+			const events = this._events;
+			const listeners = events.get( event.type );
+
+			if ( listeners !== undefined ) {
+
+				event.target = this;
+
+				for ( let i = 0, l = listeners.length; i < l; i ++ ) {
+
+					listeners[ i ].call( this, event );
+
+				}
+
+			}
 
 		}
 
@@ -3666,107 +7504,62 @@
 
 		}
 
-	}
-
-	const displacement = new Vector3();
-	const target = new Vector3();
-
-	/**
-	* Class representing moving game entities.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments GameEntity
-	*/
-	class MovingEntity extends GameEntity {
-
 		/**
-		* Constructs a new moving entity.
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
 		*/
-		constructor() {
+		toJSON() {
 
-			super();
+			const json = {
+				type: this.constructor.name
+			};
 
-			/**
-			* The velocity of this game entity.
-			* @type Vector3
-			*/
-			this.velocity = new Vector3();
+			json.indices = {
+				type: this.indices ? this.indices.constructor.name : null,
+				data: this.indices ? Array.from( this.indices ) : null
+			};
 
-			/**
-			* The maximum speed at which this game entity may travel.
-			* @type Number
-			*/
-			this.maxSpeed = 1;
+			json.vertices = Array.from( this.vertices );
+			json.backfaceCulling = this.backfaceCulling;
+			json.aabb = this.aabb.toJSON();
+			json.boundingSphere = this.boundingSphere.toJSON();
 
-			/**
-			* Whether the orientation of this game entity will be updated based on the velocity or not.
-			* @type Boolean
-			* @default true
-			*/
-			this.updateOrientation = true;
+			return json;
 
 		}
 
 		/**
-		* Updates the internal state of this game entity.
+		* Restores this instance from the given JSON object.
 		*
-		* @param {Number} delta - The time delta.
-		* @return {MovingEntity} A reference to this moving entity.
+		* @param {Object} json - The JSON object.
+		* @return {MeshGeometry} A reference to this mesh geometry.
 		*/
-		update( delta ) {
+		fromJSON( json ) {
 
-			// make sure vehicle does not exceed maximum speed
+			this.aabb = new AABB().fromJSON( json.aabb );
+			this.boundingSphere = new BoundingSphere().fromJSON( json.boundingSphere );
+			this.backfaceCulling = json.backfaceCulling;
 
-			if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
+			this.vertices = new Float32Array( json.vertices );
 
-				this.velocity.normalize();
-				this.velocity.multiplyScalar( this.maxSpeed );
+			switch ( json.indices.type ) {
 
-			}
+				case 'Uint16Array':
+					this.indices = new Uint16Array( json.indices.data );
+					break;
 
-			// calculate displacement
+				case 'Uint32Array':
+					this.indices = new Uint32Array( json.indices.data );
+					break;
 
-			displacement.copy( this.velocity ).multiplyScalar( delta );
-
-			// calculate target position
-
-			target.copy( this.position ).add( displacement );
-
-			// update the orientation if the vehicle has a non zero velocity
-
-			if ( this.updateOrientation && this.getSpeedSquared() > 0.00000001 ) {
-
-				this.lookAt( target );
+				case 'null':
+					this.indices = null;
+					break;
 
 			}
-
-			// update position
-
-			this.position.copy( target );
 
 			return this;
-
-		}
-
-		/**
-		* Returns the current speed of this game entity.
-		*
-		* @return {Number} The current speed.
-		*/
-		getSpeed() {
-
-			return this.velocity.length();
-
-		}
-
-		/**
-		* Returns the current speed in squared space of this game entity.
-		*
-		* @return {Number} The current speed in squared space.
-		*/
-		getSpeedSquared() {
-
-			return this.velocity.squaredLength();
 
 		}
 
@@ -3971,6 +7764,29 @@
 		exit( /* owner */ ) {}
 
 		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {State} A reference to this state.
+		*/
+		fromJSON( /* json */ ) {}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {State} A reference to this state.
+		*/
+		resolveReferences( /* entities */ ) {}
+
+		/**
 		* This method is called when messaging between game entities occurs.
 		*
 		* @param {GameEntity} owner - The game entity that represents the execution context of this state.
@@ -4028,6 +7844,10 @@
 			* @type Map
 			*/
 			this.states = new Map();
+
+			//
+
+			this._typesMap = new Map();
 
 		}
 
@@ -4174,6 +7994,130 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = {
+				owner: this.owner.uuid,
+				currentState: null,
+				previousState: null,
+				globalState: null,
+				states: new Array()
+			};
+
+			const statesMap = new Map();
+
+			// states
+
+			for ( let [ id, state ] of this.states ) {
+
+				json.states.push( {
+					type: state.constructor.name,
+					id: id,
+					state: state.toJSON()
+				} );
+
+				statesMap.set( state, id );
+
+			}
+
+			json.currentState = statesMap.get( this.currentState ) || null;
+			json.previousState = statesMap.get( this.previousState ) || null;
+			json.globalState = statesMap.get( this.globalState ) || null;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {StateMachine} A reference to this state machine.
+		*/
+		fromJSON( json ) {
+
+			this.owner = json.owner;
+
+			//
+
+			const statesJSON = json.states;
+
+			for ( let i = 0, l = statesJSON.length; i < l; i ++ ) {
+
+				const stateJSON = statesJSON[ i ];
+				const type = stateJSON.type;
+
+				const ctor = this._typesMap.get( type );
+
+				if ( ctor !== undefined ) {
+
+					const id = stateJSON.id;
+					const state = new ctor().fromJSON( stateJSON.state );
+
+					this.add( id, state );
+
+				} else {
+
+					Logger.warn( 'YUKA.StateMachine: Unsupported state type:', type );
+					continue;
+
+				}
+
+			}
+
+			//
+
+			this.currentState = ( json.currentState !== null ) ? ( this.get( json.currentState ) || null ) : null;
+			this.previousState = ( json.previousState !== null ) ? ( this.get( json.previousState ) || null ) : null;
+			this.globalState = ( json.globalState !== null ) ? ( this.get( json.globalState ) || null ) : null;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {StateMachine} A reference to this state machine.
+		*/
+		resolveReferences( entities ) {
+
+			this.owner = entities.get( this.owner ) || null;
+
+			for ( let state of this.states.values() ) {
+
+				state.resolveReferences( entities );
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Registers a custom type for deserialization. When calling {@link StateMachine#fromJSON}
+		* the state machine is able to pick the correct constructor in order to create custom states.
+		*
+		* @param {String} type - The name of the state type.
+		* @param {Function} constructor -  The constructor function.
+		* @return {StateMachine} A reference to this state machine.
+		*/
+		registerType( type, constructor ) {
+
+			this._typesMap.set( type, constructor );
+
+			return this;
+
+		}
+
+		//
+
 		_change( state ) {
 
 			this.previousState = this.currentState;
@@ -4217,6 +8161,19 @@
 		* @return {FuzzyTerm} A reference to this term.
 		*/
 		updateDegreeOfMembership( /* value */ ) {}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name
+			};
+
+		}
 
 	}
 
@@ -4286,6 +8243,37 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.terms = new Array();
+
+			for ( let i = 0, l = this.terms.length; i < l; i ++ ) {
+
+				const term = this.terms[ i ];
+
+				if ( term instanceof FuzzyCompositeTerm ) {
+
+					json.terms.push( term.toJSON() );
+
+				} else {
+
+					json.terms.push( term.uuid );
+
+				}
+
+			}
+
+			return json;
+
+		}
+
 	}
 
 	/**
@@ -4351,7 +8339,9 @@
 		*/
 		constructor( fuzzyTerm = null ) {
 
-			super( [ fuzzyTerm ] );
+			const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : [];
+
+			super( terms );
 
 		}
 
@@ -4464,7 +8454,9 @@
 		*/
 		constructor( fuzzyTerm = null ) {
 
-			super( [ fuzzyTerm ] );
+			const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : [];
+
+			super( terms );
 
 		}
 
@@ -4568,6 +8560,28 @@
 			*/
 			this.right = 0;
 
+			//
+
+			this._uuid = null;
+
+		}
+
+		get uuid() {
+
+			if ( this._uuid === null ) {
+
+				this._uuid = MathUtils.generateUUID();
+
+			}
+
+			return this._uuid;
+
+		}
+
+		set uuid( uuid ) {
+
+			this._uuid = uuid;
+
 		}
 
 		/**
@@ -4619,6 +8633,43 @@
 			// existing one
 
 			if ( value > this.degreeOfMembership ) this.degreeOfMembership = value;
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.degreeOfMembership = this.degreeOfMembership;
+			json.representativeValue = this.representativeValue;
+			json.left = this.left;
+			json.right = this.right;
+			json.uuid = this.uuid;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {FuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			this.degreeOfMembership = json.degreeOfMembership;
+			this.representativeValue = json.representativeValue;
+			this.left = json.left;
+			this.right = json.right;
+			this.uuid = json.uuid;
 
 			return this;
 
@@ -4709,6 +8760,37 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.midpoint = this.midpoint;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {LeftShoulderFuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.midpoint = json.midpoint;
+
+			return this;
+
+		}
+
 	}
 
 	/**
@@ -4794,6 +8876,37 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.midpoint = this.midpoint;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {RightShoulderFuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.midpoint = json.midpoint;
+
+			return this;
+
+		}
+
 	}
 
 	/**
@@ -4853,6 +8966,37 @@
 			const right = this.right;
 
 			return ( value >= left && value <= right ) ? 1 : 0;
+
+		}
+
+		/**
+		 * Transforms this instance into a JSON object.
+		 *
+		 * @return {Object} The JSON object.
+		 */
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.midpoint = this.midpoint;
+
+			return json;
+
+		}
+
+		/**
+		 * Restores this instance from the given JSON object.
+		 *
+		 * @param {Object} json - The JSON object.
+		 * @return {SingletonFuzzySet} A reference to this fuzzy set.
+		 */
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.midpoint = json.midpoint;
+
+			return this;
 
 		}
 
@@ -4939,183 +9083,38 @@
 
 		}
 
-	}
-
-	/**
-	* Class for representing a fuzzy module. Instances of this class are used by
-	* game entities for fuzzy inference. A fuzzy module is a collection of fuzzy variables
-	* and the rules that operate on them.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class FuzzyModule {
-
 		/**
-		* Constructs a new fuzzy module.
-		*/
-		constructor() {
-
-			/**
-			* An array of the fuzzy rules.
-			* @type Array
-			*/
-			this.rules = new Array();
-
-			/**
-			* A map of FLVs.
-			* @type Map
-			*/
-			this.flvs = new Map();
-
-		}
-
-		/**
-		* Adds the given FLV under the given name to this fuzzy module.
+		* Transforms this instance into a JSON object.
 		*
-		* @param {String} name - The name of the FLV.
-		* @param {FuzzyVariable} flv - The FLV to add.
-		* @return {FuzzyModule} A reference to this fuzzy module.
+		* @return {Object} The JSON object.
 		*/
-		addFLV( name, flv ) {
+		toJSON() {
 
-			this.flvs.set( name, flv );
+			const json = super.toJSON();
 
-			return this;
+			json.midpoint = this.midpoint;
+
+			return json;
 
 		}
 
 		/**
-		* Remove the FLV under the given name from this fuzzy module.
+		* Restores this instance from the given JSON object.
 		*
-		* @param {String} name - The name of the FLV to remove.
-		* @return {FuzzyModule} A reference to this fuzzy module.
+		* @param {Object} json - The JSON object.
+		* @return {TriangularFuzzySet} A reference to this fuzzy set.
 		*/
-		removeFLV( name ) {
+		fromJSON( json ) {
 
-			this.flvs.delete( name );
+			super.fromJSON( json );
 
-			return this;
-
-		}
-
-		/**
-		* Adds the given fuzzy rule to this fuzzy module.
-		*
-		* @param {FuzzyRule} rule - The fuzzy rule to add.
-		* @return {FuzzyModule} A reference to this fuzzy module.
-		*/
-		addRule( rule ) {
-
-			this.rules.push( rule );
-
-			return this;
-
-		}
-
-		/**
-		* Removes the given fuzzy rule from this fuzzy module.
-		*
-		* @param {FuzzyRule} rule - The fuzzy rule to remove.
-		* @return {FuzzyModule} A reference to this fuzzy module.
-		*/
-		removeRule( rule ) {
-
-			const rules = this.rules;
-
-			const index = rules.indexOf( rule );
-			rules.splice( index, 1 );
-
-			return this;
-
-		}
-
-		/**
-		* Calls the fuzzify method of the defined FLV with the given value.
-		*
-		* @param {String} name - The name of the FLV
-		* @param {Number} value - The crips value to fuzzify.
-		* @return {FuzzyModule} A reference to this fuzzy module.
-		*/
-		fuzzify( name, value ) {
-
-			const flv = this.flvs.get( name );
-
-			flv.fuzzify( value );
-
-			return this;
-
-		}
-
-		/**
-		* Given a fuzzy variable and a defuzzification method this returns a crisp value.
-		*
-		* @param {String} name - The name of the FLV
-		* @param {String} type - The type of defuzzification.
-		* @return {Number} The defuzzified, crips value.
-		*/
-		defuzzify( name, type = FuzzyModule.DEFUZ_TYPE.MAXAV ) {
-
-			const flvs = this.flvs;
-			const rules = this.rules;
-
-			this._initConsequences();
-
-			for ( let i = 0, l = rules.length; i < l; i ++ ) {
-
-				const rule = rules[ i ];
-
-				rule.evaluate();
-
-			}
-
-			const flv = flvs.get( name );
-
-			let value;
-
-			switch ( type ) {
-
-				case FuzzyModule.DEFUZ_TYPE.MAXAV:
-					value = flv.defuzzifyMaxAv();
-					break;
-
-				case FuzzyModule.DEFUZ_TYPE.CENTROID:
-					value = flv.defuzzifyCentroid();
-					break;
-
-				default:
-					Logger.warn( 'YUKA.FuzzyModule: Unknown defuzzification method:', type );
-					value = flv.defuzzifyMaxAv(); // use MaxAv as fallback
-
-			}
-
-			return value;
-
-		}
-
-		_initConsequences() {
-
-			const rules = this.rules;
-
-			// initializes the consequents of all rules.
-
-			for ( let i = 0, l = rules.length; i < l; i ++ ) {
-
-				const rule = rules[ i ];
-
-				rule.initConsequence();
-
-			}
+			this.midpoint = json.midpoint;
 
 			return this;
 
 		}
 
 	}
-
-	FuzzyModule.DEFUZ_TYPE = Object.freeze( {
-		MAXAV: 0,
-		CENTROID: 1
-	} );
 
 	/**
 	* Class for representing a fuzzy rule. Fuzzy rules are comprised of an antecedent and
@@ -5174,6 +9173,99 @@
 		evaluate() {
 
 			this.consequence.updateDegreeOfMembership( this.antecedent.getDegreeOfMembership() );
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = {};
+
+			const antecedent = this.antecedent;
+			const consequence = this.consequence;
+
+			json.type = this.constructor.name;
+			json.antecedent = ( antecedent instanceof FuzzyCompositeTerm ) ? antecedent.toJSON() : antecedent.uuid;
+			json.consequence = ( consequence instanceof FuzzyCompositeTerm ) ? consequence.toJSON() : consequence.uuid;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @param {Map} fuzzySets - Maps fuzzy sets to UUIDs.
+		* @return {FuzzyRule} A reference to this fuzzy rule.
+		*/
+		fromJSON( json, fuzzySets ) {
+
+			function parseTerm( termJSON ) {
+
+				if ( typeof termJSON === 'string' ) {
+
+					// atomic term -> FuzzySet
+
+					const uuid = termJSON;
+					return fuzzySets.get( uuid ) || null;
+
+				} else {
+
+					// composite term
+
+					const type = termJSON.type;
+
+					let term;
+
+					switch ( type ) {
+
+						case 'FuzzyAND':
+							term = new FuzzyAND();
+							break;
+
+						case 'FuzzyOR':
+							term = new FuzzyOR();
+							break;
+
+						case 'FuzzyVERY':
+							term = new FuzzyVERY();
+							break;
+
+						case 'FuzzyFAIRLY':
+							term = new FuzzyFAIRLY();
+							break;
+
+						default:
+							Logger.error( 'YUKA.FuzzyRule: Unsupported operator type:', type );
+							return;
+
+					}
+
+					const termsJSON = termJSON.terms;
+
+					for ( let i = 0, l = termsJSON.length; i < l; i ++ ) {
+
+						// recursively parse all subordinate terms
+
+						term.terms.push( parseTerm( termsJSON[ i ] ) );
+
+					}
+
+					return term;
+
+				}
+
+			}
+
+			this.antecedent = parseTerm( json.antecedent );
+			this.consequence = parseTerm( json.consequence );
 
 			return this;
 
@@ -5365,7 +9457,337 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = {
+				type: this.constructor.name,
+				fuzzySets: new Array(),
+				minRange: this.minRange.toString(),
+				maxRange: this.maxRange.toString(),
+			};
+
+			for ( let i = 0, l = this.fuzzySets.length; i < l; i ++ ) {
+
+				const fuzzySet = this.fuzzySets[ i ];
+				json.fuzzySets.push( fuzzySet.toJSON() );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {FuzzyVariable} A reference to this fuzzy variable.
+		*/
+		fromJSON( json ) {
+
+			this.minRange = parseFloat( json.minRange );
+			this.maxRange = parseFloat( json.maxRange );
+
+			for ( let i = 0, l = json.fuzzySets.length; i < l; i ++ ) {
+
+				const fuzzySetJson = json.fuzzySets[ i ];
+
+				let type = fuzzySetJson.type;
+
+				switch ( type ) {
+
+					case 'LeftShoulderFuzzySet':
+						this.fuzzySets.push( new LeftShoulderFuzzySet().fromJSON( fuzzySetJson ) );
+						break;
+
+					case 'RightShoulderFuzzySet':
+						this.fuzzySets.push( new RightShoulderFuzzySet().fromJSON( fuzzySetJson ) );
+						break;
+
+					case 'SingletonFuzzySet':
+						this.fuzzySets.push( new SingletonFuzzySet().fromJSON( fuzzySetJson ) );
+						break;
+
+					case 'TriangularFuzzySet':
+						this.fuzzySets.push( new TriangularFuzzySet().fromJSON( fuzzySetJson ) );
+						break;
+
+					default:
+						Logger.error( 'YUKA.FuzzyVariable: Unsupported fuzzy set type:', fuzzySetJson.type );
+
+				}
+
+			}
+
+			return this;
+
+		}
+
 	}
+
+	/**
+	* Class for representing a fuzzy module. Instances of this class are used by
+	* game entities for fuzzy inference. A fuzzy module is a collection of fuzzy variables
+	* and the rules that operate on them.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class FuzzyModule {
+
+		/**
+		* Constructs a new fuzzy module.
+		*/
+		constructor() {
+
+			/**
+			* An array of the fuzzy rules.
+			* @type Array
+			*/
+			this.rules = new Array();
+
+			/**
+			* A map of FLVs.
+			* @type Map
+			*/
+			this.flvs = new Map();
+
+		}
+
+		/**
+		* Adds the given FLV under the given name to this fuzzy module.
+		*
+		* @param {String} name - The name of the FLV.
+		* @param {FuzzyVariable} flv - The FLV to add.
+		* @return {FuzzyModule} A reference to this fuzzy module.
+		*/
+		addFLV( name, flv ) {
+
+			this.flvs.set( name, flv );
+
+			return this;
+
+		}
+
+		/**
+		* Remove the FLV under the given name from this fuzzy module.
+		*
+		* @param {String} name - The name of the FLV to remove.
+		* @return {FuzzyModule} A reference to this fuzzy module.
+		*/
+		removeFLV( name ) {
+
+			this.flvs.delete( name );
+
+			return this;
+
+		}
+
+		/**
+		* Adds the given fuzzy rule to this fuzzy module.
+		*
+		* @param {FuzzyRule} rule - The fuzzy rule to add.
+		* @return {FuzzyModule} A reference to this fuzzy module.
+		*/
+		addRule( rule ) {
+
+			this.rules.push( rule );
+
+			return this;
+
+		}
+
+		/**
+		* Removes the given fuzzy rule from this fuzzy module.
+		*
+		* @param {FuzzyRule} rule - The fuzzy rule to remove.
+		* @return {FuzzyModule} A reference to this fuzzy module.
+		*/
+		removeRule( rule ) {
+
+			const rules = this.rules;
+
+			const index = rules.indexOf( rule );
+			rules.splice( index, 1 );
+
+			return this;
+
+		}
+
+		/**
+		* Calls the fuzzify method of the defined FLV with the given value.
+		*
+		* @param {String} name - The name of the FLV
+		* @param {Number} value - The crips value to fuzzify.
+		* @return {FuzzyModule} A reference to this fuzzy module.
+		*/
+		fuzzify( name, value ) {
+
+			const flv = this.flvs.get( name );
+
+			flv.fuzzify( value );
+
+			return this;
+
+		}
+
+		/**
+		* Given a fuzzy variable and a defuzzification method this returns a crisp value.
+		*
+		* @param {String} name - The name of the FLV
+		* @param {String} type - The type of defuzzification.
+		* @return {Number} The defuzzified, crips value.
+		*/
+		defuzzify( name, type = FuzzyModule.DEFUZ_TYPE.MAXAV ) {
+
+			const flvs = this.flvs;
+			const rules = this.rules;
+
+			this._initConsequences();
+
+			for ( let i = 0, l = rules.length; i < l; i ++ ) {
+
+				const rule = rules[ i ];
+
+				rule.evaluate();
+
+			}
+
+			const flv = flvs.get( name );
+
+			let value;
+
+			switch ( type ) {
+
+				case FuzzyModule.DEFUZ_TYPE.MAXAV:
+					value = flv.defuzzifyMaxAv();
+					break;
+
+				case FuzzyModule.DEFUZ_TYPE.CENTROID:
+					value = flv.defuzzifyCentroid();
+					break;
+
+				default:
+					Logger.warn( 'YUKA.FuzzyModule: Unknown defuzzification method:', type );
+					value = flv.defuzzifyMaxAv(); // use MaxAv as fallback
+
+			}
+
+			return value;
+
+		}
+
+		_initConsequences() {
+
+			const rules = this.rules;
+
+			// initializes the consequences of all rules.
+
+			for ( let i = 0, l = rules.length; i < l; i ++ ) {
+
+				const rule = rules[ i ];
+
+				rule.initConsequence();
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = {
+				rules: new Array(),
+				flvs: new Array()
+			};
+
+			// rules
+
+			const rules = this.rules;
+
+			for ( let i = 0, l = rules.length; i < l; i ++ ) {
+
+				json.rules.push( rules[ i ].toJSON() );
+
+			}
+
+			// flvs
+
+			const flvs = this.flvs;
+
+			for ( let [ name, flv ] of flvs ) {
+
+				json.flvs.push( { name: name, flv: flv.toJSON() } );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {FuzzyModule} A reference to this fuzzy module.
+		*/
+		fromJSON( json ) {
+
+			const fuzzySets = new Map(); // used for rules
+
+			// flvs
+
+			const flvsJSON = json.flvs;
+
+			for ( let i = 0, l = flvsJSON.length; i < l; i ++ ) {
+
+				const flvJSON = flvsJSON[ i ];
+				const name = flvJSON.name;
+				const flv = new FuzzyVariable().fromJSON( flvJSON.flv );
+
+				this.addFLV( name, flv );
+
+				for ( let fuzzySet of flv.fuzzySets ) {
+
+					fuzzySets.set( fuzzySet.uuid, fuzzySet );
+
+				}
+
+			}
+
+			// rules
+
+			const rulesJSON = json.rules;
+
+			for ( let i = 0, l = rulesJSON.length; i < l; i ++ ) {
+
+				const ruleJSON = rulesJSON[ i ];
+				const rule = new FuzzyRule().fromJSON( ruleJSON, fuzzySets );
+
+				this.addRule( rule );
+
+			}
+
+			return this;
+
+		}
+
+	}
+
+	FuzzyModule.DEFUZ_TYPE = Object.freeze( {
+		MAXAV: 0,
+		CENTROID: 1
+	} );
 
 	/**
 	* Base class for representing a goal in context of Goal-driven agent design.
@@ -5498,6 +9920,50 @@
 				this.status = Goal.STATUS.ACTIVE;
 
 			}
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				owner: this.owner.uuid,
+				status: this.status
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Goal} A reference to this goal.
+		*/
+		fromJSON( json ) {
+
+			this.owner = json.owner; // uuid
+			this.status = json.status;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {Goal} A reference to this goal.
+		*/
+		resolveReferences( entities ) {
+
+			this.owner = entities.get( this.owner ) || null;
 
 			return this;
 
@@ -5710,6 +10176,49 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.subgoals = new Array();
+
+			for ( let i = 0, l = this.subgoals.length; i < l; i ++ ) {
+
+				const subgoal = this.subgoals[ i ];
+				json.subgoals.push( subgoal.toJSON() );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {CompositeGoal} A reference to this composite goal.
+		*/
+		resolveReferences( entities ) {
+
+			super.resolveReferences( entities );
+
+			for ( let i = 0, l = this.subgoals.length; i < l; i ++ ) {
+
+				const subgoal = this.subgoals[ i ];
+				subgoal.resolveReferences( entities );
+
+			}
+
+			return this;
+
+		}
+
 	}
 
 	/**
@@ -5758,6 +10267,34 @@
 		*/
 		setGoal( /* owner */ ) {}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				characterBias: this.characterBias
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {GoalEvaluator} A reference to this goal evaluator.
+		*/
+		fromJSON( json ) {
+
+			this.characterBias = json.characterBias;
+
+			return this;
+
+		}
+
 	}
 
 	/**
@@ -5782,6 +10319,10 @@
 			* @type Array
 			*/
 			this.evaluators = new Array();
+
+			//
+
+			this._typesMap = new Map();
 
 		}
 
@@ -5897,6 +10438,134 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.evaluators = new Array();
+
+			for ( let i = 0, l = this.evaluators.length; i < l; i ++ ) {
+
+				const evaluator = this.evaluators[ i ];
+				json.evaluators.push( evaluator.toJSON() );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+	  * @return {Think} A reference to this instance.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			const typesMap = this._typesMap;
+
+			this.evaluators.length = 0;
+			this.terminate();
+
+			// evaluators
+
+			for ( let i = 0, l = json.evaluators.length; i < l; i ++ ) {
+
+				const evaluatorJSON = json.evaluators[ i ];
+				const type = evaluatorJSON.type;
+
+				const ctor = typesMap.get( type );
+
+				if ( ctor !== undefined ) {
+
+					const evaluator = new ctor().fromJSON( evaluatorJSON );
+					this.evaluators.push( evaluator );
+
+				} else {
+
+					Logger.warn( 'YUKA.Think: Unsupported goal evaluator type:', type );
+					continue;
+
+				}
+
+			}
+
+			// goals
+
+			function parseGoal( goalJSON ) {
+
+				const type = goalJSON.type;
+
+				const ctor = typesMap.get( type );
+
+				if ( ctor !== undefined ) {
+
+					const goal = new ctor().fromJSON( goalJSON );
+
+					const subgoalsJSON = goalJSON.subgoals;
+
+					if ( subgoalsJSON !== undefined ) {
+
+						// composite goal
+
+						for ( let i = 0, l = subgoalsJSON.length; i < l; i ++ ) {
+
+							const subgoal = parseGoal( subgoalsJSON[ i ] );
+
+							if ( subgoal ) goal.subgoals.push( subgoal );
+
+						}
+
+					}
+
+					return goal;
+
+				} else {
+
+					Logger.warn( 'YUKA.Think: Unsupported goal evaluator type:', type );
+					return;
+
+				}
+
+			}
+
+			for ( let i = 0, l = json.subgoals.length; i < l; i ++ ) {
+
+				const subgoal = parseGoal( json.subgoals[ i ] );
+
+				if ( subgoal ) this.subgoals.push( subgoal );
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Registers a custom type for deserialization. When calling {@link Think#fromJSON}
+		* this instance is able to pick the correct constructor in order to create custom
+		* goals or goal evaluators.
+		*
+		* @param {String} type - The name of the goal or goal evaluator.
+		* @param {Function} constructor -  The constructor function.
+		* @return {Think} A reference to this instance.
+		*/
+		registerType( type, constructor ) {
+
+			this._typesMap.set( type, constructor );
+
+			return this;
+
+		}
+
 	}
 
 	/**
@@ -5962,6 +10631,90 @@
 		clone() {
 
 			return new this.constructor().copy( this );
+
+		}
+
+		/**
+		 * Transforms this instance into a JSON object.
+		 *
+		 * @return {Object} The JSON object.
+		 */
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				from: this.from,
+				to: this.to,
+				cost: this.cost
+			};
+
+		}
+
+		/**
+		 * Restores this instance from the given JSON object.
+		 *
+		 * @param {Object} json - The JSON object.
+		 * @return {Edge} A reference to this edge.
+		 */
+		fromJSON( json ) {
+
+			this.from = json.from;
+			this.to = json.to;
+			this.cost = json.cost;
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* Base class for graph nodes.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class Node {
+
+		/**
+		* Constructs a new node.
+		*
+		* @param {Number} index - The unique index of this node.
+		*/
+		constructor( index = - 1 ) {
+
+			/**
+			* The unique index of this node. The default value *-1* means invalid index.
+			* @type Number
+			* @default -1
+			*/
+			this.index = index;
+
+		}
+
+		/**
+		 * Transforms this instance into a JSON object.
+		 *
+		 * @return {Object} The JSON object.
+		 */
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				index: this.index
+			};
+
+		}
+
+		/**
+		 * Restores this instance from the given JSON object.
+		 *
+		 * @param {Object} json - The JSON object.
+		 * @return {Node} A reference to this node.
+		 */
+		fromJSON( json ) {
+
+			this.index = json.index;
+			return this;
 
 		}
 
@@ -6331,28 +11084,67 @@
 
 		}
 
-	}
+		/**
+		 * Transforms this instance into a JSON object.
+		 *
+		 * @return {Object} The JSON object.
+		 */
+		toJSON() {
 
-	/**
-	* Base class for graph nodes.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class Node {
+			const json = {
+				type: this.constructor.name,
+				digraph: this.digraph
+			};
+
+			const edges = [];
+			const nodes = [];
+
+			for ( let [ key, value ] of this._nodes.entries() ) {
+
+				const adjacencyList = [];
+
+				this.getEdgesOfNode( key, adjacencyList );
+
+				for ( let i = 0, l = adjacencyList.length; i < l; i ++ ) {
+
+					edges.push( adjacencyList[ i ].toJSON() );
+
+				}
+
+				nodes.push( value.toJSON() );
+
+			}
+
+			json._edges = edges;
+			json._nodes = nodes;
+
+			return json;
+
+		}
 
 		/**
-		* Constructs a new node.
-		*
-		* @param {Number} index - The unique index of this node.
-		*/
-		constructor( index = - 1 ) {
+		 * Restores this instance from the given JSON object.
+		 *
+		 * @param {Object} json - The JSON object.
+		 * @return {Graph} A reference to this graph.
+		 */
+		fromJSON( json ) {
 
-			/**
-			* The unique index of this node. The default value *-1* means invalid index.
-			* @type Number
-			* @default -1
-			*/
-			this.index = index;
+			this.digraph = json.digraph;
+
+			for ( let i = 0, l = json._nodes.length; i < l; i ++ ) {
+
+				this.addNode( new Node().fromJSON( json._nodes[ i ] ) );
+
+			}
+
+			for ( let i = 0, l = json._edges.length; i < l; i ++ ) {
+
+				this.addEdge( new Edge().fromJSON( json._edges[ i ] ) );
+
+			}
+
+			return this;
 
 		}
 
@@ -7610,7 +12402,7 @@
 
 	}
 
-	const v1 = new Vector3();
+	const v1$1 = new Vector3();
 	const v2 = new Vector3();
 
 	/**
@@ -7724,9 +12516,9 @@
 		*/
 		fromCoplanarPoints( a, b, c ) {
 
-			v1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+			v1$1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
 
-			this.fromNormalAndCoplanarPoint( v1, a );
+			this.fromNormalAndCoplanarPoint( v1$1, a );
 
 			return this;
 
@@ -7741,333 +12533,6 @@
 		equals( plane ) {
 
 			return plane.normal.equals( this.normal ) && plane.constant === this.constant;
-
-		}
-
-	}
-
-	const v1$1 = new Vector3();
-	const edge1 = new Vector3();
-	const edge2 = new Vector3();
-	const normal = new Vector3();
-
-	/**
-	* Class representing a ray in 3D space.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class Ray {
-
-		/**
-		* Constructs a new ray with the given values.
-		*
-		* @param {Vector3} origin - The origin of the ray.
-		* @param {Vector3} direction - The direction of the ray.
-		*/
-		constructor( origin = new Vector3(), direction = new Vector3() ) {
-
-			/**
-			* The origin of the ray.
-			* @type Vector3
-			*/
-			this.origin = origin;
-
-			/**
-			* The direction of the ray.
-			* @type Vector3
-			*/
-			this.direction = direction;
-
-		}
-
-		/**
-		* Sets the given values to this ray.
-		*
-		* @param {Vector3} origin - The origin of the ray.
-		* @param {Vector3} direction - The direction of the ray.
-		* @return {Ray} A reference to this ray.
-		*/
-		set( origin, direction ) {
-
-			this.origin = origin;
-			this.direction = direction;
-
-			return this;
-
-		}
-
-		/**
-		* Copies all values from the given ray to this ray.
-		*
-		* @param {Ray} ray - The ray to copy.
-		* @return {Ray} A reference to this ray.
-		*/
-		copy( ray ) {
-
-			this.origin.copy( ray.origin );
-			this.direction.copy( ray.direction );
-
-			return this;
-
-		}
-
-		/**
-		* Creates a new ray and copies all values from this ray.
-		*
-		* @return {Ray} A new ray.
-		*/
-		clone() {
-
-			return new this.constructor().copy( this );
-
-		}
-
-		/**
-		* Computes a position on the ray according to the given t value
-		* and stores the result in the given 3D vector. The t value has a range of
-		* [0, Infinity] where 0 means the position is equal with the origin of the ray.
-		*
-		* @param {Number} t - A scalar value representing a position on the ray.
-		* @param {Vector3} result - The result vector.
-		* @return {Vector3} The result vector.
-		*/
-		at( t, result ) {
-
-			// t has to be zero or positive
-			return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
-
-		}
-
-		/**
-		* Performs a ray/sphere intersection test and stores the intersection point
-		* to the given 3D vector. If no intersection is detected, *null* is returned.
-		*
-		* @param {BoundingSphere} sphere - A bounding sphere.
-		* @param {Vector3} result - The result vector.
-		* @return {Vector3} The result vector.
-		*/
-		intersectBoundingSphere( sphere, result ) {
-
-			v1$1.subVectors( sphere.center, this.origin );
-			const tca = v1$1.dot( this.direction );
-			const d2 = v1$1.dot( v1$1 ) - tca * tca;
-			const radius2 = sphere.radius * sphere.radius;
-
-			if ( d2 > radius2 ) return null;
-
-			const thc = Math.sqrt( radius2 - d2 );
-
-			// t0 = first intersect point - entrance on front of sphere
-
-			const t0 = tca - thc;
-
-			// t1 = second intersect point - exit point on back of sphere
-
-			const t1 = tca + thc;
-
-			// test to see if both t0 and t1 are behind the ray - if so, return null
-
-			if ( t0 < 0 && t1 < 0 ) return null;
-
-			// test to see if t0 is behind the ray:
-			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
-			// in order to always return an intersect point that is in front of the ray.
-
-			if ( t0 < 0 ) return this.at( t1, result );
-
-			// else t0 is in front of the ray, so return the first collision point scaled by t0
-
-			return this.at( t0, result );
-
-		}
-
-		/**
-		* Performs a ray/AABB intersection test and stores the intersection point
-		* to the given 3D vector. If no intersection is detected, *null* is returned.
-		*
-		* @param {BoundingSphere} sphere - A bounding sphere.
-		* @param {Vector3} result - The result vector.
-		* @return {Vector3} The result vector.
-		*/
-		intersectAABB( aabb, result ) {
-
-			let tmin, tmax, tymin, tymax, tzmin, tzmax;
-
-			const invdirx = 1 / this.direction.x,
-				invdiry = 1 / this.direction.y,
-				invdirz = 1 / this.direction.z;
-
-			const origin = this.origin;
-
-			if ( invdirx >= 0 ) {
-
-				tmin = ( aabb.min.x - origin.x ) * invdirx;
-				tmax = ( aabb.max.x - origin.x ) * invdirx;
-
-			} else {
-
-				tmin = ( aabb.max.x - origin.x ) * invdirx;
-				tmax = ( aabb.min.x - origin.x ) * invdirx;
-
-			}
-
-			if ( invdiry >= 0 ) {
-
-				tymin = ( aabb.min.y - origin.y ) * invdiry;
-				tymax = ( aabb.max.y - origin.y ) * invdiry;
-
-			} else {
-
-				tymin = ( aabb.max.y - origin.y ) * invdiry;
-				tymax = ( aabb.min.y - origin.y ) * invdiry;
-
-			}
-
-			if ( ( tmin > tymax ) || ( tymin > tmax ) ) return null;
-
-			// these lines also handle the case where tmin or tmax is NaN
-			// (result of 0 * Infinity). x !== x returns true if x is NaN
-
-			if ( tymin > tmin || tmin !== tmin ) tmin = tymin;
-
-			if ( tymax < tmax || tmax !== tmax ) tmax = tymax;
-
-			if ( invdirz >= 0 ) {
-
-				tzmin = ( aabb.min.z - origin.z ) * invdirz;
-				tzmax = ( aabb.max.z - origin.z ) * invdirz;
-
-			} else {
-
-				tzmin = ( aabb.max.z - origin.z ) * invdirz;
-				tzmax = ( aabb.min.z - origin.z ) * invdirz;
-
-			}
-
-			if ( ( tmin > tzmax ) || ( tzmin > tmax ) ) return null;
-
-			if ( tzmin > tmin || tmin !== tmin ) tmin = tzmin;
-
-			if ( tzmax < tmax || tmax !== tmax ) tmax = tzmax;
-
-			// return point closest to the ray (positive side)
-
-			if ( tmax < 0 ) return null;
-
-			return this.at( tmin >= 0 ? tmin : tmax, result );
-
-		}
-
-		/**
-		* Performs a ray/triangle intersection test and stores the intersection point
-		* to the given 3D vector. If no intersection is detected, *null* is returned.
-		*
-		* @param {Triangle} triangle - A triangle.
-		* @param {Vector3} result - The result vector.
-		* @return {Vector3} The result vector.
-		*/
-		intersectTriangle( triangle, backfaceCulling, result ) {
-
-			// reference: https://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
-
-			const a = triangle.a;
-			const b = triangle.b;
-			const c = triangle.c;
-
-			edge1.subVectors( b, a );
-			edge2.subVectors( c, a );
-			normal.crossVectors( edge1, edge2 );
-
-			let DdN = this.direction.dot( normal );
-			let sign;
-
-			if ( DdN > 0 ) {
-
-				if ( backfaceCulling ) return null;
-				sign = 1;
-
-			} else if ( DdN < 0 ) {
-
-				sign = - 1;
-				DdN = - DdN;
-
-			} else {
-
-				return null;
-
-			}
-
-			v1$1.subVectors( this.origin, a );
-			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1$1, edge2 ) );
-
-			// b1 < 0, no intersection
-
-			if ( DdQxE2 < 0 ) {
-
-				return null;
-
-			}
-
-			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1$1 ) );
-
-			// b2 < 0, no intersection
-
-			if ( DdE1xQ < 0 ) {
-
-				return null;
-
-			}
-
-			// b1 + b2 > 1, no intersection
-
-			if ( DdQxE2 + DdE1xQ > DdN ) {
-
-				return null;
-
-			}
-
-			// line intersects triangle, check if ray does
-
-			const QdN = - sign * v1$1.dot( normal );
-
-			// t < 0, no intersection
-
-			if ( QdN < 0 ) {
-
-				return null;
-
-			}
-
-			// ray intersects triangle
-
-			return this.at( QdN / DdN, result );
-
-		}
-
-		/**
-		* Transforms this ray by the given 4x4 matrix.
-		*
-		* @param {Matrix4} m - The 4x4 matrix.
-		* @return {Ray} A reference to this ray.
-		*/
-		applyMatrix4( m ) {
-
-			this.origin.applyMatrix4( m );
-			this.direction.transformDirection( m );
-
-			return this;
-
-		}
-
-		/**
-		* Returns true if the given ray is deep equal with this ray.
-		*
-		* @param {Ray} ray - The ray to test.
-		* @return {Boolean} The result of the equality test.
-		*/
-		equals( ray ) {
-
-			return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
 
 		}
 
@@ -10062,6 +14527,66 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = {
+				type: this.constructor.name,
+				aabb: this.aabb.toJSON(),
+				entries: new Array()
+			};
+
+			const entries = this.entries;
+
+			for ( let i = 0, l = entries.length; i < l; i ++ ) {
+
+				json.entries.push( entries[ i ].uuid );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Cell} A reference to this game entity.
+		*/
+		fromJSON( json ) {
+
+			this.aabb.fromJSON( json.aabb );
+			this.entries = json.entries.slice();
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {Cell} A reference to this cell.
+		*/
+		resolveReferences( entities ) {
+
+			const entries = this.entries;
+
+			for ( let i = 0, l = entries.length; i < l; i ++ ) {
+
+				entries[ i ] = entities.get( entries[ i ] );
+
+			}
+
+			return this;
+
+		}
+
 	}
 
 	const clampedPosition = new Vector3();
@@ -10133,28 +14658,28 @@
 			*/
 			this.cellsZ = cellsZ;
 
-			this._halfWidth = width / 2;
-			this._halfHeight = height / 2;
-			this._halfDepth = depth / 2;
+			this._halfWidth = this.width / 2;
+			this._halfHeight = this.height / 2;
+			this._halfDepth = this.depth / 2;
 
 			this._min = new Vector3( - this._halfWidth, - this._halfHeight, - this._halfDepth );
 			this._max = new Vector3( this._halfWidth, this._halfHeight, this._halfDepth );
 
 			//
 
-			const cellSizeX = width / cellsX;
-			const cellSizeY = height / cellsY;
-			const cellSizeZ = depth / cellsZ;
+			const cellSizeX = this.width / this.cellsX;
+			const cellSizeY = this.height / this.cellsY;
+			const cellSizeZ = this.depth / this.cellsZ;
 
-			for ( let i = 0; i < cellsX; i ++ ) {
+			for ( let i = 0; i < this.cellsX; i ++ ) {
 
 				const x = ( i * cellSizeX ) - this._halfWidth;
 
-				for ( let j = 0; j < cellsY; j ++ ) {
+				for ( let j = 0; j < this.cellsY; j ++ ) {
 
 					const y = ( j * cellSizeY ) - this._halfHeight;
 
-					for ( let k = 0; k < cellsZ; k ++ ) {
+					for ( let k = 0; k < this.cellsZ; k ++ ) {
 
 						const z = ( k * cellSizeZ ) - this._halfDepth;
 
@@ -10354,6 +14879,89 @@
 
 		}
 
+		/**
+		 * Transforms this instance into a JSON object.
+		 *
+		 * @return {Object} The JSON object.
+		 */
+		toJSON() {
+
+			const json = {
+				type: this.constructor.name,
+				cells: new Array(),
+				width: this.width,
+				height: this.height,
+				depth: this.depth,
+				cellsX: this.cellsX,
+				cellsY: this.cellsY,
+				cellsZ: this.cellsZ,
+				_halfWidth: this._halfWidth,
+				_halfHeight: this._halfHeight,
+				_halfDepth: this._halfDepth,
+				_min: this._min.toArray( new Array() ),
+				_max: this._max.toArray( new Array() )
+			};
+
+			for ( let i = 0, l = this.cells.length; i < l; i ++ ) {
+
+				json.cells.push( this.cells[ i ].toJSON() );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		 * Restores this instance from the given JSON object.
+		 *
+		 * @param {Object} json - The JSON object.
+		 * @return {CellSpacePartitioning} A reference to this spatial index.
+		 */
+		fromJSON( json ) {
+
+			this.cells.length = 0;
+
+			this.width = json.width;
+			this.height = json.height;
+			this.depth = json.depth;
+			this.cellsX = json.cellsX;
+			this.cellsY = json.cellsY;
+			this.cellsZ = json.cellsZ;
+
+			this._halfWidth = json._halfWidth;
+			this._halfHeight = json._halfHeight;
+			this._halfDepth = json._halfHeight;
+
+			this._min.fromArray( json._min );
+			this._max.fromArray( json._max );
+
+			for ( let i = 0, l = json.cells.length; i < l; i ++ ) {
+
+				this.cells.push( new Cell().fromJSON( json.cells[ i ] ) );
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {CellSpacePartitioning} A reference to this cell space portioning.
+		*/
+		resolveReferences( entities ) {
+
+			for ( let i = 0, l = this.cells.length; i < l; i ++ ) {
+
+				this.cells[ i ].resolveReferences( entities );
+
+			}
+
+		}
+
 	}
 
 	/**
@@ -10396,6 +15004,54 @@
 			* @default false
 			*/
 			this.visible = false;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name,
+				entity: this.entity.uuid,
+				timeLastSensed: this.timeLastSensed,
+				lastSensedPosition: this.lastSensedPosition.toArray( new Array() ),
+				visible: this.visible
+			};
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {MemoryRecord} A reference to this memory record.
+		*/
+		fromJSON( json ) {
+
+			this.entity = json.entity; // uuid
+			this.timeLastSensed = json.timeLastSensed;
+			this.lastSensedPosition.fromArray( json.lastSensedPosition );
+			this.visible = json.visible;
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {MemoryRecord} A reference to this memory record.
+		*/
+		resolveReferences( entities ) {
+
+			this.entity = entities.get( this.entity ) || null;
+
+			return this;
 
 		}
 
@@ -10549,9 +15205,89 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = {
+				type: this.constructor.name,
+				owner: this.owner.uuid,
+				records: new Array(),
+				memorySpan: this.memorySpan
+			};
+
+			const records = this.records;
+
+			for ( let i = 0, l = records.length; i < l; i ++ ) {
+
+				const record = records[ i ];
+				json.records.push( record.toJSON() );
+
+			}
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {MemorySystem} A reference to this memory system.
+		*/
+		fromJSON( json ) {
+
+			this.owner = json.owner; // uuid
+			this.memorySpan = json.memorySpan;
+
+			const recordsJSON = json.records;
+
+			for ( let i = 0, l = recordsJSON.length; i < l; i ++ ) {
+
+				const recordJSON = recordsJSON[ i ];
+				const record = new MemoryRecord().fromJSON( recordJSON );
+
+				this.records.push( record );
+
+			}
+
+			return this;
+
+		}
+
+		/**
+		* Restores UUIDs with references to GameEntity objects.
+		*
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {MemorySystem} A reference to this memory system.
+		*/
+		resolveReferences( entities ) {
+
+			this.owner = entities.get( this.owner ) || null;
+
+			// records
+
+			const records = this.records;
+
+			for ( let i = 0, l = records.length; i < l; i ++ ) {
+
+				const record = 	records[ i ];
+
+				record.resolveReferences( entities );
+				this.recordsMap.set( record.entity, record );
+
+			}
+
+			return this;
+
+		}
+
 	}
 
-	const boundingSphere = new BoundingSphere();
+	const boundingSphere$1 = new BoundingSphere();
 	const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 	const intersectionPointBoundingVolume = new Vector3();
 	const rayLocal = new Ray();
@@ -10599,9 +15335,9 @@
 
 			// check bounding sphere first in world space
 
-			boundingSphere.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
+			boundingSphere$1.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
 
-			if ( ray.intersectBoundingSphere( boundingSphere, intersectionPointBoundingVolume ) !== null ) {
+			if ( ray.intersectBoundingSphere( boundingSphere$1, intersectionPointBoundingVolume ) !== null ) {
 
 				// transform the ray into the local space of the obstacle
 
@@ -10697,12 +15433,43 @@
 
 		}
 
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.geometry = this.geometry.toJSON();
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {Obstacle} A reference to this obstacle.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.geometry.fromJSON( json.geometry );
+
+			return this;
+
+		}
+
 	}
 
 	const toPoint = new Vector3();
-	const direction = new Vector3();
-	const ray = new Ray();
-	const intersectionPoint = new Vector3();
+	const direction$1 = new Vector3();
+	const ray$1 = new Ray();
+	const intersectionPoint$1 = new Vector3();
 
 	/**
 	* Class for representing the vision component of a game entity.
@@ -10796,30 +15563,30 @@
 
 			// next, check if the point lies within the game entity's field of view
 
-			owner.getDirection( direction );
+			owner.getDirection( direction$1 );
 
-			const angle = direction.angleTo( toPoint );
+			const angle = direction$1.angleTo( toPoint );
 
 			if ( angle > ( this.fieldOfView * 0.5 ) ) return false;
 
 			// the point lies within the game entity's visual range and field
 			// of view. now check if obstacles block the game entity's view to the given point.
 
-			ray.origin.copy( owner.position );
-			ray.direction.copy( toPoint ).divideScalar( distanceToPoint || 1 ); // normalize
+			ray$1.origin.copy( owner.position );
+			ray$1.direction.copy( toPoint ).divideScalar( distanceToPoint || 1 ); // normalize
 
 			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 
 				const obstacle = obstacles[ i ];
 
-				const intersection = obstacle.intersectRay( ray, intersectionPoint );
+				const intersection = obstacle.intersectRay( ray$1, intersectionPoint$1 );
 
 				if ( intersection !== null ) {
 
 					// if an intersection point is closer to the game entity than the given point,
 					// something is blocking the game entity's view
 
-					const squaredDistanceToIntersectionPoint = intersectionPoint.squaredDistanceTo( owner.position );
+					const squaredDistanceToIntersectionPoint = intersectionPoint$1.squaredDistanceTo( owner.position );
 
 					if ( squaredDistanceToIntersectionPoint <= ( distanceToPoint * distanceToPoint ) ) return false;
 
@@ -10831,104 +15598,49 @@
 
 		}
 
-	}
-
-	/**
-	* Class for representing a walkable path.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class Path {
-
 		/**
-		* Constructs a new path.
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
 		*/
-		constructor() {
+		toJSON() {
 
-			/**
-			* Whether this path is looped or not.
-			* @type Boolean
-			*/
-			this.loop = false;
+			const json = {
+				type: this.constructor.name,
+				owner: this.owner.uuid,
+				fieldOfView: this.fieldOfView,
+				range: this.range.toString()
+			};
 
-			this._waypoints = new Array();
-			this._index = 0;
+			json.obstacles = new Array();
+
+			for ( let i = 0, l = this.obstacles.length; i < l; i ++ ) {
+
+				const obstacle = this.obstacles[ i ];
+				json.obstacles.push( obstacle.uuid );
+
+			}
+
+			return json;
 
 		}
 
 		/**
-		* Adds the given waypoint to this path.
+		* Restores this instance from the given JSON object.
 		*
-		* @param {Vector3} waypoint - The waypoint to add.
-		* @return {Path} A reference to this path.
+		* @param {Object} json - The JSON object.
+		* @return {Vision} A reference to this vision.
 		*/
-		add( waypoint ) {
+		fromJSON( json ) {
 
-			this._waypoints.push( waypoint );
+			this.owner = json.owner;
+			this.fieldOfView = json.fieldOfView;
+			this.range = parseFloat( json.range );
 
-			return this;
+			for ( let i = 0, l = json.obstacles.length; i < l; i ++ ) {
 
-		}
-
-		/**
-		* Clears the internal state of this path.
-		*
-		* @return {Path} A reference to this path.
-		*/
-		clear() {
-
-			this._waypoints.length = 0;
-			this._index = 0;
-
-			return this;
-
-		}
-
-		/**
-		* Returns the current active waypoint of this path.
-		*
-		* @return {Vector3} The current active waypoint.
-		*/
-		current() {
-
-			return this._waypoints[ this._index ];
-
-		}
-
-		/**
-		* Returns true if this path is not looped and the last waypoint is active.
-		*
-		* @return {Boolean} Whether this path is finished or not.
-		*/
-		finished() {
-
-			const lastIndex = this._waypoints.length - 1;
-
-			return ( this.loop === true ) ? false : ( this._index === lastIndex );
-
-		}
-
-		/**
-		* Makes the next waypoint of this path active. If the path is looped and
-		* {@link Path#finished} returns true, the path starts from the beginning.
-		*
-		* @return {Path} A reference to this path.
-		*/
-		advance() {
-
-			this._index ++;
-
-			if ( ( this._index === this._waypoints.length ) ) {
-
-				if ( this.loop === true ) {
-
-					this._index = 0;
-
-				} else {
-
-					this._index --;
-
-				}
+				const obstacle = json.obstacles[ i ];
+				this.obstacles.push( obstacle );
 
 			}
 
@@ -10936,1528 +15648,27 @@
 
 		}
 
-	}
-
-	/**
-	* This class can be used to smooth the result of a vector calculation. One use case
-	* is the smoothing of the velocity vector of game entities in order to avoid a shaky
-	* movements du to conflicting forces.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @author {@link https://github.com/robp94|robp94}
-	*/
-	class Smoother {
-
 		/**
-		* Constructs a new smoother.
+		* Restores UUIDs with references to GameEntity objects.
 		*
-		* @param  {Number} count - The amount of samples the smoother will use to average a vector.
+		* @param {Map} entities - Maps game entities to UUIDs.
+		* @return {Vision} A reference to this vision.
 		*/
-		constructor( count = 10 ) {
+		resolveReferences( entities ) {
 
-			/**
-			* The amount of samples the smoother will use to average a vector.
-			* @type Number
-			* @default 10
-			*/
-			this.count = count;
-
-			this._history = []; // this holds the history
-			this._slot = 0; // the current sample slot
-
-			// initialize history with Vector3s
-
-			for ( let i = 0; i < this.count; i ++ ) {
-
-				this._history[ i ] = new Vector3();
-
-			}
-
-		}
-
-		/**
-		* Calculates for the given value a smooth average.
-		*
-		* @param {Vector3} value - The value to smooth.
-		* @param {Vector3} average - The calculated average.
-		* @return {Vector3} The calculated average.
-		*/
-		calculate( value, average ) {
-
-			// ensure, average is a zero vector
-
-			average.set( 0, 0, 0 );
-
-			// make sure the slot index wraps around
-
-			if ( this._slot === this.count ) {
-
-				this._slot = 0;
-
-			}
-
-			// overwrite the oldest value with the newest
-
-			this._history[ this._slot ].copy( value );
-
-			// increase slot index
-
-			this._slot ++;
-
-			// now calculate the average of the history array
-
-			for ( let i = 0; i < this.count; i ++ ) {
-
-				average.add( this._history[ i ] );
-
-			}
-
-			average.divideScalar( this.count );
-
-			return average;
-
-		}
-
-	}
-
-	/**
-	* Base class for all concrete steering behaviors. They produce a force that describes
-	* where an agent should move and how fast it should travel to get there.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class SteeringBehavior {
-
-		/**
-		* Constructs a new steering behavior.
-		*/
-		constructor() {
-
-			/**
-			* Whether this steering behavior is active or not.
-			* @type Boolean
-			* @default true
-			*/
-			this.active = true;
-
-			/**
-			* Can be used to tweak the amount that a steering force contributes to the total steering force.
-			* @type Number
-			* @default 1
-			*/
-			this.weight = 1;
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( /* vehicle, force, delta */ ) {}
-
-	}
-
-	const force = new Vector3();
-
-	/**
-	* This class is responsible for managing the steering of a single vehicle. The steering manager
-	* can manage multiple steering behaviors and combine their produced force into a single one used
-	* by the vehicle.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class SteeringManager {
-
-		/**
-		* Constructs a new steering manager.
-		*
-		* @param  {Vehicle} vehicle - The vehicle that owns this steering manager.
-		*/
-		constructor( vehicle ) {
-
-			/**
-			* The vehicle that owns this steering manager.
-			* @type Vehicle
-			*/
-			this.vehicle = vehicle;
-
-			/**
-			* A list of all steering behaviors.
-			* @type Array
-			*/
-			this.behaviors = new Array();
-
-			this._steeringForce = new Vector3(); // the calculated steering force per simulation step
-
-		}
-
-		/**
-		* Adds the given steering behavior to this steering manager.
-		*
-		* @param {SteeringBehavior} behavior - The steering behavior to add.
-		* @return {SteeringManager} A reference to this steering manager.
-		*/
-		add( behavior ) {
-
-			this.behaviors.push( behavior );
-
-			return this;
-
-		}
-
-		/**
-		* Removes the given steering behavior from this steering manager.
-		*
-		* @param {SteeringBehavior} behavior - The steering behavior to remove.
-		* @return {SteeringManager} A reference to this steering manager.
-		*/
-		remove( behavior ) {
-
-			const index = this.behaviors.indexOf( behavior );
-			this.behaviors.splice( index, 1 );
-
-			return this;
-
-		}
-
-		/**
-		* Calculates the steering forces for all active steering behaviors and
-		* combines it into a single result force. This method is called in
-		* {@link Vehicle#update}.
-		*
-		* @param {Number} delta - The time delta.
-		* @param {Vector3} result - The force/result vector.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( delta, result ) {
-
-			this._calculateByOrder( delta );
-
-			return result.copy( this._steeringForce );
-
-		}
-
-		// this method calculates how much of its max steering force the vehicle has
-		// left to apply and then applies that amount of the force to add
-
-		_accumulate( forceToAdd ) {
-
-			// calculate how much steering force the vehicle has used so far
-
-			const magnitudeSoFar = this._steeringForce.length();
-
-			// calculate how much steering force remains to be used by this vehicle
-
-			const magnitudeRemaining = this.vehicle.maxForce - magnitudeSoFar;
-
-			// return false if there is no more force left to use
-
-			if ( magnitudeRemaining <= 0 ) return false;
-
-			// calculate the magnitude of the force we want to add
-
-			const magnitudeToAdd = forceToAdd.length();
-
-			// restrict the magnitude of forceToAdd, so we don't exceed the max force of the vehicle
-
-			if ( magnitudeToAdd > magnitudeRemaining ) {
-
-				forceToAdd.normalize().multiplyScalar( magnitudeRemaining );
-
-			}
-
-			// add force
-
-			this._steeringForce.add( forceToAdd );
-
-			return true;
-
-		}
-
-		_calculateByOrder( delta ) {
-
-			const behaviors = this.behaviors;
-
-			// reset steering force
-
-			this._steeringForce.set( 0, 0, 0 );
-
-			// calculate for each behavior the respective force
-
-			for ( let i = 0, l = behaviors.length; i < l; i ++ ) {
-
-				const behavior = behaviors[ i ];
-
-				if ( behavior.active === true ) {
-
-					force.set( 0, 0, 0 );
-
-					behavior.calculate( this.vehicle, force, delta );
-
-					force.multiplyScalar( behavior.weight );
-
-					if ( this._accumulate( force ) === false ) return;
-
-				}
-
-			}
-
-		}
-
-	}
-
-	const steeringForce = new Vector3();
-	const displacement$1 = new Vector3();
-	const acceleration = new Vector3();
-	const target$1 = new Vector3();
-	const velocitySmooth = new Vector3();
-
-	/**
-	* This type of game entity implements a special type of locomotion, the so called
-	* *Vehicle Model*. The class uses basic physical metrics in order to implement a
-	* realistic movement.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @author {@link https://github.com/robp94|robp94}
-	* @augments MovingEntity
-	*/
-	class Vehicle extends MovingEntity {
-
-		/**
-		* Constructs a new vehicle.
-		*/
-		constructor() {
-
-			super();
-
-			/**
-			* The mass if the vehicle in kilogram.
-			* @type Number
-			* @default 1
-			*/
-			this.mass = 1;
-
-			/**
-			* The maximum force this entity can produce to power itself.
-			* @type Number
-			* @default 100
-			*/
-			this.maxForce = 100;
-
-			/**
-			* The steering manager of this vehicle.
-			* @type SteeringManager
-			*/
-			this.steering = new SteeringManager( this );
-
-			/**
-			* An optional smoother to avoid shakiness due to conflicting steering behaviors.
-			* @type Smoother
-			* @default null
-			*/
-			this.smoother = null;
-
-		}
-
-		/**
-		* This method is responsible for updating the position based on the force produced
-		* by the internal steering manager.
-		*
-		* @param {Number} delta - The time delta.
-		* @return {Vehicle} A reference to this vehicle.
-		*/
-		update( delta ) {
-
-			// calculate steering force
-
-			this.steering.calculate( delta, steeringForce );
-
-			// acceleration = force / mass
-
-			acceleration.copy( steeringForce ).divideScalar( this.mass );
-
-			// update velocity
-
-			this.velocity.add( acceleration.multiplyScalar( delta ) );
-
-			// make sure vehicle does not exceed maximum speed
-
-			if ( this.getSpeedSquared() > ( this.maxSpeed * this.maxSpeed ) ) {
-
-				this.velocity.normalize();
-				this.velocity.multiplyScalar( this.maxSpeed );
-
-			}
-
-			// calculate displacement
-
-			displacement$1.copy( this.velocity ).multiplyScalar( delta );
-
-			// calculate target position
-
-			target$1.copy( this.position ).add( displacement$1 );
-
-			// update the orientation if the vehicle has a non zero velocity
-
-			if ( this.updateOrientation === true && this.smoother === null && this.getSpeedSquared() > 0.00000001 ) {
-
-				this.lookAt( target$1 );
-
-			}
-
-			// update position
-
-			this.position.copy( target$1 );
-
-			// if smoothing is enabled, the orientation (not the position!) of the vehicle is
-			// changed based on a post-processed velocity vector
-
-			if ( this.updateOrientation === true && this.smoother !== null ) {
-
-				this.smoother.calculate( this.velocity, velocitySmooth );
-
-				displacement$1.copy( velocitySmooth ).multiplyScalar( delta );
-				target$1.copy( this.position ).add( displacement$1 );
-
-				this.lookAt( target$1 );
-
-			}
-
-			return this;
-
-		}
-
-	}
-
-	const averageDirection = new Vector3();
-	const direction$1 = new Vector3();
-
-	/**
-	* This steering behavior produces a force that keeps a vehicle’s heading aligned with its neighbors.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class AlignmentBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new alignment behavior.
-		*/
-		constructor() {
-
-			super();
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			averageDirection.set( 0, 0, 0 );
-
-			const neighbors = vehicle.neighbors;
-
-			// iterate over all neighbors to calculate the average direction vector
-
-			for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
-
-				const neighbor = neighbors[ i ];
-
-				neighbor.getDirection( direction$1 );
-
-				averageDirection.add( direction$1 );
-
-			}
-
-			if ( neighbors.length > 0 ) {
-
-				averageDirection.divideScalar( neighbors.length );
-
-				// produce a force to align the vehicle's heading
-
-				vehicle.getDirection( direction$1 );
-				force.subVectors( averageDirection, direction$1 );
-
-			}
-
-			return force;
-
-		}
-
-	}
-
-	const desiredVelocity = new Vector3();
-	const displacement$2 = new Vector3();
-
-	/**
-	* This steering behavior produces a force that directs an agent toward a target position.
-	* Unlike {@link SeekBehavior}, it decelerates so the agent comes to a gentle halt at the target position.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class ArriveBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new arrive behavior.
-		*
-		* @param {Vector3} target - The target vector.
-		* @param {Number} deceleration - The amount of deceleration.
-		*/
-		constructor( target = new Vector3(), deceleration = 3 ) {
-
-			super();
-
-			/**
-			* The target vector.
-			* @type Vector3
-			*/
-			this.target = target;
-
-			/**
-			* The amount of deceleration.
-			* @type Number
-			* @default 3
-			*/
-			this.deceleration = deceleration;
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const target = this.target;
-			const deceleration = this.deceleration;
-
-			displacement$2.subVectors( target, vehicle.position );
-
-			const distance = displacement$2.length();
-
-			if ( distance > 0 ) {
-
-				// calculate the speed required to reach the target given the desired deceleration
-
-				let speed = distance / deceleration;
-
-				// make sure the speed does not exceed the max
-
-				speed = Math.min( speed, vehicle.maxSpeed );
-
-				// from here proceed just like "seek" except we don't need to normalize
-				// the "displacement" vector because we have already gone to the trouble
-				// of calculating its length.
-
-				desiredVelocity.copy( displacement$2 ).multiplyScalar( speed / distance );
-
-				force.subVectors( desiredVelocity, vehicle.velocity );
-
-			}
-
-			return force;
-
-		}
-
-	}
-
-	const desiredVelocity$1 = new Vector3();
-
-	/**
-	* This steering behavior produces a force that directs an agent toward a target position.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class SeekBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new seek behavior.
-		*
-		* @param {Vector3} target - The target vector.
-		*/
-		constructor( target = new Vector3() ) {
-
-			super();
-
-			/**
-			* The target vector.
-			* @type Vector3
-			*/
-			this.target = target;
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const target = this.target;
-
-			// First the desired velocity is calculated.
-			// This is the velocity the agent would need to reach the target position in an ideal world.
-			// It represents the vector from the agent to the target,
-			// scaled to be the length of the maximum possible speed of the agent.
-
-			desiredVelocity$1.subVectors( target, vehicle.position ).normalize();
-			desiredVelocity$1.multiplyScalar( vehicle.maxSpeed );
-
-			// The steering force returned by this method is the force required,
-			// which when added to the agent’s current velocity vector gives the desired velocity.
-			// To achieve this you simply subtract the agent’s current velocity from the desired velocity.
-
-			return force.subVectors( desiredVelocity$1, vehicle.velocity );
-
-		}
-
-	}
-
-	const centerOfMass = new Vector3();
-
-	/**
-	* This steering produces a steering force that moves a vehicle toward the center of mass of its neighbors.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class CohesionBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new cohesion behavior.
-		*/
-		constructor() {
-
-			super();
-
-			// internal behaviors
-
-			this._seek = new SeekBehavior();
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			centerOfMass.set( 0, 0, 0 );
-
-			const neighbors = vehicle.neighbors;
-
-			// iterate over all neighbors to calculate the center of mass
-
-			for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
-
-				const neighbor = neighbors[ i ];
-
-				centerOfMass.add( neighbor.position );
-
-			}
-
-			if ( neighbors.length > 0 ) {
-
-				centerOfMass.divideScalar( neighbors.length );
-
-				// seek to it
-
-				this._seek.target = centerOfMass;
-				this._seek.calculate( vehicle, force );
-
-				// the magnitude of cohesion is usually much larger than separation
-				// or alignment so it usually helps to normalize it
-
-				force.normalize();
-
-			}
-
-			return force;
-
-		}
-
-	}
-
-	const desiredVelocity$2 = new Vector3();
-
-	/**
-	* This steering behavior produces a force that steers an agent away from a target position.
-	* It's the opposite of {@link SeekBehavior}.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class FleeBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new flee behavior.
-		*
-		* @param {Vector3} target - The target vector.
-		* @param {Number} panicDistance - The agent only flees from the target if it is inside this radius.
-		*/
-		constructor( target = new Vector3(), panicDistance = 10 ) {
-
-			super();
-
-			/**
-			* The target vector.
-			* @type Vector3
-			*/
-			this.target = target;
-
-			/**
-			* The agent only flees from the target if it is inside this radius.
-			* @type Number
-			* @default 10
-			*/
-			this.panicDistance = panicDistance;
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const target = this.target;
-
-			// only flee if the target is within panic distance
-
-			const distanceToTargetSq = vehicle.position.squaredDistanceTo( target );
-
-			if ( distanceToTargetSq <= ( this.panicDistance * this.panicDistance ) ) {
-
-				// from here, the only difference compared to seek is that the desired
-				// velocity is calculated using a vector pointing in the opposite direction
-
-				desiredVelocity$2.subVectors( vehicle.position, target ).normalize();
-
-				// if target and vehicle position are identical, choose default velocity
-
-				if ( desiredVelocity$2.squaredLength() === 0 ) {
-
-					desiredVelocity$2.set( 0, 0, 1 );
-
-				}
-
-				desiredVelocity$2.multiplyScalar( vehicle.maxSpeed );
-
-				force.subVectors( desiredVelocity$2, vehicle.velocity );
-
-			}
-
-			return force;
-
-		}
-
-	}
-
-	const displacement$3 = new Vector3();
-	const newPursuerVelocity = new Vector3();
-	const predictedPosition = new Vector3();
-
-	/**
-	* This steering behavior is is almost the same as {@link PursuitBehavior} except that
-	* the agent flees from the estimated future position of the pursuer.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class EvadeBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new evade behavior.
-		*
-		* @param {MovingEntity} pursuer - The agent to evade from.
-		* @param {Number} panicDistance -  The agent only flees from the pursuer if it is inside this radius.
-		* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the pursuer.
-		*/
-		constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
-
-			super();
-
-			/**
-			* The agent to evade from.
-			* @type MovingEntity
-			* @default null
-			*/
-			this.pursuer = pursuer;
-
-			/**
-			* The agent only flees from the pursuer if it is inside this radius.
-			* @type Number
-			* @default 10
-			*/
-			this.panicDistance = panicDistance;
-
-			/**
-			* This factor determines how far the vehicle predicts the movement of the pursuer.
-			* @type Number
-			* @default 1
-			*/
-			this.predictionFactor = predictionFactor;
-
-			// internal behaviors
-
-			this._flee = new FleeBehavior();
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const pursuer = this.pursuer;
-
-			displacement$3.subVectors( pursuer.position, vehicle.position );
-
-			let lookAheadTime = displacement$3.length() / ( vehicle.maxSpeed + pursuer.getSpeed() );
-			lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
-
-			// calculate new velocity and predicted future position
-
-			newPursuerVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-			predictedPosition.addVectors( pursuer.position, newPursuerVelocity );
-
-			// now flee away from predicted future position of the pursuer
-
-			this._flee.target = predictedPosition;
-			this._flee.panicDistance = this.panicDistance;
-			this._flee.calculate( vehicle, force );
-
-			return force;
-
-		}
-
-	}
-
-	/**
-	* This steering behavior produces a force that moves a vehicle along a series of waypoints forming a path.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class FollowPathBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new follow path behavior.
-		*
-		* @param {Path} path - The path to follow.
-		* @param {Number} nextWaypointDistance - The distance the agent seeks for the next waypoint.
-		*/
-		constructor( path = new Path(), nextWaypointDistance = 1 ) {
-
-			super();
-
-			/**
-			* The path to follow.
-			* @type Path
-			*/
-			this.path = path;
-
-			/**
-			* The distance the agent seeks for the next waypoint.
-			* @type Number
-			* @default 1
-			*/
-			this.nextWaypointDistance = nextWaypointDistance;
-
-			// internal behaviors
-
-			this._arrive = new ArriveBehavior();
-			this._seek = new SeekBehavior();
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const path = this.path;
-
-			// calculate distance in square space from current waypoint to vehicle
-
-			const distanceSq = path.current().squaredDistanceTo( vehicle.position );
-
-			// move to next waypoint if close enough to current target
-
-			if ( distanceSq < ( this.nextWaypointDistance * this.nextWaypointDistance ) ) {
-
-				path.advance();
-
-			}
-
-			const target = path.current();
-
-			if ( path.finished() === true ) {
-
-				this._arrive.target = target;
-				this._arrive.calculate( vehicle, force );
-
-			} else {
-
-				this._seek.target = target;
-				this._seek.calculate( vehicle, force );
-
-			}
-
-			return force;
-
-		}
-
-	}
-
-	const midPoint = new Vector3();
-	const translation = new Vector3();
-	const predictedPosition1 = new Vector3();
-	const predictedPosition2 = new Vector3();
-
-	/**
-	* This steering behavior produces a force that moves a vehicle to the midpoint
-	* of the imaginary line connecting two other agents.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class InterposeBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new interpose behavior.
-		*
-		* @param {MovingEntity} entity1 - The first agent.
-		* @param {MovingEntity} entity2 - The second agent.
-		* @param {Number} deceleration - The amount of deceleration.
-		*/
-		constructor( entity1 = null, entity2 = null, deceleration = 3 ) {
-
-			super();
-
-			/**
-			* The first agent.
-			* @type MovingEntity
-			* @default null
-			*/
-			this.entity1 = entity1;
-
-			/**
-			* The second agent.
-			* @type MovingEntity
-			* @default null
-			*/
-			this.entity2 = entity2;
-
-			/**
-			* The amount of deceleration.
-			* @type Number
-			* @default 3
-			*/
-			this.deceleration = deceleration;
-
-			// internal behaviors
-
-			this._arrive = new ArriveBehavior();
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const entity1 = this.entity1;
-			const entity2 = this.entity2;
-
-			// first we need to figure out where the two entities are going to be
-			// in the future. This is approximated by determining the time
-			// taken to reach the mid way point at the current time at max speed
-
-			midPoint.addVectors( entity1.position, entity2.position ).multiplyScalar( 0.5 );
-			const time = vehicle.position.distanceTo( midPoint ) / vehicle.maxSpeed;
-
-			// now we have the time, we assume that entity 1 and entity 2 will
-			// continue on a straight trajectory and extrapolate to get their future positions
-
-			translation.copy( entity1.velocity ).multiplyScalar( time );
-			predictedPosition1.addVectors( entity1.position, translation );
-
-			translation.copy( entity2.velocity ).multiplyScalar( time );
-			predictedPosition2.addVectors( entity2.position, translation );
-
-			// calculate the mid point of these predicted positions
-
-			midPoint.addVectors( predictedPosition1, predictedPosition2 ).multiplyScalar( 0.5 );
-
-			// then steer to arrive at it
-
-			this._arrive.deceleration = this.deceleration;
-			this._arrive.target = midPoint;
-			this._arrive.calculate( vehicle, force );
-
-			return force;
-
-		}
-
-	}
-
-	const inverse = new Matrix4();
-	const localPositionOfObstacle = new Vector3();
-	const localPositionOfClosestObstacle = new Vector3();
-	const intersectionPoint$1 = new Vector3();
-	const boundingSphere$1 = new BoundingSphere();
-
-	const ray$1 = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
-
-	/**
-	* This steering behavior produces a force so a vehicle avoids obstacles lying in its path.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @author {@link https://github.com/robp94|robp94}
-	* @augments SteeringBehavior
-	*/
-	class ObstacleAvoidanceBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new obstacle avoidance behavior.
-		*
-		* @param {Array} obstacles - An Array with obstacle of type {@link GameEntity}.
-		*/
-		constructor( obstacles = new Array() ) {
-
-			super();
-
-			/**
-			* An Array with obstacle of type {@link GameEntity}.
-			* @type Array
-			*/
-			this.obstacles = obstacles;
-
-			/**
-			* This factor determines how much the vehicle decelerates if an intersection occurs.
-			* @type Number
-			* @default 0.2
-			*/
-			this.brakingWeight = 0.2;
-
-			/**
-			* Minimum length of the detection box used for intersection tests.
-			* @type Number
-			* @default 4
-			*/
-			this.dBoxMinLength = 4; //
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
+			this.owner = entities.get( this.owner ) || null;
 
 			const obstacles = this.obstacles;
 
-			// this will keep track of the closest intersecting obstacle
-
-			let closestObstacle = null;
-
-			// this will be used to track the distance to the closest obstacle
-
-			let distanceToClosestObstacle = Infinity;
-
-			// the detection box length is proportional to the agent's velocity
-
-			const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
-
-			vehicle.matrix.getInverse( inverse );
-
 			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 
-				const obstacle = obstacles[ i ];
-
-				if ( obstacle === vehicle ) continue;
-
-				// calculate this obstacle's position in local space of the vehicle
-
-				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
-
-				// if the local position has a positive z value then it must lay behind the agent.
-				// besides the absolute z value must be smaller than the length of the detection box
-
-				if ( localPositionOfObstacle.z > 0 && Math.abs( localPositionOfObstacle.z ) < dBoxLength ) {
-
-					// if the distance from the x axis to the object's position is less
-					// than its radius + half the width of the detection box then there is a potential intersection
-
-					const expandedRadius = obstacle.boundingRadius + vehicle.boundingRadius;
-
-					if ( Math.abs( localPositionOfObstacle.x ) < expandedRadius ) {
-
-						// do intersection test in local space of the vehicle
-
-						boundingSphere$1.center.copy( localPositionOfObstacle );
-						boundingSphere$1.radius = expandedRadius;
-
-						ray$1.intersectBoundingSphere( boundingSphere$1, intersectionPoint$1 );
-
-						// compare distances
-
-						if ( intersectionPoint$1.z < distanceToClosestObstacle ) {
-
-							// save new minimum distance
-
-							distanceToClosestObstacle = intersectionPoint$1.z;
-
-							// save closest obstacle
-
-							closestObstacle = obstacle;
-
-							// save local position for force calculation
-
-							localPositionOfClosestObstacle.copy( localPositionOfObstacle );
-
-						}
-
-					}
-
-				}
+				obstacles[ i ] = entities.get( obstacles[ i ] );
 
 			}
 
-			// if we have found an intersecting obstacle, calculate a steering force away from it
-
-			if ( closestObstacle !== null ) {
-
-				// the closer the agent is to an object, the stronger the steering force should be
-
-				const multiplier = 1 + ( ( dBoxLength - localPositionOfClosestObstacle.z ) / dBoxLength );
-
-				// calculate the lateral force
-
-				force.x = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.x ) * multiplier;
-
-				// apply a braking force proportional to the obstacles distance from the vehicle
-
-				force.z = ( closestObstacle.boundingRadius - localPositionOfClosestObstacle.z ) * this.brakingWeight;
-
-				// finally, convert the steering vector from local to world space (just apply the rotation)
-
-				force.applyRotation( vehicle.rotation );
-
-			}
-
-			return force;
+			return this;
 
 		}
-
-	}
-
-	const offsetWorld = new Vector3();
-	const toOffset = new Vector3();
-	const newLeaderVelocity = new Vector3();
-	const predictedPosition$1 = new Vector3();
-
-	/**
-	* This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
-	* Useful for creating formations.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class OffsetPursuitBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new offset pursuit behavior.
-		*
-		* @param {Vehicle} leader - The leader vehicle.
-		* @param {Vector3} offset - The offset from the leader.
-		*/
-		constructor( leader = null, offset = new Vector3() ) {
-
-			super();
-
-			/**
-			* The leader vehicle.
-			* @type Vehicle
-			*/
-			this.leader = leader;
-
-			/**
-			* The offset from the leader.
-			* @type Vector3
-			*/
-			this.offset = offset;
-
-			// internal behaviors
-
-			this._arrive = new ArriveBehavior();
-			this._arrive.deceleration = 1.5;
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const leader = this.leader;
-			const offset = this.offset;
-
-			// calculate the offset's position in world space
-
-			offsetWorld.copy( offset ).applyMatrix4( leader.matrix );
-
-			// calculate the vector that points from the vehicle to the offset position
-
-			toOffset.subVectors( offsetWorld, vehicle.position );
-
-			// the lookahead time is proportional to the distance between the leader
-			// and the pursuer and is inversely proportional to the sum of both
-			// agent's velocities
-
-			const lookAheadTime = toOffset.length() / ( vehicle.maxSpeed + leader.getSpeed() );
-
-			// calculate new velocity and predicted future position
-
-			newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
-
-			predictedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
-
-			// now arrive at the predicted future position of the offset
-
-			this._arrive.target = predictedPosition$1;
-			this._arrive.calculate( vehicle, force );
-
-			return force;
-
-		}
-
-	}
-
-	const displacement$4 = new Vector3();
-	const vehicleDirection = new Vector3();
-	const evaderDirection = new Vector3();
-	const newEvaderVelocity = new Vector3();
-	const predictedPosition$2 = new Vector3();
-
-	/**
-	* This steering behavior is useful when an agent is required to intercept a moving agent.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class PursuitBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new pursuit behavior.
-		*
-		* @param {MovingEntity} evader - The agent to pursue.
-		* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the evader.
-		*/
-		constructor( evader = null, predictionFactor = 1 ) {
-
-			super();
-
-			/**
-			* The agent to pursue.
-			* @type MovingEntity
-			* @default null
-			*/
-			this.evader = evader;
-
-			/**
-			* This factor determines how far the vehicle predicts the movement of the evader.
-			* @type Number
-			* @default 1
-			*/
-			this.predictionFactor = predictionFactor;
-
-			// internal behaviors
-
-			this._seek = new SeekBehavior();
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const evader = this.evader;
-
-			displacement$4.subVectors( evader.position, vehicle.position );
-
-			// 1. if the evader is ahead and facing the agent then we can just seek for the evader's current position
-
-			vehicle.getDirection( vehicleDirection );
-			evader.getDirection( evaderDirection );
-
-			// first condition: evader must be in front of the pursuer
-
-			const evaderAhead = displacement$4.dot( vehicleDirection ) > 0;
-
-			// second condition: evader must almost directly facing the agent
-
-			const facing = vehicleDirection.dot( evaderDirection ) < - 0.95;
-
-			if ( evaderAhead === true && facing === true ) {
-
-				this._seek.target = evader.position;
-				this._seek.calculate( vehicle, force );
-				return force;
-
-			}
-
-			// 2. evader not considered ahead so we predict where the evader will be
-
-			// the lookahead time is proportional to the distance between the evader
-			// and the pursuer. and is inversely proportional to the sum of the
-			// agent's velocities
-
-			let lookAheadTime = displacement$4.length() / ( vehicle.maxSpeed + evader.getSpeed() );
-			lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
-
-			// calculate new velocity and predicted future position
-
-			newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
-			predictedPosition$2.addVectors( evader.position, newEvaderVelocity );
-
-			// now seek to the predicted future position of the evader
-
-			this._seek.target = predictedPosition$2;
-			this._seek.calculate( vehicle, force );
-
-			return force;
-
-		}
-
-	}
-
-	const toAgent = new Vector3();
-
-	/**
-	* This steering produces a force that steers a vehicle away from those in its neighborhood region.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class SeparationBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new separation behavior.
-		*/
-		constructor() {
-
-			super();
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force /*, delta */ ) {
-
-			const neighbors = vehicle.neighbors;
-
-			for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
-
-				const neighbor = neighbors[ i ];
-
-				toAgent.subVectors( vehicle.position, neighbor.position );
-
-				let length = toAgent.length();
-
-				// handle zero length if both vehicles have the same position
-
-				if ( length === 0 ) length = 0.0001;
-
-				// scale the force inversely proportional to the agents distance from its neighbor
-
-				toAgent.normalize().divideScalar( length );
-
-				force.add( toAgent );
-
-			}
-
-			return force;
-
-		}
-
-	}
-
-	const targetWorld = new Vector3();
-	const randomDisplacement = new Vector3();
-
-	/**
-	* This steering behavior produces a steering force that will give the
-	* impression of a random walk through the agent’s environment. The behavior only
-	* produces a 2D force (XZ).
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments SteeringBehavior
-	*/
-	class WanderBehavior extends SteeringBehavior {
-
-		/**
-		* Constructs a new wander behavior.
-		*
-		* @param {Number} radius - The radius of the wander circle for the wander behavior.
-		* @param {Number} distance - The distance the wander circle is projected in front of the agent.
-		* @param {Number} jitter - The maximum amount of displacement along the sphere each frame.
-		*/
-		constructor( radius = 1, distance = 5, jitter = 5 ) {
-
-			super();
-
-			/**
-			* The radius of the constraining circle for the wander behavior.
-			* @type Number
-			* @default 1
-			*/
-			this.radius = radius;
-
-			/**
-			* The distance the wander sphere is projected in front of the agent.
-			* @type Number
-			* @default 5
-			*/
-			this.distance = distance;
-
-			/**
-			* The maximum amount of displacement along the sphere each frame.
-			* @type Number
-			* @default 5
-			*/
-			this.jitter = jitter;
-
-			this._targetLocal = new Vector3();
-
-			generateRandomPointOnCircle( this.radius, this._targetLocal );
-
-		}
-
-		/**
-		* Calculates the steering force for a single simulation step.
-		*
-		* @param {Vehicle} vehicle - The game entity the force is produced for.
-		* @param {Vector3} force - The force/result vector.
-		* @param {Number} delta - The time delta.
-		* @return {Vector3} The force/result vector.
-		*/
-		calculate( vehicle, force, delta ) {
-
-			// this behavior is dependent on the update rate, so this line must be
-			// included when using time independent frame rate
-
-			const jitterThisTimeSlice = this.jitter * delta;
-
-			// prepare random vector
-
-			randomDisplacement.x = MathUtils.randFloat( - 1, 1 ) * jitterThisTimeSlice;
-			randomDisplacement.z = MathUtils.randFloat( - 1, 1 ) * jitterThisTimeSlice;
-
-			// add random vector to the target's position
-
-			this._targetLocal.add( randomDisplacement );
-
-			// re-project this new vector back onto a unit sphere
-
-			this._targetLocal.normalize();
-
-			// increase the length of the vector to the same as the radius of the wander sphere
-
-			this._targetLocal.multiplyScalar( this.radius );
-
-			// move the target into a position wanderDist in front of the agent
-
-			targetWorld.copy( this._targetLocal );
-			targetWorld.z += this.distance;
-
-			// project the target into world space
-
-			targetWorld.applyMatrix4( vehicle.worldMatrix );
-
-			// and steer towards it
-
-			force.subVectors( targetWorld, vehicle.position );
-
-			return force;
-
-		}
-
-	}
-
-	//
-
-	function generateRandomPointOnCircle( radius, target ) {
-
-		const theta = Math.random() * Math.PI * 2;
-
-		target.x = radius * Math.cos( theta );
-		target.z = radius * Math.sin( theta );
 
 	}
 
@@ -12591,243 +15802,6 @@
 			this._active = false;
 
 		}
-
-	}
-
-	/**
-	* Base class for representing trigger regions. It's a predefine region in 3D space,
-	* owned by one or more triggers. The shape of the trigger can be arbitrary.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class TriggerRegion {
-
-		/**
-		* Returns true if the bounding volume of the given game entity touches/intersects
-		* the trigger region. Must be implemented by all concrete trigger regions.
-		*
-		* @param {GameEntity} entity - The entity to test.
-		* @return {Boolean} Whether this trigger touches the given game entity or not.
-		*/
-		touching( /* entity */ ) {
-
-			return false;
-
-		}
-
-	}
-
-	const boundingSphereEntity = new BoundingSphere();
-
-	/**
-	* Class for representing a rectangular trigger region as an AABB.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments TriggerRegion
-	*/
-	class RectangularTriggerRegion extends TriggerRegion {
-
-		/**
-		* Constructs a new rectangular trigger region with the given values.
-		*
-		* @param {Vector3} min - The minimum bounds of the region.
-		* @param {Vector3} max - The maximum bounds of the region.
-		*/
-		constructor( min = new Vector3(), max = new Vector3() ) {
-
-			super();
-
-			this._aabb = new AABB( min, max );
-
-		}
-
-		get min() {
-
-			return this._aabb.min;
-
-		}
-
-		set min( min ) {
-
-			this._aabb.min = min;
-
-		}
-
-		get max() {
-
-			return this._aabb.max;
-
-		}
-
-		set max( max ) {
-
-			this._aabb.max = max;
-
-		}
-
-		/**
-		* Creates the new rectangular trigger region from a given position and size.
-		*
-		* @param {Vector3} position - The center position of the trigger region.
-		* @param {Vector3} size - The size of the trigger region per axis.
-		* @return {RectangularTriggerRegion} A reference to this trigger region.
-		*/
-		fromPositionAndSize( position, size ) {
-
-			this._aabb.fromCenterAndSize( position, size );
-
-			return this;
-
-		}
-
-		/**
-		* Returns true if the bounding volume of the given game entity touches/intersects
-		* the trigger region.
-		*
-		* @param {GameEntity} entity - The entity to test.
-		* @return {Boolean} Whether this trigger touches the given game entity or not.
-		*/
-		touching( entity ) {
-
-			boundingSphereEntity.set( entity.position, entity.boundingRadius );
-
-			return this._aabb.intersectsBoundingSphere( boundingSphereEntity );
-
-		}
-
-	}
-
-	const boundingSphereEntity$1 = new BoundingSphere();
-
-	/**
-	* Class for representing a spherical trigger region as a bounding sphere.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments TriggerRegion
-	*/
-	class SphericalTriggerRegion extends TriggerRegion {
-
-		/**
-		* Constructs a new spherical trigger region with the given values.
-		*
-		* @param {Vector3} position - The center position of the region.
-		* @param {Number} radius - The radius of the region.
-		*/
-		constructor( position = new Vector3(), radius = 0 ) {
-
-			super();
-
-			this._boundingSphere = new BoundingSphere( position, radius );
-
-		}
-
-		get position() {
-
-			return this._boundingSphere.center;
-
-		}
-
-		set position( position ) {
-
-			this._boundingSphere.center = position;
-
-		}
-
-		get radius() {
-
-			return this._boundingSphere.radius;
-
-		}
-
-		set radius( radius ) {
-
-			this._boundingSphere.radius = radius;
-
-		}
-
-		/**
-		* Returns true if the bounding volume of the given game entity touches/intersects
-		* the trigger region.
-		*
-		* @param {GameEntity} entity - The entity to test.
-		* @return {Boolean} Whether this trigger touches the given game entity or not.
-		*/
-		touching( entity ) {
-
-			boundingSphereEntity$1.set( entity.position, entity.boundingRadius );
-
-			return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity$1 );
-
-		}
-
-	}
-
-	/**
-	* Base class for representing triggers. A trigger generates an action if a game entity
-	* touches its trigger region, a predefine region in 3D space.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class Trigger {
-
-		/**
-		* Constructs a new trigger with the given values.
-		*
-		* @param {TriggerRegion} region - The region of the trigger.
-		*/
-		constructor( region = new TriggerRegion() ) {
-
-			/**
-			* Whether this trigger is active or not.
-			* @type Boolean
-			* @default true
-			*/
-			this.active = true;
-
-			/**
-			* The region of the trigger.
-			* @type TriggerRegion
-			*/
-			this.region = region;
-
-		}
-
-		/**
-		* This method is called per simulation step for all game entities. If the game
-		* entity touches the region of the trigger, the respective action is executed.
-		*
-		* @param {GameEntity} entity - The entity to test
-		* @return {Trigger} A reference to this trigger.
-		*/
-		check( entity ) {
-
-			if ( ( this.active === true ) && ( this.region.touching( entity ) === true ) ) {
-
-				this.execute( entity );
-
-			}
-
-			return this;
-
-		}
-
-		/**
-		* This method is called when the trigger should execute its action.
-		* Must be implemented by all concrete triggers.
-		*
-		* @param {GameEntity} entity - The entity that touched the trigger region.
-		* @return {Trigger} A reference to this trigger.
-		*/
-		execute( /* entity */ ) {}
-
-		/**
-		* Triggers can have internal states. This method is called per simulation step
-		* and can be used to update the trigger.
-		*
-		* @param {Number} delta - The time delta value.
-		* @return {Trigger} A reference to this trigger.
-		*/
-		update( /* delta */ ) {}
 
 	}
 

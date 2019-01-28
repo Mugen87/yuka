@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const TriggerJSONs = require( '../../files/TriggerJSONs.js' );
 
 const TriggerRegion = YUKA.TriggerRegion;
 
@@ -22,6 +23,32 @@ describe( 'TriggerRegion', function () {
 
 			const region = new TriggerRegion();
 			expect( region.touching() ).to.be.false;
+
+		} );
+
+	} );
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const region = new TriggerRegion();
+
+			const json = region.toJSON();
+
+			expect( json ).to.be.deep.equal( TriggerJSONs.TriggerRegion );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const region = new TriggerRegion();
+			const region2 = new TriggerRegion().fromJSON( TriggerJSONs.TriggerRegion );
+
+			expect( region2 ).to.be.deep.equal( region );
 
 		} );
 

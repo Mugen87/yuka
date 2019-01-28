@@ -1,3 +1,10 @@
+import { FuzzyCompositeTerm } from './FuzzyCompositeTerm.js';
+import { FuzzyAND } from './operators/FuzzyAND.js';
+import { FuzzyOR } from './operators/FuzzyOR.js';
+import { FuzzyVERY } from './operators/FuzzyVERY.js';
+import { FuzzyFAIRLY } from './operators/FuzzyFAIRLY.js';
+import { Logger } from '../core/Logger.js';
+
 /**
 * Class for representing a fuzzy rule. Fuzzy rules are comprised of an antecedent and
 * a consequent in the form: IF antecedent THEN consequent.
@@ -55,6 +62,99 @@ class FuzzyRule {
 	evaluate() {
 
 		this.consequence.updateDegreeOfMembership( this.antecedent.getDegreeOfMembership() );
+
+		return this;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {};
+
+		const antecedent = this.antecedent;
+		const consequence = this.consequence;
+
+		json.type = this.constructor.name;
+		json.antecedent = ( antecedent instanceof FuzzyCompositeTerm ) ? antecedent.toJSON() : antecedent.uuid;
+		json.consequence = ( consequence instanceof FuzzyCompositeTerm ) ? consequence.toJSON() : consequence.uuid;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @param {Map} fuzzySets - Maps fuzzy sets to UUIDs.
+	* @return {FuzzyRule} A reference to this fuzzy rule.
+	*/
+	fromJSON( json, fuzzySets ) {
+
+		function parseTerm( termJSON ) {
+
+			if ( typeof termJSON === 'string' ) {
+
+				// atomic term -> FuzzySet
+
+				const uuid = termJSON;
+				return fuzzySets.get( uuid ) || null;
+
+			} else {
+
+				// composite term
+
+				const type = termJSON.type;
+
+				let term;
+
+				switch ( type ) {
+
+					case 'FuzzyAND':
+						term = new FuzzyAND();
+						break;
+
+					case 'FuzzyOR':
+						term = new FuzzyOR();
+						break;
+
+					case 'FuzzyVERY':
+						term = new FuzzyVERY();
+						break;
+
+					case 'FuzzyFAIRLY':
+						term = new FuzzyFAIRLY();
+						break;
+
+					default:
+						Logger.error( 'YUKA.FuzzyRule: Unsupported operator type:', type );
+						return;
+
+				}
+
+				const termsJSON = termJSON.terms;
+
+				for ( let i = 0, l = termsJSON.length; i < l; i ++ ) {
+
+					// recursively parse all subordinate terms
+
+					term.terms.push( parseTerm( termsJSON[ i ] ) );
+
+				}
+
+				return term;
+
+			}
+
+		}
+
+		this.antecedent = parseTerm( json.antecedent );
+		this.consequence = parseTerm( json.consequence );
 
 		return this;
 

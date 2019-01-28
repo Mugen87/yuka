@@ -134,6 +134,50 @@ class Goal {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			owner: this.owner.uuid,
+			status: this.status
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Goal} A reference to this goal.
+	*/
+	fromJSON( json ) {
+
+		this.owner = json.owner; // uuid
+		this.status = json.status;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {Goal} A reference to this goal.
+	*/
+	resolveReferences( entities ) {
+
+		this.owner = entities.get( this.owner ) || null;
+
+		return this;
+
+	}
+
 }
 
 Goal.STATUS = Object.freeze( {

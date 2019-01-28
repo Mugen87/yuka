@@ -87,6 +87,52 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.leader = this.leader ? this.leader.uuid : null;
+		json.offset = this.offset;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {OffsetPursuitBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.leader = json.leader;
+		this.offset = json.offset;
+
+		return this;
+
+	}
+
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {OffsetPursuitBehavior} A reference to this behavior.
+	*/
+	resolveReferences( entities ) {
+
+		this.leader = entities.get( this.leader ) || null;
+
+	}
+
 }
 
 export { OffsetPursuitBehavior };

@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const MathJSONs = require( '../../files/MathJSONs.js' );
 
 const BoundingSphere = YUKA.BoundingSphere;
 const Matrix4 = YUKA.Matrix4;
@@ -177,6 +178,32 @@ describe( 'BoundingSphere', function () {
 
 			expect( sphere1.equals( sphere2 ) ).to.be.true;
 			expect( sphere1.equals( sphere3 ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const boundingSphere = new BoundingSphere();
+
+
+			expect( boundingSphere.toJSON() ).to.be.deep.equal( MathJSONs.BoundingSphere );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const boundingSphere = new BoundingSphere();
+			const boundingSphere2 = new BoundingSphere( new Vector3( 0, 0, 1 ), 1 ).fromJSON( MathJSONs.BoundingSphere );
+
+			expect( boundingSphere2 ).to.be.deep.equal( boundingSphere );
 
 		} );
 

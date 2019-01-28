@@ -45,6 +45,10 @@ class StateMachine {
 		*/
 		this.states = new Map();
 
+		//
+
+		this._typesMap = new Map();
+
 	}
 
 	/**
@@ -189,6 +193,130 @@ class StateMachine {
 		return false;
 
 	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			owner: this.owner.uuid,
+			currentState: null,
+			previousState: null,
+			globalState: null,
+			states: new Array()
+		};
+
+		const statesMap = new Map();
+
+		// states
+
+		for ( let [ id, state ] of this.states ) {
+
+			json.states.push( {
+				type: state.constructor.name,
+				id: id,
+				state: state.toJSON()
+			} );
+
+			statesMap.set( state, id );
+
+		}
+
+		json.currentState = statesMap.get( this.currentState ) || null;
+		json.previousState = statesMap.get( this.previousState ) || null;
+		json.globalState = statesMap.get( this.globalState ) || null;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {StateMachine} A reference to this state machine.
+	*/
+	fromJSON( json ) {
+
+		this.owner = json.owner;
+
+		//
+
+		const statesJSON = json.states;
+
+		for ( let i = 0, l = statesJSON.length; i < l; i ++ ) {
+
+			const stateJSON = statesJSON[ i ];
+			const type = stateJSON.type;
+
+			const ctor = this._typesMap.get( type );
+
+			if ( ctor !== undefined ) {
+
+				const id = stateJSON.id;
+				const state = new ctor().fromJSON( stateJSON.state );
+
+				this.add( id, state );
+
+			} else {
+
+				Logger.warn( 'YUKA.StateMachine: Unsupported state type:', type );
+				continue;
+
+			}
+
+		}
+
+		//
+
+		this.currentState = ( json.currentState !== null ) ? ( this.get( json.currentState ) || null ) : null;
+		this.previousState = ( json.previousState !== null ) ? ( this.get( json.previousState ) || null ) : null;
+		this.globalState = ( json.globalState !== null ) ? ( this.get( json.globalState ) || null ) : null;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {StateMachine} A reference to this state machine.
+	*/
+	resolveReferences( entities ) {
+
+		this.owner = entities.get( this.owner ) || null;
+
+		for ( let state of this.states.values() ) {
+
+			state.resolveReferences( entities );
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Registers a custom type for deserialization. When calling {@link StateMachine#fromJSON}
+	* the state machine is able to pick the correct constructor in order to create custom states.
+	*
+	* @param {String} type - The name of the state type.
+	* @param {Function} constructor -  The constructor function.
+	* @return {StateMachine} A reference to this state machine.
+	*/
+	registerType( type, constructor ) {
+
+		this._typesMap.set( type, constructor );
+
+		return this;
+
+	}
+
+	//
 
 	_change( state ) {
 

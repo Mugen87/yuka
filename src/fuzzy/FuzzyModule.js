@@ -1,4 +1,6 @@
 import { Logger } from '../core/Logger.js';
+import { FuzzyRule } from './FuzzyRule.js';
+import { FuzzyVariable } from './FuzzyVariable.js';
 
 /**
 * Class for representing a fuzzy module. Instances of this class are used by
@@ -155,13 +157,96 @@ class FuzzyModule {
 
 		const rules = this.rules;
 
-		// initializes the consequents of all rules.
+		// initializes the consequences of all rules.
 
 		for ( let i = 0, l = rules.length; i < l; i ++ ) {
 
 			const rule = rules[ i ];
 
 			rule.initConsequence();
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			rules: new Array(),
+			flvs: new Array()
+		};
+
+		// rules
+
+		const rules = this.rules;
+
+		for ( let i = 0, l = rules.length; i < l; i ++ ) {
+
+			json.rules.push( rules[ i ].toJSON() );
+
+		}
+
+		// flvs
+
+		const flvs = this.flvs;
+
+		for ( let [ name, flv ] of flvs ) {
+
+			json.flvs.push( { name: name, flv: flv.toJSON() } );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {FuzzyModule} A reference to this fuzzy module.
+	*/
+	fromJSON( json ) {
+
+		const fuzzySets = new Map(); // used for rules
+
+		// flvs
+
+		const flvsJSON = json.flvs;
+
+		for ( let i = 0, l = flvsJSON.length; i < l; i ++ ) {
+
+			const flvJSON = flvsJSON[ i ];
+			const name = flvJSON.name;
+			const flv = new FuzzyVariable().fromJSON( flvJSON.flv );
+
+			this.addFLV( name, flv );
+
+			for ( let fuzzySet of flv.fuzzySets ) {
+
+				fuzzySets.set( fuzzySet.uuid, fuzzySet );
+
+			}
+
+		}
+
+		// rules
+
+		const rulesJSON = json.rules;
+
+		for ( let i = 0, l = rulesJSON.length; i < l; i ++ ) {
+
+			const ruleJSON = rulesJSON[ i ];
+			const rule = new FuzzyRule().fromJSON( ruleJSON, fuzzySets );
+
+			this.addRule( rule );
 
 		}
 

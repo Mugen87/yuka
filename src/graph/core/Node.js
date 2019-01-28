@@ -21,6 +21,33 @@ class Node {
 
 	}
 
+	/**
+	 * Transforms this instance into a JSON object.
+	 *
+	 * @return {Object} The JSON object.
+	 */
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			index: this.index
+		};
+
+	}
+
+	/**
+	 * Restores this instance from the given JSON object.
+	 *
+	 * @param {Object} json - The JSON object.
+	 * @return {Node} A reference to this node.
+	 */
+	fromJSON( json ) {
+
+		this.index = json.index;
+		return this;
+
+	}
+
 }
 
 export { Node };

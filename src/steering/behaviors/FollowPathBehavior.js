@@ -83,6 +83,39 @@ class FollowPathBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.path = this.path.toJSON();
+		json.nextWaypointDistance = this.nextWaypointDistance;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {FollowPathBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.path.fromJSON( json.path );
+		this.nextWaypointDistance = json.nextWaypointDistance;
+
+		return this;
+
+	}
+
 }
 
 export { FollowPathBehavior };

@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const PerceptionJSONs = require( '../../../files/PerceptionJSONs.js' );
 
 const MemorySystem = YUKA.MemorySystem;
 const GameEntity = YUKA.GameEntity;
@@ -149,6 +150,84 @@ describe( 'MemorySystem', function () {
 
 			expect( result ).to.include( record1, record2 );
 			expect( result ).to.not.include( record3 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const memorySystem = new MemorySystem( owner );
+
+			const entity = new GameEntity();
+			entity.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			memorySystem.createRecord( entity );
+
+			expect( memorySystem.toJSON() ).to.be.deep.equal( PerceptionJSONs.MemorySystem );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const memorySystem1 = new MemorySystem( owner );
+
+			const entity = new GameEntity();
+			entity.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			memorySystem1.createRecord( entity );
+
+			const entities = new Map();
+			entities.set( owner.uuid, owner );
+			entities.set( entity.uuid, entity );
+
+			const memorySystem2 = new MemorySystem().fromJSON( PerceptionJSONs.MemorySystem );
+
+			memorySystem2.resolveReferences( entities );
+
+			expect( memorySystem1 ).to.be.deep.equal( memorySystem2 );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the reference to the entity', function () {
+
+			const owner = new GameEntity();
+			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const entities = new Map();
+			entities.set( owner.uuid, owner );
+
+			const memorySystem = new MemorySystem();
+			memorySystem.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			memorySystem.resolveReferences( entities );
+
+			expect( memorySystem.owner ).to.equal( owner );
+
+		} );
+
+		it( 'should set the owner to null if the mapping is missing', function () {
+
+			const memorySystem = new MemorySystem();
+			memorySystem.owner = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			memorySystem.resolveReferences( new Map() );
+
+			expect( memorySystem.owner ).to.be.null;
 
 		} );
 

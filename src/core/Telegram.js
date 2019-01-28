@@ -50,6 +50,57 @@ class Telegram {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			sender: this.sender ? this.sender.uuid : null,
+			receiver: this.receiver ? this.receiver.uuid : null,
+			message: this.message,
+			delay: this.delay,
+			data: this.data
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Telegram} A reference to this telegram.
+	*/
+	fromJSON( json ) {
+
+		this.sender = json.sender;
+		this.receiver = json.receiver;
+		this.message = json.message;
+		this.delay = json.delay;
+		this.data = json.data;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {Telegram} A reference to this telegram.
+	*/
+	resolveReferences( entities ) {
+
+		this.sender = entities.get( this.sender );
+		this.receiver = entities.get( this.receiver );
+
+		return this;
+
+	}
+
 }
 
 export { Telegram };

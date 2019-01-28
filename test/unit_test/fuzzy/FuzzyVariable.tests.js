@@ -4,9 +4,14 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
+const FuzzyJSONs = require( '../../files/FuzzyJSONs.js' );
 
 const FuzzyVariable = YUKA.FuzzyVariable;
 const FuzzySet = YUKA.FuzzySet;
+const LeftShoulderFuzzySet = YUKA.LeftShoulderFuzzySet;
+const RightShoulderFuzzySet = YUKA.RightShoulderFuzzySet;
+const TriangularFuzzySet = YUKA.TriangularFuzzySet;
+const SingletonFuzzySet = YUKA.SingletonFuzzySet;
 
 describe( 'FuzzyVariable', function () {
 
@@ -254,6 +259,78 @@ describe( 'FuzzyVariable', function () {
 			const value = flv.defuzzifyCentroid(); // use default sample value of 10
 
 			expect( value ).to.equal( 0 );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const fuzzySet1 = new LeftShoulderFuzzySet( 0, 50, 100 );
+			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const fuzzySet2 = new RightShoulderFuzzySet( 0, 50, 100 );
+			fuzzySet2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+
+			const fuzzySet3 = new TriangularFuzzySet( 0, 50, 100 );
+			fuzzySet3.uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
+
+			const fuzzySet4 = new SingletonFuzzySet( 0, 50, 100 );
+			fuzzySet4.uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
+
+			const flv = new FuzzyVariable();
+
+			flv.add( fuzzySet1 );
+			flv.add( fuzzySet2 );
+			flv.add( fuzzySet3 );
+			flv.add( fuzzySet4 );
+
+			expect( flv.toJSON() ).to.be.deep.equal( FuzzyJSONs.FuzzyVariable );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const fuzzySet1 = new LeftShoulderFuzzySet( 0, 50, 100 );
+			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const fuzzySet2 = new RightShoulderFuzzySet( 0, 50, 100 );
+			fuzzySet2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+
+			const fuzzySet3 = new TriangularFuzzySet( 0, 50, 100 );
+			fuzzySet3.uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
+
+			const fuzzySet4 = new SingletonFuzzySet( 0, 50, 100 );
+			fuzzySet4.uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
+
+			const flv1 = new FuzzyVariable();
+
+			flv1.add( fuzzySet1 );
+			flv1.add( fuzzySet2 );
+			flv1.add( fuzzySet3 );
+			flv1.add( fuzzySet4 );
+
+			const flv2 = new FuzzyVariable().fromJSON( FuzzyJSONs.FuzzyVariable );
+
+			expect( flv1 ).to.be.deep.equal( flv2 );
+
+		} );
+
+		it( 'should log an error if the JSON contains a wrong type definition for a fuzzy set', function () {
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			const flv = new FuzzyVariable();
+
+			flv.fromJSON( FuzzyJSONs.FuzzyVariableWrongType );
+
+			expect( flv.fuzzySets ).to.be.empty;
 
 		} );
 

@@ -2,6 +2,7 @@ import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Logger } from './Logger.js';
+import { MathUtils } from '../math/MathUtils.js';
 
 const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
@@ -142,6 +143,25 @@ class GameEntity {
 		this._renderComponent = null;
 		this._renderComponentCallback = null;
 		this._started = false;
+		this._uuid = null;
+
+	}
+
+	get uuid() {
+
+		if ( this._uuid === null ) {
+
+			this._uuid = MathUtils.generateUUID();
+
+		}
+
+		return this._uuid;
+
+	}
+
+	set uuid( uuid ) {
+
+		this._uuid = uuid;
 
 	}
 
@@ -377,6 +397,129 @@ class GameEntity {
 		return this;
 
 	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			uuid: this.uuid,
+			name: this.name,
+			active: this.active,
+			children: entitiesToIds( this.children ),
+			parent: ( this.parent !== null ) ? this.parent.uuid : null,
+			neighbors: entitiesToIds( this.neighbors ),
+			neighborhoodRadius: this.neighborhoodRadius,
+			updateNeighborhood: this.updateNeighborhood,
+			position: this.position.toArray( new Array() ),
+			rotation: this.rotation.toArray( new Array() ),
+			scale: this.scale.toArray( new Array() ),
+			forward: this.forward.toArray( new Array() ),
+			up: this.up.toArray( new Array() ),
+			boundingRadius: this.boundingRadius,
+			maxTurnRate: this.maxTurnRate,
+			matrix: this.matrix.toArray( new Array() ),
+			worldMatrix: this.worldMatrix.toArray( new Array() ),
+			_cache: {
+				position: this._cache.position.toArray( new Array() ),
+				rotation: this._cache.rotation.toArray( new Array() ),
+				scale: this._cache.scale.toArray( new Array() ),
+			},
+			_started: this._started
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {GameEntity} A reference to this game entity.
+	*/
+	fromJSON( json ) {
+
+		this.uuid = json.uuid;
+		this.name = json.name;
+		this.active = json.active;
+		this.neighborhoodRadius = json.neighborhoodRadius;
+		this.updateNeighborhood = json.updateNeighborhood;
+		this.position.fromArray( json.position );
+		this.rotation.fromArray( json.rotation );
+		this.scale.fromArray( json.scale );
+		this.forward.fromArray( json.forward );
+		this.up.fromArray( json.up );
+		this.boundingRadius = json.boundingRadius;
+		this.maxTurnRate = json.maxTurnRate;
+		this.matrix.fromArray( json.matrix );
+		this.worldMatrix.fromArray( json.worldMatrix );
+
+		this.children = json.children.slice();
+		this.neighbors = json.neighbors.slice();
+		this.parent = json.parent;
+
+		this._cache.position.fromArray( json._cache.position );
+		this._cache.rotation.fromArray( json._cache.rotation );
+		this._cache.scale.fromArray( json._cache.scale );
+
+		this._started = json._started;
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {GameEntity} A reference to this game entity.
+	*/
+	resolveReferences( entities ) {
+
+		//
+
+		const neighbors = this.neighbors;
+
+		for ( let i = 0, l = neighbors.length; i < l; i ++ ) {
+
+			neighbors[ i ] = entities.get( neighbors[ i ] );
+
+		}
+
+		//
+
+		const children = this.children;
+
+		for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+			children[ i ] = entities.get( children[ i ] );
+
+		}
+
+		//
+
+		this.parent = entities.get( this.parent ) || null;
+
+		return this;
+
+	}
+
+}
+
+function entitiesToIds( array ) {
+
+	const ids = new Array();
+
+	for ( let i = 0, l = array.length; i < l; i ++ ) {
+
+		ids.push( array[ i ].uuid );
+
+	}
+
+	return ids;
 
 }
 

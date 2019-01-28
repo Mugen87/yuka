@@ -124,6 +124,36 @@ class BoundingSphere {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			center: this.center.toArray( new Array() ),
+			radius: this.radius
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {BoundingSphere} A reference to this bounding sphere.
+	*/
+	fromJSON( json ) {
+
+		this.center.fromArray( json.center );
+		this.radius = json.radius;
+
+		return this;
+
+	}
+
 }
 
 export { BoundingSphere };

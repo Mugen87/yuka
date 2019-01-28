@@ -4,6 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const PerceptionJSONs = require( '../../../files/PerceptionJSONs.js' );
 
 const Obstacle = YUKA.Obstacle;
 const MeshGeometry = YUKA.MeshGeometry;
@@ -104,6 +105,42 @@ describe( 'Obstacle', function () {
 
 			expect( result ).not.to.be.null;
 			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+
+			const geometry = new MeshGeometry( vertices );
+			const obstacle = new Obstacle( geometry );
+			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const json = obstacle.toJSON();
+
+			expect( json ).to.be.deep.equal( PerceptionJSONs.Obstacle );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+
+			const geometry = new MeshGeometry( vertices );
+			const obstacle = new Obstacle( geometry );
+			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			const obstacle2 = new Obstacle().fromJSON( PerceptionJSONs.Obstacle );
+
+			expect( obstacle2 ).to.be.deep.equal( obstacle );
 
 		} );
 

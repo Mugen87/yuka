@@ -79,6 +79,39 @@ class ArriveBehavior extends SteeringBehavior {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.target = this.target.toArray( new Array() );
+		json.deceleration = this.deceleration;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {ArriveBehavior} A reference to this behavior.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.target.fromArray( json.target );
+		this.deceleration = json.deceleration;
+
+		return this;
+
+	}
+
 }
 
 export { ArriveBehavior };

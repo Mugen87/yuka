@@ -133,6 +133,78 @@ class Vision {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			type: this.constructor.name,
+			owner: this.owner.uuid,
+			fieldOfView: this.fieldOfView,
+			range: this.range.toString()
+		};
+
+		json.obstacles = new Array();
+
+		for ( let i = 0, l = this.obstacles.length; i < l; i ++ ) {
+
+			const obstacle = this.obstacles[ i ];
+			json.obstacles.push( obstacle.uuid );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Vision} A reference to this vision.
+	*/
+	fromJSON( json ) {
+
+		this.owner = json.owner;
+		this.fieldOfView = json.fieldOfView;
+		this.range = parseFloat( json.range );
+
+		for ( let i = 0, l = json.obstacles.length; i < l; i ++ ) {
+
+			const obstacle = json.obstacles[ i ];
+			this.obstacles.push( obstacle );
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {Vision} A reference to this vision.
+	*/
+	resolveReferences( entities ) {
+
+		this.owner = entities.get( this.owner ) || null;
+
+		const obstacles = this.obstacles;
+
+		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
+
+			obstacles[ i ] = entities.get( obstacles[ i ] );
+
+		}
+
+		return this;
+
+	}
+
 }
 
 export { Vision };

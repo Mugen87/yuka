@@ -4,6 +4,8 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
 
 const InterposeBehavior = YUKA.InterposeBehavior;
 const ArriveBehavior = YUKA.ArriveBehavior;
@@ -82,6 +84,75 @@ describe( 'InterposeBehavior', function () {
 			expect( force.x ).to.closeTo( 0, Number.EPSILON );
 			expect( force.y ).to.closeTo( 0.5, Number.EPSILON );
 			expect( force.z ).to.closeTo( 0.25, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const interposeBehavior = new InterposeBehavior( null, null, 1 );
+			const json = interposeBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.InterposeBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const interposeBehavior1 = new InterposeBehavior( null, null, 1 );
+			const interposeBehavior2 = new InterposeBehavior().fromJSON( SteeringJSONs.InterposeBehavior );
+
+			expect( interposeBehavior1 ).to.deep.equal( interposeBehavior2 );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const entity1 = new Vehicle();
+			const entity2 = new Vehicle();
+
+			const behavior1 = new InterposeBehavior( entity1, entity2 );
+			const behavior2 = new InterposeBehavior();
+
+			//set ids
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+
+			//set references
+			behavior2.entity1 = entity1.uuid;
+			behavior2.entity2 = entity2.uuid;
+
+			const map = new Map();
+			map.set( entity1.uuid, entity1 );
+			map.set( entity2.uuid, entity2 );
+
+			behavior2.resolveReferences( map );
+
+			expect( behavior2 ).to.deep.equal( behavior1 );
+
+		} );
+
+		it( 'should set the entities to null if the mapping is missing', function () {
+
+			const behavior = new InterposeBehavior();
+			behavior.entity1 = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			behavior.entity2 = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+
+			behavior.resolveReferences( new Map() );
+
+			expect( behavior.entity1 ).to.be.null;
+			expect( behavior.entity2 ).to.be.null;
 
 		} );
 

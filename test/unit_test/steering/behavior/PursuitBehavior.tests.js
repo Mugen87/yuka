@@ -4,6 +4,8 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
+const SteeringJSONs = require( '../../../files/SteeringJSONs.js' );
+
 
 const PursuitBehavior = YUKA.PursuitBehavior;
 const SeekBehavior = YUKA.SeekBehavior;
@@ -89,6 +91,77 @@ describe( 'PursuitBehavior', function () {
 			expect( force.x ).to.closeTo( 0, Number.EPSILON );
 			expect( force.y ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 			expect( force.z ).to.closeTo( - 0.7071067811865475, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#toJSON()', function () {
+
+		it( 'should serialize this instance to a JSON object', function () {
+
+			const evader = new Vehicle();
+			evader.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			const pursuitBehavior = new PursuitBehavior( evader, 2 );
+			const json = pursuitBehavior.toJSON();
+
+			expect( json ).to.deep.equal( SteeringJSONs.PursuitBehavior );
+
+		} );
+
+	} );
+
+	describe( '#fromJSON()', function () {
+
+		it( 'should deserialize this instance from the given JSON object', function () {
+
+			const evader = new Vehicle();
+			evader.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			const pursuitBehavior1 = new PursuitBehavior( evader, 2 );
+			const pursuitBehavior2 = new PursuitBehavior().fromJSON( SteeringJSONs.PursuitBehavior );
+
+			const entitiesMap = new Map();
+			entitiesMap.set( evader.uuid, evader );
+			pursuitBehavior2.resolveReferences( entitiesMap );
+
+			expect( pursuitBehavior1 ).to.deep.equal( pursuitBehavior2 );
+
+		} );
+
+	} );
+
+	describe( '#resolveReferences()', function () {
+
+		it( 'should restore the references to other entities', function () {
+
+			const entity1 = new Vehicle();
+
+			const behavior1 = new PursuitBehavior( entity1 );
+			const behavior2 = new PursuitBehavior( );
+
+			//set ids
+			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			//set references
+			behavior2.evader = entity1.uuid;
+
+			const map = new Map();
+			map.set( entity1.uuid, entity1 );
+
+			behavior2.resolveReferences( map );
+
+			expect( behavior2 ).to.deep.equal( behavior1 );
+
+		} );
+
+		it( 'should set the evader to null if the mapping is missing', function () {
+
+			const behavior = new PursuitBehavior();
+			behavior.evader = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+
+			behavior.resolveReferences( new Map() );
+
+			expect( behavior.evader ).to.be.null;
 
 		} );
 

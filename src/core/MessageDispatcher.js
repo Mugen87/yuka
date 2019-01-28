@@ -115,6 +115,78 @@ class MessageDispatcher {
 
 	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const data = {
+			type: this.constructor.name,
+			delayedTelegrams: new Array()
+		};
+
+		// delayed telegrams
+
+		for ( let i = 0, l = this.delayedTelegrams.length; i < l; i ++ ) {
+
+			const delayedTelegram = this.delayedTelegrams[ i ];
+			data.delayedTelegrams.push( delayedTelegram.toJSON() );
+
+		}
+
+		return data;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {MessageDispatcher} A reference to this message dispatcher.
+	*/
+	fromJSON( json ) {
+
+		this.clear();
+
+		const telegramsJSON = json.delayedTelegrams;
+
+		for ( let i = 0, l = telegramsJSON.length; i < l; i ++ ) {
+
+			const telegramJSON = telegramsJSON[ i ];
+			const telegram = new Telegram().fromJSON( telegramJSON );
+
+			this.delayedTelegrams.push( telegram );
+
+		}
+
+		return this;
+
+	}
+
+
+	/**
+	* Restores UUIDs with references to GameEntity objects.
+	*
+	* @param {Map} entities - Maps game entities to UUIDs.
+	* @return {MessageDispatcher} A reference to this message dispatcher.
+	*/
+	resolveReferences( entities ) {
+
+		const delayedTelegrams = this.delayedTelegrams;
+
+		for ( let i = 0, l = delayedTelegrams.length; i < l; i ++ ) {
+
+			const delayedTelegram = delayedTelegrams[ i ];
+			delayedTelegram.resolveReferences( entities );
+
+		}
+
+		return this;
+
+	}
+
 }
 
 export { MessageDispatcher };
