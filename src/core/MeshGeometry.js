@@ -78,7 +78,7 @@ class MeshGeometry {
 		};
 
 		json.indices = {
-			type: this.indices ? this.indices.constructor.name : "null",
+			type: this.indices ? this.indices.constructor.name : 'null',
 			data: this.indices ? Array.from( this.indices ) : null
 		};
 
