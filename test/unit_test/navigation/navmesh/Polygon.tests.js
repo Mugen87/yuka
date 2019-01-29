@@ -171,6 +171,24 @@ describe( 'Polygon', function () {
 
 		} );
 
+		it( 'should return false if the point lies inside the polygon and not within the allowed tolerance range', function () {
+
+			const polygon = new Polygon();
+			const point = new Vector3( 0.5, 0.0001, 0.5 );
+
+			const vertices = [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 0, 0 )
+			];
+
+			polygon.fromContour( vertices );
+
+			expect( polygon.contains( point, 0 ) ).to.be.false;
+
+		} );
+
 	} );
 
 	describe( '#convex()', function () {
