@@ -8,6 +8,7 @@ Yuka is a JavaScript library for developing Game AI.
 * **Perception:** Create game entities with a short-term memory and a vision component.
 * **Trigger:** Use triggers to generate dynamic actions in your game.
 * **Fuzzy Logic:** Make your game entities smarter with Yuka's fuzzy inference system.
+* **JSON:** Save and load the current state of your game by using a serialization/deserialization API based on JSON.
 
 Yuka is a standalone library and independent of a particular 3D engine.
 
@@ -17,7 +18,7 @@ You can find the Yuka documentation [on the website](https://mugen87.github.io/y
 
 ## Examples
 
-We have several examples [on the website](https://mugen87.github.io/yuka/examples/). If you donwload the repository and execute `npm install && npm start` in the main directory, you can start a local server and check out the examples on your computer.
+We have several examples [on the website](https://mugen87.github.io/yuka/examples/). If you download the repository and execute `npm install && npm start` in the main directory, you can start a local server and check out the examples on your computer.
 
 ## Resources
 
