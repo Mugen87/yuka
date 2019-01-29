@@ -171,6 +171,18 @@ describe( 'Ray', function () {
 
 		} );
 
+		it( 'should fill the given result vector with the intersection point of a ray/AABB intersection test, other cases', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( - 1, 0, - 1 ) );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( - 2, 0, - 2 ), new Vector3( 1, 0, - 1 ) );
+
+			const result = new Vector3();
+			ray.intersectAABB( aabb, result );
+
+			expect( result ).to.deep.equal( { x: - 2.5, y: 0, z: - 2.5 } );
+
+		} );
+
 		it( 'should fill the given result vector with the intersection point if the ray touches the AABB', function () {
 
 			const ray = new Ray( new Vector3( 1, 0, 0 ), v2 );
@@ -230,6 +242,22 @@ describe( 'Ray', function () {
 
 		} );
 
+		it( 'should not detect an intersection and return null if the direction of the ray is wrong', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, - 1 ) );
+			const triangle = {
+				a: new Vector3( 1, - 1, 1 ),
+				b: new Vector3( - 1, - 1, 1 ),
+				c: new Vector3( 0, 1, 1 ),
+			};
+
+			const result = new Vector3();
+			ray.intersectTriangle( triangle, false, result );
+
+			expect( ray.intersectTriangle( triangle, false, result ) ).to.equal( null );
+
+		} );
+
 		it( 'should not detect an intersection and return null if the ray hits the back side of the triangle', function () {
 
 			const ray = new Ray( new Vector3(), v2 );
@@ -261,7 +289,7 @@ describe( 'Ray', function () {
 
 		} );
 
-		it( 'should detect an intersection if the ray touchs the triangle', function () {
+		it( 'should detect an intersection if the ray touches the triangle', function () {
 
 			const ray = new Ray( new Vector3( 1, - 1, 1 ), v2 );
 			const triangle = {
@@ -292,6 +320,22 @@ describe( 'Ray', function () {
 
 			expect( ray1.intersectTriangle( triangle, true, result ) ).to.be.null;
 			expect( ray2.intersectTriangle( triangle, true, result ) ).to.be.null;
+
+		} );
+
+		it( 'should not detect an intersection and return null if the ray is parallel to the triangle plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, 1 ) );
+			const triangle = {
+				a: new Vector3( 1, 0, 1 ),
+				b: new Vector3( - 1, 0, 1 ),
+				c: new Vector3( 0, 0, 1 ),
+			};
+
+			const result = new Vector3();
+			ray.intersectTriangle( triangle, true, result );
+
+			expect( ray.intersectTriangle( triangle, true, result ) ).to.equal( null );
 
 		} );
 

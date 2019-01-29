@@ -4640,6 +4640,7 @@ class Ray {
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
 	* @param {Triangle} triangle - A triangle.
+	* @param {Boolean} backfaceCulling - Whether back face culling is active or not.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
