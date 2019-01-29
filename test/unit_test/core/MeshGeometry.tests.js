@@ -92,6 +92,22 @@ describe( 'MeshGeometry', function () {
 
 		} );
 
+		it( 'should deserialize this instance from the given JSON object, test for other branches', function () {
+
+			const vertices = new Float32Array( [ 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const indices = new Uint32Array( [ 0, 1, 2 ] );
+
+			const geometry = new MeshGeometry( vertices, indices );
+			const geometry2 = new MeshGeometry( vertices );
+
+			const geometryJ = new MeshGeometry().fromJSON( geometry.toJSON() );
+			const geometryJ2 = new MeshGeometry().fromJSON( geometry2.toJSON() );
+
+			expect( geometryJ ).to.be.deep.equal( geometry );
+			expect( geometryJ2 ).to.be.deep.equal( geometry2 );
+
+		} );
+
 	} );
 
 } );
