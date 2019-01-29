@@ -113,7 +113,7 @@ describe( 'Vision', function () {
 			const entity = new GameEntity();
 			entity.position.set( 0.5, 2, 0.5 );
 			const vision = new Vision( entity );
-			vision.range = 3;
+			vision.range = 10;
 			vision.fieldOfView = Math.PI * 0.25;
 
 			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
