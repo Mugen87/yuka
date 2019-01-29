@@ -12891,12 +12891,6 @@
 			*/
 			this.polygon = null;
 
-			/**
-			* The unique index of the vertex.
-			* @type number
-			*/
-			this.nodeIndex = - 1;
-
 		}
 
 		/**
@@ -13108,10 +13102,6 @@
 			// half-edge data structure is now complete, begin build of convex regions
 
 			this._buildRegions( sortedEdgeList );
-
-			// ensure unique node indices for all twin edges
-
-			this._buildNodeIndices();
 
 			// now build the navigation graph
 
@@ -13532,73 +13522,12 @@
 
 		}
 
-		_buildNodeIndices() {
-
-			const regions = this.regions;
-
-			const indicesMap = new Map();
-			let nextNodeIndex = 0;
-
-			for ( let i = 0, l = regions.length; i < l; i ++ ) {
-
-				const region = regions[ i ];
-
-				let edge = region.edge;
-
-				do {
-
-					// only edges with a twin reference needs to be considered
-
-					if ( edge.twin !== null && edge.nodeIndex === null ) {
-
-						let nodeIndex = - 1;
-						const position = edge.from();
-
-						// check all existing entries
-
-						for ( const [ index, pos ] of indicesMap.entries() ) {
-
-							if ( position.equals( pos ) === true ) {
-
-								// found, use the existing index
-
-								nodeIndex = index;
-								break;
-
-							}
-
-						}
-
-						// if no suitable index was found, create a new one
-
-						if ( nodeIndex === - 1 ) {
-
-							nodeIndex = nextNodeIndex ++;
-							indicesMap.set( nodeIndex, position );
-
-						}
-
-						// assign unique node index to edge
-
-						edge.nodeIndex = nodeIndex;
-						edge.twin.next.nodeIndex = nodeIndex;
-
-					}
-
-					edge = edge.next;
-
-				} while ( edge !== region.edge );
-
-			}
-
-		}
-
 		_buildGraph() {
 
 			const graph = this.graph;
 			const regions = this.regions;
 
-			// for each region, the code creates an array of directly accessible node indices
+			// for each region, the code creates an array of directly accessible regions
 
 			const regionNeighbourhood = new Array();
 
@@ -13610,17 +13539,26 @@
 				regionNeighbourhood.push( regionIndices );
 
 				let edge = region.edge;
+
+				// iterate through all egdes of the region (in other words: along its contour)
+
 				do {
+
+					// check for a portal edge
 
 					if ( edge.twin !== null ) {
 
-						regionIndices.push( this.regions.indexOf( edge.twin.polygon ) );
+						const regionIndex = this.regions.indexOf( edge.twin.polygon );
 
-						// add node to graph if necessary
+						regionIndices.push( regionIndex ); // the index of the adjacent region
+
+						// add node for this region to the graph if necessary
 
 						if ( graph.hasNode( this.regions.indexOf( edge.polygon ) ) === false ) {
 
-							graph.addNode( new NavNode( this.regions.indexOf( edge.polygon ), edge.polygon.centroid ) );
+							const node = new NavNode( this.regions.indexOf( edge.polygon ), edge.polygon.centroid );
+
+							graph.addNode( node );
 
 						}
 
@@ -13697,7 +13635,7 @@
 
 			/**
 			* A reference to the first half-edge of this polygon.
-			* @type Vector3
+			* @type HalfEdge
 			*/
 			this.edge = null;
 

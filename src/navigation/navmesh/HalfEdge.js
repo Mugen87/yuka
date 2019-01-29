@@ -45,12 +45,6 @@ class HalfEdge {
 		*/
 		this.polygon = null;
 
-		/**
-		* The unique index of the vertex.
-		* @type number
-		*/
-		this.nodeIndex = - 1;
-
 	}
 
 	/**
