@@ -174,7 +174,8 @@ describe( 'Polygon', function () {
 		it( 'should return false if the point lies inside the polygon and not within the allowed tolerance range', function () {
 
 			const polygon = new Polygon();
-			const point = new Vector3( 0.5, 0.0001, 0.5 );
+			const point = new Vector3( 0.5, 0.0002, 0.5 );
+			const epsilon = 0.0001;
 
 			const vertices = [
 				new Vector3( 0, 0, 0 ),
@@ -185,7 +186,7 @@ describe( 'Polygon', function () {
 
 			polygon.fromContour( vertices );
 
-			expect( polygon.contains( point, 0 ) ).to.be.false;
+			expect( polygon.contains( point, epsilon ) ).to.be.false;
 
 		} );
 
