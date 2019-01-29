@@ -25,7 +25,7 @@ class Polygon {
 
 		/**
 		* A reference to the first half-edge of this polygon.
-		* @type Vector3
+		* @type HalfEdge
 		*/
 		this.edge = null;
 

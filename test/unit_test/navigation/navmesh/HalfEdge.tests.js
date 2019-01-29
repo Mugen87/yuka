@@ -23,7 +23,6 @@ describe( 'HalfEdge', function () {
 			expect( halfEdge ).to.have.a.property( 'prev' ).that.is.null;
 			expect( halfEdge ).to.have.a.property( 'twin' ).that.is.null;
 			expect( halfEdge ).to.have.a.property( 'polygon' ).that.is.null;
-			expect( halfEdge ).to.have.a.property( 'nodeIndex' ).that.is.equal( - 1 );
 
 		} );
 
