@@ -97,6 +97,47 @@ describe( 'NavMeshLoader', function () {
 
 		} );
 
+		it( 'should reject the promise with an error if the url das not exist', function ( done ) {
+
+			const loader = new NavMeshLoader();
+			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb-embedded/error';
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			loader.load( url ).then( ( ) => {
+
+
+			}, ( err ) =>{
+
+
+				expect( err ).to.be.a( 'Error' );
+				expect( err.message ).to.be.equal( 'Not Found' );
+				done();
+
+			} );
+
+		} );
+
+		it( 'should reject the promise with an error if the asset version is not supported', function ( done ) {
+
+			const loader = new NavMeshLoader();
+			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb-embedded/navmeshUnsupportedAssetVersion.glb';
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			loader.load( url ).then( ( ) => {
+
+
+			}, ( err ) =>{
+
+				expect( err ).to.be.a( 'Error' );
+				expect( err.message ).to.be.equal( 'YUKA.NavMeshLoader: Unsupported asset version.' );
+				done();
+
+			} );
+
+		} );
+
 	} );
 
 } );
