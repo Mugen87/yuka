@@ -104,11 +104,7 @@ describe( 'NavMeshLoader', function () {
 
 			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
 
-			loader.load( url ).then( ( ) => {
-
-
-			}, ( err ) =>{
-
+			loader.load( url ).then( () => {}, ( err ) =>{
 
 				expect( err ).to.be.a( 'Error' );
 				expect( err.message ).to.be.equal( 'Not Found' );
@@ -125,10 +121,7 @@ describe( 'NavMeshLoader', function () {
 
 			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
 
-			loader.load( url ).then( ( ) => {
-
-
-			}, ( err ) =>{
+			loader.load( url ).then( ( ) => {}, ( err ) =>{
 
 				expect( err ).to.be.a( 'Error' );
 				expect( err.message ).to.be.equal( 'YUKA.NavMeshLoader: Unsupported asset version.' );
