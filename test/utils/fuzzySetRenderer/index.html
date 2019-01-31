@@ -1,0 +1,58 @@
+<html lang="en">
+	<head>
+		<title>Yuka | FuzzySet Renderer</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../../examples/lib/styles.css">
+		<link rel="shortcut icon" type="image/x-icon" href="https://mugen87.github.io/yuka/favicon.ico">
+		<style>
+			canvas {
+				margin: auto;
+				display: block;
+				position: relative;
+				top: 64px;
+			}
+			#info {
+				color: #ee0808;
+			}
+		</style>
+	</head>
+<body>
+
+	<section id="info">
+		<p>
+			This utility draws the membership function of all fuzzy sets as simple charts for debugging purposes.
+		</p>
+	</section>
+
+	<canvas id="canvas" width="1000" height="1000"></canvas>
+
+	<script type="module">
+
+		import * as YUKA from '../../../build/yuka.module.js';
+		import { FuzzySetRenderer } from './src/FuzzySetRenderer.js';
+
+		const canvas = document.getElementById( 'canvas' );
+		const renderer = new FuzzySetRenderer( canvas );
+
+		const triangularFuzzySet = new YUKA.TriangularFuzzySet( 0, 50, 100 );
+		const leftShoulderFuzzySet = new YUKA.LeftShoulderFuzzySet( 0, 50, 100 );
+		const rightShoulderFuzzySet = new YUKA.RightShoulderFuzzySet( 0, 50, 100 );
+		const singeltonFuzzySet = new YUKA.SingletonFuzzySet( 0, 50, 100 );
+
+		renderer.setViewport( 0, 0, 300, 300 );
+		renderer.draw( triangularFuzzySet );
+
+		renderer.setViewport( 330, 0, 300, 300 );
+		renderer.draw( leftShoulderFuzzySet );
+
+		renderer.setViewport( 660, 0, 300, 300 );
+		renderer.draw( rightShoulderFuzzySet );
+
+		renderer.setViewport( 0, 330, 300, 300 );
+		renderer.draw( singeltonFuzzySet );
+
+	</script>
+
+</body>
+</html>
