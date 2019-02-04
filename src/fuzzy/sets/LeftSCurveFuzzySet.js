@@ -1,16 +1,16 @@
 import { FuzzySet } from '../FuzzySet.js';
 
 /**
-* Class for representing a fuzzy set that is a singleton. In its range, the degree of
-* membership is always one.
+* Class for representing a fuzzy set that has a s-shape membership function with
+* values from highest to lowest.
 *
-* @author {@link https://github.com/Mugen87|Mugen87}
+* @author robp94 / https://github.com/robp94
 * @augments FuzzySet
 */
-class SingletonFuzzySet extends FuzzySet {
+class LeftSCurveFuzzySet extends FuzzySet {
 
 	/**
-	* Constructs a new singleton fuzzy set with the given values.
+	* Constructs a new S-curve fuzzy set with the given values.
 	*
 	* @param {Number} left - Represents the left border of this fuzzy set.
 	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
@@ -18,7 +18,11 @@ class SingletonFuzzySet extends FuzzySet {
 	*/
 	constructor( left = 0, midpoint = 0, right = 0 ) {
 
-		super( midpoint );
+		// the representative value is the midpoint of the plateau of the shoulder
+
+		const representativeValue = ( midpoint + left ) / 2;
+
+		super( representativeValue );
 
 		/**
 		* Represents the left border of this fuzzy set.
@@ -38,7 +42,7 @@ class SingletonFuzzySet extends FuzzySet {
 		* Represents the right border of this fuzzy set.
 		* @type Number
 		* @default 0
-		*/
+	  */
 		this.right = right;
 
 	}
@@ -47,14 +51,41 @@ class SingletonFuzzySet extends FuzzySet {
 	* Computes the degree of membership for the given value.
 	*
 	* @param {Number} value - The value used to calculate the degree of membership.
-	* @return {Number} The degree of membership.
+  * @return {Number} The degree of membership.
 	*/
 	computeDegreeOfMembership( value ) {
 
+		const midpoint = this.midpoint;
 		const left = this.left;
 		const right = this.right;
 
-		return ( value >= left && value <= right ) ? 1 : 0;
+		// find DOM if the given value is left of the center or equal to the center
+
+		if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+			return 1;
+
+		}
+
+		// find DOM if the given value is right of the midpoint
+
+		if ( ( value > midpoint ) && ( value <= right ) ) {
+
+			if ( value >= ( ( midpoint + right ) / 2 ) ) {
+
+				return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
+
+			} else {
+
+				return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
+
+			}
+
+		}
+
+		// out of range
+
+		return 0;
 
 	}
 
@@ -77,7 +108,7 @@ class SingletonFuzzySet extends FuzzySet {
 	* Restores this instance from the given JSON object.
 	*
 	* @param {Object} json - The JSON object.
-	* @return {SingletonFuzzySet} A reference to this fuzzy set.
+	* @return {LeftSCurveFuzzySet} A reference to this fuzzy set.
 	*/
 	fromJSON( json ) {
 
@@ -91,4 +122,4 @@ class SingletonFuzzySet extends FuzzySet {
 
 }
 
-export { SingletonFuzzySet };
+export { LeftSCurveFuzzySet };

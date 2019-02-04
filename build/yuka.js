@@ -31,6 +31,438 @@
 }(this, (function (exports) { 'use strict';
 
 	/**
+	* Base class for representing a term in a {@link FuzzyRule}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class FuzzyTerm {
+
+		/**
+		* Clears the degree of membership value.
+		*
+		* @return {FuzzyTerm} A reference to this term.
+		*/
+		clearDegreeOfMembership() {}
+
+		/**
+		* Returns the degree of membership.
+		*
+		* @return {Number} Degree of membership.
+		*/
+		getDegreeOfMembership() {}
+
+		/**
+		* Updates the degree of membership by the given value. This method is used when
+		* the term is part of a fuzzy rule's consequent.
+		*
+		* @param {Number} value - The value used to update the degree of membership.
+		* @return {FuzzyTerm} A reference to this term.
+		*/
+		updateDegreeOfMembership( /* value */ ) {}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name
+			};
+
+		}
+
+	}
+
+	const lut = [];
+
+	for ( let i = 0; i < 256; i ++ ) {
+
+		lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
+
+	}
+
+	/**
+	* Class with various math helpers.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class MathUtils {
+
+		/**
+		* Ensures the given scalar value is within a given min/max range.
+		*
+		* @param {Number} value - The value to clamp.
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {Number} The clamped value.
+		*/
+		static clamp( value, min, max ) {
+
+			return Math.max( min, Math.min( max, value ) );
+
+		}
+
+		/**
+		* Computes a random integer value within a given min/max range.
+		*
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {Number} The random integer value.
+		*/
+		static randInt( min, max ) {
+
+			return min + Math.floor( Math.random() * ( max - min + 1 ) );
+
+		}
+
+		/**
+		* Computes a random float value within a given min/max range.
+		*
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {Number} The random float value.
+		*/
+		static randFloat( min, max ) {
+
+			return min + Math.random() * ( max - min );
+
+		}
+
+		/**
+		* Computes the signed area of a rectangle defined by three points.
+		* This method can also be used to calculate the area of a triangle.
+		*
+		* @param {Vector3} a - The first point in 3D space.
+		* @param {Vector3} b - The second point in 3D space.
+		* @param {Vector3} c - The third point in 3D space.
+		* @return {Number} The signed area.
+		*/
+		static area( a, b, c ) {
+
+			return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
+
+		}
+
+		/**
+		* Computes a RFC4122 Version 4 complied Universally Unique Identifier (UUID).
+		*
+		* @return {String} The UUID.
+		*/
+		static generateUUID() {
+
+			// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/21963136#21963136
+
+			const d0 = Math.random() * 0xffffffff | 0;
+			const d1 = Math.random() * 0xffffffff | 0;
+			const d2 = Math.random() * 0xffffffff | 0;
+			const d3 = Math.random() * 0xffffffff | 0;
+			const uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+				lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+				lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+			return uuid.toUpperCase();
+
+		}
+
+	}
+
+	/**
+	* Base class for fuzzy sets. This type of sets are defined by a membership function
+	* which can be any arbitrary shape but are typically triangular or trapezoidal. They define
+	* a gradual transition from regions completely outside the set to regions completely
+	* within the set, thereby enabling a value to have partial membership to a set.
+	*
+	* This class is derived from {@link FuzzyTerm} so it can be directly used in fuzzy rules.
+	* According to the composite design pattern, a fuzzy set can be considered as an atomic fuzzy term.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments FuzzyTerm
+	*/
+	class FuzzySet extends FuzzyTerm {
+
+		/**
+		* Constructs a new fuzzy set with the given values.
+		*
+		* @param {Number} representativeValue - The maximum of the set's membership function.
+		*/
+		constructor( representativeValue = 0 ) {
+
+			super();
+
+			/**
+			* Represents the degree of membership to this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.degreeOfMembership = 0;
+
+			/**
+			* The maximum of the set's membership function. For instance, if
+			* the set is triangular then this will be the peak point of the triangular.
+			* If the set has a plateau then this value will be the mid point of the
+			* plateau. Used to avoid runtime calculations.
+			* @type Number
+			* @default 0
+			*/
+			this.representativeValue = representativeValue;
+
+			/**
+			* Represents the left border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.left = 0;
+
+			/**
+			* Represents the right border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.right = 0;
+
+			//
+
+			this._uuid = null;
+
+		}
+
+		get uuid() {
+
+			if ( this._uuid === null ) {
+
+				this._uuid = MathUtils.generateUUID();
+
+			}
+
+			return this._uuid;
+
+		}
+
+		set uuid( uuid ) {
+
+			this._uuid = uuid;
+
+		}
+
+		/**
+		* Computes the degree of membership for the given value. Notice that this method
+		* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
+		* order to calculate intermediate degree of membership values. This method be
+		* implemented by all concrete fuzzy set classes.
+		*
+		* @param {Number} value - The value used to calculate the degree of membership.
+		* @return {Number} The degree of membership.
+		*/
+		computeDegreeOfMembership( /* value */ ) {}
+
+		// FuzzyTerm API
+
+		/**
+		* Clears the degree of membership value.
+		*
+		* @return {FuzzySet} A reference to this fuzzy set.
+		*/
+		clearDegreeOfMembership() {
+
+			this.degreeOfMembership = 0;
+
+			return this;
+
+		}
+
+		/**
+		* Returns the degree of membership.
+		*
+		* @return {Number} Degree of membership.
+		*/
+		getDegreeOfMembership() {
+
+			return this.degreeOfMembership;
+
+		}
+
+		/**
+		* Updates the degree of membership by the given value. This method is used when
+		* the set is part of a fuzzy rule's consequent.
+		*
+		* @return {FuzzySet} A reference to this fuzzy set.
+		*/
+		updateDegreeOfMembership( value ) {
+
+			// update the degree of membership if the given value is greater than the
+			// existing one
+
+			if ( value > this.degreeOfMembership ) this.degreeOfMembership = value;
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.degreeOfMembership = this.degreeOfMembership;
+			json.representativeValue = this.representativeValue;
+			json.left = this.left;
+			json.right = this.right;
+			json.uuid = this.uuid;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {FuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			this.degreeOfMembership = json.degreeOfMembership;
+			this.representativeValue = json.representativeValue;
+			this.left = json.left;
+			this.right = json.right;
+			this.uuid = json.uuid;
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* Class for representing a fuzzy set that has a s-shape membership function with
+	* values from highest to lowest.
+	*
+	* @author robp94 / https://github.com/robp94
+	* @augments FuzzySet
+	*/
+	class LeftSCurveFuzzySet extends FuzzySet {
+
+		/**
+		* Constructs a new S-curve fuzzy set with the given values.
+		*
+		* @param {Number} left - Represents the left border of this fuzzy set.
+		* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+		* @param {Number} right - Represents the right border of this fuzzy set.
+		*/
+		constructor( left = 0, midpoint = 0, right = 0 ) {
+
+			// the representative value is the midpoint of the plateau of the shoulder
+
+			const representativeValue = ( midpoint + left ) / 2;
+
+			super( representativeValue );
+
+			/**
+			* Represents the left border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.left = left;
+
+			/**
+			* Represents the peak value of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.midpoint = midpoint;
+
+			/**
+			* Represents the right border of this fuzzy set.
+			* @type Number
+			* @default 0
+		  */
+			this.right = right;
+
+		}
+
+		/**
+		* Computes the degree of membership for the given value.
+		*
+		* @param {Number} value - The value used to calculate the degree of membership.
+	  * @return {Number} The degree of membership.
+		*/
+		computeDegreeOfMembership( value ) {
+
+			const midpoint = this.midpoint;
+			const left = this.left;
+			const right = this.right;
+
+			// find DOM if the given value is left of the center or equal to the center
+
+			if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+				return 1;
+
+			}
+
+			// find DOM if the given value is right of the midpoint
+
+			if ( ( value > midpoint ) && ( value <= right ) ) {
+
+				if ( value >= ( ( midpoint + right ) / 2 ) ) {
+
+					return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
+
+				} else {
+
+					return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
+
+				}
+
+			}
+
+			// out of range
+
+			return 0;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.midpoint = this.midpoint;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {LeftSCurveFuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.midpoint = json.midpoint;
+
+			return this;
+
+		}
+
+	}
+
+	/**
 	* Class for representing a telegram, an envelope which contains a message
 	* and certain metadata like sender and receiver. Part of the messaging system
 	* for game entities.
@@ -385,100 +817,6 @@
 			}
 
 			return this;
-
-		}
-
-	}
-
-	const lut = [];
-
-	for ( let i = 0; i < 256; i ++ ) {
-
-		lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
-
-	}
-
-	/**
-	* Class with various math helpers.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class MathUtils {
-
-		/**
-		* Ensures the given scalar value is within a given min/max range.
-		*
-		* @param {Number} value - The value to clamp.
-		* @param {min} value - The min value.
-		* @param {max} value - The max value.
-		* @return {Number} The clamped value.
-		*/
-		static clamp( value, min, max ) {
-
-			return Math.max( min, Math.min( max, value ) );
-
-		}
-
-		/**
-		* Computes a random integer value within a given min/max range.
-		*
-		* @param {min} value - The min value.
-		* @param {max} value - The max value.
-		* @return {Number} The random integer value.
-		*/
-		static randInt( min, max ) {
-
-			return min + Math.floor( Math.random() * ( max - min + 1 ) );
-
-		}
-
-		/**
-		* Computes a random float value within a given min/max range.
-		*
-		* @param {min} value - The min value.
-		* @param {max} value - The max value.
-		* @return {Number} The random float value.
-		*/
-		static randFloat( min, max ) {
-
-			return min + Math.random() * ( max - min );
-
-		}
-
-		/**
-		* Computes the signed area of a rectangle defined by three points.
-		* This method can also be used to calculate the area of a triangle.
-		*
-		* @param {Vector3} a - The first point in 3D space.
-		* @param {Vector3} b - The second point in 3D space.
-		* @param {Vector3} c - The third point in 3D space.
-		* @return {Number} The signed area.
-		*/
-		static area( a, b, c ) {
-
-			return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
-
-		}
-
-		/**
-		* Computes a RFC4122 Version 4 complied Universally Unique Identifier (UUID).
-		*
-		* @return {String} The UUID.
-		*/
-		static generateUUID() {
-
-			// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/21963136#21963136
-
-			const d0 = Math.random() * 0xffffffff | 0;
-			const d1 = Math.random() * 0xffffffff | 0;
-			const d2 = Math.random() * 0xffffffff | 0;
-			const d3 = Math.random() * 0xffffffff | 0;
-			const uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
-				lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
-				lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
-				lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
-
-			return uuid.toUpperCase();
 
 		}
 
@@ -8134,51 +8472,6 @@
 	}
 
 	/**
-	* Base class for representing a term in a {@link FuzzyRule}.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class FuzzyTerm {
-
-		/**
-		* Clears the degree of membership value.
-		*
-		* @return {FuzzyTerm} A reference to this term.
-		*/
-		clearDegreeOfMembership() {}
-
-		/**
-		* Returns the degree of membership.
-		*
-		* @return {Number} Degree of membership.
-		*/
-		getDegreeOfMembership() {}
-
-		/**
-		* Updates the degree of membership by the given value. This method is used when
-		* the term is part of a fuzzy rule's consequent.
-		*
-		* @param {Number} value - The value used to update the degree of membership.
-		* @return {FuzzyTerm} A reference to this term.
-		*/
-		updateDegreeOfMembership( /* value */ ) {}
-
-		/**
-		* Transforms this instance into a JSON object.
-		*
-		* @return {Object} The JSON object.
-		*/
-		toJSON() {
-
-			return {
-				type: this.constructor.name
-			};
-
-		}
-
-	}
-
-	/**
 	* Base class for representing more complex fuzzy terms based on the
 	* composite design pattern.
 	*
@@ -8508,177 +8801,6 @@
 	}
 
 	/**
-	* Base class for fuzzy sets. This type of sets are defined by a membership function
-	* which can be any arbitrary shape but are typically triangular or trapezoidal. They define
-	* a gradual transition from regions completely outside the set to regions completely
-	* within the set, thereby enabling a value to have partial membership to a set.
-	*
-	* This class is derived from {@link FuzzyTerm} so it can be directly used in fuzzy rules.
-	* According to the composite design pattern, a fuzzy set can be considered as an atomic fuzzy term.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments FuzzyTerm
-	*/
-	class FuzzySet extends FuzzyTerm {
-
-		/**
-		* Constructs a new fuzzy set with the given values.
-		*
-		* @param {Number} representativeValue - The maximum of the set's membership function.
-		*/
-		constructor( representativeValue = 0 ) {
-
-			super();
-
-			/**
-			* Represents the degree of membership to this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.degreeOfMembership = 0;
-
-			/**
-			* The maximum of the set's membership function. For instance, if
-			* the set is triangular then this will be the peak point of the triangular.
-			* If the set has a plateau then this value will be the mid point of the
-			* plateau. Used to avoid runtime calculations.
-			* @type Number
-			* @default 0
-			*/
-			this.representativeValue = representativeValue;
-
-			/**
-			* Represents the left border of this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.left = 0;
-
-			/**
-			* Represents the right border of this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.right = 0;
-
-			//
-
-			this._uuid = null;
-
-		}
-
-		get uuid() {
-
-			if ( this._uuid === null ) {
-
-				this._uuid = MathUtils.generateUUID();
-
-			}
-
-			return this._uuid;
-
-		}
-
-		set uuid( uuid ) {
-
-			this._uuid = uuid;
-
-		}
-
-		/**
-		* Computes the degree of membership for the given value. Notice that this method
-		* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
-		* order to calculate intermediate degree of membership values. This method be
-		* implemented by all concrete fuzzy set classes.
-		*
-		* @param {Number} value - The value used to calculate the degree of membership.
-		* @return {Number} The degree of membership.
-		*/
-		computeDegreeOfMembership( /* value */ ) {}
-
-		// FuzzyTerm API
-
-		/**
-		* Clears the degree of membership value.
-		*
-		* @return {FuzzySet} A reference to this fuzzy set.
-		*/
-		clearDegreeOfMembership() {
-
-			this.degreeOfMembership = 0;
-
-			return this;
-
-		}
-
-		/**
-		* Returns the degree of membership.
-		*
-		* @return {Number} Degree of membership.
-		*/
-		getDegreeOfMembership() {
-
-			return this.degreeOfMembership;
-
-		}
-
-		/**
-		* Updates the degree of membership by the given value. This method is used when
-		* the set is part of a fuzzy rule's consequent.
-		*
-		* @return {FuzzySet} A reference to this fuzzy set.
-		*/
-		updateDegreeOfMembership( value ) {
-
-			// update the degree of membership if the given value is greater than the
-			// existing one
-
-			if ( value > this.degreeOfMembership ) this.degreeOfMembership = value;
-
-			return this;
-
-		}
-
-		/**
-		* Transforms this instance into a JSON object.
-		*
-		* @return {Object} The JSON object.
-		*/
-		toJSON() {
-
-			const json = super.toJSON();
-
-			json.degreeOfMembership = this.degreeOfMembership;
-			json.representativeValue = this.representativeValue;
-			json.left = this.left;
-			json.right = this.right;
-			json.uuid = this.uuid;
-
-			return json;
-
-		}
-
-		/**
-		* Restores this instance from the given JSON object.
-		*
-		* @param {Object} json - The JSON object.
-		* @return {FuzzySet} A reference to this fuzzy set.
-		*/
-		fromJSON( json ) {
-
-			this.degreeOfMembership = json.degreeOfMembership;
-			this.representativeValue = json.representativeValue;
-			this.left = json.left;
-			this.right = json.right;
-			this.uuid = json.uuid;
-
-			return this;
-
-		}
-
-	}
-
-	/**
 	* Class for representing a fuzzy set that has a left shoulder shape. The range between
 	* the midpoint and left border point represents the same DOM.
 	*
@@ -8781,6 +8903,269 @@
 		*
 		* @param {Object} json - The JSON object.
 		* @return {LeftShoulderFuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.midpoint = json.midpoint;
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* Class for representing a fuzzy set that has a normal distribution shape. It can be defined
+	* by the mean and standard deviation.
+	*
+	* @author robp94 / https://github.com/robp94
+	* @augments FuzzySet
+	*/
+	class NormalDistFuzzySet extends FuzzySet {
+
+		/**
+		* Constructs a new triangular fuzzy set with the given values.
+		*
+		* @param {Number} left - Represents the left border of this fuzzy set.
+		* @param {Number} midpoint - Mean or expectation of the normal distribution.
+		* @param {Number} right - Represents the right border of this fuzzy set.
+		* @param {Number} standardDeviation - Standard deviation of the normal distribution.
+		*/
+		constructor( left = 0, midpoint = 0, right = 0, standardDeviation = 0 ) {
+
+			super( midpoint );
+
+			/**
+			* Represents the left border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.left = left;
+
+			/**
+			* Represents the peak value of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.midpoint = midpoint;
+
+			/**
+			* Represents the right border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.right = right;
+
+			/**
+			* Represents the standard deviation of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.standardDeviation = standardDeviation;
+
+			//
+
+			this._cache = {};
+
+		}
+
+		/**
+		* Computes the degree of membership for the given value.
+		*
+	  * @param {Number} value - The value used to calculate the degree of membership.
+		* @return {Number} The degree of membership.
+		*/
+		computeDegreeOfMembership( value ) {
+
+			this._updateCache();
+
+			if ( value >= this.right || value <= this.left ) return 0;
+
+			return probabilityDensity( value, this.midpoint, this._cache.variance ) / this._cache.normalizationFactor;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.midpoint = this.midpoint;
+			json.standardDeviation = this.standardDeviation;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {NormalDistFuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.midpoint = json.midpoint;
+			this.standardDeviation = json.standardDeviation;
+
+			return this;
+
+		}
+
+		//
+
+		_updateCache() {
+
+			const cache =	this._cache;
+			const midpoint = this.midpoint;
+			const standardDeviation = this.standardDeviation;
+
+			if ( midpoint !== cache.midpoint || standardDeviation !== cache.standardDeviation ) {
+
+				const variance = standardDeviation * standardDeviation;
+
+				cache.midpoint = midpoint;
+				cache.standardDeviation = standardDeviation;
+				cache.variance = variance;
+
+				// this value is used to ensure the DOM lies in the range of [0,1]
+
+				cache.normalizationFactor = probabilityDensity( midpoint, midpoint, variance );
+
+			}
+
+			return this;
+
+		}
+
+	}
+
+	//
+
+	function probabilityDensity( x, mean, variance ) {
+
+		return ( 1 / Math.sqrt( 2 * Math.PI * variance ) ) * Math.exp( - ( Math.pow( ( x - mean ), 2 ) ) / ( 2 * variance ) );
+
+	}
+
+	/**
+	* Class for representing a fuzzy set that has a s-shape membership function with
+	* values from lowest to highest.
+	*
+	* @author robp94 / https://github.com/robp94
+	* @augments FuzzySet
+	*/
+	class RightSCurveFuzzySet extends FuzzySet {
+
+		/**
+		* Constructs a new S-curve fuzzy set with the given values.
+		*
+		* @param {Number} left - Represents the left border of this fuzzy set.
+		* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+		* @param {Number} right - Represents the right border of this fuzzy set.
+		*/
+		constructor( left = 0, midpoint = 0, right = 0 ) {
+
+			// the representative value is the midpoint of the plateau of the shoulder
+
+			const representativeValue = ( midpoint + right ) / 2;
+
+			super( representativeValue );
+
+			/**
+			* Represents the left border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.left = left;
+
+			/**
+			* Represents the peak value of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.midpoint = midpoint;
+
+			/**
+			* Represents the right border of this fuzzy set.
+			* @type Number
+			* @default 0
+		  */
+			this.right = right;
+
+		}
+
+		/**
+		* Computes the degree of membership for the given value.
+		*
+		* @param {Number} value - The value used to calculate the degree of membership.
+	  * @return {Number} The degree of membership.
+		*/
+		computeDegreeOfMembership( value ) {
+
+			const midpoint = this.midpoint;
+			const left = this.left;
+			const right = this.right;
+
+			// find DOM if the given value is left of the center or equal to the center
+
+			if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+				if ( value <= ( ( left + midpoint ) / 2 ) ) {
+
+					return 2 * ( Math.pow( ( value - left ) / ( midpoint - left ), 2 ) );
+
+				} else {
+
+					return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - left ), 2 ) ) );
+
+				}
+
+
+			}
+
+			// find DOM if the given value is right of the midpoint
+
+			if ( ( value > midpoint ) && ( value <= right ) ) {
+
+				return 1;
+
+			}
+
+			// out of range
+
+			return 0;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.midpoint = this.midpoint;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {RightSCurveFuzzySet} A reference to this fuzzy set.
 		*/
 		fromJSON( json ) {
 
@@ -8920,9 +9305,7 @@
 	class SingletonFuzzySet extends FuzzySet {
 
 		/**
-		* Constructs a new singleton fuzzy set with the given values. {@link SingletonFuzzySet#midpoint}
-		* is not needed in this class but it's still present in order to have a common interface for all
-		* fuzzy sets.
+		* Constructs a new singleton fuzzy set with the given values.
 		*
 		* @param {Number} left - Represents the left border of this fuzzy set.
 		* @param {Number} midpoint - Represents the peak value of this fuzzy set.
@@ -8971,10 +9354,10 @@
 		}
 
 		/**
-		 * Transforms this instance into a JSON object.
-		 *
-		 * @return {Object} The JSON object.
-		 */
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
 		toJSON() {
 
 			const json = super.toJSON();
@@ -8986,11 +9369,11 @@
 		}
 
 		/**
-		 * Restores this instance from the given JSON object.
-		 *
-		 * @param {Object} json - The JSON object.
-		 * @return {SingletonFuzzySet} A reference to this fuzzy set.
-		 */
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {SingletonFuzzySet} A reference to this fuzzy set.
+		*/
 		fromJSON( json ) {
 
 			super.fromJSON( json );
@@ -15760,7 +16143,10 @@
 	exports.FuzzyFAIRLY = FuzzyFAIRLY;
 	exports.FuzzyOR = FuzzyOR;
 	exports.FuzzyVERY = FuzzyVERY;
+	exports.LeftSCurveFuzzySet = LeftSCurveFuzzySet;
 	exports.LeftShoulderFuzzySet = LeftShoulderFuzzySet;
+	exports.NormalDistFuzzySet = NormalDistFuzzySet;
+	exports.RightSCurveFuzzySet = RightSCurveFuzzySet;
 	exports.RightShoulderFuzzySet = RightShoulderFuzzySet;
 	exports.SingletonFuzzySet = SingletonFuzzySet;
 	exports.TriangularFuzzySet = TriangularFuzzySet;

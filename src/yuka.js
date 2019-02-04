@@ -1,3 +1,5 @@
+import { LeftSCurveFuzzySet } from "./fuzzy/sets/LeftSCurveFuzzySet";
+
 export { EntityManager } from './core/EntityManager.js';
 export { EventDispatcher } from './core/EventDispatcher.js';
 export { GameEntity } from './core/GameEntity.js';
@@ -14,7 +16,10 @@ export { FuzzyAND } from './fuzzy/operators/FuzzyAND.js';
 export { FuzzyFAIRLY } from './fuzzy/operators/FuzzyFAIRLY.js';
 export { FuzzyOR } from './fuzzy/operators/FuzzyOR.js';
 export { FuzzyVERY } from './fuzzy/operators/FuzzyVERY.js';
+export { LeftSCurveFuzzySet } from './fuzzy/sets/LeftSCurveFuzzySet.js';
 export { LeftShoulderFuzzySet } from './fuzzy/sets/LeftShoulderFuzzySet.js';
+export { NormalDistFuzzySet } from './fuzzy/sets/NormalDistFuzzySet.js';
+export { RightSCurveFuzzySet } from './fuzzy/sets/RightSCurveFuzzySet.js';
 export { RightShoulderFuzzySet } from './fuzzy/sets/RightShoulderFuzzySet.js';
 export { SingletonFuzzySet } from './fuzzy/sets/SingletonFuzzySet.js';
 export { TriangularFuzzySet } from './fuzzy/sets/TriangularFuzzySet.js';
