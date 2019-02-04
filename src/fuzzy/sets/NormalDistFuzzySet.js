@@ -58,7 +58,7 @@ class NormalDistFuzzySet extends FuzzySet {
 	/**
 	* Computes the degree of membership for the given value.
 	*
-  * @param {Number} value - The value used to calculate the degree of membership.
+	* @param {Number} value - The value used to calculate the degree of membership.
 	* @return {Number} The degree of membership.
 	*/
 	computeDegreeOfMembership( value ) {

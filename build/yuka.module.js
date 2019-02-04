@@ -376,7 +376,7 @@ class LeftSCurveFuzzySet extends FuzzySet {
 		* Represents the right border of this fuzzy set.
 		* @type Number
 		* @default 0
-	  */
+		*/
 		this.right = right;
 
 	}
@@ -385,7 +385,7 @@ class LeftSCurveFuzzySet extends FuzzySet {
 	* Computes the degree of membership for the given value.
 	*
 	* @param {Number} value - The value used to calculate the degree of membership.
-  * @return {Number} The degree of membership.
+	* @return {Number} The degree of membership.
 	*/
 	computeDegreeOfMembership( value ) {
 
@@ -8968,7 +8968,7 @@ class NormalDistFuzzySet extends FuzzySet {
 	/**
 	* Computes the degree of membership for the given value.
 	*
-  * @param {Number} value - The value used to calculate the degree of membership.
+	* @param {Number} value - The value used to calculate the degree of membership.
 	* @return {Number} The degree of membership.
 	*/
 	computeDegreeOfMembership( value ) {
@@ -9092,7 +9092,7 @@ class RightSCurveFuzzySet extends FuzzySet {
 		* Represents the right border of this fuzzy set.
 		* @type Number
 		* @default 0
-	  */
+		*/
 		this.right = right;
 
 	}
@@ -9101,7 +9101,7 @@ class RightSCurveFuzzySet extends FuzzySet {
 	* Computes the degree of membership for the given value.
 	*
 	* @param {Number} value - The value used to calculate the degree of membership.
-  * @return {Number} The degree of membership.
+	* @return {Number} The degree of membership.
 	*/
 	computeDegreeOfMembership( value ) {
 
