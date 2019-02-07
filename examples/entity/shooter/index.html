@@ -9,7 +9,7 @@
 			* {
 				-webkit-user-select: none;
 				-moz-user-select: none;
-        -ms-user-select: none;
+				-ms-user-select: none;
 				user-select: none;
 			}
 			#crosshairs {
@@ -225,15 +225,15 @@
 		shot.setVolume( 0.3 );
 		reload.setVolume( 0.1 );
 
-		audioLoader.load( 'audio/step1.ogg', ( buffer ) => { step1.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/step2.ogg', ( buffer ) => { step2.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/shot.ogg', ( buffer ) => { shot.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/reload.ogg', ( buffer ) => { reload.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/impact1.ogg', ( buffer ) => { impact1.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/impact2.ogg', ( buffer ) => { impact2.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/impact3.ogg', ( buffer ) => { impact3.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/impact4.ogg', ( buffer ) => { impact4.setBuffer( buffer ) } );
-		audioLoader.load( 'audio/impact5.ogg', ( buffer ) => { impact5.setBuffer( buffer ) } );
+		audioLoader.load( 'audio/step1.ogg', buffer => step1.setBuffer( buffer ) );
+		audioLoader.load( 'audio/step2.ogg', buffer => step2.setBuffer( buffer ) );
+		audioLoader.load( 'audio/shot.ogg', buffer => shot.setBuffer( buffer ) );
+		audioLoader.load( 'audio/reload.ogg', buffer => reload.setBuffer( buffer ) );
+		audioLoader.load( 'audio/impact1.ogg', buffer => impact1.setBuffer( buffer ) );
+		audioLoader.load( 'audio/impact2.ogg', buffer => impact2.setBuffer( buffer ) );
+		audioLoader.load( 'audio/impact3.ogg', buffer => impact3.setBuffer( buffer ) );
+		audioLoader.load( 'audio/impact4.ogg', buffer => impact4.setBuffer( buffer ) );
+		audioLoader.load( 'audio/impact5.ogg', buffer => impact5.setBuffer( buffer ) );
 
 		//
 
