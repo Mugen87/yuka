@@ -1100,6 +1100,20 @@
 		}
 
 		/**
+		* Reflects this vector along the given normal.
+		*
+		* @param {Vector3} normal - The normal vector.
+		* @return {Vector3} A reference to this vector.
+		*/
+		reflect( normal ) {
+
+			// solve r = v - 2( v * n ) * n
+
+			return this.sub( v1.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
+
+		}
+
+		/**
 		* Ensures this 3D vector lies in the given min/max range.
 		*
 		* @param {Vector3} min - The min range.
@@ -1485,6 +1499,8 @@
 		}
 
 	}
+
+	const v1 = new Vector3();
 
 	const WorldUp = new Vector3( 0, 1, 0 );
 
@@ -4683,6 +4699,31 @@
 		}
 
 		/**
+		* Ensures the given point is inside this bounding sphere and stores
+		* the result in the given vector.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		clampPoint( point, result ) {
+
+			result.copy( point );
+
+			const squaredDistance = this.center.squaredDistanceTo( point );
+
+			if ( squaredDistance > ( this.radius * this.radius ) ) {
+
+				result.sub( this.center ).normalize();
+				result.multiplyScalar( this.radius ).add( this.center );
+
+			}
+
+			return result;
+
+		}
+
+		/**
 		* Returns true if the given point is inside this bounding sphere.
 		*
 		* @param {Vector3} point - A point in 3D space.
@@ -4767,7 +4808,7 @@
 
 	}
 
-	const v1 = new Vector3();
+	const v1$1 = new Vector3();
 	const edge1 = new Vector3();
 	const edge2 = new Vector3();
 	const normal = new Vector3();
@@ -4869,9 +4910,9 @@
 		*/
 		intersectBoundingSphere( sphere, result ) {
 
-			v1.subVectors( sphere.center, this.origin );
-			const tca = v1.dot( this.direction );
-			const d2 = v1.dot( v1 ) - tca * tca;
+			v1$1.subVectors( sphere.center, this.origin );
+			const tca = v1$1.dot( this.direction );
+			const d2 = v1$1.dot( v1$1 ) - tca * tca;
 			const radius2 = sphere.radius * sphere.radius;
 
 			if ( d2 > radius2 ) return null;
@@ -5019,8 +5060,8 @@
 
 			}
 
-			v1.subVectors( this.origin, a );
-			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1, edge2 ) );
+			v1$1.subVectors( this.origin, a );
+			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1$1, edge2 ) );
 
 			// b1 < 0, no intersection
 
@@ -5030,7 +5071,7 @@
 
 			}
 
-			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1 ) );
+			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1$1 ) );
 
 			// b2 < 0, no intersection
 
@@ -5050,7 +5091,7 @@
 
 			// line intersects triangle, check if ray does
 
-			const QdN = - sign * v1.dot( normal );
+			const QdN = - sign * v1$1.dot( normal );
 
 			// t < 0, no intersection
 
@@ -12786,7 +12827,7 @@
 
 	}
 
-	const v1$1 = new Vector3();
+	const v1$2 = new Vector3();
 	const v2 = new Vector3();
 
 	/**
@@ -12900,9 +12941,9 @@
 		*/
 		fromCoplanarPoints( a, b, c ) {
 
-			v1$1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+			v1$2.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
 
-			this.fromNormalAndCoplanarPoint( v1$1, a );
+			this.fromNormalAndCoplanarPoint( v1$2, a );
 
 			return this;
 

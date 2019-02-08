@@ -88,6 +88,26 @@ describe( 'BoundingSphere', function () {
 
 	} );
 
+	describe( '#clampPoint()', function () {
+
+		it( 'should clamp a point so it does not exceed the boundaries of the bounding sphere', function () {
+
+			const sphere = new BoundingSphere( zero3, 1 );
+
+			const point1 = new Vector3( 2, 0, 0 ); // outside
+			const point2 = new Vector3( 1, 0, 0 ); // touch
+			const point3 = new Vector3( 0.5, 0, 0 ); // inside
+
+			const result = new Vector3();
+
+			expect( sphere.clampPoint( point1, result ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
+			expect( sphere.clampPoint( point2, result ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
+			expect( sphere.clampPoint( point3, result ) ).to.deep.equal( { x: 0.5, y: 0, z: 0 } );
+
+		} );
+
+	} );
+
 	describe( '#containsPoint()', function () {
 
 		it( 'should return true if a point is inside the bounding sphere', function () {
