@@ -56,7 +56,7 @@ class World {
 
 		if ( entity.geometry ) {
 
-			const index = this.obstacles.indexOf( entity.geometry );
+			const index = this.obstacles.indexOf( entity );
 
 			if ( index !== - 1 ) this.obstacles.splice( index, 1 );
 
