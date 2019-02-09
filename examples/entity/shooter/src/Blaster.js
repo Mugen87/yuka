@@ -200,6 +200,12 @@ class Blaster extends GameEntity {
 
 			this.updateUI();
 
+		} else if ( this.status === STATUS.EMPTY ) {
+
+			const audio = this.sounds.get( 'empty' );
+			if ( audio.isPlaying === true ) audio.stop();
+			audio.play();
+
 		}
 
 		return this;

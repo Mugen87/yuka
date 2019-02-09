@@ -144,12 +144,18 @@
 
 		const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 		dirLight.castShadow = true;
-		dirLight.shadow.camera.top = 20;
-		dirLight.shadow.camera.bottom = 10;
+		dirLight.shadow.camera.top = 5;
+		dirLight.shadow.camera.bottom = - 5;
 		dirLight.shadow.camera.left = - 5;
 		dirLight.shadow.camera.right = 5;
-		dirLight.position.set( 0, 30, 30 );
+		dirLight.shadow.camera.near = 0.1;
+		dirLight.shadow.camera.far = 25;
+		dirLight.position.set( 5, 7.5, - 10 );
+		dirLight.target.position.set( 0, 0, - 25 );
+		dirLight.target.updateMatrixWorld();
 		scene.add( dirLight );
+
+		// scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
 
 		//
 
@@ -188,7 +194,7 @@
 
 		gltfLoader.load( 'model/target.glb', ( gltf ) => {
 
-			const targetMesh = gltf.scene.getObjectByName( 'target' );
+			const targetMesh = gltf.scene.getObjectByName( 'LowPoly003__0' );
 			targetMesh.matrixAutoUpdate = false;
 			targetMesh.castShadow = true;
 
@@ -199,8 +205,9 @@
 			const target = new Target( geometry );
 
 			target.setRenderComponent( targetMesh, sync );
-			target.position.set( 0, 1, - 20 );
-			target.rotation.fromEuler( Math.PI, Math.PI * 0.5, 0 );
+			target.position.set( 0, 5, - 20 );
+			target.rotation.fromEuler( Math.PI * 0.5, Math.PI, Math.PI );
+			target.scale.set( 0.5, 0.5, 0.5 );
 
 			world.add( target );
 
@@ -221,9 +228,11 @@
 		const impact3 = new THREE.PositionalAudio( listener );
 		const impact4 = new THREE.PositionalAudio( listener );
 		const impact5 = new THREE.PositionalAudio( listener );
+		const empty = new THREE.PositionalAudio( listener );
 
 		shot.setVolume( 0.3 );
 		reload.setVolume( 0.1 );
+		empty.setVolume( 0.5 );
 
 		audioLoader.load( 'audio/step1.ogg', buffer => step1.setBuffer( buffer ) );
 		audioLoader.load( 'audio/step2.ogg', buffer => step2.setBuffer( buffer ) );
@@ -234,6 +243,7 @@
 		audioLoader.load( 'audio/impact3.ogg', buffer => impact3.setBuffer( buffer ) );
 		audioLoader.load( 'audio/impact4.ogg', buffer => impact4.setBuffer( buffer ) );
 		audioLoader.load( 'audio/impact5.ogg', buffer => impact5.setBuffer( buffer ) );
+		audioLoader.load( 'audio/empty.ogg', buffer => empty.setBuffer( buffer ) );
 
 		//
 
@@ -274,6 +284,7 @@
 		player.weapon.sounds.set( 'impact3', impact3 );
 		player.weapon.sounds.set( 'impact4', impact4 );
 		player.weapon.sounds.set( 'impact5', impact5 );
+		player.weapon.sounds.set( 'empty', empty );
 
 		controls = new FirstPersonControls( player );
 		controls.lookSpeed = 2;
