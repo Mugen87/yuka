@@ -756,6 +756,20 @@ class Vector3 {
 	}
 
 	/**
+	* Reflects this vector along the given normal.
+	*
+	* @param {Vector3} normal - The normal vector.
+	* @return {Vector3} A reference to this vector.
+	*/
+	reflect( normal ) {
+
+		// solve r = v - 2( v * n ) * n
+
+		return this.sub( v1.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
+
+	}
+
+	/**
 	* Ensures this 3D vector lies in the given min/max range.
 	*
 	* @param {Vector3} min - The min range.
@@ -1141,6 +1155,8 @@ class Vector3 {
 	}
 
 }
+
+const v1 = new Vector3();
 
 const WorldUp = new Vector3( 0, 1, 0 );
 
@@ -4339,6 +4355,31 @@ class BoundingSphere {
 	}
 
 	/**
+	* Ensures the given point is inside this bounding sphere and stores
+	* the result in the given vector.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	clampPoint( point, result ) {
+
+		result.copy( point );
+
+		const squaredDistance = this.center.squaredDistanceTo( point );
+
+		if ( squaredDistance > ( this.radius * this.radius ) ) {
+
+			result.sub( this.center ).normalize();
+			result.multiplyScalar( this.radius ).add( this.center );
+
+		}
+
+		return result;
+
+	}
+
+	/**
 	* Returns true if the given point is inside this bounding sphere.
 	*
 	* @param {Vector3} point - A point in 3D space.
@@ -4423,7 +4464,7 @@ class BoundingSphere {
 
 }
 
-const v1 = new Vector3();
+const v1$1 = new Vector3();
 const edge1 = new Vector3();
 const edge2 = new Vector3();
 const normal = new Vector3();
@@ -4525,9 +4566,9 @@ class Ray {
 	*/
 	intersectBoundingSphere( sphere, result ) {
 
-		v1.subVectors( sphere.center, this.origin );
-		const tca = v1.dot( this.direction );
-		const d2 = v1.dot( v1 ) - tca * tca;
+		v1$1.subVectors( sphere.center, this.origin );
+		const tca = v1$1.dot( this.direction );
+		const d2 = v1$1.dot( v1$1 ) - tca * tca;
 		const radius2 = sphere.radius * sphere.radius;
 
 		if ( d2 > radius2 ) return null;
@@ -4640,6 +4681,7 @@ class Ray {
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
 	* @param {Triangle} triangle - A triangle.
+	* @param {Boolean} backfaceCulling - Whether back face culling is active or not.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
@@ -4674,8 +4716,8 @@ class Ray {
 
 		}
 
-		v1.subVectors( this.origin, a );
-		const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1, edge2 ) );
+		v1$1.subVectors( this.origin, a );
+		const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1$1, edge2 ) );
 
 		// b1 < 0, no intersection
 
@@ -4685,7 +4727,7 @@ class Ray {
 
 		}
 
-		const DdE1xQ = sign * this.direction.dot( edge1.cross( v1 ) );
+		const DdE1xQ = sign * this.direction.dot( edge1.cross( v1$1 ) );
 
 		// b2 < 0, no intersection
 
@@ -4705,7 +4747,7 @@ class Ray {
 
 		// line intersects triangle, check if ray does
 
-		const QdN = - sign * v1.dot( normal );
+		const QdN = - sign * v1$1.dot( normal );
 
 		// t < 0, no intersection
 
@@ -7510,7 +7552,7 @@ class MeshGeometry {
 		};
 
 		json.indices = {
-			type: this.indices ? this.indices.constructor.name : null,
+			type: this.indices ? this.indices.constructor.name : 'null',
 			data: this.indices ? Array.from( this.indices ) : null
 		};
 
@@ -8672,6 +8714,128 @@ class FuzzySet extends FuzzyTerm {
 }
 
 /**
+* Class for representing a fuzzy set that has a s-shape membership function with
+* values from highest to lowest.
+*
+* @author robp94 / https://github.com/robp94
+* @augments FuzzySet
+*/
+class LeftSCurveFuzzySet extends FuzzySet {
+
+	/**
+	* Constructs a new S-curve fuzzy set with the given values.
+	*
+	* @param {Number} left - Represents the left border of this fuzzy set.
+	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+	* @param {Number} right - Represents the right border of this fuzzy set.
+	*/
+	constructor( left = 0, midpoint = 0, right = 0 ) {
+
+		// the representative value is the midpoint of the plateau of the shoulder
+
+		const representativeValue = ( midpoint + left ) / 2;
+
+		super( representativeValue );
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = left;
+
+		/**
+		* Represents the peak value of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.midpoint = midpoint;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = right;
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( value ) {
+
+		const midpoint = this.midpoint;
+		const left = this.left;
+		const right = this.right;
+
+		// find DOM if the given value is left of the center or equal to the center
+
+		if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+			return 1;
+
+		}
+
+		// find DOM if the given value is right of the midpoint
+
+		if ( ( value > midpoint ) && ( value <= right ) ) {
+
+			if ( value >= ( ( midpoint + right ) / 2 ) ) {
+
+				return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
+
+			} else {
+
+				return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
+
+			}
+
+		}
+
+		// out of range
+
+		return 0;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.midpoint = this.midpoint;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {LeftSCurveFuzzySet} A reference to this fuzzy set.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.midpoint = json.midpoint;
+
+		return this;
+
+	}
+
+}
+
+/**
 * Class for representing a fuzzy set that has a left shoulder shape. The range between
 * the midpoint and left border point represents the same DOM.
 *
@@ -8774,6 +8938,269 @@ class LeftShoulderFuzzySet extends FuzzySet {
 	*
 	* @param {Object} json - The JSON object.
 	* @return {LeftShoulderFuzzySet} A reference to this fuzzy set.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.midpoint = json.midpoint;
+
+		return this;
+
+	}
+
+}
+
+/**
+* Class for representing a fuzzy set that has a normal distribution shape. It can be defined
+* by the mean and standard deviation.
+*
+* @author robp94 / https://github.com/robp94
+* @augments FuzzySet
+*/
+class NormalDistFuzzySet extends FuzzySet {
+
+	/**
+	* Constructs a new triangular fuzzy set with the given values.
+	*
+	* @param {Number} left - Represents the left border of this fuzzy set.
+	* @param {Number} midpoint - Mean or expectation of the normal distribution.
+	* @param {Number} right - Represents the right border of this fuzzy set.
+	* @param {Number} standardDeviation - Standard deviation of the normal distribution.
+	*/
+	constructor( left = 0, midpoint = 0, right = 0, standardDeviation = 0 ) {
+
+		super( midpoint );
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = left;
+
+		/**
+		* Represents the peak value of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.midpoint = midpoint;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = right;
+
+		/**
+		* Represents the standard deviation of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.standardDeviation = standardDeviation;
+
+		//
+
+		this._cache = {};
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( value ) {
+
+		this._updateCache();
+
+		if ( value >= this.right || value <= this.left ) return 0;
+
+		return probabilityDensity( value, this.midpoint, this._cache.variance ) / this._cache.normalizationFactor;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.midpoint = this.midpoint;
+		json.standardDeviation = this.standardDeviation;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {NormalDistFuzzySet} A reference to this fuzzy set.
+	*/
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.midpoint = json.midpoint;
+		this.standardDeviation = json.standardDeviation;
+
+		return this;
+
+	}
+
+	//
+
+	_updateCache() {
+
+		const cache =	this._cache;
+		const midpoint = this.midpoint;
+		const standardDeviation = this.standardDeviation;
+
+		if ( midpoint !== cache.midpoint || standardDeviation !== cache.standardDeviation ) {
+
+			const variance = standardDeviation * standardDeviation;
+
+			cache.midpoint = midpoint;
+			cache.standardDeviation = standardDeviation;
+			cache.variance = variance;
+
+			// this value is used to ensure the DOM lies in the range of [0,1]
+
+			cache.normalizationFactor = probabilityDensity( midpoint, midpoint, variance );
+
+		}
+
+		return this;
+
+	}
+
+}
+
+//
+
+function probabilityDensity( x, mean, variance ) {
+
+	return ( 1 / Math.sqrt( 2 * Math.PI * variance ) ) * Math.exp( - ( Math.pow( ( x - mean ), 2 ) ) / ( 2 * variance ) );
+
+}
+
+/**
+* Class for representing a fuzzy set that has a s-shape membership function with
+* values from lowest to highest.
+*
+* @author robp94 / https://github.com/robp94
+* @augments FuzzySet
+*/
+class RightSCurveFuzzySet extends FuzzySet {
+
+	/**
+	* Constructs a new S-curve fuzzy set with the given values.
+	*
+	* @param {Number} left - Represents the left border of this fuzzy set.
+	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+	* @param {Number} right - Represents the right border of this fuzzy set.
+	*/
+	constructor( left = 0, midpoint = 0, right = 0 ) {
+
+		// the representative value is the midpoint of the plateau of the shoulder
+
+		const representativeValue = ( midpoint + right ) / 2;
+
+		super( representativeValue );
+
+		/**
+		* Represents the left border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.left = left;
+
+		/**
+		* Represents the peak value of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.midpoint = midpoint;
+
+		/**
+		* Represents the right border of this fuzzy set.
+		* @type Number
+		* @default 0
+		*/
+		this.right = right;
+
+	}
+
+	/**
+	* Computes the degree of membership for the given value.
+	*
+	* @param {Number} value - The value used to calculate the degree of membership.
+	* @return {Number} The degree of membership.
+	*/
+	computeDegreeOfMembership( value ) {
+
+		const midpoint = this.midpoint;
+		const left = this.left;
+		const right = this.right;
+
+		// find DOM if the given value is left of the center or equal to the center
+
+		if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+			if ( value <= ( ( left + midpoint ) / 2 ) ) {
+
+				return 2 * ( Math.pow( ( value - left ) / ( midpoint - left ), 2 ) );
+
+			} else {
+
+				return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - left ), 2 ) ) );
+
+			}
+
+
+		}
+
+		// find DOM if the given value is right of the midpoint
+
+		if ( ( value > midpoint ) && ( value <= right ) ) {
+
+			return 1;
+
+		}
+
+		// out of range
+
+		return 0;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.midpoint = this.midpoint;
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {RightSCurveFuzzySet} A reference to this fuzzy set.
 	*/
 	fromJSON( json ) {
 
@@ -8913,9 +9340,7 @@ class RightShoulderFuzzySet extends FuzzySet {
 class SingletonFuzzySet extends FuzzySet {
 
 	/**
-	* Constructs a new singleton fuzzy set with the given values. {@link SingletonFuzzySet#midpoint}
-	* is not needed in this class but it's still present in order to have a common interface for all
-	* fuzzy sets.
+	* Constructs a new singleton fuzzy set with the given values.
 	*
 	* @param {Number} left - Represents the left border of this fuzzy set.
 	* @param {Number} midpoint - Represents the peak value of this fuzzy set.
@@ -8964,10 +9389,10 @@ class SingletonFuzzySet extends FuzzySet {
 	}
 
 	/**
-	 * Transforms this instance into a JSON object.
-	 *
-	 * @return {Object} The JSON object.
-	 */
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
 	toJSON() {
 
 		const json = super.toJSON();
@@ -8979,11 +9404,11 @@ class SingletonFuzzySet extends FuzzySet {
 	}
 
 	/**
-	 * Restores this instance from the given JSON object.
-	 *
-	 * @param {Object} json - The JSON object.
-	 * @return {SingletonFuzzySet} A reference to this fuzzy set.
-	 */
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {SingletonFuzzySet} A reference to this fuzzy set.
+	*/
 	fromJSON( json ) {
 
 		super.fromJSON( json );
@@ -12396,7 +12821,7 @@ class LineSegment {
 
 }
 
-const v1$1 = new Vector3();
+const v1$2 = new Vector3();
 const v2 = new Vector3();
 
 /**
@@ -12510,9 +12935,9 @@ class Plane {
 	*/
 	fromCoplanarPoints( a, b, c ) {
 
-		v1$1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+		v1$2.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
 
-		this.fromNormalAndCoplanarPoint( v1$1, a );
+		this.fromNormalAndCoplanarPoint( v1$2, a );
 
 		return this;
 
@@ -15737,4 +16162,4 @@ function runTaskQueue( deadline ) {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftShoulderFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };

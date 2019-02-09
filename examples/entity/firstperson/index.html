@@ -9,7 +9,7 @@
 			* {
 				-webkit-user-select: none;
 				-moz-user-select: none;
-        -ms-user-select: none;
+				-ms-user-select: none;
 				user-select: none;
 			}
 		</style>
@@ -119,17 +119,8 @@
 		const step1 = new THREE.Audio( listener );
 		const step2 = new THREE.Audio( listener );
 
-		audioLoader.load( 'audio/step1.ogg', ( buffer ) => {
-
-			step1.setBuffer( buffer );
-
-		} );
-
-		audioLoader.load( 'audio/step2.ogg', ( buffer ) => {
-
-			step2.setBuffer( buffer );
-
-		} );
+		audioLoader.load( 'audio/step1.ogg', buffer => step1.setBuffer( buffer ) );
+		audioLoader.load( 'audio/step2.ogg', buffer => step2.setBuffer( buffer ) );
 
 		//
 
