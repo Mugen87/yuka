@@ -6,7 +6,10 @@ import { Vector3 } from '../../../../build/yuka.module.js';
 import * as THREE from '../../../lib/three.module.js';
 import { Bullet } from './Bullet.js';
 
-const closestPoint = new Vector3();
+const intersection = {
+	point: new Vector3(),
+	normal: new Vector3()
+};
 const target = new Vector3();
 
 class World {
@@ -112,15 +115,17 @@ class World {
 
 			const obstalce = obstacles[ i ];
 
-			if ( obstalce.intersectRay( ray, intersectionPoint, normal ) !== null ) {
+			if ( obstalce.intersectRay( ray, intersection.point, intersection.normal ) !== null ) {
 
-				const squaredDistance = intersectionPoint.squaredDistanceTo( ray.origin );
+				const squaredDistance = intersection.point.squaredDistanceTo( ray.origin );
 
 				if ( squaredDistance < minDistance ) {
 
 					minDistance = squaredDistance;
-					closestPoint.copy( intersectionPoint );
 					closestObstacle = obstalce;
+
+					intersectionPoint.copy( intersection.point );
+					if ( normal ) normal.copy( intersection.normal );
 
 				}
 
