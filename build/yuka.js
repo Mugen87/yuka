@@ -4731,7 +4731,6 @@
 
 			}
 
-
 			// there is no intersection if t is negative
 
 			return ( t >= 0 ) ? this.at( t, result ) : null;
