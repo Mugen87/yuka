@@ -174,6 +174,21 @@ describe( 'AABB', function () {
 
 	} );
 
+	describe( '#getSize()', function () {
+
+		it( 'should compute the size (width, height, depth) of this AABB and store it into the given vector', function () {
+
+			const aabb = new AABB( one3, two3 );
+			const size = new Vector3();
+
+			aabb.getSize( size );
+
+			expect( size ).to.deep.equal( new Vector3( 1, 1, 1 ) );
+
+		} );
+
+	} );
+
 	describe( '#intersectsAABB()', function () {
 
 		it( 'should return true if the given AABB intersects this AABB', function () {

@@ -143,6 +143,18 @@ class AABB {
 	}
 
 	/**
+	* Computes the size (width, height, depth) of this AABB and stores it into the given vector.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getSize( result ) {
+
+		return result.subVectors( this.max, this.min );
+
+	}
+
+	/**
 	* Returns true if the given AABB intersects this AABB.
 	*
 	* @param {AABB} aabb - The AABB to test.
