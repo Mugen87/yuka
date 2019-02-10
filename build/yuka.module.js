@@ -4406,6 +4406,19 @@ class BoundingSphere {
 	}
 
 	/**
+	* Returns the normal for a given point on this bounding sphere's surface.
+	*
+	* @param {Vector3} point - The point on the surface
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getNormalFromSurfacePoint( point, result ) {
+
+		return result.subVectors( point, this.center ).normalize();
+
+	}
+
+	/**
 	* Transforms this bounding sphere with the given 4x4 transformation matrix.
 	*
 	* @param {Matrix4} matrix - The 4x4 transformation matrix.
@@ -4603,7 +4616,7 @@ class Ray {
 	* Performs a ray/AABB intersection test and stores the intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
-	* @param {BoundingSphere} sphere - A bounding sphere.
+	* @param {AABB} aabb - An AABB.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
@@ -4673,6 +4686,49 @@ class Ray {
 		if ( tmax < 0 ) return null;
 
 		return this.at( tmin >= 0 ? tmin : tmax, result );
+
+	}
+
+	/**
+	* Performs a ray/plane intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	*
+	* @param {Plane} plane - A plane.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectPlane( plane, result ) {
+
+		let t;
+
+		const denominator = plane.normal.dot( this.direction );
+
+		if ( denominator === 0 ) {
+
+			if ( plane.distanceToPoint( this.origin ) === 0 ) {
+
+				// ray is coplanar
+
+				t = 0;
+
+			} else {
+
+				// ray is parallel, no intersection
+
+				return null;
+
+			}
+
+		} else {
+
+			t = - ( this.origin.dot( plane.normal ) + plane.constant ) / denominator;
+
+		}
+
+
+		// there is no intersection if t is negative
+
+		return ( t >= 0 ) ? this.at( t, result ) : null;
 
 	}
 
@@ -6191,6 +6247,8 @@ class TriggerRegion {
 }
 
 const vector = new Vector3();
+const center = new Vector3();
+const size = new Vector3();
 
 const points = [
 	new Vector3(),
@@ -6333,6 +6391,18 @@ class AABB {
 	}
 
 	/**
+	* Computes the size (width, height, depth) of this AABB and stores it into the given vector.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getSize( result ) {
+
+		return result.subVectors( this.max, this.min );
+
+	}
+
+	/**
 	* Returns true if the given AABB intersects this AABB.
 	*
 	* @param {AABB} aabb - The AABB to test.
@@ -6361,6 +6431,66 @@ class AABB {
 		// if that point is inside the sphere, the AABB and sphere intersect.
 
 		return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+	}
+
+	/**
+	* Returns the normal for a given point on this AABB's surface.
+	*
+	* @param {Vector3} point - The point on the surface
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getNormalFromSurfacePoint( point, result ) {
+
+		// from https://www.gamedev.net/forums/topic/551816-finding-the-aabb-surface-normal-from-an-intersection-point-on-aabb/
+
+		result.set( 0, 0, 0 );
+
+		let distance;
+		let minDistance = Infinity;
+
+		this.getCenter( center );
+		this.getSize( size );
+
+		// transform point into local space of AABB
+
+		vector.copy( point ).sub( center );
+
+		// x-axis
+
+		distance = Math.abs( size.x - Math.abs( vector.x ) );
+
+		if ( distance < minDistance ) {
+
+			minDistance = distance;
+			result.set( 1 * Math.sign( vector.x ), 0, 0 );
+
+		}
+
+		// y-axis
+
+		distance = Math.abs( size.y - Math.abs( vector.y ) );
+
+		if ( distance < minDistance ) {
+
+			minDistance = distance;
+			result.set( 0, 1 * Math.sign( vector.y ), 0 );
+
+		}
+
+		// z-axis
+
+		distance = Math.abs( size.z - Math.abs( vector.z ) );
+
+		if ( distance < minDistance ) {
+
+			minDistance = distance;
+			result.set( 0, 0, 1 * Math.sign( vector.z ) );
+
+		}
+
+		return result;
 
 	}
 
@@ -12832,7 +12962,7 @@ const v2 = new Vector3();
 class Plane {
 
 	/**
-	* Constructs a new plane with the given values. The sign of __Plane#constant__ determines the side of the plane on which the origin is located.
+	* Constructs a new plane with the given values. The sign of {@link Plane#constant} determines the side of the plane on which the origin is located.
 	*
 	* @param {Vector3} normal - The normal vector of the plane.
 	* @param {Number} constant - The distance of the plane from the origin.
