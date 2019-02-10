@@ -170,6 +170,20 @@ describe( 'BoundingSphere', function () {
 
 	} );
 
+	describe( '#getNormalFromSurfacePoint()', function () {
+
+		it( 'should return the normal for a given point on this bounding sphere its surface', function () {
+
+			const sphere = new BoundingSphere( one3, 1 );
+			const surfacePoint = new Vector3( 2, 1, 1 );
+			const normal = new Vector3();
+
+			expect( sphere.getNormalFromSurfacePoint( surfacePoint, normal ) ).to.deep.equal( new Vector3( 1, 0, 0 ) );
+
+		} );
+
+	} );
+
 	describe( '#applyMatrix4()', function () {
 
 		it( 'should transform this bounding sphere by the given 4x4 transformation matrix', function () {

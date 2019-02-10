@@ -123,6 +123,19 @@ class BoundingSphere {
 	}
 
 	/**
+	* Returns the normal for a given point on this bounding sphere's surface.
+	*
+	* @param {Vector3} point - The point on the surface
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getNormalFromSurfacePoint( point, result ) {
+
+		return result.subVectors( point, this.center ).normalize();
+
+	}
+
+	/**
 	* Transforms this bounding sphere with the given 4x4 transformation matrix.
 	*
 	* @param {Matrix4} matrix - The 4x4 transformation matrix.

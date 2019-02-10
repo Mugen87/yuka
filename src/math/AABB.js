@@ -1,6 +1,8 @@
 import { Vector3 } from './Vector3.js';
 
 const vector = new Vector3();
+const center = new Vector3();
+const size = new Vector3();
 
 const points = [
 	new Vector3(),
@@ -183,6 +185,66 @@ class AABB {
 		// if that point is inside the sphere, the AABB and sphere intersect.
 
 		return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+	}
+
+	/**
+	* Returns the normal for a given point on this AABB's surface.
+	*
+	* @param {Vector3} point - The point on the surface
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getNormalFromSurfacePoint( point, result ) {
+
+		// from https://www.gamedev.net/forums/topic/551816-finding-the-aabb-surface-normal-from-an-intersection-point-on-aabb/
+
+		result.set( 0, 0, 0 );
+
+		let distance;
+		let minDistance = Infinity;
+
+		this.getCenter( center );
+		this.getSize( size );
+
+		// transform point into local space of AABB
+
+		vector.copy( point ).sub( center );
+
+		// x-axis
+
+		distance = Math.abs( size.x - Math.abs( vector.x ) );
+
+		if ( distance < minDistance ) {
+
+			minDistance = distance;
+			result.set( 1 * Math.sign( vector.x ), 0, 0 );
+
+		}
+
+		// y-axis
+
+		distance = Math.abs( size.y - Math.abs( vector.y ) );
+
+		if ( distance < minDistance ) {
+
+			minDistance = distance;
+			result.set( 0, 1 * Math.sign( vector.y ), 0 );
+
+		}
+
+		// z-axis
+
+		distance = Math.abs( size.z - Math.abs( vector.z ) );
+
+		if ( distance < minDistance ) {
+
+			minDistance = distance;
+			result.set( 0, 0, 1 * Math.sign( vector.z ) );
+
+		}
+
+		return result;
 
 	}
 
