@@ -15,6 +15,8 @@ class AssetManager {
 		this.textureLoader = new THREE.TextureLoader( this.loadingManager );
 		this.gltfLoader = new GLTFLoader( this.loadingManager );
 
+		this.listener = new THREE.AudioListener();
+
 		this.animations = new Map();
 		this.audios = new Map();
 		this.models = new Map();
@@ -31,7 +33,7 @@ class AssetManager {
 
 		return new Promise( ( resolve ) => {
 
-			loadingManager.onLoad = function () {
+			loadingManager.onLoad = () => {
 
 				resolve();
 
@@ -45,8 +47,6 @@ class AssetManager {
 
 		const audioLoader = this.audioLoader;
 		const audios = this.audios;
-
-		this.listener = new THREE.AudioListener();
 		const listener = this.listener;
 
 		const step1 = new THREE.Audio( listener );

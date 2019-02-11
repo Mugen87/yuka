@@ -33,6 +33,7 @@ class World {
 		this.animations = new Map();
 
 		this.player = null;
+		this.controls = null;
 		this.obstacles = new Array();
 		this.bulletHoles = new Array();
 
