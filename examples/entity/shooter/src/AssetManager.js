@@ -103,7 +103,6 @@ class AssetManager {
 			targetMesh.geometry.rotateX( Math.PI * 0.5 );
 			targetMesh.geometry.rotateY( Math.PI );
 			targetMesh.geometry.rotateZ( Math.PI );
-			targetMesh.geometry.translate( 0, 5, - 20 );
 			targetMesh.matrixAutoUpdate = false;
 			targetMesh.castShadow = true;
 
