@@ -112,7 +112,7 @@ describe( 'TaskQueue', function () {
 
 				done();
 
-			}, 10 );
+			}, 100 );
 
 		} );
 
@@ -137,7 +137,7 @@ describe( 'TaskQueue', function () {
 
 				done();
 
-			}, 10 );
+			}, 100 );
 
 		} );
 
