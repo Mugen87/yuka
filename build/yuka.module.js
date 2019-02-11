@@ -3211,6 +3211,8 @@ class MovingEntity extends GameEntity {
 * Base class for all concrete steering behaviors. They produce a force that describes
 * where an agent should move and how fast it should travel to get there.
 *
+* Note: All built-in steering behaviors assume a {@link Vehicle#mass} of one. Different values can lead to an unexpected result.
+*
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
 class SteeringBehavior {
