@@ -330,6 +330,7 @@ class World {
 
 		const geometry = new YUKA.MeshGeometry( vertices, indices );
 		const target = new Target( geometry );
+		target.position.set( 0, 5, - 20 );
 		target.setRenderComponent( targetMesh, sync );
 
 		this.add( target );
