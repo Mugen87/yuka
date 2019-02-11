@@ -2,15 +2,20 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Vector3 } from '../../../../build/yuka.module.js';
+import * as YUKA from '../../../../build/yuka.module.js';
 import * as THREE from '../../../lib/three.module.js';
+import { AssetManager } from './AssetManager.js';
 import { Bullet } from './Bullet.js';
+import { Ground } from './Ground.js';
+import { Player } from './Player.js';
+import { Target } from './Target.js';
+import { FirstPersonControls } from './FirstPersonControls.js';
 
+const target = new YUKA.Vector3();
 const intersection = {
-	point: new Vector3(),
-	normal: new Vector3()
+	point: new YUKA.Vector3(),
+	normal: new YUKA.Vector3()
 };
-const target = new Vector3();
 
 class World {
 
@@ -18,14 +23,61 @@ class World {
 
 		this.maxBulletHoles = 20;
 
-		this.entityManager = null;
-		this.scene = null;
+		this.entityManager = new YUKA.EntityManager();
+		this.time = new YUKA.Time();
 
+		this.camera = null;
+		this.scene = null;
+		this.renderer = null;
+		this.audios = new Map();
+		this.animations = new Map();
+
+		this.player = null;
 		this.obstacles = new Array();
 		this.bulletHoles = new Array();
-		this.renderComponents = new Map();
 
-		this._setupRenderComponents();
+		this.assetManager = new AssetManager();
+
+		this._animate = animate.bind( this );
+		this._onIntroClick = onIntroClick.bind( this );
+		this._onWindowResize = onWindowResize.bind( this );
+
+		this.ui = {
+			intro: document.getElementById( 'intro' ),
+			crosshairs: document.getElementById( 'crosshairs' ),
+			loadingScreen: document.getElementById( 'loading-screen' )
+		};
+
+	}
+
+	init() {
+
+		this.assetManager.init().then( () => {
+
+			this._initScene();
+			this._initGround();
+			this._initPlayer();
+			this._initControls();
+			this._initTarget();
+			this._initUI();
+
+			this._animate();
+
+		} );
+
+	}
+
+	update() {
+
+		const delta = this.time.update().getDelta();
+
+		this.controls.update( delta );
+
+		this.entityManager.update( delta );
+
+		if ( this.mixer ) this.mixer.update( delta );
+
+		this.renderer.render( this.scene, this.camera );
 
 	}
 
@@ -70,10 +122,10 @@ class World {
 
 	addBullet( owner, ray ) {
 
-		const renderComponent = this.renderComponents.get( 'bulletLine' ).clone();
+		const bulletLine = this.assetManager.models.get( 'bulletLine' ).clone();
 
 		const bullet = new Bullet( owner, ray );
-		bullet.setRenderComponent( renderComponent, sync );
+		bullet.setRenderComponent( bulletLine, sync );
 
 		this.add( bullet );
 
@@ -81,7 +133,7 @@ class World {
 
 	addBulletHole( position, normal, audio ) {
 
-		const bulletHole = this.renderComponents.get( 'bulletHole' ).clone();
+		const bulletHole = this.assetManager.models.get( 'bulletHole' ).clone();
 		bulletHole.add( audio );
 
 		const s = 1 + ( Math.random() * 0.5 );
@@ -137,33 +189,159 @@ class World {
 
 	}
 
-	_setupRenderComponents() {
+	_initScene() {
 
-		const loader = new THREE.TextureLoader();
+		// camera
 
-		// bullet hole
+		this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
+		this.camera.matrixAutoUpdate = false;
+		this.camera.add( this.assetManager.listener );
 
-		const texture = loader.load( 'model/bulletHole.png' );
-		texture.minFilter = THREE.LinearFilter;
-		const bulletHoleGeometry = new THREE.PlaneBufferGeometry( 0.1, 0.1 );
-		const bulletHoleMaterial = new THREE.MeshLambertMaterial( { map: texture, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: - 4 } );
+		// audios
 
-		const bulletHole = new THREE.Mesh( bulletHoleGeometry, bulletHoleMaterial );
-		bulletHole.matrixAutoUpdate = false;
+		this.audios = this.assetManager.audios;
 
-		this.renderComponents.set( 'bulletHole', bulletHole );
+		// scene
 
-		// bullet line
+		this.scene = new THREE.Scene();
+		this.scene.background = new THREE.Color( 0xa0a0a0 );
+		this.scene.fog = new THREE.Fog( 0xa0a0a0, 10, 50 );
 
-		const bulletLineGeometry = new THREE.BufferGeometry();
-		const bulletLineMaterial = new THREE.LineBasicMaterial( { color: 0xfbf8e6 } );
+		// lights
 
-		bulletLineGeometry.setFromPoints( [ new THREE.Vector3(), new THREE.Vector3( 0, 0, - 1 ) ] );
+		const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.8 );
+		hemiLight.position.set( 0, 100, 0 );
+		this.scene.add( hemiLight );
 
-		const bulletLine = new THREE.LineSegments( bulletLineGeometry, bulletLineMaterial );
-		bulletLine.matrixAutoUpdate = false;
+		const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+		dirLight.castShadow = true;
+		dirLight.shadow.camera.top = 5;
+		dirLight.shadow.camera.bottom = - 5;
+		dirLight.shadow.camera.left = - 5;
+		dirLight.shadow.camera.right = 5;
+		dirLight.shadow.camera.near = 0.1;
+		dirLight.shadow.camera.far = 25;
+		dirLight.position.set( 5, 7.5, - 10 );
+		dirLight.target.position.set( 0, 0, - 25 );
+		dirLight.target.updateMatrixWorld();
+		this.scene.add( dirLight );
 
-		this.renderComponents.set( 'bulletLine', bulletLine );
+		// this.scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
+
+		// renderer
+
+		this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+		this.renderer.setSize( window.innerWidth, window.innerHeight );
+		this.renderer.shadowMap.enabled = true;
+		this.renderer.gammaOutput = true;
+		document.body.appendChild( this.renderer.domElement );
+
+		// listeners
+
+		window.addEventListener( 'resize', this._onWindowResize, false );
+		this.ui.intro.addEventListener( 'click', this._onIntroClick, false );
+
+	}
+
+	_initGround() {
+
+		const groundMesh = this.assetManager.models.get( 'ground' );
+
+		const vertices = groundMesh.geometry.attributes.position.array;
+		const indices = groundMesh.geometry.index.array;
+
+		const geometry = new YUKA.MeshGeometry( vertices, indices );
+		const ground = new Ground( geometry );
+		ground.setRenderComponent( groundMesh, sync );
+
+		this.add( ground );
+
+	}
+
+	_initPlayer() {
+
+		const player = new Player();
+		player.head.setRenderComponent( this.camera, syncCamera );
+
+		this.add( player );
+		this.player = player;
+
+		// weapon
+
+		const weapon = player.weapon;
+		const weaponMesh = this.assetManager.models.get( 'weapon' );
+		weapon.setRenderComponent( weaponMesh, sync );
+		this.scene.add( weaponMesh );
+
+		weaponMesh.add( this.audios.get( 'shot' ) );
+		weaponMesh.add( this.audios.get( 'reload' ) );
+		weaponMesh.add( this.audios.get( 'empty' ) );
+
+		// animations
+
+		this.mixer = new THREE.AnimationMixer( player.weapon );
+
+		const shotClip = this.assetManager.animations.get( 'shot' );
+		const shotAction = this.mixer.clipAction( shotClip );
+		shotAction.loop = THREE.LoopOnce;
+
+		this.animations.set( 'shot', shotAction );
+
+		const reloadClip = this.assetManager.animations.get( 'reload' );
+		const reloadAction = this.mixer.clipAction( reloadClip );
+		reloadAction.loop = THREE.LoopOnce;
+
+		this.animations.set( 'reload', reloadAction );
+
+	}
+
+	_initControls() {
+
+		const player = this.player;
+
+		this.controls = new FirstPersonControls( player );
+		this.controls.lookSpeed = 2;
+
+		const intro = this.ui.intro;
+		const crosshairs = this.ui.crosshairs;
+
+		this.controls.addEventListener( 'lock', () => {
+
+			intro.classList.add( 'hidden' );
+			crosshairs.classList.remove( 'hidden' );
+
+		} );
+
+		this.controls.addEventListener( 'unlock', () => {
+
+			intro.classList.remove( 'hidden' );
+			crosshairs.classList.add( 'hidden' );
+
+		} );
+
+	}
+
+	_initTarget() {
+
+		const targetMesh = this.assetManager.models.get( 'target' );
+
+		const vertices = targetMesh.geometry.attributes.position.array;
+		const indices = targetMesh.geometry.index.array;
+
+		const geometry = new YUKA.MeshGeometry( vertices, indices );
+		const target = new Target( geometry );
+		target.setRenderComponent( targetMesh, sync );
+
+		this.add( target );
+
+	}
+
+	_initUI() {
+
+		const loadingScreen = this.ui.loadingScreen;
+
+		loadingScreen.classList.add( 'fade-out' );
+		loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
 
 	}
 
@@ -172,6 +350,41 @@ class World {
 function sync( entity, renderComponent ) {
 
 	renderComponent.matrix.copy( entity.worldMatrix );
+
+}
+
+function syncCamera( entity, renderComponent ) {
+
+	renderComponent.matrixWorld.copy( entity.worldMatrix );
+
+}
+
+function onIntroClick() {
+
+	this.controls.connect();
+
+}
+
+function onWindowResize() {
+
+	this.camera.aspect = window.innerWidth / window.innerHeight;
+	this.camera.updateProjectionMatrix();
+
+	this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+function onTransitionEnd( event ) {
+
+	event.target.remove();
+
+}
+
+function animate() {
+
+	requestAnimationFrame( this._animate );
+
+	this.update();
 
 }
 

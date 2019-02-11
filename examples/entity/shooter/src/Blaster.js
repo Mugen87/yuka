@@ -34,9 +34,7 @@ class Blaster extends GameEntity {
 		this.endTimeReload = Infinity;
 		this.endTimeMuzzleFire = Infinity;
 
-		this.animations = new Map();
-		this.sounds = new Map();
-		this.muzzleSprite = null;
+		this.muzzleSprite = world.assetManager.models.get( 'muzzle' );
 
 		this.ui = {
 			roundsLeft: document.getElementById( 'roundsLeft' ),
@@ -117,15 +115,13 @@ class Blaster extends GameEntity {
 
 			// audio
 
-			const audio = this.sounds.get( 'reload' );
-
+			const audio = world.audios.get( 'reload' );
 			if ( audio.isPlaying === true ) audio.stop();
-
 			audio.play();
 
 			// animation
 
-			const animation = this.animations.get( 'reload' );
+			const animation = world.animations.get( 'reload' );
 			animation.stop();
 			animation.play();
 
@@ -147,13 +143,13 @@ class Blaster extends GameEntity {
 
 			// audio
 
-			const audio = this.sounds.get( 'shot' );
+			const audio = world.audios.get( 'shot' );
 			if ( audio.isPlaying === true ) audio.stop();
 			audio.play();
 
 			// animation
 
-			const animation = this.animations.get( 'shot' );
+			const animation = world.animations.get( 'shot' );
 			animation.stop();
 			animation.play();
 
@@ -202,7 +198,7 @@ class Blaster extends GameEntity {
 
 		} else if ( this.status === STATUS.EMPTY ) {
 
-			const audio = this.sounds.get( 'empty' );
+			const audio = world.audios.get( 'empty' );
 			if ( audio.isPlaying === true ) audio.stop();
 			audio.play();
 

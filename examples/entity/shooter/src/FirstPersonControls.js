@@ -3,6 +3,7 @@
  */
 
 import { EventDispatcher, Vector3, Logger } from '../../../../build/yuka.module.js';
+import world from './World.js';
 
 const PI05 = Math.PI / 2;
 const direction = new Vector3();
@@ -32,8 +33,6 @@ class FirstPersonControls extends EventDispatcher {
 			right: false,
 			left: false
 		};
-
-		this.sounds = new Map();
 
 		this._mouseDownHandler = onMouseDown.bind( this );
 		this._mouseMoveHandler = onMouseMove.bind( this );
@@ -125,7 +124,8 @@ class FirstPersonControls extends EventDispatcher {
 
 			currentSign = sign;
 
-			const audio = this.sounds.get( 'rightStep' );
+			const audio = world.audios.get( 'step1' );
+			if ( audio.isPlaying === true ) audio.stop();
 			audio.play();
 
 		}
@@ -134,7 +134,8 @@ class FirstPersonControls extends EventDispatcher {
 
 			currentSign = sign;
 
-			const audio = this.sounds.get( 'leftStep' );
+			const audio = world.audios.get( 'step2' );
+			if ( audio.isPlaying === true ) audio.stop();
 			audio.play();
 
 		}
