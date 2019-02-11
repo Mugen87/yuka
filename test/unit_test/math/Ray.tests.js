@@ -158,6 +158,60 @@ describe( 'Ray', function () {
 
 	} );
 
+	describe( '#intersectsBoundingSphere()', function () {
+
+		it( 'should return true if the ray intersects the sphere', function () {
+
+			const ray = new Ray( new Vector3(), v2 );
+			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
+			const result = ray.intersectsBoundingSphere( sphere );
+
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return true if the ray touches the sphere', function () {
+
+			const ray = new Ray( new Vector3( 0, 1, 0 ), v2 );
+			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
+			const result = ray.intersectsBoundingSphere( sphere );
+
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return true if the ray starts inside the sphere', function () {
+
+			const ray = new Ray( new Vector3(), v2 );
+			const sphere = new BoundingSphere( new Vector3(), 1 );
+			const result = ray.intersectsBoundingSphere( sphere );
+
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return false to indicate no intersection', function () {
+
+			const ray = new Ray( new Vector3( 0, 10, 0 ), v2 );
+			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
+			const result = ray.intersectsBoundingSphere( sphere );
+
+			expect( result ).to.be.false;
+
+		} );
+
+		it( 'should return false to indicate no intersection (ray starts behind sphere)', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), v2 );
+			const sphere = new BoundingSphere( new Vector3( 0, 0, 10 ), 1 );
+			const result = ray.intersectsBoundingSphere( sphere );
+
+			expect( result ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#intersectAABB()', function () {
 
 		it( 'should fill the given result vector with the intersection point of a ray/AABB intersection test', function () {
@@ -225,6 +279,67 @@ describe( 'Ray', function () {
 
 	} );
 
+	describe( '#intersectsAABB()', function () {
+
+		it( 'should return true if the ray intersects the AABB', function () {
+
+			const ray = new Ray( new Vector3(), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result = ray.intersectsAABB( aabb );
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return true if the ray intersects the AABB, other cases', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( - 1, 0, - 1 ) );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( - 2, 0, - 2 ), new Vector3( 1, 0, - 1 ) );
+
+			const result = ray.intersectsAABB( aabb );
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return true if the ray touches the AABB', function () {
+
+			const ray = new Ray( new Vector3( 1, 0, 0 ), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result = ray.intersectsAABB( aabb );
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return true if the ray starts inside the AABB', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 10 ), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result = ray.intersectsAABB( aabb );
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return false to indicate no intersection', function () {
+
+			const ray1 = new Ray( new Vector3( 0, 0, 15 ), v2 );
+			const ray2 = new Ray( new Vector3( 0, - 15, 10 ), v2 );
+			const ray3 = new Ray( new Vector3( - 10, 10, 0 ), v2 );
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 10 ), new Vector3( 2, 2, 2 ) );
+
+			const result1 = ray1.intersectsAABB( aabb );
+			const result2 = ray2.intersectsAABB( aabb );
+			const result3 = ray3.intersectsAABB( aabb );
+
+			expect( result1 ).to.be.false;
+			expect( result2 ).to.be.false;
+			expect( result3 ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#intersectPlane()', function () {
 
 		it( 'should fill the given result vector with the intersection point of a ray/plane intersection test', function () {
@@ -280,6 +395,60 @@ describe( 'Ray', function () {
 			const result = new Vector3();
 
 			expect( ray.intersectPlane( plane, result ) ).to.deep.equal( ray.origin );
+
+		} );
+
+	} );
+
+	describe( '#intersectsPlane()', function () {
+
+		it( 'should return true if the ray intersects the plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, 1 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = ray.intersectsPlane( plane );
+			expect( result ).to.be.true;
+
+		} );
+
+		it( 'should return false if the ray is parallel to the plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 1, 0, 0 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = ray.intersectsPlane( plane );
+			expect( result ).to.be.false;
+
+		} );
+
+		it( 'should return false if the ray is behind the plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, - 1 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = ray.intersectsPlane( plane );
+			expect( result ).to.be.false;
+
+		} );
+
+		it( 'should return false if the ray hits the backside of the plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, 1 ) );
+			const plane = new Plane( new Vector3( 0, 0, 1 ), 2 );
+
+			const result = ray.intersectsPlane( plane );
+			expect( result ).to.be.false;
+
+		} );
+
+		it( 'should return true if the ray is coplanar to the plane', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 2 ), new Vector3( 1, 0, 0 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = ray.intersectsPlane( plane );
+			expect( result ).to.be.true;
 
 		} );
 

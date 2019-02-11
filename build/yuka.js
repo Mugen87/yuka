@@ -1,19 +1,19 @@
 /**
  * @license
  * The MIT License
- *
+ * 
  * Copyright © 2018 Yuka authors
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -4619,6 +4619,39 @@
 		}
 
 		/**
+		 * Performs a ray/sphere intersection test returns either true or false if
+		 * there is a intersection or not.
+		 *
+		 * @param {BoundingSphere} sphere - A bounding sphere.
+		 * @return {boolean} The result boolean.
+		 */
+		intersectsBoundingSphere( sphere ) {
+
+			const v1 = new Vector3();
+			let squaredDistanceToPoint;
+
+			const directionDistance = v1.subVectors( sphere.center, this.origin ).dot( this.direction );
+
+			// point behind the ray
+
+			if ( directionDistance < 0 ) {
+
+				squaredDistanceToPoint = this.origin.squaredDistanceTo( sphere.center );
+
+			} else {
+
+				v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+				squaredDistanceToPoint = v1.squaredDistanceTo( sphere.center );
+
+			}
+
+
+			return squaredDistanceToPoint <= ( sphere.radius * sphere.radius );
+
+		}
+
+		/**
 		* Performs a ray/AABB intersection test and stores the intersection point
 		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		*
@@ -4696,6 +4729,30 @@
 		}
 
 		/**
+		 * Performs a ray/AABB intersection test returns either true or false if
+		 * there is a intersection or not.
+		 *
+		 * @param {AABB} aabb - A axis-aligned bounding box.
+		 * @return {boolean} The result boolean.
+		 */
+		intersectsAABB( aabb ) {
+
+			const result = new Vector3();
+
+
+			if ( this.intersectAABB( aabb, result ) ) {
+
+				return true;
+
+			} else {
+
+				return false;
+
+			}
+
+		}
+
+		/**
 		* Performs a ray/plane intersection test and stores the intersection point
 		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		*
@@ -4734,6 +4791,39 @@
 			// there is no intersection if t is negative
 
 			return ( t >= 0 ) ? this.at( t, result ) : null;
+
+		}
+
+		/**
+		 * Performs a ray/plane intersection test returns either true or false if
+		 * there is a intersection or not.
+		 *
+		 * @param {Plane} plane - A plane.
+		 * @return {boolean} The result boolean.
+		 */
+		intersectsPlane( plane ) {
+
+			// check if the ray lies on the plane first
+
+			const distToPoint = plane.distanceToPoint( this.origin );
+
+			if ( distToPoint === 0 ) {
+
+				return true;
+
+			}
+
+			const denominator = plane.normal.dot( this.direction );
+
+			if ( denominator * distToPoint < 0 ) {
+
+				return true;
+
+			}
+
+			// ray origin is behind the plane (and is pointing behind it)
+
+			return false;
 
 		}
 
