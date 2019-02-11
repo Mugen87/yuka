@@ -4613,6 +4613,39 @@ class Ray {
 	}
 
 	/**
+	 * Performs a ray/sphere intersection test. Returns either true or false if
+	 * there is a intersection or not.
+	 *
+	 * @param {BoundingSphere} sphere - A bounding sphere.
+	 * @return {boolean} Whether there is an intersection or not.
+	 */
+	intersectsBoundingSphere( sphere ) {
+
+		const v1 = new Vector3();
+		let squaredDistanceToPoint;
+
+		const directionDistance = v1.subVectors( sphere.center, this.origin ).dot( this.direction );
+
+		if ( directionDistance < 0 ) {
+
+			// sphere's center behind the ray
+
+			squaredDistanceToPoint = this.origin.squaredDistanceTo( sphere.center );
+
+		} else {
+
+			v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+			squaredDistanceToPoint = v1.squaredDistanceTo( sphere.center );
+
+		}
+
+
+		return squaredDistanceToPoint <= ( sphere.radius * sphere.radius );
+
+	}
+
+	/**
 	* Performs a ray/AABB intersection test and stores the intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
@@ -4690,6 +4723,19 @@ class Ray {
 	}
 
 	/**
+	 * Performs a ray/AABB intersection test. Returns either true or false if
+	 * there is a intersection or not.
+	 *
+	 * @param {AABB} aabb - An axis-aligned bounding box.
+	 * @return {boolean} Whether there is an intersection or not.
+	 */
+	intersectsAABB( aabb ) {
+
+		return this.intersectAABB( aabb, v1$1 ) !== null;
+
+	}
+
+	/**
 	* Performs a ray/plane intersection test and stores the intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
@@ -4725,10 +4771,42 @@ class Ray {
 
 		}
 
-
 		// there is no intersection if t is negative
 
 		return ( t >= 0 ) ? this.at( t, result ) : null;
+
+	}
+
+	/**
+	 * Performs a ray/plane intersection test. Returns either true or false if
+	 * there is a intersection or not.
+	 *
+	 * @param {Plane} plane - A plane.
+	 * @return {boolean} Whether there is an intersection or not.
+	 */
+	intersectsPlane( plane ) {
+
+		// check if the ray lies on the plane first
+
+		const distToPoint = plane.distanceToPoint( this.origin );
+
+		if ( distToPoint === 0 ) {
+
+			return true;
+
+		}
+
+		const denominator = plane.normal.dot( this.direction );
+
+		if ( denominator * distToPoint < 0 ) {
+
+			return true;
+
+		}
+
+		// ray origin is behind the plane (and is pointing behind it)
+
+		return false;
 
 	}
 
@@ -15776,7 +15854,6 @@ class MemorySystem {
 
 const boundingSphere$1 = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
-const intersectionPointBoundingVolume = new Vector3();
 const rayLocal = new Ray();
 const plane = new Plane();
 const inverseMatrix = new Matrix4();
@@ -15824,7 +15901,7 @@ class Obstacle extends GameEntity {
 
 		boundingSphere$1.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
 
-		if ( ray.intersectBoundingSphere( boundingSphere$1, intersectionPointBoundingVolume ) !== null ) {
+		if ( ray.intersectsBoundingSphere( boundingSphere$1 ) ) {
 
 			// transform the ray into the local space of the obstacle
 
@@ -15833,7 +15910,7 @@ class Obstacle extends GameEntity {
 
 			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
 
-			if ( rayLocal.intersectAABB( geometry.aabb, intersectionPointBoundingVolume ) !== null ) {
+			if ( rayLocal.intersectsAABB( geometry.aabb ) ) {
 
 				// now perform more expensive test with all triangles of the geometry
 
