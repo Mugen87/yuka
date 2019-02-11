@@ -10,6 +10,7 @@ const Matrix4 = YUKA.Matrix4;
 const Quaternion = YUKA.Quaternion;
 const Vector3 = YUKA.Vector3;
 const AABB = YUKA.AABB;
+const Plane = YUKA.Plane;
 const BoundingSphere = YUKA.BoundingSphere;
 
 const v1 = new Vector3( 2, 2, 2 );
@@ -157,7 +158,7 @@ describe( 'Ray', function () {
 
 	} );
 
-	describe( '#intersectBoundingAABB()', function () {
+	describe( '#intersectAABB()', function () {
 
 		it( 'should fill the given result vector with the intersection point of a ray/AABB intersection test', function () {
 
@@ -219,6 +220,66 @@ describe( 'Ray', function () {
 			expect( ray1.intersectAABB( aabb, result ) ).to.be.null;
 			expect( ray2.intersectAABB( aabb, result ) ).to.be.null;
 			expect( ray3.intersectAABB( aabb, result ) ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#intersectPlane()', function () {
+
+		it( 'should fill the given result vector with the intersection point of a ray/plane intersection test', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, 1 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = new Vector3();
+			ray.intersectPlane( plane, result );
+
+			expect( result ).to.deep.equal( { x: 0, y: 0, z: 2 } );
+
+		} );
+
+		it( 'should detect no intersection if the ray is parallel to the plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 1, 0, 0 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = new Vector3();
+
+			expect( ray.intersectPlane( plane, result ) ).to.be.null;
+
+		} );
+
+		it( 'should detect no intersection if the ray is behind the plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, - 1 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = new Vector3();
+
+			expect( ray.intersectPlane( plane, result ) ).to.be.null;
+
+		} );
+
+		it( 'should detect no intersection if the ray hits the backside of the plane', function () {
+
+			const ray = new Ray( new Vector3(), new Vector3( 0, 0, 1 ) );
+			const plane = new Plane( new Vector3( 0, 0, 1 ), 2 );
+
+			const result = new Vector3();
+
+			expect( ray.intersectPlane( plane, result ) ).to.be.null;
+
+		} );
+
+		it( 'should return the origin of the ray if the ray is coplanar to the plane', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 2 ), new Vector3( 1, 0, 0 ) );
+			const plane = new Plane( new Vector3( 0, 0, - 1 ), 2 );
+
+			const result = new Vector3();
+
+			expect( ray.intersectPlane( plane, result ) ).to.deep.equal( ray.origin );
 
 		} );
 

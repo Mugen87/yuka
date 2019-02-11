@@ -174,6 +174,21 @@ describe( 'AABB', function () {
 
 	} );
 
+	describe( '#getSize()', function () {
+
+		it( 'should compute the size (width, height, depth) of this AABB and store it into the given vector', function () {
+
+			const aabb = new AABB( one3, two3 );
+			const size = new Vector3();
+
+			aabb.getSize( size );
+
+			expect( size ).to.deep.equal( new Vector3( 1, 1, 1 ) );
+
+		} );
+
+	} );
+
 	describe( '#intersectsAABB()', function () {
 
 		it( 'should return true if the given AABB intersects this AABB', function () {
@@ -231,6 +246,41 @@ describe( 'AABB', function () {
 			const sphere = new BoundingSphere( new Vector3( 0.5, 0.5, 1.5 ), 0.4 );
 
 			expect( aabb.intersectsBoundingSphere( sphere ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#getNormalFromSurfacePoint()', function () {
+
+		it( 'should return the normal for a given point on this AABB its surface', function () {
+
+			let aabb = new AABB( zero3, one3 );
+
+			const surfacePoint1 = new Vector3( 1, 0.5, 0.5 );
+			const surfacePoint2 = new Vector3( 0, 0.5, 0.5 );
+			const surfacePoint3 = new Vector3( 0.5, 1, 0.5 );
+			const surfacePoint4 = new Vector3( 0.5, 0, 0.5 );
+			const surfacePoint5 = new Vector3( 0.5, 0.5, 1 );
+			const surfacePoint6 = new Vector3( 0.5, 0.5, 0 );
+
+			const normal = new Vector3();
+
+			expect( aabb.getNormalFromSurfacePoint( surfacePoint1, normal ) ).to.deep.equal( new Vector3( 1, 0, 0 ) );
+			expect( aabb.getNormalFromSurfacePoint( surfacePoint2, normal ) ).to.deep.equal( new Vector3( - 1, 0, 0 ) );
+			expect( aabb.getNormalFromSurfacePoint( surfacePoint3, normal ) ).to.deep.equal( new Vector3( 0, 1, 0 ) );
+			expect( aabb.getNormalFromSurfacePoint( surfacePoint4, normal ) ).to.deep.equal( new Vector3( 0, - 1, 0 ) );
+			expect( aabb.getNormalFromSurfacePoint( surfacePoint5, normal ) ).to.deep.equal( new Vector3( 0, 0, 1 ) );
+			expect( aabb.getNormalFromSurfacePoint( surfacePoint6, normal ) ).to.deep.equal( new Vector3( 0, 0, - 1 ) );
+
+			// special case
+
+			aabb = new AABB();
+			aabb.min.set( - Infinity, - Infinity, - Infinity );
+			aabb.max.set( Infinity, Infinity, Infinity );
+
+			const surfacePoint7 = new Vector3( Infinity, Infinity, Infinity );
+			expect( aabb.getNormalFromSurfacePoint( surfacePoint7, normal ) ).to.deep.equal( new Vector3( 0, 0, 0 ) );
 
 		} );
 

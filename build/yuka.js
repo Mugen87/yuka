@@ -31,438 +31,6 @@
 }(this, (function (exports) { 'use strict';
 
 	/**
-	* Base class for representing a term in a {@link FuzzyRule}.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class FuzzyTerm {
-
-		/**
-		* Clears the degree of membership value.
-		*
-		* @return {FuzzyTerm} A reference to this term.
-		*/
-		clearDegreeOfMembership() {}
-
-		/**
-		* Returns the degree of membership.
-		*
-		* @return {Number} Degree of membership.
-		*/
-		getDegreeOfMembership() {}
-
-		/**
-		* Updates the degree of membership by the given value. This method is used when
-		* the term is part of a fuzzy rule's consequent.
-		*
-		* @param {Number} value - The value used to update the degree of membership.
-		* @return {FuzzyTerm} A reference to this term.
-		*/
-		updateDegreeOfMembership( /* value */ ) {}
-
-		/**
-		* Transforms this instance into a JSON object.
-		*
-		* @return {Object} The JSON object.
-		*/
-		toJSON() {
-
-			return {
-				type: this.constructor.name
-			};
-
-		}
-
-	}
-
-	const lut = [];
-
-	for ( let i = 0; i < 256; i ++ ) {
-
-		lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
-
-	}
-
-	/**
-	* Class with various math helpers.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	*/
-	class MathUtils {
-
-		/**
-		* Ensures the given scalar value is within a given min/max range.
-		*
-		* @param {Number} value - The value to clamp.
-		* @param {min} value - The min value.
-		* @param {max} value - The max value.
-		* @return {Number} The clamped value.
-		*/
-		static clamp( value, min, max ) {
-
-			return Math.max( min, Math.min( max, value ) );
-
-		}
-
-		/**
-		* Computes a random integer value within a given min/max range.
-		*
-		* @param {min} value - The min value.
-		* @param {max} value - The max value.
-		* @return {Number} The random integer value.
-		*/
-		static randInt( min, max ) {
-
-			return min + Math.floor( Math.random() * ( max - min + 1 ) );
-
-		}
-
-		/**
-		* Computes a random float value within a given min/max range.
-		*
-		* @param {min} value - The min value.
-		* @param {max} value - The max value.
-		* @return {Number} The random float value.
-		*/
-		static randFloat( min, max ) {
-
-			return min + Math.random() * ( max - min );
-
-		}
-
-		/**
-		* Computes the signed area of a rectangle defined by three points.
-		* This method can also be used to calculate the area of a triangle.
-		*
-		* @param {Vector3} a - The first point in 3D space.
-		* @param {Vector3} b - The second point in 3D space.
-		* @param {Vector3} c - The third point in 3D space.
-		* @return {Number} The signed area.
-		*/
-		static area( a, b, c ) {
-
-			return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
-
-		}
-
-		/**
-		* Computes a RFC4122 Version 4 complied Universally Unique Identifier (UUID).
-		*
-		* @return {String} The UUID.
-		*/
-		static generateUUID() {
-
-			// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/21963136#21963136
-
-			const d0 = Math.random() * 0xffffffff | 0;
-			const d1 = Math.random() * 0xffffffff | 0;
-			const d2 = Math.random() * 0xffffffff | 0;
-			const d3 = Math.random() * 0xffffffff | 0;
-			const uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
-				lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
-				lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
-				lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
-
-			return uuid.toUpperCase();
-
-		}
-
-	}
-
-	/**
-	* Base class for fuzzy sets. This type of sets are defined by a membership function
-	* which can be any arbitrary shape but are typically triangular or trapezoidal. They define
-	* a gradual transition from regions completely outside the set to regions completely
-	* within the set, thereby enabling a value to have partial membership to a set.
-	*
-	* This class is derived from {@link FuzzyTerm} so it can be directly used in fuzzy rules.
-	* According to the composite design pattern, a fuzzy set can be considered as an atomic fuzzy term.
-	*
-	* @author {@link https://github.com/Mugen87|Mugen87}
-	* @augments FuzzyTerm
-	*/
-	class FuzzySet extends FuzzyTerm {
-
-		/**
-		* Constructs a new fuzzy set with the given values.
-		*
-		* @param {Number} representativeValue - The maximum of the set's membership function.
-		*/
-		constructor( representativeValue = 0 ) {
-
-			super();
-
-			/**
-			* Represents the degree of membership to this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.degreeOfMembership = 0;
-
-			/**
-			* The maximum of the set's membership function. For instance, if
-			* the set is triangular then this will be the peak point of the triangular.
-			* If the set has a plateau then this value will be the mid point of the
-			* plateau. Used to avoid runtime calculations.
-			* @type Number
-			* @default 0
-			*/
-			this.representativeValue = representativeValue;
-
-			/**
-			* Represents the left border of this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.left = 0;
-
-			/**
-			* Represents the right border of this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.right = 0;
-
-			//
-
-			this._uuid = null;
-
-		}
-
-		get uuid() {
-
-			if ( this._uuid === null ) {
-
-				this._uuid = MathUtils.generateUUID();
-
-			}
-
-			return this._uuid;
-
-		}
-
-		set uuid( uuid ) {
-
-			this._uuid = uuid;
-
-		}
-
-		/**
-		* Computes the degree of membership for the given value. Notice that this method
-		* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
-		* order to calculate intermediate degree of membership values. This method be
-		* implemented by all concrete fuzzy set classes.
-		*
-		* @param {Number} value - The value used to calculate the degree of membership.
-		* @return {Number} The degree of membership.
-		*/
-		computeDegreeOfMembership( /* value */ ) {}
-
-		// FuzzyTerm API
-
-		/**
-		* Clears the degree of membership value.
-		*
-		* @return {FuzzySet} A reference to this fuzzy set.
-		*/
-		clearDegreeOfMembership() {
-
-			this.degreeOfMembership = 0;
-
-			return this;
-
-		}
-
-		/**
-		* Returns the degree of membership.
-		*
-		* @return {Number} Degree of membership.
-		*/
-		getDegreeOfMembership() {
-
-			return this.degreeOfMembership;
-
-		}
-
-		/**
-		* Updates the degree of membership by the given value. This method is used when
-		* the set is part of a fuzzy rule's consequent.
-		*
-		* @return {FuzzySet} A reference to this fuzzy set.
-		*/
-		updateDegreeOfMembership( value ) {
-
-			// update the degree of membership if the given value is greater than the
-			// existing one
-
-			if ( value > this.degreeOfMembership ) this.degreeOfMembership = value;
-
-			return this;
-
-		}
-
-		/**
-		* Transforms this instance into a JSON object.
-		*
-		* @return {Object} The JSON object.
-		*/
-		toJSON() {
-
-			const json = super.toJSON();
-
-			json.degreeOfMembership = this.degreeOfMembership;
-			json.representativeValue = this.representativeValue;
-			json.left = this.left;
-			json.right = this.right;
-			json.uuid = this.uuid;
-
-			return json;
-
-		}
-
-		/**
-		* Restores this instance from the given JSON object.
-		*
-		* @param {Object} json - The JSON object.
-		* @return {FuzzySet} A reference to this fuzzy set.
-		*/
-		fromJSON( json ) {
-
-			this.degreeOfMembership = json.degreeOfMembership;
-			this.representativeValue = json.representativeValue;
-			this.left = json.left;
-			this.right = json.right;
-			this.uuid = json.uuid;
-
-			return this;
-
-		}
-
-	}
-
-	/**
-	* Class for representing a fuzzy set that has a s-shape membership function with
-	* values from highest to lowest.
-	*
-	* @author robp94 / https://github.com/robp94
-	* @augments FuzzySet
-	*/
-	class LeftSCurveFuzzySet extends FuzzySet {
-
-		/**
-		* Constructs a new S-curve fuzzy set with the given values.
-		*
-		* @param {Number} left - Represents the left border of this fuzzy set.
-		* @param {Number} midpoint - Represents the peak value of this fuzzy set.
-		* @param {Number} right - Represents the right border of this fuzzy set.
-		*/
-		constructor( left = 0, midpoint = 0, right = 0 ) {
-
-			// the representative value is the midpoint of the plateau of the shoulder
-
-			const representativeValue = ( midpoint + left ) / 2;
-
-			super( representativeValue );
-
-			/**
-			* Represents the left border of this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.left = left;
-
-			/**
-			* Represents the peak value of this fuzzy set.
-			* @type Number
-			* @default 0
-			*/
-			this.midpoint = midpoint;
-
-			/**
-			* Represents the right border of this fuzzy set.
-			* @type Number
-			* @default 0
-		  */
-			this.right = right;
-
-		}
-
-		/**
-		* Computes the degree of membership for the given value.
-		*
-		* @param {Number} value - The value used to calculate the degree of membership.
-	  * @return {Number} The degree of membership.
-		*/
-		computeDegreeOfMembership( value ) {
-
-			const midpoint = this.midpoint;
-			const left = this.left;
-			const right = this.right;
-
-			// find DOM if the given value is left of the center or equal to the center
-
-			if ( ( value >= left ) && ( value <= midpoint ) ) {
-
-				return 1;
-
-			}
-
-			// find DOM if the given value is right of the midpoint
-
-			if ( ( value > midpoint ) && ( value <= right ) ) {
-
-				if ( value >= ( ( midpoint + right ) / 2 ) ) {
-
-					return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
-
-				} else {
-
-					return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
-
-				}
-
-			}
-
-			// out of range
-
-			return 0;
-
-		}
-
-		/**
-		* Transforms this instance into a JSON object.
-		*
-		* @return {Object} The JSON object.
-		*/
-		toJSON() {
-
-			const json = super.toJSON();
-
-			json.midpoint = this.midpoint;
-
-			return json;
-
-		}
-
-		/**
-		* Restores this instance from the given JSON object.
-		*
-		* @param {Object} json - The JSON object.
-		* @return {LeftSCurveFuzzySet} A reference to this fuzzy set.
-		*/
-		fromJSON( json ) {
-
-			super.fromJSON( json );
-
-			this.midpoint = json.midpoint;
-
-			return this;
-
-		}
-
-	}
-
-	/**
 	* Class for representing a telegram, an envelope which contains a message
 	* and certain metadata like sender and receiver. Part of the messaging system
 	* for game entities.
@@ -822,6 +390,100 @@
 
 	}
 
+	const lut = [];
+
+	for ( let i = 0; i < 256; i ++ ) {
+
+		lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
+
+	}
+
+	/**
+	* Class with various math helpers.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class MathUtils {
+
+		/**
+		* Ensures the given scalar value is within a given min/max range.
+		*
+		* @param {Number} value - The value to clamp.
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {Number} The clamped value.
+		*/
+		static clamp( value, min, max ) {
+
+			return Math.max( min, Math.min( max, value ) );
+
+		}
+
+		/**
+		* Computes a random integer value within a given min/max range.
+		*
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {Number} The random integer value.
+		*/
+		static randInt( min, max ) {
+
+			return min + Math.floor( Math.random() * ( max - min + 1 ) );
+
+		}
+
+		/**
+		* Computes a random float value within a given min/max range.
+		*
+		* @param {min} value - The min value.
+		* @param {max} value - The max value.
+		* @return {Number} The random float value.
+		*/
+		static randFloat( min, max ) {
+
+			return min + Math.random() * ( max - min );
+
+		}
+
+		/**
+		* Computes the signed area of a rectangle defined by three points.
+		* This method can also be used to calculate the area of a triangle.
+		*
+		* @param {Vector3} a - The first point in 3D space.
+		* @param {Vector3} b - The second point in 3D space.
+		* @param {Vector3} c - The third point in 3D space.
+		* @return {Number} The signed area.
+		*/
+		static area( a, b, c ) {
+
+			return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
+
+		}
+
+		/**
+		* Computes a RFC4122 Version 4 complied Universally Unique Identifier (UUID).
+		*
+		* @return {String} The UUID.
+		*/
+		static generateUUID() {
+
+			// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/21963136#21963136
+
+			const d0 = Math.random() * 0xffffffff | 0;
+			const d1 = Math.random() * 0xffffffff | 0;
+			const d2 = Math.random() * 0xffffffff | 0;
+			const d3 = Math.random() * 0xffffffff | 0;
+			const uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+				lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+				lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+			return uuid.toUpperCase();
+
+		}
+
+	}
+
 	/**
 	* Class representing a 3D vector.
 	*
@@ -1096,6 +758,20 @@
 			this.z = a.z / b.z;
 
 			return this;
+
+		}
+
+		/**
+		* Reflects this vector along the given normal.
+		*
+		* @param {Vector3} normal - The normal vector.
+		* @return {Vector3} A reference to this vector.
+		*/
+		reflect( normal ) {
+
+			// solve r = v - 2( v * n ) * n
+
+			return this.sub( v1.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
 
 		}
 
@@ -1485,6 +1161,8 @@
 		}
 
 	}
+
+	const v1 = new Vector3();
 
 	const WorldUp = new Vector3( 0, 1, 0 );
 
@@ -4683,6 +4361,31 @@
 		}
 
 		/**
+		* Ensures the given point is inside this bounding sphere and stores
+		* the result in the given vector.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		clampPoint( point, result ) {
+
+			result.copy( point );
+
+			const squaredDistance = this.center.squaredDistanceTo( point );
+
+			if ( squaredDistance > ( this.radius * this.radius ) ) {
+
+				result.sub( this.center ).normalize();
+				result.multiplyScalar( this.radius ).add( this.center );
+
+			}
+
+			return result;
+
+		}
+
+		/**
 		* Returns true if the given point is inside this bounding sphere.
 		*
 		* @param {Vector3} point - A point in 3D space.
@@ -4705,6 +4408,19 @@
 			const radius = this.radius + sphere.radius;
 
 			return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+		}
+
+		/**
+		* Returns the normal for a given point on this bounding sphere's surface.
+		*
+		* @param {Vector3} point - The point on the surface
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		getNormalFromSurfacePoint( point, result ) {
+
+			return result.subVectors( point, this.center ).normalize();
 
 		}
 
@@ -4767,7 +4483,7 @@
 
 	}
 
-	const v1 = new Vector3();
+	const v1$1 = new Vector3();
 	const edge1 = new Vector3();
 	const edge2 = new Vector3();
 	const normal = new Vector3();
@@ -4869,9 +4585,9 @@
 		*/
 		intersectBoundingSphere( sphere, result ) {
 
-			v1.subVectors( sphere.center, this.origin );
-			const tca = v1.dot( this.direction );
-			const d2 = v1.dot( v1 ) - tca * tca;
+			v1$1.subVectors( sphere.center, this.origin );
+			const tca = v1$1.dot( this.direction );
+			const d2 = v1$1.dot( v1$1 ) - tca * tca;
 			const radius2 = sphere.radius * sphere.radius;
 
 			if ( d2 > radius2 ) return null;
@@ -4906,7 +4622,7 @@
 		* Performs a ray/AABB intersection test and stores the intersection point
 		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		*
-		* @param {BoundingSphere} sphere - A bounding sphere.
+		* @param {AABB} aabb - An AABB.
 		* @param {Vector3} result - The result vector.
 		* @return {Vector3} The result vector.
 		*/
@@ -4980,6 +4696,48 @@
 		}
 
 		/**
+		* Performs a ray/plane intersection test and stores the intersection point
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
+		*
+		* @param {Plane} plane - A plane.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		intersectPlane( plane, result ) {
+
+			let t;
+
+			const denominator = plane.normal.dot( this.direction );
+
+			if ( denominator === 0 ) {
+
+				if ( plane.distanceToPoint( this.origin ) === 0 ) {
+
+					// ray is coplanar
+
+					t = 0;
+
+				} else {
+
+					// ray is parallel, no intersection
+
+					return null;
+
+				}
+
+			} else {
+
+				t = - ( this.origin.dot( plane.normal ) + plane.constant ) / denominator;
+
+			}
+
+			// there is no intersection if t is negative
+
+			return ( t >= 0 ) ? this.at( t, result ) : null;
+
+		}
+
+		/**
 		* Performs a ray/triangle intersection test and stores the intersection point
 		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		*
@@ -5019,8 +4777,8 @@
 
 			}
 
-			v1.subVectors( this.origin, a );
-			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1, edge2 ) );
+			v1$1.subVectors( this.origin, a );
+			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1$1, edge2 ) );
 
 			// b1 < 0, no intersection
 
@@ -5030,7 +4788,7 @@
 
 			}
 
-			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1 ) );
+			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1$1 ) );
 
 			// b2 < 0, no intersection
 
@@ -5050,7 +4808,7 @@
 
 			// line intersects triangle, check if ray does
 
-			const QdN = - sign * v1.dot( normal );
+			const QdN = - sign * v1$1.dot( normal );
 
 			// t < 0, no intersection
 
@@ -6494,6 +6252,8 @@
 	}
 
 	const vector = new Vector3();
+	const center = new Vector3();
+	const size = new Vector3();
 
 	const points = [
 		new Vector3(),
@@ -6636,6 +6396,18 @@
 		}
 
 		/**
+		* Computes the size (width, height, depth) of this AABB and stores it into the given vector.
+		*
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		getSize( result ) {
+
+			return result.subVectors( this.max, this.min );
+
+		}
+
+		/**
 		* Returns true if the given AABB intersects this AABB.
 		*
 		* @param {AABB} aabb - The AABB to test.
@@ -6664,6 +6436,66 @@
 			// if that point is inside the sphere, the AABB and sphere intersect.
 
 			return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+		}
+
+		/**
+		* Returns the normal for a given point on this AABB's surface.
+		*
+		* @param {Vector3} point - The point on the surface
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		getNormalFromSurfacePoint( point, result ) {
+
+			// from https://www.gamedev.net/forums/topic/551816-finding-the-aabb-surface-normal-from-an-intersection-point-on-aabb/
+
+			result.set( 0, 0, 0 );
+
+			let distance;
+			let minDistance = Infinity;
+
+			this.getCenter( center );
+			this.getSize( size );
+
+			// transform point into local space of AABB
+
+			vector.copy( point ).sub( center );
+
+			// x-axis
+
+			distance = Math.abs( size.x - Math.abs( vector.x ) );
+
+			if ( distance < minDistance ) {
+
+				minDistance = distance;
+				result.set( 1 * Math.sign( vector.x ), 0, 0 );
+
+			}
+
+			// y-axis
+
+			distance = Math.abs( size.y - Math.abs( vector.y ) );
+
+			if ( distance < minDistance ) {
+
+				minDistance = distance;
+				result.set( 0, 1 * Math.sign( vector.y ), 0 );
+
+			}
+
+			// z-axis
+
+			distance = Math.abs( size.z - Math.abs( vector.z ) );
+
+			if ( distance < minDistance ) {
+
+				minDistance = distance;
+				result.set( 0, 0, 1 * Math.sign( vector.z ) );
+
+			}
+
+			return result;
 
 		}
 
@@ -8472,6 +8304,51 @@
 	}
 
 	/**
+	* Base class for representing a term in a {@link FuzzyRule}.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
+	class FuzzyTerm {
+
+		/**
+		* Clears the degree of membership value.
+		*
+		* @return {FuzzyTerm} A reference to this term.
+		*/
+		clearDegreeOfMembership() {}
+
+		/**
+		* Returns the degree of membership.
+		*
+		* @return {Number} Degree of membership.
+		*/
+		getDegreeOfMembership() {}
+
+		/**
+		* Updates the degree of membership by the given value. This method is used when
+		* the term is part of a fuzzy rule's consequent.
+		*
+		* @param {Number} value - The value used to update the degree of membership.
+		* @return {FuzzyTerm} A reference to this term.
+		*/
+		updateDegreeOfMembership( /* value */ ) {}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			return {
+				type: this.constructor.name
+			};
+
+		}
+
+	}
+
+	/**
 	* Base class for representing more complex fuzzy terms based on the
 	* composite design pattern.
 	*
@@ -8801,6 +8678,299 @@
 	}
 
 	/**
+	* Base class for fuzzy sets. This type of sets are defined by a membership function
+	* which can be any arbitrary shape but are typically triangular or trapezoidal. They define
+	* a gradual transition from regions completely outside the set to regions completely
+	* within the set, thereby enabling a value to have partial membership to a set.
+	*
+	* This class is derived from {@link FuzzyTerm} so it can be directly used in fuzzy rules.
+	* According to the composite design pattern, a fuzzy set can be considered as an atomic fuzzy term.
+	*
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments FuzzyTerm
+	*/
+	class FuzzySet extends FuzzyTerm {
+
+		/**
+		* Constructs a new fuzzy set with the given values.
+		*
+		* @param {Number} representativeValue - The maximum of the set's membership function.
+		*/
+		constructor( representativeValue = 0 ) {
+
+			super();
+
+			/**
+			* Represents the degree of membership to this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.degreeOfMembership = 0;
+
+			/**
+			* The maximum of the set's membership function. For instance, if
+			* the set is triangular then this will be the peak point of the triangular.
+			* If the set has a plateau then this value will be the mid point of the
+			* plateau. Used to avoid runtime calculations.
+			* @type Number
+			* @default 0
+			*/
+			this.representativeValue = representativeValue;
+
+			/**
+			* Represents the left border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.left = 0;
+
+			/**
+			* Represents the right border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.right = 0;
+
+			//
+
+			this._uuid = null;
+
+		}
+
+		get uuid() {
+
+			if ( this._uuid === null ) {
+
+				this._uuid = MathUtils.generateUUID();
+
+			}
+
+			return this._uuid;
+
+		}
+
+		set uuid( uuid ) {
+
+			this._uuid = uuid;
+
+		}
+
+		/**
+		* Computes the degree of membership for the given value. Notice that this method
+		* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
+		* order to calculate intermediate degree of membership values. This method be
+		* implemented by all concrete fuzzy set classes.
+		*
+		* @param {Number} value - The value used to calculate the degree of membership.
+		* @return {Number} The degree of membership.
+		*/
+		computeDegreeOfMembership( /* value */ ) {}
+
+		// FuzzyTerm API
+
+		/**
+		* Clears the degree of membership value.
+		*
+		* @return {FuzzySet} A reference to this fuzzy set.
+		*/
+		clearDegreeOfMembership() {
+
+			this.degreeOfMembership = 0;
+
+			return this;
+
+		}
+
+		/**
+		* Returns the degree of membership.
+		*
+		* @return {Number} Degree of membership.
+		*/
+		getDegreeOfMembership() {
+
+			return this.degreeOfMembership;
+
+		}
+
+		/**
+		* Updates the degree of membership by the given value. This method is used when
+		* the set is part of a fuzzy rule's consequent.
+		*
+		* @return {FuzzySet} A reference to this fuzzy set.
+		*/
+		updateDegreeOfMembership( value ) {
+
+			// update the degree of membership if the given value is greater than the
+			// existing one
+
+			if ( value > this.degreeOfMembership ) this.degreeOfMembership = value;
+
+			return this;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.degreeOfMembership = this.degreeOfMembership;
+			json.representativeValue = this.representativeValue;
+			json.left = this.left;
+			json.right = this.right;
+			json.uuid = this.uuid;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {FuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			this.degreeOfMembership = json.degreeOfMembership;
+			this.representativeValue = json.representativeValue;
+			this.left = json.left;
+			this.right = json.right;
+			this.uuid = json.uuid;
+
+			return this;
+
+		}
+
+	}
+
+	/**
+	* Class for representing a fuzzy set that has a s-shape membership function with
+	* values from highest to lowest.
+	*
+	* @author robp94 / https://github.com/robp94
+	* @augments FuzzySet
+	*/
+	class LeftSCurveFuzzySet extends FuzzySet {
+
+		/**
+		* Constructs a new S-curve fuzzy set with the given values.
+		*
+		* @param {Number} left - Represents the left border of this fuzzy set.
+		* @param {Number} midpoint - Represents the peak value of this fuzzy set.
+		* @param {Number} right - Represents the right border of this fuzzy set.
+		*/
+		constructor( left = 0, midpoint = 0, right = 0 ) {
+
+			// the representative value is the midpoint of the plateau of the shoulder
+
+			const representativeValue = ( midpoint + left ) / 2;
+
+			super( representativeValue );
+
+			/**
+			* Represents the left border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.left = left;
+
+			/**
+			* Represents the peak value of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.midpoint = midpoint;
+
+			/**
+			* Represents the right border of this fuzzy set.
+			* @type Number
+			* @default 0
+			*/
+			this.right = right;
+
+		}
+
+		/**
+		* Computes the degree of membership for the given value.
+		*
+		* @param {Number} value - The value used to calculate the degree of membership.
+		* @return {Number} The degree of membership.
+		*/
+		computeDegreeOfMembership( value ) {
+
+			const midpoint = this.midpoint;
+			const left = this.left;
+			const right = this.right;
+
+			// find DOM if the given value is left of the center or equal to the center
+
+			if ( ( value >= left ) && ( value <= midpoint ) ) {
+
+				return 1;
+
+			}
+
+			// find DOM if the given value is right of the midpoint
+
+			if ( ( value > midpoint ) && ( value <= right ) ) {
+
+				if ( value >= ( ( midpoint + right ) / 2 ) ) {
+
+					return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
+
+				} else {
+
+					return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
+
+				}
+
+			}
+
+			// out of range
+
+			return 0;
+
+		}
+
+		/**
+		* Transforms this instance into a JSON object.
+		*
+		* @return {Object} The JSON object.
+		*/
+		toJSON() {
+
+			const json = super.toJSON();
+
+			json.midpoint = this.midpoint;
+
+			return json;
+
+		}
+
+		/**
+		* Restores this instance from the given JSON object.
+		*
+		* @param {Object} json - The JSON object.
+		* @return {LeftSCurveFuzzySet} A reference to this fuzzy set.
+		*/
+		fromJSON( json ) {
+
+			super.fromJSON( json );
+
+			this.midpoint = json.midpoint;
+
+			return this;
+
+		}
+
+	}
+
+	/**
 	* Class for representing a fuzzy set that has a left shoulder shape. The range between
 	* the midpoint and left border point represents the same DOM.
 	*
@@ -8974,7 +9144,7 @@
 		/**
 		* Computes the degree of membership for the given value.
 		*
-	  * @param {Number} value - The value used to calculate the degree of membership.
+		* @param {Number} value - The value used to calculate the degree of membership.
 		* @return {Number} The degree of membership.
 		*/
 		computeDegreeOfMembership( value ) {
@@ -9098,7 +9268,7 @@
 			* Represents the right border of this fuzzy set.
 			* @type Number
 			* @default 0
-		  */
+			*/
 			this.right = right;
 
 		}
@@ -9107,7 +9277,7 @@
 		* Computes the degree of membership for the given value.
 		*
 		* @param {Number} value - The value used to calculate the degree of membership.
-	  * @return {Number} The degree of membership.
+		* @return {Number} The degree of membership.
 		*/
 		computeDegreeOfMembership( value ) {
 
@@ -12786,7 +12956,7 @@
 
 	}
 
-	const v1$1 = new Vector3();
+	const v1$2 = new Vector3();
 	const v2 = new Vector3();
 
 	/**
@@ -12797,7 +12967,7 @@
 	class Plane {
 
 		/**
-		* Constructs a new plane with the given values. The sign of __Plane#constant__ determines the side of the plane on which the origin is located.
+		* Constructs a new plane with the given values. The sign of {@link Plane#constant} determines the side of the plane on which the origin is located.
 		*
 		* @param {Vector3} normal - The normal vector of the plane.
 		* @param {Number} constant - The distance of the plane from the origin.
@@ -12900,9 +13070,9 @@
 		*/
 		fromCoplanarPoints( a, b, c ) {
 
-			v1$1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+			v1$2.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
 
-			this.fromNormalAndCoplanarPoint( v1$1, a );
+			this.fromNormalAndCoplanarPoint( v1$2, a );
 
 			return this;
 

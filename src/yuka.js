@@ -1,5 +1,3 @@
-import { LeftSCurveFuzzySet } from "./fuzzy/sets/LeftSCurveFuzzySet";
-
 export { EntityManager } from './core/EntityManager.js';
 export { EventDispatcher } from './core/EventDispatcher.js';
 export { GameEntity } from './core/GameEntity.js';

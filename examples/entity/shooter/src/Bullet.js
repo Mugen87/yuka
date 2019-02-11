@@ -27,8 +27,8 @@ class Bullet extends MovingEntity {
 
 		this.scale.set( s, s, s );
 
-		this.maxLifetime = 1;
-		this.lifetime = 0;
+		this.lifetime = 1;
+		this.currentTime = 0;
 
 	}
 
@@ -36,7 +36,7 @@ class Bullet extends MovingEntity {
 
 		this.currentTime += delta;
 
-		if ( this.lifetime > this.maxLifetime ) {
+		if ( this.currentTime > this.lifetime ) {
 
 			world.remove( this );
 
@@ -60,7 +60,7 @@ class Bullet extends MovingEntity {
 
 					// hit!
 
-					const audio = this.owner.weapon.sounds.get( 'impact' + MathUtils.randInt( 1, 5 ) );
+					const audio = world.audios.get( 'impact' + MathUtils.randInt( 1, 5 ) );
 
 					if ( audio.isPlaying === true ) audio.stop();
 					audio.play();

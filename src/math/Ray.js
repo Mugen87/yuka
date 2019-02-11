@@ -139,7 +139,7 @@ class Ray {
 	* Performs a ray/AABB intersection test and stores the intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
-	* @param {AABB} aabb - A axis-aligned bounding box.
+	* @param {AABB} aabb - An AABB.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
@@ -209,6 +209,48 @@ class Ray {
 		if ( tmax < 0 ) return null;
 
 		return this.at( tmin >= 0 ? tmin : tmax, result );
+
+	}
+
+	/**
+	* Performs a ray/plane intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	*
+	* @param {Plane} plane - A plane.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectPlane( plane, result ) {
+
+		let t;
+
+		const denominator = plane.normal.dot( this.direction );
+
+		if ( denominator === 0 ) {
+
+			if ( plane.distanceToPoint( this.origin ) === 0 ) {
+
+				// ray is coplanar
+
+				t = 0;
+
+			} else {
+
+				// ray is parallel, no intersection
+
+				return null;
+
+			}
+
+		} else {
+
+			t = - ( this.origin.dot( plane.normal ) + plane.constant ) / denominator;
+
+		}
+
+		// there is no intersection if t is negative
+
+		return ( t >= 0 ) ? this.at( t, result ) : null;
 
 	}
 

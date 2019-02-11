@@ -278,6 +278,20 @@ class Vector3 {
 	}
 
 	/**
+	* Reflects this vector along the given normal.
+	*
+	* @param {Vector3} normal - The normal vector.
+	* @return {Vector3} A reference to this vector.
+	*/
+	reflect( normal ) {
+
+		// solve r = v - 2( v * n ) * n
+
+		return this.sub( v1.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
+
+	}
+
+	/**
 	* Ensures this 3D vector lies in the given min/max range.
 	*
 	* @param {Vector3} min - The min range.
@@ -663,5 +677,7 @@ class Vector3 {
 	}
 
 }
+
+const v1 = new Vector3();
 
 export { Vector3 };

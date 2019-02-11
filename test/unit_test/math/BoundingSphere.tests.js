@@ -88,6 +88,26 @@ describe( 'BoundingSphere', function () {
 
 	} );
 
+	describe( '#clampPoint()', function () {
+
+		it( 'should clamp a point so it does not exceed the boundaries of the bounding sphere', function () {
+
+			const sphere = new BoundingSphere( zero3, 1 );
+
+			const point1 = new Vector3( 2, 0, 0 ); // outside
+			const point2 = new Vector3( 1, 0, 0 ); // touch
+			const point3 = new Vector3( 0.5, 0, 0 ); // inside
+
+			const result = new Vector3();
+
+			expect( sphere.clampPoint( point1, result ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
+			expect( sphere.clampPoint( point2, result ) ).to.deep.equal( { x: 1, y: 0, z: 0 } );
+			expect( sphere.clampPoint( point3, result ) ).to.deep.equal( { x: 0.5, y: 0, z: 0 } );
+
+		} );
+
+	} );
+
 	describe( '#containsPoint()', function () {
 
 		it( 'should return true if a point is inside the bounding sphere', function () {
@@ -145,6 +165,20 @@ describe( 'BoundingSphere', function () {
 			const sphere2 = new BoundingSphere( two3, 1 );
 
 			expect( sphere1.intersectsBoundingSphere( sphere2 ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#getNormalFromSurfacePoint()', function () {
+
+		it( 'should return the normal for a given point on this bounding sphere its surface', function () {
+
+			const sphere = new BoundingSphere( one3, 1 );
+			const surfacePoint = new Vector3( 2, 1, 1 );
+			const normal = new Vector3();
+
+			expect( sphere.getNormalFromSurfacePoint( surfacePoint, normal ) ).to.deep.equal( new Vector3( 1, 0, 0 ) );
 
 		} );
 

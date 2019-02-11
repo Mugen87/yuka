@@ -232,6 +232,21 @@ describe( 'Vector3', function () {
 
 	} );
 
+	describe( '#reflect()', function () {
+
+		it( 'should reflect this vector along the given normal', function () {
+
+			const v1 = new Vector3( 1, 0, - 1 );
+			const n = new Vector3( 0, 0, 1 );
+
+			v1.reflect( n );
+
+			expect( v1 ).to.deep.equal( { x: 1, y: 0, z: 1 } );
+
+		} );
+
+	} );
+
 	describe( '#clamp()', function () {
 
 		it( 'should produce a vector with values between the given min/max vectors', function () {

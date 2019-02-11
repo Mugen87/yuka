@@ -72,6 +72,31 @@ class BoundingSphere {
 	}
 
 	/**
+	* Ensures the given point is inside this bounding sphere and stores
+	* the result in the given vector.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	clampPoint( point, result ) {
+
+		result.copy( point );
+
+		const squaredDistance = this.center.squaredDistanceTo( point );
+
+		if ( squaredDistance > ( this.radius * this.radius ) ) {
+
+			result.sub( this.center ).normalize();
+			result.multiplyScalar( this.radius ).add( this.center );
+
+		}
+
+		return result;
+
+	}
+
+	/**
 	* Returns true if the given point is inside this bounding sphere.
 	*
 	* @param {Vector3} point - A point in 3D space.
@@ -94,6 +119,19 @@ class BoundingSphere {
 		const radius = this.radius + sphere.radius;
 
 		return ( sphere.center.squaredDistanceTo( this.center ) <= ( radius * radius ) );
+
+	}
+
+	/**
+	* Returns the normal for a given point on this bounding sphere's surface.
+	*
+	* @param {Vector3} point - The point on the surface
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getNormalFromSurfacePoint( point, result ) {
+
+		return result.subVectors( point, this.center ).normalize();
 
 	}
 
