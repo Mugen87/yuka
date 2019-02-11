@@ -18,8 +18,9 @@ class ArriveBehavior extends SteeringBehavior {
 	*
 	* @param {Vector3} target - The target vector.
 	* @param {Number} deceleration - The amount of deceleration.
+	* @param {Number} tolerance - A tolerance value in world units to prevent the vehicle from overshooting its target.
 	*/
-	constructor( target = new Vector3(), deceleration = 3 ) {
+	constructor( target = new Vector3(), deceleration = 3, tolerance = 0 ) {
 
 		super();
 
@@ -35,6 +36,13 @@ class ArriveBehavior extends SteeringBehavior {
 		* @default 3
 		*/
 		this.deceleration = deceleration;
+
+		/**
+		 * A tolerance value in world units to prevent the vehicle from overshooting its target.
+		 * @type {Number}
+		 * @default 0
+		 */
+		this.tolerance = tolerance;
 
 	}
 
@@ -55,7 +63,7 @@ class ArriveBehavior extends SteeringBehavior {
 
 		const distance = displacement.length();
 
-		if ( distance > 0 ) {
+		if ( distance > this.tolerance ) {
 
 			// calculate the speed required to reach the target given the desired deceleration
 
@@ -71,6 +79,11 @@ class ArriveBehavior extends SteeringBehavior {
 
 			desiredVelocity.copy( displacement ).multiplyScalar( speed / distance );
 
+			force.subVectors( desiredVelocity, vehicle.velocity );
+
+		} else {
+
+			desiredVelocity.set( 0, 0, 0 );
 			force.subVectors( desiredVelocity, vehicle.velocity );
 
 		}

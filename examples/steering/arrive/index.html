@@ -81,7 +81,7 @@
 			vehicle = new YUKA.Vehicle();
 			vehicle.setRenderComponent( vehicleMesh, sync );
 
-			const arriveBehavior = new YUKA.ArriveBehavior( target.position, 2.5 );
+			const arriveBehavior = new YUKA.ArriveBehavior( target.position, 2.5, 0.1 );
 			vehicle.steering.add( arriveBehavior );
 
 			entityManager.add( target );
@@ -128,7 +128,7 @@
 
 			target.position.fromSpherical( radius, phi, theta );
 
-			setTimeout( generateTarget, 5000 );
+			setTimeout( generateTarget, 15000 );
 
 		}
 

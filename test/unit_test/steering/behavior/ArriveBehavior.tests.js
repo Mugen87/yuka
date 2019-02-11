@@ -95,6 +95,21 @@ describe( 'ArriveBehavior', function () {
 
 		} );
 
+		it( 'should use the deceleration property to stop the vehicle when it is inside the tolerance range', function () {
+
+			const target = new Vector3( 0, 0, 1 );
+			const vehicle = new Vehicle();
+			const force = new Vector3();
+
+			const arriveBehavior = new ArriveBehavior( target, 2, 1 );
+
+			vehicle.velocity = new Vector3( 0, 0, 1 );
+			arriveBehavior.calculate( vehicle, force );
+
+			expect( force ).to.deep.equal( new Vector3( 0, 0, - 1 ) );
+
+		} );
+
 		it( 'should produce no force if the distance between the vehicle and the target is zero', function () {
 
 			const target = new Vector3( 0, 0, 0 );
