@@ -3435,16 +3435,13 @@
 
 				desiredVelocity.copy( displacement$1 ).multiplyScalar( speed / distance );
 
-				force.subVectors( desiredVelocity, vehicle.velocity );
-
 			} else {
 
 				desiredVelocity.set( 0, 0, 0 );
-				force.subVectors( desiredVelocity, vehicle.velocity );
 
 			}
 
-			return force;
+			return force.subVectors( desiredVelocity, vehicle.velocity );
 
 		}
 
