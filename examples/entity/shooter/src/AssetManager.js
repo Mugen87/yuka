@@ -226,7 +226,7 @@ class AssetManager {
 			q0.x, q0.y, q0.z, q0.w ]
 		);
 
-		const reloadClip = new THREE.AnimationClip( 'Shot', 1.5, [ positionKeyframes, rotationKeyframes ] );
+		const reloadClip = new THREE.AnimationClip( 'Reload', 1.5, [ positionKeyframes, rotationKeyframes ] );
 		animations.set( 'reload', reloadClip );
 
 	}
