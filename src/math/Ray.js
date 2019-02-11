@@ -139,7 +139,7 @@ class Ray {
 	* Performs a ray/AABB intersection test and stores the intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
-	* @param {BoundingSphere} sphere - A bounding sphere.
+	* @param {AABB} aabb - A axis-aligned bounding box.
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
 	*/
