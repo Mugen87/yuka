@@ -136,11 +136,11 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/sphere intersection test returns either true or false if
+	 * Performs a ray/sphere intersection test. Returns either true or false if
 	 * there is a intersection or not.
 	 *
 	 * @param {BoundingSphere} sphere - A bounding sphere.
-	 * @return {boolean} The result boolean.
+	 * @return {boolean} Whether there is an intersection or not.
 	 */
 	intersectsBoundingSphere( sphere ) {
 
@@ -149,9 +149,9 @@ class Ray {
 
 		const directionDistance = v1.subVectors( sphere.center, this.origin ).dot( this.direction );
 
-		// point behind the ray
-
 		if ( directionDistance < 0 ) {
+
+			// sphere's center behind the ray
 
 			squaredDistanceToPoint = this.origin.squaredDistanceTo( sphere.center );
 
@@ -246,26 +246,15 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/AABB intersection test returns either true or false if
+	 * Performs a ray/AABB intersection test. Returns either true or false if
 	 * there is a intersection or not.
 	 *
-	 * @param {AABB} aabb - A axis-aligned bounding box.
-	 * @return {boolean} The result boolean.
+	 * @param {AABB} aabb - An axis-aligned bounding box.
+	 * @return {boolean} Whether there is an intersection or not.
 	 */
 	intersectsAABB( aabb ) {
 
-		const result = new Vector3();
-
-
-		if ( this.intersectAABB( aabb, result ) ) {
-
-			return true;
-
-		} else {
-
-			return false;
-
-		}
+		return this.intersectAABB( aabb, v1 ) !== null;
 
 	}
 
@@ -312,11 +301,11 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/plane intersection test returns either true or false if
+	 * Performs a ray/plane intersection test. Returns either true or false if
 	 * there is a intersection or not.
 	 *
 	 * @param {Plane} plane - A plane.
-	 * @return {boolean} The result boolean.
+	 * @return {boolean} Whether there is an intersection or not.
 	 */
 	intersectsPlane( plane ) {
 

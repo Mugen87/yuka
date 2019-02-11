@@ -8,7 +8,6 @@ import { Ray } from '../../math/Ray.js';
 
 const boundingSphere = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
-const intersectionPointBoundingVolume = new Vector3();
 const rayLocal = new Ray();
 const plane = new Plane();
 const inverseMatrix = new Matrix4();
@@ -56,7 +55,7 @@ class Obstacle extends GameEntity {
 
 		boundingSphere.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
 
-		if ( ray.intersectBoundingSphere( boundingSphere, intersectionPointBoundingVolume ) !== null ) {
+		if ( ray.intersectsBoundingSphere( boundingSphere ) ) {
 
 			// transform the ray into the local space of the obstacle
 
@@ -65,7 +64,7 @@ class Obstacle extends GameEntity {
 
 			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
 
-			if ( rayLocal.intersectAABB( geometry.aabb, intersectionPointBoundingVolume ) !== null ) {
+			if ( rayLocal.intersectsAABB( geometry.aabb ) ) {
 
 				// now perform more expensive test with all triangles of the geometry
 

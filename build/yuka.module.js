@@ -1,19 +1,19 @@
 /**
  * @license
  * The MIT License
- * 
+ *
  * Copyright © 2018 Yuka authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -4613,11 +4613,11 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/sphere intersection test returns either true or false if
+	 * Performs a ray/sphere intersection test. Returns either true or false if
 	 * there is a intersection or not.
 	 *
 	 * @param {BoundingSphere} sphere - A bounding sphere.
-	 * @return {boolean} The result boolean.
+	 * @return {boolean} Whether there is an intersection or not.
 	 */
 	intersectsBoundingSphere( sphere ) {
 
@@ -4626,9 +4626,9 @@ class Ray {
 
 		const directionDistance = v1.subVectors( sphere.center, this.origin ).dot( this.direction );
 
-		// point behind the ray
-
 		if ( directionDistance < 0 ) {
+
+			// sphere's center behind the ray
 
 			squaredDistanceToPoint = this.origin.squaredDistanceTo( sphere.center );
 
@@ -4723,26 +4723,15 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/AABB intersection test returns either true or false if
+	 * Performs a ray/AABB intersection test. Returns either true or false if
 	 * there is a intersection or not.
 	 *
-	 * @param {AABB} aabb - A axis-aligned bounding box.
-	 * @return {boolean} The result boolean.
+	 * @param {AABB} aabb - An axis-aligned bounding box.
+	 * @return {boolean} Whether there is an intersection or not.
 	 */
 	intersectsAABB( aabb ) {
 
-		const result = new Vector3();
-
-
-		if ( this.intersectAABB( aabb, result ) ) {
-
-			return true;
-
-		} else {
-
-			return false;
-
-		}
+		return this.intersectAABB( aabb, v1$1 ) !== null;
 
 	}
 
@@ -4789,11 +4778,11 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/plane intersection test returns either true or false if
+	 * Performs a ray/plane intersection test. Returns either true or false if
 	 * there is a intersection or not.
 	 *
 	 * @param {Plane} plane - A plane.
-	 * @return {boolean} The result boolean.
+	 * @return {boolean} Whether there is an intersection or not.
 	 */
 	intersectsPlane( plane ) {
 
@@ -15865,7 +15854,6 @@ class MemorySystem {
 
 const boundingSphere$1 = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
-const intersectionPointBoundingVolume = new Vector3();
 const rayLocal = new Ray();
 const plane = new Plane();
 const inverseMatrix = new Matrix4();
@@ -15913,7 +15901,7 @@ class Obstacle extends GameEntity {
 
 		boundingSphere$1.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
 
-		if ( ray.intersectBoundingSphere( boundingSphere$1, intersectionPointBoundingVolume ) !== null ) {
+		if ( ray.intersectsBoundingSphere( boundingSphere$1 ) ) {
 
 			// transform the ray into the local space of the obstacle
 
@@ -15922,7 +15910,7 @@ class Obstacle extends GameEntity {
 
 			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
 
-			if ( rayLocal.intersectAABB( geometry.aabb, intersectionPointBoundingVolume ) !== null ) {
+			if ( rayLocal.intersectsAABB( geometry.aabb ) ) {
 
 				// now perform more expensive test with all triangles of the geometry
 
