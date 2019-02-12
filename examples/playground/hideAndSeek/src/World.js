@@ -584,6 +584,10 @@ function onIntroClick() {
 		this.controls.connect();
 		this.started = true;
 
+		const context = THREE.AudioContext.getContext();
+
+		if ( context.state === 'suspended' ) context.resume();
+
 	}
 
 }
