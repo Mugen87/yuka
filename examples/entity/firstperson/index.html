@@ -165,6 +165,10 @@
 
 			controls.connect();
 
+			const context = THREE.AudioContext.getContext();
+
+			if ( context.state === 'suspended' ) context.resume();
+
 		}, false );
 
 		// game setup

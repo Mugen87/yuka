@@ -579,10 +579,14 @@ function onWindowResize() {
 
 function onIntroClick() {
 
- 	if ( this.gameOver === false ) {
+	if ( this.gameOver === false ) {
 
 		this.controls.connect();
 		this.started = true;
+
+		const context = THREE.AudioContext.getContext();
+
+		if ( context.state === 'suspended' ) context.resume();
 
 	}
 
