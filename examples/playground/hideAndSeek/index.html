@@ -1,0 +1,157 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Hide And Seek</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
+		<link rel="shortcut icon" type="image/x-icon" href="https://mugen87.github.io/yuka/favicon.ico">
+		<style>
+			* {
+				-webkit-user-select: none;
+				-moz-user-select: none;
+        -ms-user-select: none;
+				user-select: none;
+			}
+			#crosshairs {
+				position: absolute;
+				height: 100%;
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			#crosshairs.hidden {
+				display: none;
+			}
+			#crosshairs>div {
+				width: 10px;
+				height: 10px;
+				border-radius: 66px;
+				border: 2px solid #992129;
+				opacity: 0.5;
+			}
+			#time {
+				position: absolute;
+				top: 0;
+				left: 48%;
+				width: 64px;
+			}
+			#result {
+				position: absolute;
+				bottom: 4%;
+				left: 4%;
+				width: 160px;
+			}
+			#hud {
+				position: absolute;
+				bottom: 4%;
+				right: 4%;
+			}
+			#roundsLeft {
+				font-weight: bold;
+				width: 32px;
+			}
+			#ammo {
+				font-size: 20px;
+				opacity: 0.5;
+				width: 32px;
+			}
+			#gameover {
+				display: none;
+				text-align: center;
+			}
+			#intro>div {
+				text-align: center;
+			}
+			.ui-container {
+				background-color: #282828;
+				font-size: 28px;
+				color: #ffffff;
+				text-align: center;
+				line-height: 20px;
+			}
+			.ui-container>div {
+				padding: 16px;
+			}
+			.value {
+				display: inline-block;
+			}
+			button {
+				height: 20px;
+				width: 120px;
+				color: #ffffff;
+				background: transparent;
+				outline: 1px solid #ffffff;
+				border: 0px;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+<body>
+
+	<section id="loading-screen">
+		<div class="spinner">
+			<div class="rect1"></div>
+			<div class="rect2"></div>
+			<div class="rect3"></div>
+			<div class="rect4"></div>
+			<div class="rect5"></div>
+		</div>
+	</section>
+
+	<section id="intro">
+		<div id="start">
+			<p>
+				Click to Play
+			</p>
+			<p class="sub">
+				Try to frag as many enemies as you can within 60 seconds. Have fun 🙌!
+			</p>
+		</div>
+		<div id="gameover">
+			<p>
+				Game Over
+			</p>
+			<p class="sub">
+				Congratulations! You've fragged <span id="gameover_hits"></span> enemies.
+			</p>
+			<p>
+				<button type="button" onclick="window.location.reload()">Restart Game</button>
+			</p>
+		</div>
+	</section>
+
+	<section id="crosshairs" class="hidden">
+		<div></div>
+	</section>
+
+	<section id="time" class="ui-container">
+		<div>
+			<span id="playingTime" class="value"></span>
+		</div>
+	</section>
+
+	<section id="result" class="ui-container">
+		<div>
+			Hits: <span id="hits" class="value"></span>
+		</div>
+	</section>
+
+	<section id="hud" class="ui-container">
+		<div>
+			<span id="roundsLeft" class="value"></span>
+			<span>|</span>
+			<span id="ammo" class="value"></span>
+		<div>
+	</section>
+
+	<script type="module">
+
+	import world from './src/World.js';
+
+	world.init();
+
+	</script>
+
+</body>
+</html>
