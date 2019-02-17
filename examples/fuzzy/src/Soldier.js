@@ -66,8 +66,8 @@ class Soldier extends GameEntity {
 		fuzzyModuleShotGun.fuzzify( 'ammoStatus', this.ammoShotgun );
 		fuzzyModuleAssaultRifle.fuzzify( 'ammoStatus', this.ammoAssaultRifle );
 
-		const desirabilityShotgun = fuzzyModuleShotGun.defuzzify( 'desirability' );
-		const desirabilityAssaultRifle = fuzzyModuleAssaultRifle.defuzzify( 'desirability' );
+		const desirabilityShotgun = ( this.ammoShotgun === 0 ) ? 0 : fuzzyModuleShotGun.defuzzify( 'desirability' );
+		const desirabilityAssaultRifle = ( this.ammoAssaultRifle === 0 ) ? 0 : fuzzyModuleAssaultRifle.defuzzify( 'desirability' );
 
 		if ( desirabilityShotgun > desirabilityAssaultRifle ) {
 
