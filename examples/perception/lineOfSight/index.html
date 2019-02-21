@@ -21,6 +21,7 @@
 		import * as THREE from '../../lib/three.module.js';
 
 		import { createVisionHelper } from '../common/VisionHelper.js';
+		import { Obstacle } from '../common/Obstacle.js';
 
 		let renderer, scene, camera, targetMaterial;
 
@@ -87,7 +88,7 @@
 			const indices = obstacleGeometry.index.array;
 			const geometry = new YUKA.MeshGeometry( vertices, indices );
 
-			const obstacle = new YUKA.Obstacle( geometry );
+			const obstacle = new Obstacle( geometry );
 			obstacle.position.z = 3;
 			obstacle.setRenderComponent( obstacleMesh, sync );
 

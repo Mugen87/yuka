@@ -257,12 +257,12 @@ class World {
 
 		renderComponent.material = enemyMaterial;
 
-		const enemy = new Enemy();
+		const vertices = renderComponent.geometry.attributes.position.array;
+		const geometry = new YUKA.MeshGeometry( vertices );
+
+		const enemy = new Enemy( geometry );
 		enemy.boundingRadius = renderComponent.geometry.boundingSphere.radius;
 		enemy.setRenderComponent( renderComponent, sync );
-
-		const vertices = renderComponent.geometry.attributes.position.array;
-		enemy.geometry = new YUKA.MeshGeometry( vertices );
 
 		// compute spawning point
 
@@ -298,7 +298,7 @@ class World {
 
 			const obstalce = obstacles[ i ];
 
-			if ( obstalce.intersectRay( ray, intersection.point, intersection.normal ) !== null ) {
+			if ( obstalce.geometry.intersectRay( ray, obstalce.worldMatrix, intersection.point, intersection.normal ) !== null ) {
 
 				const squaredDistance = intersection.point.squaredDistanceTo( ray.origin );
 				obstalce.squaredDistance = squaredDistance;

@@ -166,16 +166,16 @@ class World {
 
 		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 
-			const obstalce = obstacles[ i ];
+			const obstacle = obstacles[ i ];
 
-			if ( obstalce.intersectRay( ray, intersection.point, intersection.normal ) !== null ) {
+			if ( obstacle.geometry.intersectRay( ray, obstacle.worldMatrix, intersection.point, intersection.normal ) !== null ) {
 
 				const squaredDistance = intersection.point.squaredDistanceTo( ray.origin );
 
 				if ( squaredDistance < minDistance ) {
 
 					minDistance = squaredDistance;
-					closestObstacle = obstalce;
+					closestObstacle = obstacle;
 
 					intersectionPoint.copy( intersection.point );
 					if ( normal ) normal.copy( intersection.normal );

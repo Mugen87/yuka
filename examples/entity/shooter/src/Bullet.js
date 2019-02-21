@@ -47,9 +47,9 @@ class Bullet extends MovingEntity {
 
 			super.update( delta );
 
-			const obstacle = world.intersectRay( ray, intersectionPoint, normal );
+			const geometry = world.intersectRay( ray, intersectionPoint, normal );
 
-			if ( obstacle !== null ) {
+			if ( geometry !== null ) {
 
 				// calculate distance from origin to intersection point
 
@@ -67,7 +67,7 @@ class Bullet extends MovingEntity {
 
 					// inform game entity about hit
 
-					this.owner.sendMessage( obstacle, 'hit' );
+					this.owner.sendMessage( geometry, 'hit' );
 
 					// add visual feedback
 

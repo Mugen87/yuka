@@ -2919,6 +2919,22 @@ class GameEntity {
 	}
 
 	/**
+	* Holds the implementation for the line of sight test of this game entity.
+	* This method is used by {@link Vision#visible} in order to determine whether
+	* this game entity blocks the given line of sight or not. Implement this method
+	* when your game entity acts as an obstacle.
+	*
+	* @param {Ray} ray - The ray that represents the line of sight.
+	* @param {Vector3} intersectionPoint - The intersection point.
+	* @return {Vector3} The intersection point.
+	*/
+	lineOfSightTest() {
+
+		return null;
+
+	}
+
+	/**
 	* Sends a message with the given data to the specified receiver.
 	*
 	* @param {GameEntity} receiver - The receiver.
@@ -3211,6 +3227,8 @@ class MovingEntity extends GameEntity {
 * Base class for all concrete steering behaviors. They produce a force that describes
 * where an agent should move and how fast it should travel to get there.
 *
+* Note: All built-in steering behaviors assume a {@link Vehicle#mass} of one. Different values can lead to an unexpected results.
+*
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
 class SteeringBehavior {
@@ -3366,8 +3384,9 @@ class ArriveBehavior extends SteeringBehavior {
 	*
 	* @param {Vector3} target - The target vector.
 	* @param {Number} deceleration - The amount of deceleration.
+	* @param {Number} tolerance - A tolerance value in world units to prevent the vehicle from overshooting its target.
 	*/
-	constructor( target = new Vector3(), deceleration = 3 ) {
+	constructor( target = new Vector3(), deceleration = 3, tolerance = 0 ) {
 
 		super();
 
@@ -3383,6 +3402,13 @@ class ArriveBehavior extends SteeringBehavior {
 		* @default 3
 		*/
 		this.deceleration = deceleration;
+
+		/**
+		 * A tolerance value in world units to prevent the vehicle from overshooting its target.
+		 * @type {Number}
+		 * @default 0
+		 */
+		this.tolerance = tolerance;
 
 	}
 
@@ -3403,7 +3429,7 @@ class ArriveBehavior extends SteeringBehavior {
 
 		const distance = displacement$1.length();
 
-		if ( distance > 0 ) {
+		if ( distance > this.tolerance ) {
 
 			// calculate the speed required to reach the target given the desired deceleration
 
@@ -3419,11 +3445,13 @@ class ArriveBehavior extends SteeringBehavior {
 
 			desiredVelocity.copy( displacement$1 ).multiplyScalar( speed / distance );
 
-			force.subVectors( desiredVelocity, vehicle.velocity );
+		} else {
+
+			desiredVelocity.set( 0, 0, 0 );
 
 		}
 
-		return force;
+		return force.subVectors( desiredVelocity, vehicle.velocity );
 
 	}
 
@@ -7684,6 +7712,148 @@ class EventDispatcher {
 
 }
 
+const v1$2 = new Vector3();
+const v2 = new Vector3();
+
+/**
+* Class representing a plane in 3D space. The plane is specified in Hessian normal form.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class Plane {
+
+	/**
+	* Constructs a new plane with the given values. The sign of {@link Plane#constant} determines the side of the plane on which the origin is located.
+	*
+	* @param {Vector3} normal - The normal vector of the plane.
+	* @param {Number} constant - The distance of the plane from the origin.
+	*/
+	constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
+
+		/**
+		* The normal vector of the plane.
+		* @type Vector3
+		*/
+		this.normal = normal;
+
+		/**
+		* The distance of the plane from the origin.
+		* @type Number
+		*/
+		this.constant = constant;
+
+	}
+
+	/**
+	* Sets the given values to this plane.
+	*
+	* @param {Vector3} normal - The normal vector of the plane.
+	* @param {Number} constant - The distance of the plane from the origin.
+	* @return {Plane} A reference to this plane.
+	*/
+	set( normal, constant ) {
+
+		this.normal = normal;
+		this.constant = constant;
+
+		return this;
+
+	}
+
+	/**
+	* Copies all values from the given plane to this plane.
+	*
+	* @param {Plane} plane - The plane to copy.
+	* @return {Plane} A reference to this plane.
+	*/
+	copy( plane ) {
+
+		this.normal.copy( plane.normal );
+		this.constant = plane.constant;
+
+		return this;
+
+	}
+
+	/**
+	* Creates a new plane and copies all values from this plane.
+	*
+	* @return {Plane} A new plane.
+	*/
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	/**
+	* Computes the signed distance from the given 3D vector to this plane.
+	* The sign of the distance indicates the half-space in which the points lies.
+	* Zero means the point lies on the plane.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Number} The signed distance.
+	*/
+	distanceToPoint( point ) {
+
+		return this.normal.dot( point ) + this.constant;
+
+	}
+
+	/**
+	* Sets the values of the plane from the given normal vector and a coplanar point.
+	*
+	* @param {Vector3} normal - A normalized vector.
+	* @param {Vector3} point - A coplanar point.
+	* @return {Plane} A reference to this plane.
+	*/
+	fromNormalAndCoplanarPoint( normal, point ) {
+
+		this.normal.copy( normal );
+		this.constant = - point.dot( this.normal );
+
+		return this;
+
+	}
+
+	/**
+	* Sets the values of the plane from three given coplanar points.
+	*
+	* @param {Vector3} a - A coplanar point.
+	* @param {Vector3} b - A coplanar point.
+	* @param {Vector3} c - A coplanar point.
+	* @return {Plane} A reference to this plane.
+	*/
+	fromCoplanarPoints( a, b, c ) {
+
+		v1$2.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+
+		this.fromNormalAndCoplanarPoint( v1$2, a );
+
+		return this;
+
+	}
+
+	/**
+	* Returns true if the given plane is deep equal with this plane.
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the equality test.
+	*/
+	equals( plane ) {
+
+		return plane.normal.equals( this.normal ) && plane.constant === this.constant;
+
+	}
+
+}
+
+const boundingSphere$1 = new BoundingSphere();
+const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
+const rayLocal = new Ray();
+const plane = new Plane();
+const inverseMatrix = new Matrix4();
+
 /**
 * Class for representing a polygon mesh. The faces consist of triangles.
 *
@@ -7745,6 +7915,119 @@ class MeshGeometry {
 		boundingSphere.radius = boundingSphere.center.distanceTo( aabb.max );
 
 		return this;
+
+	}
+
+	/**
+	 * Performs a ray intersection test with the geometry of the obstacle and stores
+	 * the intersection point in the given result vector. If no intersection is detected,
+	 * *null* is returned.
+	 *
+	 * @param {Ray} ray - The ray to test.
+	 * @param {Matrix4} worldMatrix - The matrix that transforms the geometry to world space.
+	 * @param {Vector3} intersectionPoint - The intersection point.
+	 * @param {Vector3} normal - The normal vector of the respective triangle.
+	 * @return {Vector3} The result vector.
+	 */
+	intersectRay( ray, worldMatrix, intersectionPoint, normal = null ) {
+
+		// check bounding sphere first in world space
+
+		boundingSphere$1.copy( this.boundingSphere ).applyMatrix4( worldMatrix );
+
+		if ( ray.intersectsBoundingSphere( boundingSphere$1 ) ) {
+
+			// transform the ray into the local space of the obstacle
+
+			worldMatrix.getInverse( inverseMatrix );
+			rayLocal.copy( ray ).applyMatrix4( inverseMatrix );
+
+			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
+
+			if ( rayLocal.intersectsAABB( this.aabb ) ) {
+
+				// now perform more expensive test with all triangles of the geometry
+
+				const vertices = this.vertices;
+				const indices = this.indices;
+
+				if ( indices === null ) {
+
+					// non-indexed geometry
+
+					for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
+
+						triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
+						triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
+						triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
+
+						if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
+
+							// transform intersection point back to world space
+
+							intersectionPoint.applyMatrix4( worldMatrix );
+
+							// compute normal of triangle in world space if necessary
+
+							if ( normal !== null ) {
+
+								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+								normal.copy( plane.normal );
+								normal.transformDirection( worldMatrix );
+
+							}
+
+							return intersectionPoint;
+
+						}
+
+					}
+
+				} else {
+
+					// indexed geometry
+
+					for ( let i = 0, l = indices.length; i < l; i += 3 ) {
+
+						const a = indices[ i ];
+						const b = indices[ i + 1 ];
+						const c = indices[ i + 2 ];
+
+						const stride = 3;
+
+						triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
+						triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
+						triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
+
+						if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
+
+							// transform intersection point back to world space
+
+							intersectionPoint.applyMatrix4( worldMatrix );
+
+							// compute normal of triangle in world space if necessary
+
+							if ( normal !== null ) {
+
+								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+								normal.copy( plane.normal );
+								normal.transformDirection( worldMatrix );
+
+							}
+
+							return intersectionPoint;
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		return null;
 
 	}
 
@@ -13029,142 +13312,6 @@ class LineSegment {
 
 }
 
-const v1$2 = new Vector3();
-const v2 = new Vector3();
-
-/**
-* Class representing a plane in 3D space. The plane is specified in Hessian normal form.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-*/
-class Plane {
-
-	/**
-	* Constructs a new plane with the given values. The sign of {@link Plane#constant} determines the side of the plane on which the origin is located.
-	*
-	* @param {Vector3} normal - The normal vector of the plane.
-	* @param {Number} constant - The distance of the plane from the origin.
-	*/
-	constructor( normal = new Vector3( 0, 0, 1 ), constant = 0 ) {
-
-		/**
-		* The normal vector of the plane.
-		* @type Vector3
-		*/
-		this.normal = normal;
-
-		/**
-		* The distance of the plane from the origin.
-		* @type Number
-		*/
-		this.constant = constant;
-
-	}
-
-	/**
-	* Sets the given values to this plane.
-	*
-	* @param {Vector3} normal - The normal vector of the plane.
-	* @param {Number} constant - The distance of the plane from the origin.
-	* @return {Plane} A reference to this plane.
-	*/
-	set( normal, constant ) {
-
-		this.normal = normal;
-		this.constant = constant;
-
-		return this;
-
-	}
-
-	/**
-	* Copies all values from the given plane to this plane.
-	*
-	* @param {Plane} plane - The plane to copy.
-	* @return {Plane} A reference to this plane.
-	*/
-	copy( plane ) {
-
-		this.normal.copy( plane.normal );
-		this.constant = plane.constant;
-
-		return this;
-
-	}
-
-	/**
-	* Creates a new plane and copies all values from this plane.
-	*
-	* @return {Plane} A new plane.
-	*/
-	clone() {
-
-		return new this.constructor().copy( this );
-
-	}
-
-	/**
-	* Computes the signed distance from the given 3D vector to this plane.
-	* The sign of the distance indicates the half-space in which the points lies.
-	* Zero means the point lies on the plane.
-	*
-	* @param {Vector3} point - A point in 3D space.
-	* @return {Number} The signed distance.
-	*/
-	distanceToPoint( point ) {
-
-		return this.normal.dot( point ) + this.constant;
-
-	}
-
-	/**
-	* Sets the values of the plane from the given normal vector and a coplanar point.
-	*
-	* @param {Vector3} normal - A normalized vector.
-	* @param {Vector3} point - A coplanar point.
-	* @return {Plane} A reference to this plane.
-	*/
-	fromNormalAndCoplanarPoint( normal, point ) {
-
-		this.normal.copy( normal );
-		this.constant = - point.dot( this.normal );
-
-		return this;
-
-	}
-
-	/**
-	* Sets the values of the plane from three given coplanar points.
-	*
-	* @param {Vector3} a - A coplanar point.
-	* @param {Vector3} b - A coplanar point.
-	* @param {Vector3} c - A coplanar point.
-	* @return {Plane} A reference to this plane.
-	*/
-	fromCoplanarPoints( a, b, c ) {
-
-		v1$2.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
-
-		this.fromNormalAndCoplanarPoint( v1$2, a );
-
-		return this;
-
-	}
-
-	/**
-	* Returns true if the given plane is deep equal with this plane.
-	*
-	* @param {Plane} plane - The plane to test.
-	* @return {Boolean} The result of the equality test.
-	*/
-	equals( plane ) {
-
-		return plane.normal.equals( this.normal ) && plane.constant === this.constant;
-
-	}
-
-}
-
 /**
 * Class for representing navigation edges.
 *
@@ -15852,237 +15999,60 @@ class MemorySystem {
 
 }
 
-const boundingSphere$1 = new BoundingSphere();
-const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
-const rayLocal = new Ray();
-const plane = new Plane();
-const inverseMatrix = new Matrix4();
-
-/**
-* Class for representing an obstacle in 3D space.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-* @augments GameEntity
-*/
-class Obstacle extends GameEntity {
-
-	/**
-	* Constructs a new obstacle.
-	*
-	* @param {MeshGeometry} geometry - A geometry representing a mesh.
-	*/
-	constructor( geometry = new MeshGeometry() ) {
-
-		super();
-
-		/**
-		* Represents the geometry of this obstacle.
-		* @type MeshGeometry
-		*/
-		this.geometry = geometry;
-
-	}
-
-	/**
-	* Performs a ray intersection test with the geometry of the obstacle and stores
-	* the intersection point in the given result vector. If no intersection is detected,
-	* *null* is returned.
-	*
-	* @param {Ray} ray - The ray to test.
-	* @param {Vector3} intersectionPoint - The intersection point.
-	* @param {Vector3} normal - The normal vector of the respective triangle.
-	* @return {Vector3} The result vector.
-	*/
-	intersectRay( ray, intersectionPoint, normal = null ) {
-
-		const geometry = this.geometry;
-
-		// check bounding sphere first in world space
-
-		boundingSphere$1.copy( geometry.boundingSphere ).applyMatrix4( this.worldMatrix );
-
-		if ( ray.intersectsBoundingSphere( boundingSphere$1 ) ) {
-
-			// transform the ray into the local space of the obstacle
-
-			this.worldMatrix.getInverse( inverseMatrix );
-			rayLocal.copy( ray ).applyMatrix4( inverseMatrix );
-
-			// check AABB in local space since its more expensive to convert an AABB to world space than a bounding sphere
-
-			if ( rayLocal.intersectsAABB( geometry.aabb ) ) {
-
-				// now perform more expensive test with all triangles of the geometry
-
-				const vertices = geometry.vertices;
-				const indices = geometry.indices;
-
-				if ( indices === null ) {
-
-					// non-indexed geometry
-
-					for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
-
-						triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
-						triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
-						triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
-
-						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, intersectionPoint ) !== null ) {
-
-							// transform intersection point back to world space
-
-							intersectionPoint.applyMatrix4( this.worldMatrix );
-
-							// compute normal of triangle in world space if necessary
-
-							if ( normal !== null ) {
-
-								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
-								normal.copy( plane.normal );
-								normal.transformDirection( this.worldMatrix );
-
-							}
-
-							return intersectionPoint;
-
-						}
-
-					}
-
-				} else {
-
-					// indexed geometry
-
-					for ( let i = 0, l = indices.length; i < l; i += 3 ) {
-
-						const a = indices[ i ];
-						const b = indices[ i + 1 ];
-						const c = indices[ i + 2 ];
-
-						const stride = 3;
-
-						triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
-						triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
-						triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
-
-						if ( rayLocal.intersectTriangle( triangle, geometry.backfaceCulling, intersectionPoint ) !== null ) {
-
-							// transform intersection point back to world space
-
-							intersectionPoint.applyMatrix4( this.worldMatrix );
-
-							// compute normal of triangle in world space if necessary
-
-							if ( normal !== null ) {
-
-								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
-								normal.copy( plane.normal );
-								normal.transformDirection( this.worldMatrix );
-
-							}
-
-							return intersectionPoint;
-
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-
-		return null;
-
-	}
-
-	/**
-	* Transforms this instance into a JSON object.
-	*
-	* @return {Object} The JSON object.
-	*/
-	toJSON() {
-
-		const json = super.toJSON();
-
-		json.geometry = this.geometry.toJSON();
-
-		return json;
-
-	}
-
-	/**
-	* Restores this instance from the given JSON object.
-	*
-	* @param {Object} json - The JSON object.
-	* @return {Obstacle} A reference to this obstacle.
-	*/
-	fromJSON( json ) {
-
-		super.fromJSON( json );
-
-		this.geometry.fromJSON( json.geometry );
-
-		return this;
-
-	}
-
-}
-
 const toPoint = new Vector3();
 const direction$1 = new Vector3();
 const ray$1 = new Ray();
 const intersectionPoint$1 = new Vector3();
 
 /**
-* Class for representing the vision component of a game entity.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-*/
+ * Class for representing the vision component of a game entity.
+ *
+ * @author {@link https://github.com/Mugen87|Mugen87}
+ */
 class Vision {
 
 	/**
-	* Constructs a new vision object.
-	*
-	* @param {GameEntity} owner - The owner of this vision instance.
-	*/
+	 * Constructs a new vision object.
+	 *
+	 * @param {GameEntity} owner - The owner of this vision instance.
+	 */
 	constructor( owner = null ) {
 
 		/**
-		* The game entity that owns this vision instance.
-		* @type GameEntity
-		*/
+		 * The game entity that owns this vision instance.
+		 * @type GameEntity
+		 */
 		this.owner = owner;
 
 		/**
-		* The field of view in radians.
-		* @type Number
-		* @default π/2
-		*/
+		 * The field of view in radians.
+		 * @type Number
+		 * @default π/2
+		 */
 		this.fieldOfView = Math.PI;
 
 		/**
-		* The visual range in world units.
-		* @type Number
-		* @default Infinity
-		*/
+		 * The visual range in world units.
+		 * @type Number
+		 * @default Infinity
+		 */
 		this.range = Infinity;
 
 		/**
-		* An array of {@link Obstacle obstacles}.
-		* @type Array
-		*/
+		 * An array of obstacles. An obstacle is a game entity that
+		 * implements the {@link GameEntity#lineOfSightTest} method.
+		 * @type Array
+		 */
 		this.obstacles = new Array();
 
 	}
 
 	/**
-	* Adds an obstacle to this vision instance.
-	*
-	* @param {Obstacle} obstacle - The obstacle to add.
-	* @return {Vision} A reference to this vision instance.
-	*/
+	 * Adds an obstacle to this vision instance.
+	 *
+	 * @param {GameEntity} obstacle - The obstacle to add.
+	 * @return {Vision} A reference to this vision instance.
+	 */
 	addObstacle( obstacle ) {
 
 		this.obstacles.push( obstacle );
@@ -16092,11 +16062,11 @@ class Vision {
 	}
 
 	/**
-	* Removes an obstacle from this vision instance.
-	*
-	* @param {Obstacle} obstacle - The obstacle to remove.
-	* @return {Vision} A reference to this vision instance.
-	*/
+	 * Removes an obstacle from this vision instance.
+	 *
+	 * @param {GameEntity} obstacle - The obstacle to remove.
+	 * @return {Vision} A reference to this vision instance.
+	 */
 	removeObstacle( obstacle ) {
 
 		const index = this.obstacles.indexOf( obstacle );
@@ -16107,12 +16077,12 @@ class Vision {
 	}
 
 	/**
-	* Performs a line of sight test in order to determine if the given point
-	* in 3D space is visible for the game entity.
-	*
-	* @param {Vector3} point - The point to test.
-	* @return {Boolean} Whether the given point is visible or not.
-	*/
+	 * Performs a line of sight test in order to determine if the given point
+	 * in 3D space is visible for the game entity.
+	 *
+	 * @param {Vector3} point - The point to test.
+	 * @return {Boolean} Whether the given point is visible or not.
+	 */
 	visible( point ) {
 
 		const owner = this.owner;
@@ -16143,7 +16113,7 @@ class Vision {
 
 			const obstacle = obstacles[ i ];
 
-			const intersection = obstacle.intersectRay( ray$1, intersectionPoint$1 );
+			const intersection = obstacle.lineOfSightTest( ray$1, intersectionPoint$1 );
 
 			if ( intersection !== null ) {
 
@@ -16163,10 +16133,10 @@ class Vision {
 	}
 
 	/**
-	* Transforms this instance into a JSON object.
-	*
-	* @return {Object} The JSON object.
-	*/
+	 * Transforms this instance into a JSON object.
+	 *
+	 * @return {Object} The JSON object.
+	 */
 	toJSON() {
 
 		const json = {
@@ -16190,11 +16160,11 @@ class Vision {
 	}
 
 	/**
-	* Restores this instance from the given JSON object.
-	*
-	* @param {Object} json - The JSON object.
-	* @return {Vision} A reference to this vision.
-	*/
+	 * Restores this instance from the given JSON object.
+	 *
+	 * @param {Object} json - The JSON object.
+	 * @return {Vision} A reference to this vision.
+	 */
 	fromJSON( json ) {
 
 		this.owner = json.owner;
@@ -16213,11 +16183,11 @@ class Vision {
 	}
 
 	/**
-	* Restores UUIDs with references to GameEntity objects.
-	*
-	* @param {Map} entities - Maps game entities to UUIDs.
-	* @return {Vision} A reference to this vision.
-	*/
+	 * Restores UUIDs with references to GameEntity objects.
+	 *
+	 * @param {Map} entities - Maps game entities to UUIDs.
+	 * @return {Vision} A reference to this vision.
+	 */
 	resolveReferences( entities ) {
 
 		this.owner = entities.get( this.owner ) || null;
@@ -16369,4 +16339,4 @@ function runTaskQueue( deadline ) {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Obstacle, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };

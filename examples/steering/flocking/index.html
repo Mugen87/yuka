@@ -96,11 +96,11 @@
 
 			// dat.gui
 
-			var gui = new DAT.GUI( { width: 300 } );
+			const gui = new DAT.GUI( { width: 300 } );
 
-			gui.add( params, 'alignment', 0.1, 2 ).name( 'alignment' ).onChange( ( value ) => { alignmentBehavior.weight = value; } );
-			gui.add( params, 'cohesion', 0.1, 2 ).name( 'cohesion' ).onChange( ( value ) => { cohesionBehavior.weight = value; } );
-			gui.add( params, 'separation', 0.1, 2 ).name( 'separation' ).onChange( ( value ) => { separationBehavior.weight = value; } );
+			gui.add( params, 'alignment', 0.1, 2 ).name( 'alignment' ).onChange( ( value ) => alignmentBehavior.weight = value );
+			gui.add( params, 'cohesion', 0.1, 2 ).name( 'cohesion' ).onChange( ( value ) => cohesionBehavior.weight = value );
+			gui.add( params, 'separation', 0.1, 2 ).name( 'separation' ).onChange( ( value ) => separationBehavior.weight = value );
 
 			gui.open();
 

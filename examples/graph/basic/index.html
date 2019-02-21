@@ -76,7 +76,7 @@
 
 		// dat.gui
 
-		var gui = new DAT.GUI( { width: 300 } );
+		const gui = new DAT.GUI( { width: 300 } );
 		gui.add( params, 'algorithm', [ 'AStar', 'Dijkstra', 'BFS', 'DFS' ] ).onChange( performSearch );
 		gui.open();
 
@@ -143,7 +143,7 @@
 
 		raycaster.setFromCamera( mouse, camera );
 
-		var intersects = raycaster.intersectObjects( nodes );
+		const intersects = raycaster.intersectObjects( nodes );
 
 		if ( intersects.length > 0 ) {
 

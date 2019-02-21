@@ -205,7 +205,7 @@ class HideBehavior extends SteeringBehavior {
 
 		if ( this._waypoint !== null ) {
 
-			var distanceSq = this._waypoint.squaredDistanceTo( vehicle.position );
+			const distanceSq = this._waypoint.squaredDistanceTo( vehicle.position );
 
 			// if we are close enough, delete the current waypoint
 

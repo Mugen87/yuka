@@ -2,20 +2,18 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Vehicle, Obstacle } from '../../../../build/yuka.module.js';
+import { Vehicle } from '../../../../build/yuka.module.js';
 
 import { HideBehavior } from './HideBehavior.js';
 import world from './World.js';
 
-const obstacle = new Obstacle();
-
 class Enemy extends Vehicle {
 
-	constructor() {
+	constructor( geometry ) {
 
 		super();
 
-		this.geometry = null;
+		this.geometry = geometry;
 		this.maxSpeed = 5;
 		this.deathAnimDuration = 0.5;
 		this.currentTime = 0;
@@ -74,15 +72,6 @@ class Enemy extends Vehicle {
 			}
 
 		}
-
-	}
-
-	intersectRay( ray, intersectionPoint, normal = null ) {
-
-		obstacle.geometry = this.geometry;
-		obstacle.worldMatrix = this.worldMatrix;
-
-		return obstacle.intersectRay( ray, intersectionPoint, normal );
 
 	}
 
