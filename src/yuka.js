@@ -62,7 +62,6 @@ export { Cell } from './partitioning/Cell.js';
 export { CellSpacePartitioning } from './partitioning/CellSpacePartitioning.js';
 export { MemoryRecord } from './perception/memory/MemoryRecord.js';
 export { MemorySystem } from './perception/memory/MemorySystem.js';
-export { Obstacle } from './perception/vision/Obstacle.js';
 export { Vision } from './perception/vision/Vision.js';
 export { Path } from './steering/Path.js';
 export { Smoother } from './steering/Smoother.js';

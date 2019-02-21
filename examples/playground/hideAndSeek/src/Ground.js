@@ -2,13 +2,15 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Obstacle } from '../../../../build/yuka.module.js';
+import { GameEntity } from '../../../../build/yuka.module.js';
 
-class Ground extends Obstacle {
+class Ground extends GameEntity {
 
 	constructor( geometry ) {
 
-		super( geometry );
+		super();
+
+		this.geometry = geometry;
 
 	}
 

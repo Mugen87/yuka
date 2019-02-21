@@ -256,6 +256,7 @@ describe( 'GameEntity', function () {
 		} );
 
 	} );
+
 	describe( '#handleMessage()', function () {
 
 		it( 'should exist', function () {
@@ -269,6 +270,24 @@ describe( 'GameEntity', function () {
 
 			const entity = new GameEntity();
 			expect( entity.handleMessage() ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#lineOfSightTest()', function () {
+
+		it( 'should exist', function () {
+
+			const entity = new GameEntity();
+			expect( entity ).respondTo( 'lineOfSightTest' );
+
+		} );
+
+		it( 'should return "null" to indicate no blocking of the given line of sight', function () {
+
+			const entity = new GameEntity();
+			expect( entity.lineOfSightTest() ).to.be.null;
 
 		} );
 

@@ -144,19 +144,19 @@
 			scene.add( mesh2 );
 			scene.add( mesh3 );
 
-			const obstacle1 = new YUKA.Obstacle();
+			const obstacle1 = new YUKA.GameEntity();
 			obstacle1.position.copy( mesh1.position );
 			obstacle1.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( obstacle1 );
 			obstacles.push( obstacle1 );
 
-			const obstacle2 = new YUKA.Obstacle();
+			const obstacle2 = new YUKA.GameEntity();
 			obstacle2.position.copy( mesh2.position );
 			obstacle2.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( obstacle2 );
 			obstacles.push( obstacle2 );
 
-			const obstacle3 = new YUKA.Obstacle();
+			const obstacle3 = new YUKA.GameEntity();
 			obstacle3.position.copy( mesh3.position );
 			obstacle3.boundingRadius = geometry.boundingSphere.radius;
 			entityManager.add( obstacle3 );

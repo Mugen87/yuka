@@ -374,6 +374,22 @@ class GameEntity {
 	}
 
 	/**
+	* Holds the implementation for the line of sight test of this game entity.
+	* This method is used by {@link Vision#visible} in order to determine whether
+	* this game entity blocks the given line of sight or not. Implement this method
+	* when your game entity acts as an obstacle.
+	*
+	* @param {Ray} ray - The ray that represents the line of sight.
+	* @param {Vector3} intersectionPoint - The intersection point.
+	* @return {Vector3} The intersection point.
+	*/
+	lineOfSightTest() {
+
+		return null;
+
+	}
+
+	/**
 	* Sends a message with the given data to the specified receiver.
 	*
 	* @param {GameEntity} receiver - The receiver.

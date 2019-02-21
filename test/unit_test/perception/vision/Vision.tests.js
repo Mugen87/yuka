@@ -9,7 +9,6 @@ const PerceptionJSONs = require( '../../../files/PerceptionJSONs.js' );
 
 const Vision = YUKA.Vision;
 const GameEntity = YUKA.GameEntity;
-const Obstacle = YUKA.Obstacle;
 const MeshGeometry = YUKA.MeshGeometry;
 const Vector3 = YUKA.Vector3;
 
@@ -229,3 +228,43 @@ describe( 'Vision', function () {
 	} );
 
 } );
+
+
+class Obstacle extends GameEntity {
+
+	constructor( geometry = new MeshGeometry() ) {
+
+		super();
+
+
+		this.geometry = geometry;
+
+	}
+
+	lineOfSightTest( ray, intersectionPoint ) {
+
+		return this.geometry.intersectRay( ray, this.worldMatrix, intersectionPoint );
+
+	}
+
+	toJSON() {
+
+		const json = super.toJSON();
+
+		json.geometry = this.geometry.toJSON();
+
+		return json;
+
+	}
+
+	fromJSON( json ) {
+
+		super.fromJSON( json );
+
+		this.geometry.fromJSON( json.geometry );
+
+		return this;
+
+	}
+
+}

@@ -2,19 +2,20 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { Obstacle } from '../../../../build/yuka.module.js';
+import { GameEntity } from '../../../../build/yuka.module.js';
 
-class Target extends Obstacle {
+class Target extends GameEntity {
 
 	constructor( geometry ) {
 
-		super( geometry );
+		super();
 
 		this.uiElement = document.getElementById( 'hit' );
 
 		this.endTime = Infinity;
 		this.currentTime = 0;
 		this.duration = 1; // 1 second
+		this.geometry = geometry;
 
 	}
 

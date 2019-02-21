@@ -7,53 +7,53 @@ const ray = new Ray();
 const intersectionPoint = new Vector3();
 
 /**
-* Class for representing the vision component of a game entity.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-*/
+ * Class for representing the vision component of a game entity.
+ *
+ * @author {@link https://github.com/Mugen87|Mugen87}
+ */
 class Vision {
 
 	/**
-	* Constructs a new vision object.
-	*
-	* @param {GameEntity} owner - The owner of this vision instance.
-	*/
+	 * Constructs a new vision object.
+	 *
+	 * @param {GameEntity} owner - The owner of this vision instance.
+	 */
 	constructor( owner = null ) {
 
 		/**
-		* The game entity that owns this vision instance.
-		* @type GameEntity
-		*/
+		 * The game entity that owns this vision instance.
+		 * @type GameEntity
+		 */
 		this.owner = owner;
 
 		/**
-		* The field of view in radians.
-		* @type Number
-		* @default π/2
-		*/
+		 * The field of view in radians.
+		 * @type Number
+		 * @default π/2
+		 */
 		this.fieldOfView = Math.PI;
 
 		/**
-		* The visual range in world units.
-		* @type Number
-		* @default Infinity
-		*/
+		 * The visual range in world units.
+		 * @type Number
+		 * @default Infinity
+		 */
 		this.range = Infinity;
 
 		/**
-		* An array of {@link Obstacle obstacles}.
-		* @type Array
-		*/
+		 * An array of {@link GameEntity obstacles}.
+		 * @type Array
+		 */
 		this.obstacles = new Array();
 
 	}
 
 	/**
-	* Adds an obstacle to this vision instance.
-	*
-	* @param {Obstacle} obstacle - The obstacle to add.
-	* @return {Vision} A reference to this vision instance.
-	*/
+	 * Adds an obstacle to this vision instance.
+	 *
+	 * @param {GameEntity} obstacle - The obstacle to add.
+	 * @return {Vision} A reference to this vision instance.
+	 */
 	addObstacle( obstacle ) {
 
 		this.obstacles.push( obstacle );
@@ -63,11 +63,11 @@ class Vision {
 	}
 
 	/**
-	* Removes an obstacle from this vision instance.
-	*
-	* @param {Obstacle} obstacle - The obstacle to remove.
-	* @return {Vision} A reference to this vision instance.
-	*/
+	 * Removes an obstacle from this vision instance.
+	 *
+	 * @param {GameEntity} obstacle - The obstacle to remove.
+	 * @return {Vision} A reference to this vision instance.
+	 */
 	removeObstacle( obstacle ) {
 
 		const index = this.obstacles.indexOf( obstacle );
@@ -78,12 +78,12 @@ class Vision {
 	}
 
 	/**
-	* Performs a line of sight test in order to determine if the given point
-	* in 3D space is visible for the game entity.
-	*
-	* @param {Vector3} point - The point to test.
-	* @return {Boolean} Whether the given point is visible or not.
-	*/
+	 * Performs a line of sight test in order to determine if the given point
+	 * in 3D space is visible for the game entity.
+	 *
+	 * @param {Vector3} point - The point to test.
+	 * @return {Boolean} Whether the given point is visible or not.
+	 */
 	visible( point ) {
 
 		const owner = this.owner;
@@ -114,7 +114,7 @@ class Vision {
 
 			const obstacle = obstacles[ i ];
 
-			const intersection = obstacle.intersectRay( ray, intersectionPoint );
+			const intersection = obstacle.lineOfSightTest( ray, intersectionPoint );
 
 			if ( intersection !== null ) {
 
@@ -134,10 +134,10 @@ class Vision {
 	}
 
 	/**
-	* Transforms this instance into a JSON object.
-	*
-	* @return {Object} The JSON object.
-	*/
+	 * Transforms this instance into a JSON object.
+	 *
+	 * @return {Object} The JSON object.
+	 */
 	toJSON() {
 
 		const json = {
@@ -161,11 +161,11 @@ class Vision {
 	}
 
 	/**
-	* Restores this instance from the given JSON object.
-	*
-	* @param {Object} json - The JSON object.
-	* @return {Vision} A reference to this vision.
-	*/
+	 * Restores this instance from the given JSON object.
+	 *
+	 * @param {Object} json - The JSON object.
+	 * @return {Vision} A reference to this vision.
+	 */
 	fromJSON( json ) {
 
 		this.owner = json.owner;
@@ -184,11 +184,11 @@ class Vision {
 	}
 
 	/**
-	* Restores UUIDs with references to GameEntity objects.
-	*
-	* @param {Map} entities - Maps game entities to UUIDs.
-	* @return {Vision} A reference to this vision.
-	*/
+	 * Restores UUIDs with references to GameEntity objects.
+	 *
+	 * @param {Map} entities - Maps game entities to UUIDs.
+	 * @return {Vision} A reference to this vision.
+	 */
 	resolveReferences( entities ) {
 
 		this.owner = entities.get( this.owner ) || null;

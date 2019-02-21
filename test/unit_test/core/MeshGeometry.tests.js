@@ -9,6 +9,9 @@ const CoreJSONs = require( '../../files/CoreJSONs.js' );
 const MeshGeometry = YUKA.MeshGeometry;
 const AABB = YUKA.AABB;
 const BoundingSphere = YUKA.BoundingSphere;
+const Ray = YUKA.Ray;
+const Vector3 = YUKA.Vector3;
+const Matrix4 = YUKA.Matrix4;
 
 describe( 'MeshGeometry', function () {
 
@@ -55,6 +58,84 @@ describe( 'MeshGeometry', function () {
 			expect( geometry.boundingSphere.center ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
 			expect( geometry.boundingSphere.radius ).to.closeTo( 0.7071067811865476, Number.EPSILON );
 
+
+		} );
+
+	} );
+
+	describe( '#intersectRay()', function () {
+
+		it( 'should perform a ray-triangle intersection test with the given ray and the internal geometry and store the result in the given vector', function () {
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const indices = new Uint16Array( [ 0, 1, 2, 3, 4, 5 ] );
+
+			const geometry = new MeshGeometry( vertices, indices );
+
+			const matrix = new Matrix4();
+			const intersectionPoint = new Vector3();
+			const normal = new Vector3();
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.5 ), new Vector3( 0, - 1, 0 ) );
+
+			const result = geometry.intersectRay( ray, matrix, intersectionPoint, normal );
+
+			expect( result ).not.to.be.null;
+			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
+			expect( normal ).to.deep.equal( { x: 0, y: 1, z: 0 } );
+
+		} );
+
+		it( 'should support non-indexed mesh geometries', function () {
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+
+			const geometry = new MeshGeometry( vertices );
+
+			const matrix = new Matrix4();
+			const intersectionPoint = new Vector3();
+			const normal = new Vector3();
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.5 ), new Vector3( 0, - 1, 0 ) );
+
+			const result = geometry.intersectRay( ray, matrix, intersectionPoint, normal );
+
+			expect( result ).not.to.be.null;
+			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
+			expect( normal ).to.deep.equal( { x: 0, y: 1, z: 0 } );
+
+		} );
+
+		it( 'should perform an early out if the ray does not intersect the bounding volumes of the obstacle', function () {
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+
+			const geometry = new MeshGeometry( vertices );
+
+			const matrix = new Matrix4();
+			const intersectionPoint = new Vector3();
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.5 ), new Vector3( 0, 1, 0 ) );
+
+			expect( geometry.intersectRay( ray, matrix, intersectionPoint ) ).to.be.null;
+
+		} );
+
+		it( 'should respect the transformation of the obstacle', function () {
+
+			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+
+			const geometry = new MeshGeometry( vertices );
+
+			const ray = new Ray( new Vector3( 0.5, 5, 0.5 ), new Vector3( 0, - 1, 0 ) );
+
+			const matrix = new Matrix4();
+			matrix.setPosition( new Vector3( 10, 0, 0 ) );
+			const intersectionPoint = new Vector3();
+
+			const result = geometry.intersectRay( ray, matrix, intersectionPoint );
+
+			expect( result ).to.be.null;
 
 		} );
 
