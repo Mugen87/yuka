@@ -16039,7 +16039,8 @@ class Vision {
 		this.range = Infinity;
 
 		/**
-		 * An array of {@link GameEntity obstacles}.
+		 * An array of obstacles. An obstacle is a game entity that
+		 * implements the {@link GameEntity#lineOfSightTest} method.
 		 * @type Array
 		 */
 		this.obstacles = new Array();
