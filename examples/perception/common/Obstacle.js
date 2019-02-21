@@ -1,5 +1,5 @@
 
-import { GameEntity, MeshGeometry } from '../../../../build/yuka.module.js';
+import { GameEntity, MeshGeometry } from '../../../build/yuka.module.js';
 
 /**
  * @author robp94 / https://github.com/robp94
