@@ -293,8 +293,6 @@ class GameEntity {
 	*/
 	getWorldPosition( result ) {
 
-		console.log( this.worldMatrix );
-
 		return result.extractPositionFromMatrix( this.worldMatrix );
 
 	}
