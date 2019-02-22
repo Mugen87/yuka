@@ -16,7 +16,7 @@ class Obstacle extends GameEntity {
 
 	lineOfSightTest( ray, intersectionPoint ) {
 
-		return this.geometry.intersectRay( ray, this.worldMatrix, intersectionPoint );
+		return this.geometry.intersectRay( ray, this.worldMatrix, true, intersectionPoint );
 
 	}
 

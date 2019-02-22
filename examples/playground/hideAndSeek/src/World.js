@@ -298,7 +298,7 @@ class World {
 
 			const obstalce = obstacles[ i ];
 
-			if ( obstalce.geometry.intersectRay( ray, obstalce.worldMatrix, intersection.point, intersection.normal ) !== null ) {
+			if ( obstalce.geometry.intersectRay( ray, obstalce.worldMatrix, false, intersection.point, intersection.normal ) !== null ) {
 
 				const squaredDistance = intersection.point.squaredDistanceTo( ray.origin );
 				obstalce.squaredDistance = squaredDistance;
