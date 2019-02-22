@@ -1,11 +1,14 @@
 import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
+import { Matrix3 } from '../math/Matrix3.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Logger } from './Logger.js';
 import { MathUtils } from '../math/MathUtils.js';
 
 const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
+const quaternionWorld = new Quaternion();
+const rotationMatrix = new Matrix3();
 
 /**
 * Base class for all game entities.
@@ -263,6 +266,36 @@ class GameEntity {
 		targetRotation.lookAt( this.forward, targetDirection, this.up );
 
 		return this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta );
+
+	}
+
+	/**
+	* Computes the current direction (forward) vector of this game entity
+	* in world space and stores the result in the given vector.
+	*
+	* @param {Vector3} result - The direction vector of this game entity in world space.
+	* @return {Vector3} The direction vector of this game entity in world space.
+	*/
+	getWorldDirection( result ) {
+
+		quaternionWorld.fromMatrix3( rotationMatrix.fromMatrix4( this.worldMatrix ) );
+
+		return result.copy( this.forward ).applyRotation( quaternionWorld ).normalize();
+
+	}
+
+	/**
+	* Computes the current position of this game entity in world space and
+	* stores the result in the given vector.
+	*
+	* @param {Vector3} result - The position of this game entity in world space.
+	* @return {Vector3} The position of this game entity in world space.
+	*/
+	getWorldPosition( result ) {
+
+		console.log( this.worldMatrix );
+
+		return result.extractPositionFromMatrix( this.worldMatrix );
 
 	}
 

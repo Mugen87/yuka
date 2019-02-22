@@ -10,6 +10,8 @@ const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 const rayLocal = new Ray();
 const plane = new Plane();
 const inverseMatrix = new Matrix4();
+const closestIntersectionPoint = new Vector3();
+const closestTriangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 
 /**
 * Class for representing a polygon mesh. The faces consist of triangles.
@@ -82,11 +84,12 @@ class MeshGeometry {
 	 *
 	 * @param {Ray} ray - The ray to test.
 	 * @param {Matrix4} worldMatrix - The matrix that transforms the geometry to world space.
+	 * @param {Boolean} closest - Whether the closest intersection point should be computed or not.
 	 * @param {Vector3} intersectionPoint - The intersection point.
 	 * @param {Vector3} normal - The normal vector of the respective triangle.
 	 * @return {Vector3} The result vector.
 	 */
-	intersectRay( ray, worldMatrix, intersectionPoint, normal = null ) {
+	intersectRay( ray, worldMatrix, closest, intersectionPoint, normal = null ) {
 
 		// check bounding sphere first in world space
 
@@ -108,6 +111,9 @@ class MeshGeometry {
 				const vertices = this.vertices;
 				const indices = this.indices;
 
+				let minDistance = Infinity;
+				let found = false;
+
 				if ( indices === null ) {
 
 					// non-indexed geometry
@@ -120,21 +126,28 @@ class MeshGeometry {
 
 						if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
 
-							// transform intersection point back to world space
+							if ( closest ) {
 
-							intersectionPoint.applyMatrix4( worldMatrix );
+								const distance = intersectionPoint.squaredDistanceTo( rayLocal.origin );
 
-							// compute normal of triangle in world space if necessary
+								if ( distance < minDistance ) {
 
-							if ( normal !== null ) {
+									minDistance = distance;
 
-								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
-								normal.copy( plane.normal );
-								normal.transformDirection( worldMatrix );
+									closestIntersectionPoint.copy( intersectionPoint );
+									closestTriangle.a.copy( triangle.a );
+									closestTriangle.b.copy( triangle.b );
+									closestTriangle.c.copy( triangle.c );
+									found = true;
+
+								}
+
+							} else {
+
+								found = true;
+								break;
 
 							}
-
-							return intersectionPoint;
 
 						}
 
@@ -158,25 +171,65 @@ class MeshGeometry {
 
 						if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
 
-							// transform intersection point back to world space
+							if ( closest ) {
 
-							intersectionPoint.applyMatrix4( worldMatrix );
+								const distance = intersectionPoint.squaredDistanceTo( rayLocal.origin );
 
-							// compute normal of triangle in world space if necessary
+								if ( distance < minDistance ) {
 
-							if ( normal !== null ) {
+									minDistance = distance;
 
-								plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
-								normal.copy( plane.normal );
-								normal.transformDirection( worldMatrix );
+									closestIntersectionPoint.copy( intersectionPoint );
+									closestTriangle.a.copy( triangle.a );
+									closestTriangle.b.copy( triangle.b );
+									closestTriangle.c.copy( triangle.c );
+									found = true;
+
+								}
+
+							} else {
+
+								found = true;
+								break;
 
 							}
-
-							return intersectionPoint;
 
 						}
 
 					}
+
+				}
+
+				// intersection was found
+
+				if ( found ) {
+
+					if ( closest ) {
+
+						// restore closest intersection point and triangle
+
+						intersectionPoint.copy( closestIntersectionPoint );
+						triangle.a.copy( closestTriangle.a );
+						triangle.b.copy( closestTriangle.b );
+						triangle.c.copy( closestTriangle.c );
+
+					}
+
+					// transform intersection point back to world space
+
+					intersectionPoint.applyMatrix4( worldMatrix );
+
+					// compute normal of triangle in world space if necessary
+
+					if ( normal !== null ) {
+
+						plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+						normal.copy( plane.normal );
+						normal.transformDirection( worldMatrix );
+
+					}
+
+					return intersectionPoint;
 
 				}
 

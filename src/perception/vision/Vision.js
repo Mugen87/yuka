@@ -5,6 +5,7 @@ const toPoint = new Vector3();
 const direction = new Vector3();
 const ray = new Ray();
 const intersectionPoint = new Vector3();
+const worldPosition = new Vector3();
 
 /**
  * Class for representing the vision component of a game entity.
@@ -29,7 +30,7 @@ class Vision {
 		/**
 		 * The field of view in radians.
 		 * @type Number
-		 * @default π/2
+		 * @default π
 		 */
 		this.fieldOfView = Math.PI;
 
@@ -90,16 +91,18 @@ class Vision {
 		const owner = this.owner;
 		const obstacles = this.obstacles;
 
+		owner.getWorldPosition( worldPosition );
+
 		// check if point lies within the game entity's visual range
 
-		toPoint.subVectors( point, owner.position );
+		toPoint.subVectors( point, worldPosition );
 		const distanceToPoint = toPoint.length();
 
 		if ( distanceToPoint > this.range ) return false;
 
 		// next, check if the point lies within the game entity's field of view
 
-		owner.getDirection( direction );
+		owner.getWorldDirection( direction );
 
 		const angle = direction.angleTo( toPoint );
 
@@ -108,7 +111,7 @@ class Vision {
 		// the point lies within the game entity's visual range and field
 		// of view. now check if obstacles block the game entity's view to the given point.
 
-		ray.origin.copy( owner.position );
+		ray.origin.copy( worldPosition );
 		ray.direction.copy( toPoint ).divideScalar( distanceToPoint || 1 ); // normalize
 
 		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
@@ -122,7 +125,7 @@ class Vision {
 				// if an intersection point is closer to the game entity than the given point,
 				// something is blocking the game entity's view
 
-				const squaredDistanceToIntersectionPoint = intersectionPoint.squaredDistanceTo( owner.position );
+				const squaredDistanceToIntersectionPoint = intersectionPoint.squaredDistanceTo( worldPosition );
 
 				if ( squaredDistanceToIntersectionPoint <= ( distanceToPoint * distanceToPoint ) ) return false;
 

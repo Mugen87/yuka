@@ -78,7 +78,7 @@ describe( 'MeshGeometry', function () {
 
 			const ray = new Ray( new Vector3( 0.5, 1, 0.5 ), new Vector3( 0, - 1, 0 ) );
 
-			const result = geometry.intersectRay( ray, matrix, intersectionPoint, normal );
+			const result = geometry.intersectRay( ray, matrix, false, intersectionPoint, normal );
 
 			expect( result ).not.to.be.null;
 			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
@@ -98,7 +98,7 @@ describe( 'MeshGeometry', function () {
 
 			const ray = new Ray( new Vector3( 0.5, 1, 0.5 ), new Vector3( 0, - 1, 0 ) );
 
-			const result = geometry.intersectRay( ray, matrix, intersectionPoint, normal );
+			const result = geometry.intersectRay( ray, matrix, false, intersectionPoint, normal );
 
 			expect( result ).not.to.be.null;
 			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 0, z: 0.5 } );
@@ -117,7 +117,7 @@ describe( 'MeshGeometry', function () {
 
 			const ray = new Ray( new Vector3( 0.5, 1, 0.5 ), new Vector3( 0, 1, 0 ) );
 
-			expect( geometry.intersectRay( ray, matrix, intersectionPoint ) ).to.be.null;
+			expect( geometry.intersectRay( ray, matrix, false, intersectionPoint ) ).to.be.null;
 
 		} );
 
@@ -133,9 +133,103 @@ describe( 'MeshGeometry', function () {
 			matrix.setPosition( new Vector3( 10, 0, 0 ) );
 			const intersectionPoint = new Vector3();
 
-			const result = geometry.intersectRay( ray, matrix, intersectionPoint );
+			const result = geometry.intersectRay( ray, matrix, false, intersectionPoint );
 
 			expect( result ).to.be.null;
+
+		} );
+
+		it( 'should compute the closest intersection point if necessary', function () {
+
+			const vertices = new Float32Array( [
+				1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0,
+				// the following second line is the same polygon but closer to the ray's origin
+				1, 1, 0, 0.5, 1, 1, 1, 1, 1, 0, 1, 0, 0.5, 1, 1, 1, 1, 0
+			] );
+			const indices = new Uint16Array( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ] );
+
+			const geometry = new MeshGeometry( vertices, indices );
+
+			const closest = true;
+			const matrix = new Matrix4();
+			const intersectionPoint = new Vector3();
+
+			const ray = new Ray( new Vector3( 0.5, 2, 0.5 ), new Vector3( 0, - 1, 0 ) );
+
+			const result = geometry.intersectRay( ray, matrix, closest, intersectionPoint );
+
+			expect( result ).to.be.not.null;
+			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 1, z: 0.5 } );
+
+		} );
+
+		it( 'should not overwrite a temporary closest intersection point with a point which is further away from the origin', function () {
+
+			const vertices = new Float32Array( [
+				1, 1, 0, 0.5, 1, 1, 1, 1, 1, 0, 1, 0, 0.5, 1, 1, 1, 1, 0,
+				// the following second line is the same polygon but further away from the ray's origin
+				1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0,
+			] );
+			const indices = new Uint16Array( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ] );
+
+			const geometry = new MeshGeometry( vertices, indices );
+
+			const closest = true;
+			const matrix = new Matrix4();
+			const intersectionPoint = new Vector3();
+
+			const ray = new Ray( new Vector3( 0.5, 2, 0.5 ), new Vector3( 0, - 1, 0 ) );
+
+			const result = geometry.intersectRay( ray, matrix, closest, intersectionPoint );
+
+			expect( result ).to.be.not.null;
+			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 1, z: 0.5 } );
+
+		} );
+
+		it( 'should compute the closest intersection point if necessary for non-indexed mesh geometries', function () {
+
+			const vertices = new Float32Array( [
+				1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0,
+				// the following second line is the same polygon but closer to the ray's origin
+				1, 1, 0, 0.5, 1, 1, 1, 1, 1, 0, 1, 0, 0.5, 1, 1, 1, 1, 0
+			] );
+
+			const geometry = new MeshGeometry( vertices );
+
+			const ray = new Ray( new Vector3( 0.5, 2, 0.5 ), new Vector3( 0, - 1, 0 ) );
+
+			const closest = true;
+			const matrix = new Matrix4();
+			const intersectionPoint = new Vector3();
+
+			const result = geometry.intersectRay( ray, matrix, closest, intersectionPoint );
+
+			expect( result ).to.be.not.null;
+			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 1, z: 0.5 } );
+
+		} );
+
+		it( 'should compute the closest intersection point if necessary for non-indexed mesh geometries and not overwrite temporary closest intersection points', function () {
+
+			const vertices = new Float32Array( [
+				1, 1, 0, 0.5, 1, 1, 1, 1, 1, 0, 1, 0, 0.5, 1, 1, 1, 1, 0,
+				// the following second line is the same polygon but further away from the ray's origin
+				1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0
+			] );
+
+			const geometry = new MeshGeometry( vertices );
+
+			const ray = new Ray( new Vector3( 0.5, 2, 0.5 ), new Vector3( 0, - 1, 0 ) );
+
+			const closest = true;
+			const matrix = new Matrix4();
+			const intersectionPoint = new Vector3();
+
+			const result = geometry.intersectRay( ray, matrix, closest, intersectionPoint );
+
+			expect( result ).to.be.not.null;
+			expect( intersectionPoint ).to.deep.equal( { x: 0.5, y: 1, z: 0.5 } );
 
 		} );
 

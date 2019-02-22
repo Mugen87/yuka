@@ -318,6 +318,26 @@ class Matrix3 {
 	}
 
 	/**
+	* Sets the elements of this matrix by extracting the upper-left 3x3 portion
+	* from a 4x4 matrix.
+	*
+	* @param {Matrix4} m - A 4x4 matrix.
+	* @return {Matrix3} A reference to this matrix.
+	*/
+	fromMatrix4( m ) {
+
+		const e = this.elements;
+		const me = m.elements;
+
+		e[ 0 ] = me[ 0 ]; e[ 1 ] = me[ 1 ]; e[ 2 ] = me[ 2 ];
+		e[ 3 ] = me[ 4 ]; e[ 4 ] = me[ 5 ]; e[ 5 ] = me[ 6 ];
+		e[ 6 ] = me[ 8 ]; e[ 7 ] = me[ 9 ]; e[ 8 ] = me[ 10 ];
+
+		return this;
+
+	}
+
+	/**
 	* Sets the elements of this matrix from an array.
 	*
 	* @param {Array} array - An array.

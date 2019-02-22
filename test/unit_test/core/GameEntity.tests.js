@@ -179,6 +179,46 @@ describe( 'GameEntity', function () {
 
 	} );
 
+	describe( '#getWorldDirection()', function () {
+
+		it( 'should compute the direction of this game entity in world space', function () {
+
+			const entity = new GameEntity();
+			const targetDirection = new Vector3( - 1, 0, 0 );
+
+			const q = new Quaternion();
+			q.lookAt( entity.forward, targetDirection, entity.up );
+
+			entity.worldMatrix.compose( new Vector3(), q, new Vector3( 1, 1, 1 ) );
+			const worldDirection = new Vector3();
+
+			entity.getWorldDirection( worldDirection );
+
+			expect( worldDirection.x ).to.closeTo( - 1, Number.EPSILON );
+			expect( worldDirection.y ).to.closeTo( 0, Number.EPSILON );
+			expect( worldDirection.z ).to.closeTo( 0, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#getWorldPosition()', function () {
+
+		it( 'should compute the position of this game entity in world space', function () {
+
+			const entity = new GameEntity();
+			const targetPosition = new Vector3( 1, 1, 1 );
+			entity.worldMatrix.setPosition( targetPosition );
+			const worldPosition = new Vector3();
+
+			entity.getWorldPosition( worldPosition );
+
+			expect( worldPosition ).to.deep.equal( targetPosition );
+
+		} );
+
+	} );
+
 	describe( '#updateMatrix()', function () {
 
 		it( 'should compose a matrix from position, rotation and scale', function () {

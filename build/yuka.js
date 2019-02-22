@@ -1483,6 +1483,26 @@
 		}
 
 		/**
+		* Sets the elements of this matrix by extracting the upper-left 3x3 portion
+		* from a 4x4 matrix.
+		*
+		* @param {Matrix4} m - A 4x4 matrix.
+		* @return {Matrix3} A reference to this matrix.
+		*/
+		fromMatrix4( m ) {
+
+			const e = this.elements;
+			const me = m.elements;
+
+			e[ 0 ] = me[ 0 ]; e[ 1 ] = me[ 1 ]; e[ 2 ] = me[ 2 ];
+			e[ 3 ] = me[ 4 ]; e[ 4 ] = me[ 5 ]; e[ 5 ] = me[ 6 ];
+			e[ 6 ] = me[ 8 ]; e[ 7 ] = me[ 9 ]; e[ 8 ] = me[ 10 ];
+
+			return this;
+
+		}
+
+		/**
 		* Sets the elements of this matrix from an array.
 		*
 		* @param {Array} array - An array.
@@ -2557,6 +2577,8 @@
 
 	const targetRotation = new Quaternion();
 	const targetDirection = new Vector3();
+	const quaternionWorld = new Quaternion();
+	const rotationMatrix = new Matrix3();
 
 	/**
 	* Base class for all game entities.
@@ -2814,6 +2836,36 @@
 			targetRotation.lookAt( this.forward, targetDirection, this.up );
 
 			return this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta );
+
+		}
+
+		/**
+		* Computes the current direction (forward) vector of this game entity
+		* in world space and stores the result in the given vector.
+		*
+		* @param {Vector3} result - The direction vector of this game entity in world space.
+		* @return {Vector3} The direction vector of this game entity in world space.
+		*/
+		getWorldDirection( result ) {
+
+			quaternionWorld.fromMatrix3( rotationMatrix.fromMatrix4( this.worldMatrix ) );
+
+			return result.copy( this.forward ).applyRotation( quaternionWorld ).normalize();
+
+		}
+
+		/**
+		* Computes the current position of this game entity in world space and
+		* stores the result in the given vector.
+		*
+		* @param {Vector3} result - The position of this game entity in world space.
+		* @return {Vector3} The position of this game entity in world space.
+		*/
+		getWorldPosition( result ) {
+
+			console.log( this.worldMatrix );
+
+			return result.extractPositionFromMatrix( this.worldMatrix );
 
 		}
 
@@ -7859,6 +7911,8 @@
 	const rayLocal = new Ray();
 	const plane = new Plane();
 	const inverseMatrix = new Matrix4();
+	const closestIntersectionPoint = new Vector3();
+	const closestTriangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 
 	/**
 	* Class for representing a polygon mesh. The faces consist of triangles.
@@ -7931,11 +7985,12 @@
 		 *
 		 * @param {Ray} ray - The ray to test.
 		 * @param {Matrix4} worldMatrix - The matrix that transforms the geometry to world space.
+		 * @param {Boolean} closest - Whether the closest intersection point should be computed or not.
 		 * @param {Vector3} intersectionPoint - The intersection point.
 		 * @param {Vector3} normal - The normal vector of the respective triangle.
 		 * @return {Vector3} The result vector.
 		 */
-		intersectRay( ray, worldMatrix, intersectionPoint, normal = null ) {
+		intersectRay( ray, worldMatrix, closest, intersectionPoint, normal = null ) {
 
 			// check bounding sphere first in world space
 
@@ -7957,6 +8012,9 @@
 					const vertices = this.vertices;
 					const indices = this.indices;
 
+					let minDistance = Infinity;
+					let found = false;
+
 					if ( indices === null ) {
 
 						// non-indexed geometry
@@ -7969,21 +8027,28 @@
 
 							if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
 
-								// transform intersection point back to world space
+								if ( closest ) {
 
-								intersectionPoint.applyMatrix4( worldMatrix );
+									const distance = intersectionPoint.squaredDistanceTo( rayLocal.origin );
 
-								// compute normal of triangle in world space if necessary
+									if ( distance < minDistance ) {
 
-								if ( normal !== null ) {
+										minDistance = distance;
 
-									plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
-									normal.copy( plane.normal );
-									normal.transformDirection( worldMatrix );
+										closestIntersectionPoint.copy( intersectionPoint );
+										closestTriangle.a.copy( triangle.a );
+										closestTriangle.b.copy( triangle.b );
+										closestTriangle.c.copy( triangle.c );
+										found = true;
+
+									}
+
+								} else {
+
+									found = true;
+									break;
 
 								}
-
-								return intersectionPoint;
 
 							}
 
@@ -8007,25 +8072,65 @@
 
 							if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
 
-								// transform intersection point back to world space
+								if ( closest ) {
 
-								intersectionPoint.applyMatrix4( worldMatrix );
+									const distance = intersectionPoint.squaredDistanceTo( rayLocal.origin );
 
-								// compute normal of triangle in world space if necessary
+									if ( distance < minDistance ) {
 
-								if ( normal !== null ) {
+										minDistance = distance;
 
-									plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
-									normal.copy( plane.normal );
-									normal.transformDirection( worldMatrix );
+										closestIntersectionPoint.copy( intersectionPoint );
+										closestTriangle.a.copy( triangle.a );
+										closestTriangle.b.copy( triangle.b );
+										closestTriangle.c.copy( triangle.c );
+										found = true;
+
+									}
+
+								} else {
+
+									found = true;
+									break;
 
 								}
-
-								return intersectionPoint;
 
 							}
 
 						}
+
+					}
+
+					// intersection was found
+
+					if ( found ) {
+
+						if ( closest ) {
+
+							// restore closest intersection point and triangle
+
+							intersectionPoint.copy( closestIntersectionPoint );
+							triangle.a.copy( closestTriangle.a );
+							triangle.b.copy( closestTriangle.b );
+							triangle.c.copy( closestTriangle.c );
+
+						}
+
+						// transform intersection point back to world space
+
+						intersectionPoint.applyMatrix4( worldMatrix );
+
+						// compute normal of triangle in world space if necessary
+
+						if ( normal !== null ) {
+
+							plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
+							normal.copy( plane.normal );
+							normal.transformDirection( worldMatrix );
+
+						}
+
+						return intersectionPoint;
 
 					}
 
@@ -16009,6 +16114,7 @@
 	const direction$1 = new Vector3();
 	const ray$1 = new Ray();
 	const intersectionPoint$1 = new Vector3();
+	const worldPosition = new Vector3();
 
 	/**
 	 * Class for representing the vision component of a game entity.
@@ -16033,7 +16139,7 @@
 			/**
 			 * The field of view in radians.
 			 * @type Number
-			 * @default π/2
+			 * @default π
 			 */
 			this.fieldOfView = Math.PI;
 
@@ -16094,16 +16200,18 @@
 			const owner = this.owner;
 			const obstacles = this.obstacles;
 
+			owner.getWorldPosition( worldPosition );
+
 			// check if point lies within the game entity's visual range
 
-			toPoint.subVectors( point, owner.position );
+			toPoint.subVectors( point, worldPosition );
 			const distanceToPoint = toPoint.length();
 
 			if ( distanceToPoint > this.range ) return false;
 
 			// next, check if the point lies within the game entity's field of view
 
-			owner.getDirection( direction$1 );
+			owner.getWorldDirection( direction$1 );
 
 			const angle = direction$1.angleTo( toPoint );
 
@@ -16112,7 +16220,7 @@
 			// the point lies within the game entity's visual range and field
 			// of view. now check if obstacles block the game entity's view to the given point.
 
-			ray$1.origin.copy( owner.position );
+			ray$1.origin.copy( worldPosition );
 			ray$1.direction.copy( toPoint ).divideScalar( distanceToPoint || 1 ); // normalize
 
 			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
@@ -16126,7 +16234,7 @@
 					// if an intersection point is closer to the game entity than the given point,
 					// something is blocking the game entity's view
 
-					const squaredDistanceToIntersectionPoint = intersectionPoint$1.squaredDistanceTo( owner.position );
+					const squaredDistanceToIntersectionPoint = intersectionPoint$1.squaredDistanceTo( worldPosition );
 
 					if ( squaredDistanceToIntersectionPoint <= ( distanceToPoint * distanceToPoint ) ) return false;
 

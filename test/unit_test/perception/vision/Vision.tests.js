@@ -110,18 +110,21 @@ describe( 'Vision', function () {
 		it( 'should return false if the given point lies inside the visual range and the field of view of the game entity but an obstacle blocks the line of sight', function () {
 
 			const entity = new GameEntity();
-			entity.position.set( 0.5, 2, 0.5 );
+			entity.position.set( 0, 0, - 1 );
+			entity.updateWorldMatrix();
 			const vision = new Vision( entity );
-			vision.range = 10;
+			vision.range = 5;
 			vision.fieldOfView = Math.PI * 0.25;
 
-			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const vertices = new Float32Array( [
+				1, 1, 0,	1, - 1, 0,	- 1, - 1, 0,
+				- 1, - 1, 0,	- 1, 1, 0,	1, 1, 0
+			] );
 			const geometry = new MeshGeometry( vertices );
 			const obstacle = new Obstacle( geometry );
 			vision.addObstacle( obstacle );
 
-			const point = new Vector3( 0.5, - 2, 0.5 );
-			entity.lookAt( point );
+			const point = new Vector3( 0, 0, 2 );
 
 			expect( vision.visible( point ) ).to.be.false;
 
@@ -134,7 +137,6 @@ describe( 'Vision', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const entity = new GameEntity();
-			entity.position.set( 0.5, 2, 0.5 );
 			const vision = new Vision( entity );
 			vision.range = 3;
 			vision.fieldOfView = Math.PI * 0.25;
@@ -160,7 +162,6 @@ describe( 'Vision', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const entity = new GameEntity();
-			entity.position.set( 0.5, 2, 0.5 );
 			const vision = new Vision( entity );
 			vision.range = 3;
 			vision.fieldOfView = Math.PI * 0.25;
@@ -168,6 +169,7 @@ describe( 'Vision', function () {
 			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
 			const geometry = new MeshGeometry( vertices );
 			const obstacle = new Obstacle( geometry );
+
 			vision.addObstacle( obstacle );
 			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
@@ -243,7 +245,7 @@ class Obstacle extends GameEntity {
 
 	lineOfSightTest( ray, intersectionPoint ) {
 
-		return this.geometry.intersectRay( ray, this.worldMatrix, intersectionPoint );
+		return this.geometry.intersectRay( ray, this.worldMatrix, true, intersectionPoint );
 
 	}
 
