@@ -1818,13 +1818,15 @@ class Quaternion {
 	*
 	* @param {Quaternion} q - The target rotation.
 	* @param {Number} step - The maximum step in radians.
+	* @param {Number} tolerance - A tolerance value in radians to tweak the result
+	* when both rotations are considered to be equal.
 	* @return {Boolean} Whether the given quaternion already represents the target rotation.
 	*/
-	rotateTo( q, step ) {
+	rotateTo( q, step, tolerance = 0.0001 ) {
 
 		const angle = this.angleTo( q );
 
-		if ( angle < 0.0001 ) return true;
+		if ( angle < tolerance ) return true;
 
 		const t = Math.min( 1, step / angle );
 
@@ -2822,14 +2824,16 @@ class GameEntity {
 	*
 	* @param {Vector3} target - The target position.
 	* @param {Number} delta - The time delta.
+	* @param {Number} tolerance - A tolerance value in radians to tweak the result
+	* when a game entity is considered to face a target.
 	* @return {Boolean} Whether the entity is faced to the target or not.
 	*/
-	rotateTo( target, delta ) {
+	rotateTo( target, delta, tolerance = 0.0001 ) {
 
 		targetDirection.subVectors( target, this.position ).normalize();
 		targetRotation.lookAt( this.forward, targetDirection, this.up );
 
-		return this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta );
+		return this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta, tolerance );
 
 	}
 
@@ -15798,6 +15802,14 @@ class MemoryRecord {
 		* @type GameEntity
 		*/
 		this.entity = entity;
+
+		/**
+		* Records the time the entity became visible. Useful in combination with a reaction time
+		* in order to prevent immediate actions.
+		* @type Number
+		* @default - 1
+		*/
+		this.timeBecameVisible = - 1;
 
 		/**
 		* Records the time the entity was last sensed (e.g. seen or heard). Used to determine

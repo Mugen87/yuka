@@ -249,13 +249,15 @@ class Quaternion {
 	*
 	* @param {Quaternion} q - The target rotation.
 	* @param {Number} step - The maximum step in radians.
+	* @param {Number} tolerance - A tolerance value in radians to tweak the result
+	* when both rotations are considered to be equal.
 	* @return {Boolean} Whether the given quaternion already represents the target rotation.
 	*/
-	rotateTo( q, step ) {
+	rotateTo( q, step, tolerance = 0.0001 ) {
 
 		const angle = this.angleTo( q );
 
-		if ( angle < 0.0001 ) return true;
+		if ( angle < tolerance ) return true;
 
 		const t = Math.min( 1, step / angle );
 

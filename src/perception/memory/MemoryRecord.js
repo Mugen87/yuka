@@ -21,6 +21,14 @@ class MemoryRecord {
 		this.entity = entity;
 
 		/**
+		* Records the time the entity became visible. Useful in combination with a reaction time
+		* in order to prevent immediate actions.
+		* @type Number
+		* @default - 1
+		*/
+		this.timeBecameVisible = - 1;
+
+		/**
 		* Records the time the entity was last sensed (e.g. seen or heard). Used to determine
 		* if a game entity can "remember" this record or not.
 		* @type Number
