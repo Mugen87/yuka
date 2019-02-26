@@ -9317,7 +9317,7 @@
 	* Class for representing a fuzzy set that has a s-shape membership function with
 	* values from highest to lowest.
 	*
-	* @author robp94 / https://github.com/robp94
+	* @author {@link https://github.com/robp94|robp94}
 	* @augments FuzzySet
 	*/
 	class LeftSCurveFuzzySet extends FuzzySet {
@@ -9555,7 +9555,7 @@
 	* Class for representing a fuzzy set that has a normal distribution shape. It can be defined
 	* by the mean and standard deviation.
 	*
-	* @author robp94 / https://github.com/robp94
+	* @author {@link https://github.com/robp94|robp94}
 	* @augments FuzzySet
 	*/
 	class NormalDistFuzzySet extends FuzzySet {
@@ -9695,7 +9695,7 @@
 	* Class for representing a fuzzy set that has a s-shape membership function with
 	* values from lowest to highest.
 	*
-	* @author robp94 / https://github.com/robp94
+	* @author {@link https://github.com/robp94|robp94}
 	* @augments FuzzySet
 	*/
 	class RightSCurveFuzzySet extends FuzzySet {

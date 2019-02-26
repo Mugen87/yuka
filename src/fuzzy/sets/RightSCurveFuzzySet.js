@@ -4,7 +4,7 @@ import { FuzzySet } from '../FuzzySet.js';
 * Class for representing a fuzzy set that has a s-shape membership function with
 * values from lowest to highest.
 *
-* @author robp94 / https://github.com/robp94
+* @author {@link https://github.com/robp94|robp94}
 * @augments FuzzySet
 */
 class RightSCurveFuzzySet extends FuzzySet {
