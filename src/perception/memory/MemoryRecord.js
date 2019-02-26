@@ -61,6 +61,7 @@ class MemoryRecord {
 		return {
 			type: this.constructor.name,
 			entity: this.entity.uuid,
+			timeBecameVisible: this.timeBecameVisible,
 			timeLastSensed: this.timeLastSensed,
 			lastSensedPosition: this.lastSensedPosition.toArray( new Array() ),
 			visible: this.visible
@@ -77,6 +78,7 @@ class MemoryRecord {
 	fromJSON( json ) {
 
 		this.entity = json.entity; // uuid
+		this.timeBecameVisible = json.timeBecameVisible;
 		this.timeLastSensed = json.timeLastSensed;
 		this.lastSensedPosition.fromArray( json.lastSensedPosition );
 		this.visible = json.visible;
