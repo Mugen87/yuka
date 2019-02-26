@@ -160,7 +160,7 @@ class Blaster extends GameEntity {
 
 			this.endTimeMuzzleFire = this.currentTime + this.muzzleFireTime;
 
-			// adjust ammo
+			// create bullet
 
 			const owner = this.owner;
 			const head = owner.head;
@@ -186,10 +186,10 @@ class Blaster extends GameEntity {
 			target.copy( ray.origin ).add( ray.direction.multiplyScalar( distance ) );
 			ray.origin.extractPositionFromMatrix( this.worldMatrix );
 			ray.direction.subVectors( target, ray.origin ).normalize();
-
-			//
-
 			world.addBullet( owner, ray );
+
+			// adjust ammo
+
 			this.roundsLeft --;
 
 			this.endTimeShot = this.currentTime + this.shotTime;
