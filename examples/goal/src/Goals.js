@@ -83,6 +83,8 @@ class GatherGoal extends CompositeGoal {
 
 	activate() {
 
+		this.clearSubgoals();
+
 		const owner = this.owner;
 
 		owner.ui.currentGoal.textContent = GATHER;
@@ -95,9 +97,9 @@ class GatherGoal extends CompositeGoal {
 
 	execute() {
 
-		this.activateIfInactive();
-
 		this.status = this.executeSubgoals();
+
+		this.replanIfFailed();
 
 	}
 
@@ -233,20 +235,24 @@ class SeekToCollectibleGoal extends Goal {
 
 	execute() {
 
-		const owner = this.owner;
+		if ( this.active() ) {
 
-		const squaredDistance = owner.position.squaredDistanceTo( owner.currentTarget.position );
+			const owner = this.owner;
 
-		if ( squaredDistance < 0.25 ) {
+			const squaredDistance = owner.position.squaredDistanceTo( owner.currentTarget.position );
 
-			this.status = Goal.STATUS.COMPLETED;
+			if ( squaredDistance < 0.25 ) {
+
+				this.status = Goal.STATUS.COMPLETED;
+
+			}
+
+			// adjust animation speed based on the actual velocity of the girl
+
+			const animation = owner.animations.get( WALK );
+			animation.timeScale = Math.min( 0.75, owner.getSpeed() / owner.maxSpeed );
 
 		}
-
-		// adjust animation speed based on the actual velocity of the girl
-
-		const animation = owner.animations.get( WALK );
-		animation.timeScale = Math.min( 0.75, owner.getSpeed() / owner.maxSpeed );
 
 	}
 
