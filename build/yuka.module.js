@@ -14756,9 +14756,11 @@ class Polygon {
 	/**
 	* Determines the portal edge that can be used to reach the
 	* given polygon over its twin reference. The result is stored
-	* in the given portal edge data structure.
+	* in the given portal edge data structure. If the given polygon
+	* is no direct neighbor, the references of the portal edge data
+	* structure are set to null.
 	*
-	* @param {Polygon} polygon - The array of points.
+	* @param {Polygon} polygon - The polygon to reach.
 	* @param {Object} portalEdge - The portal edge.
 	* @return {Object} The portal edge.
 	*/
