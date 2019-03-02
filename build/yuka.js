@@ -15821,17 +15821,17 @@
 			* Records the time the entity became visible. Useful in combination with a reaction time
 			* in order to prevent immediate actions.
 			* @type Number
-			* @default - 1
+			* @default - Infinity
 			*/
-			this.timeBecameVisible = - 1;
+			this.timeBecameVisible = - Infinity;
 
 			/**
 			* Records the time the entity was last sensed (e.g. seen or heard). Used to determine
 			* if a game entity can "remember" this record or not.
 			* @type Number
-			* @default - 1
+			* @default - Infinity
 			*/
-			this.timeLastSensed = - 1;
+			this.timeLastSensed = - Infinity;
 
 			/**
 			* Marks the position where the opponent was last sensed.
@@ -15858,8 +15858,8 @@
 			return {
 				type: this.constructor.name,
 				entity: this.entity.uuid,
-				timeBecameVisible: this.timeBecameVisible,
-				timeLastSensed: this.timeLastSensed,
+				timeBecameVisible: this.timeBecameVisible.toString(),
+				timeLastSensed: this.timeLastSensed.toString(),
 				lastSensedPosition: this.lastSensedPosition.toArray( new Array() ),
 				visible: this.visible
 			};
@@ -15875,8 +15875,8 @@
 		fromJSON( json ) {
 
 			this.entity = json.entity; // uuid
-			this.timeBecameVisible = json.timeBecameVisible;
-			this.timeLastSensed = json.timeLastSensed;
+			this.timeBecameVisible = parseFloat( json.timeBecameVisible );
+			this.timeLastSensed = parseFloat( json.timeLastSensed );
 			this.lastSensedPosition.fromArray( json.lastSensedPosition );
 			this.visible = json.visible;
 

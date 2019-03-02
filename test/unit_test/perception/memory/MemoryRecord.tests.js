@@ -17,8 +17,8 @@ describe( 'MemoryRecord', function () {
 
 			const record = new MemoryRecord();
 			expect( record ).to.have.a.property( 'entity' ).that.is.null;
-			expect( record ).to.have.a.property( 'timeBecameVisible' ).that.is.equal( - 1 );
-			expect( record ).to.have.a.property( 'timeLastSensed' ).that.is.equal( - 1 );
+			expect( record ).to.have.a.property( 'timeBecameVisible' ).that.is.equal( - Infinity );
+			expect( record ).to.have.a.property( 'timeLastSensed' ).that.is.equal( - Infinity );
 			expect( record ).to.have.a.property( 'lastSensedPosition' ).that.is.deep.equal( { x: 0, y: 0, z: 0 } );
 			expect( record ).to.have.a.property( 'visible' ).that.is.false;
 
