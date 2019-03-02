@@ -2703,7 +2703,7 @@
 
 			// private properties
 
-			// local transformation matrix. lo part of the public API due to caching
+			// local transformation matrix. no part of the public API due to caching
 
 			this._localMatrix = new Matrix4();
 
@@ -2720,7 +2720,7 @@
 			this._renderComponent = null;
 			this._renderComponentCallback = null;
 
-			// flag to indicate whether the property was updated by its manager at least once or not
+			// flag to indicate whether the entity was updated by its manager at least once or not
 
 			this._started = false;
 
