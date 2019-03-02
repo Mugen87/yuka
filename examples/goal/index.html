@@ -61,7 +61,6 @@
 		import * as YUKA from '../../build/yuka.module.js';
 		import * as THREE from '../lib/three.module.js';
 		import { GLTFLoader } from '../lib/GLTFLoader.module.js';
-		import { OrbitControls } from '../lib/OrbitControls.module.js';
 
 		import { Girl } from './src/Girl.js';
 		import { Collectible } from './src/Collectible.js';
@@ -80,6 +79,7 @@
 
 			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
 			camera.position.set( 0, 5, 15 );
+			camera.lookAt( scene.position );
 
 			//
 
@@ -210,10 +210,6 @@
 
 			//
 
-			const controls = new OrbitControls( camera, renderer.domElement );
-			controls.minDistance = 2;
-			controls.maxDistance = 20;
-
 			window.addEventListener( 'resize', onWindowResize, false );
 
 		}
@@ -241,7 +237,7 @@
 
 		function sync( entity, renderComponent ) {
 
-			renderComponent.matrix.copy( entity.matrix );
+			renderComponent.matrix.copy( entity.worldMatrix );
 
 		}
 
