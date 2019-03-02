@@ -116,12 +116,6 @@ class GameEntity {
 		this.maxTurnRate = Math.PI;
 
 		/**
-		* A transformation matrix representing the local space of this game entity.
-		* @type Matrix4
-		*/
-		this.matrix = new Matrix4();
-
-		/**
 		* A transformation matrix representing the world space of this game entity.
 		* @type Matrix4
 		*/
@@ -135,17 +129,31 @@ class GameEntity {
 		*/
 		this.manager = null;
 
-		//
+		// private properties
+
+		// local transformation matrix. lo part of the public API due to caching
+
+		this._localMatrix = new Matrix4();
+
+		// per-entity cache in order to avoid unnecessary matrix calculations
 
 		this._cache = {
 			position: new Vector3(),
 			rotation: new Quaternion(),
-			scale: new Vector3()
+			scale: new Vector3( 1, 1, 1 )
 		};
+
+		// render component
 
 		this._renderComponent = null;
 		this._renderComponentCallback = null;
+
+		// flag to indicate whether the property was updated by its manager at least once or not
+
 		this._started = false;
+
+		// unique ID, primarily used in context of serialization/deserialization
+
 		this._uuid = null;
 
 	}
@@ -300,33 +308,6 @@ class GameEntity {
 	}
 
 	/**
-	* Updates the transformation matrix representing the local space.
-	*
-	* @return {GameEntity} A reference to this game entity.
-	*/
-	updateMatrix() {
-
-		const cache = this._cache;
-
-		if ( cache.position.equals( this.position ) &&
-				cache.rotation.equals( this.rotation ) &&
-				cache.scale.equals( this.scale ) ) {
-
-			return this;
-
-		}
-
-		this.matrix.compose( this.position, this.rotation, this.scale );
-
-		cache.position.copy( this.position );
-		cache.rotation.copy( this.rotation );
-		cache.scale.copy( this.scale );
-
-		return this;
-
-	}
-
-	/**
 	* Updates the world matrix representing the world space.
 	*
 	* @param {Boolean} up - Whether to update the world matrices of the parents or not.
@@ -348,15 +329,15 @@ class GameEntity {
 
 		// update this entity
 
-		this.updateMatrix();
+		this._updateMatrix();
 
 		if ( parent === null ) {
 
-			this.worldMatrix.copy( this.matrix );
+			this.worldMatrix.copy( this._localMatrix );
 
 		} else {
 
-			this.worldMatrix.multiplyMatrices( this.parent.worldMatrix, this.matrix );
+			this.worldMatrix.multiplyMatrices( this.parent.worldMatrix, this._localMatrix );
 
 		}
 
@@ -471,8 +452,8 @@ class GameEntity {
 			up: this.up.toArray( new Array() ),
 			boundingRadius: this.boundingRadius,
 			maxTurnRate: this.maxTurnRate,
-			matrix: this.matrix.toArray( new Array() ),
 			worldMatrix: this.worldMatrix.toArray( new Array() ),
+			_localMatrix: this._localMatrix.toArray( new Array() ),
 			_cache: {
 				position: this._cache.position.toArray( new Array() ),
 				rotation: this._cache.rotation.toArray( new Array() ),
@@ -503,12 +484,13 @@ class GameEntity {
 		this.up.fromArray( json.up );
 		this.boundingRadius = json.boundingRadius;
 		this.maxTurnRate = json.maxTurnRate;
-		this.matrix.fromArray( json.matrix );
 		this.worldMatrix.fromArray( json.worldMatrix );
 
 		this.children = json.children.slice();
 		this.neighbors = json.neighbors.slice();
 		this.parent = json.parent;
+
+		this._localMatrix.fromArray( json._localMatrix );
 
 		this._cache.position.fromArray( json._cache.position );
 		this._cache.rotation.fromArray( json._cache.rotation );
@@ -551,6 +533,30 @@ class GameEntity {
 		//
 
 		this.parent = entities.get( this.parent ) || null;
+
+		return this;
+
+	}
+
+	// Updates the transformation matrix representing the local space.
+
+	_updateMatrix() {
+
+		const cache = this._cache;
+
+		if ( cache.position.equals( this.position ) &&
+				cache.rotation.equals( this.rotation ) &&
+				cache.scale.equals( this.scale ) ) {
+
+			return this;
+
+		}
+
+		this._localMatrix.compose( this.position, this.rotation, this.scale );
+
+		cache.position.copy( this.position );
+		cache.rotation.copy( this.rotation );
+		cache.scale.copy( this.scale );
 
 		return this;
 

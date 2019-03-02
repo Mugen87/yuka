@@ -60,7 +60,7 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 		// calculate the offset's position in world space
 
-		offsetWorld.copy( offset ).applyMatrix4( leader.matrix );
+		offsetWorld.copy( offset ).applyMatrix4( leader.worldMatrix );
 
 		// calculate the vector that points from the vehicle to the offset position
 

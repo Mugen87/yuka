@@ -76,7 +76,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-		vehicle.matrix.getInverse( inverse );
+		vehicle.worldMatrix.getInverse( inverse );
 
 		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 

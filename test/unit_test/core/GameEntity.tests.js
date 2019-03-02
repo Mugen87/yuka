@@ -41,10 +41,11 @@ describe( 'GameEntity', function () {
 			expect( entity ).to.have.a.property( 'boundingRadius' ).that.is.equal( 0 );
 			expect( entity ).to.have.a.property( 'maxTurnRate' ).that.is.equal( Math.PI );
 
-			expect( entity ).to.have.a.property( 'matrix' ).that.is.an.instanceof( Matrix4 );
 			expect( entity ).to.have.a.property( 'worldMatrix' ).that.is.an.instanceof( Matrix4 );
 
 			expect( entity ).to.have.a.property( 'manager' ).that.is.null;
+
+			expect( entity ).to.have.a.property( '_localMatrix' ).that.is.an.instanceof( Matrix4 );
 
 			expect( entity ).to.have.a.property( '_renderComponent' ).that.is.null;
 			expect( entity ).to.have.a.property( '_renderComponentCallback' ).that.is.null;
@@ -214,22 +215,6 @@ describe( 'GameEntity', function () {
 			entity.getWorldPosition( worldPosition );
 
 			expect( worldPosition ).to.deep.equal( targetPosition );
-
-		} );
-
-	} );
-
-	describe( '#updateMatrix()', function () {
-
-		it( 'should compose a matrix from position, rotation and scale', function () {
-
-			const entity = new GameEntity();
-			entity.position.set( 1, 1, 1 );
-			entity.scale.set( 2, 2, 2 );
-
-			entity.updateMatrix();
-
-			expect( entity.matrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
 
 		} );
 
@@ -431,6 +416,22 @@ describe( 'GameEntity', function () {
 			entity.resolveReferences( new Map() );
 
 			expect( entity.parent ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#_updateMatrix()', function () {
+
+		it( 'should compose a matrix from position, rotation and scale', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+			entity.scale.set( 2, 2, 2 );
+
+			entity._updateMatrix();
+
+			expect( entity._localMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
 
 		} );
 

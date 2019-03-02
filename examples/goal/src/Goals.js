@@ -152,8 +152,8 @@ class FindNextCollectibleGoal extends Goal {
 		// determine if the girl should perform a left or right turn in order to face
 		// the collectible
 
-		owner.updateMatrix();
-		owner.matrix.getInverse( inverseMatrix );
+		owner.updateWorldMatrix();
+		owner.worldMatrix.getInverse( inverseMatrix );
 		localPosition.copy( owner.currentTarget.position ).applyMatrix4( inverseMatrix );
 
 		this.animationId = ( localPosition.x >= 0 ) ? LEFT_TURN : RIGHT_TURN;
