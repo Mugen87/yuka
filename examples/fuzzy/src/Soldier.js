@@ -163,7 +163,7 @@ class Soldier extends GameEntity {
 		// rules assault rifle
 
 		fuzzyModuleAssaultRifle.addRule( new FuzzyRule( new FuzzyAND( targetClose, lowAssault ), undesirable ) );
-		fuzzyModuleAssaultRifle.addRule( new FuzzyRule( new FuzzyAND( targetClose, okayShot ), desirable ) );
+		fuzzyModuleAssaultRifle.addRule( new FuzzyRule( new FuzzyAND( targetClose, okayAssault ), desirable ) );
 		fuzzyModuleAssaultRifle.addRule( new FuzzyRule( new FuzzyAND( targetClose, LoadsAssault ), desirable ) );
 
 		fuzzyModuleAssaultRifle.addRule( new FuzzyRule( new FuzzyAND( targetMedium, lowAssault ), desirable ) );
