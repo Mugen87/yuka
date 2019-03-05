@@ -13572,8 +13572,10 @@ class GraphUtils {
 
 /**
 * A corridor is a sequence of portal edges representing a walkable way within a navigation mesh. The class is able
-* to find the shortest path through this corridor as a sequence of waypoints.
-* Code is based on the following {@link https://github.com/nickjanssen/PatrolJS/blob/master/patrol.js implementation}.
+* to find the shortest path through this corridor as a sequence of waypoints. It's an implementaion of the so called
+* {@link http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html Funnel Algorithm}. Read
+* the paper {@link https://aaai.org/Papers/AAAI/2006/AAAI06-148.pdf Efficient Triangulation-Based Pathfinding} for
+* more detailed information.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @author {@link https://github.com/robp94|robp94}
@@ -13641,9 +13643,9 @@ class Corridor {
 
 			// update right vertex
 
-			if ( MathUtils.area( portalApex, portalRight, right ) <= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalRight, right ) <= 0 ) {
 
-				if ( portalApex === portalRight || MathUtils.area( portalApex, portalLeft, right ) > 0.0 ) {
+				if ( portalApex === portalRight || MathUtils.area( portalApex, portalLeft, right ) > 0 ) {
 
 					// tighten the funnel
 
@@ -13680,9 +13682,9 @@ class Corridor {
 
 			// update left vertex
 
-			if ( MathUtils.area( portalApex, portalLeft, left ) >= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalLeft, left ) >= 0 ) {
 
-				if ( portalApex === portalLeft || MathUtils.area( portalApex, portalRight, left ) < 0.0 ) {
+				if ( portalApex === portalLeft || MathUtils.area( portalApex, portalRight, left ) < 0 ) {
 
 					// tighten the funnel
 
@@ -15815,17 +15817,17 @@ class MemoryRecord {
 		* Records the time the entity became visible. Useful in combination with a reaction time
 		* in order to prevent immediate actions.
 		* @type Number
-		* @default - 1
+		* @default - Infinity
 		*/
-		this.timeBecameVisible = - 1;
+		this.timeBecameVisible = - Infinity;
 
 		/**
 		* Records the time the entity was last sensed (e.g. seen or heard). Used to determine
 		* if a game entity can "remember" this record or not.
 		* @type Number
-		* @default - 1
+		* @default - Infinity
 		*/
-		this.timeLastSensed = - 1;
+		this.timeLastSensed = - Infinity;
 
 		/**
 		* Marks the position where the opponent was last sensed.
@@ -15852,8 +15854,8 @@ class MemoryRecord {
 		return {
 			type: this.constructor.name,
 			entity: this.entity.uuid,
-			timeBecameVisible: this.timeBecameVisible,
-			timeLastSensed: this.timeLastSensed,
+			timeBecameVisible: this.timeBecameVisible.toString(),
+			timeLastSensed: this.timeLastSensed.toString(),
 			lastSensedPosition: this.lastSensedPosition.toArray( new Array() ),
 			visible: this.visible
 		};
@@ -15869,8 +15871,8 @@ class MemoryRecord {
 	fromJSON( json ) {
 
 		this.entity = json.entity; // uuid
-		this.timeBecameVisible = json.timeBecameVisible;
-		this.timeLastSensed = json.timeLastSensed;
+		this.timeBecameVisible = parseFloat( json.timeBecameVisible );
+		this.timeLastSensed = parseFloat( json.timeLastSensed );
 		this.lastSensedPosition.fromArray( json.lastSensedPosition );
 		this.visible = json.visible;
 
