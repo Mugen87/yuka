@@ -2,8 +2,10 @@ import { MathUtils } from '../../math/MathUtils.js';
 
 /**
 * A corridor is a sequence of portal edges representing a walkable way within a navigation mesh. The class is able
-* to find the shortest path through this corridor as a sequence of waypoints.
-* Code is based on the following {@link https://github.com/nickjanssen/PatrolJS/blob/master/patrol.js implementation}.
+* to find the shortest path through this corridor as a sequence of waypoints. It's an implementaion of the so called
+* {@link http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html Funnel Algorithm}. Read
+* the paper {@link https://aaai.org/Papers/AAAI/2006/AAAI06-148.pdf Efficient Triangulation-Based Pathfinding} for
+* more detailed information.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @author {@link https://github.com/robp94|robp94}
@@ -71,9 +73,9 @@ class Corridor {
 
 			// update right vertex
 
-			if ( MathUtils.area( portalApex, portalRight, right ) <= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalRight, right ) <= 0 ) {
 
-				if ( portalApex === portalRight || MathUtils.area( portalApex, portalLeft, right ) > 0.0 ) {
+				if ( portalApex === portalRight || MathUtils.area( portalApex, portalLeft, right ) > 0 ) {
 
 					// tighten the funnel
 
@@ -110,9 +112,9 @@ class Corridor {
 
 			// update left vertex
 
-			if ( MathUtils.area( portalApex, portalLeft, left ) >= 0.0 ) {
+			if ( MathUtils.area( portalApex, portalLeft, left ) >= 0 ) {
 
-				if ( portalApex === portalLeft || MathUtils.area( portalApex, portalRight, left ) < 0.0 ) {
+				if ( portalApex === portalLeft || MathUtils.area( portalApex, portalRight, left ) < 0 ) {
 
 					// tighten the funnel
 
