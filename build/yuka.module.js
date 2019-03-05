@@ -13572,7 +13572,7 @@ class GraphUtils {
 
 /**
 * A corridor is a sequence of portal edges representing a walkable way within a navigation mesh. The class is able
-* to find the shortest path through this corridor as a sequence of waypoints. It's an implementaion of the so called
+* to find the shortest path through this corridor as a sequence of waypoints. It's an implementation of the so called
 * {@link http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html Funnel Algorithm}. Read
 * the paper {@link https://aaai.org/Papers/AAAI/2006/AAAI06-148.pdf Efficient Triangulation-Based Pathfinding} for
 * more detailed information.
