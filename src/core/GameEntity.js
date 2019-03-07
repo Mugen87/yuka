@@ -1,6 +1,5 @@
 import { Vector3 } from '../math/Vector3.js';
 import { Quaternion } from '../math/Quaternion.js';
-import { Matrix3 } from '../math/Matrix3.js';
 import { Matrix4 } from '../math/Matrix4.js';
 import { Logger } from './Logger.js';
 import { MathUtils } from '../math/MathUtils.js';
@@ -8,7 +7,6 @@ import { MathUtils } from '../math/MathUtils.js';
 const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
 const quaternionWorld = new Quaternion();
-const rotationMatrix = new Matrix3();
 
 /**
 * Base class for all game entities.
@@ -288,7 +286,7 @@ class GameEntity {
 	*/
 	getWorldDirection( result ) {
 
-		quaternionWorld.fromMatrix3( rotationMatrix.fromMatrix4( this.worldMatrix ) );
+		quaternionWorld.extractRotationFromMatrix( this.worldMatrix );
 
 		return result.copy( this.forward ).applyRotation( quaternionWorld ).normalize();
 

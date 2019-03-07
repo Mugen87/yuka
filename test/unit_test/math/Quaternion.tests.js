@@ -6,6 +6,7 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const Matrix3 = YUKA.Matrix3;
+const Matrix4 = YUKA.Matrix4;
 const Vector3 = YUKA.Vector3;
 const Quaternion = YUKA.Quaternion;
 
@@ -334,6 +335,30 @@ describe( 'Quaternion', function () {
 			q1.slerp( q2, 1 );
 
 			expect( q1 ).to.deep.equal( q2 );
+
+		} );
+
+	} );
+
+	describe( '#extractRotationFromMatrix()', function () {
+
+		it( 'should extract the rotation of the given 4x4 matrix and stores it in this quaternion.', function () {
+
+			const m1 = new Matrix4();
+			const q1 = new Quaternion();
+
+			const position = new Vector3();
+			const rotation = new Quaternion().fromEuler( Math.PI / 2, 0, 0 );
+			const scale = new Vector3( 2, 2, 2 );
+
+			m1.compose( position, rotation, scale );
+
+			q1.extractRotationFromMatrix( m1 );
+
+			expect( q1.x ).to.closeTo( rotation.x, Number.EPSILON );
+			expect( q1.y ).to.closeTo( rotation.y, Number.EPSILON );
+			expect( q1.z ).to.closeTo( rotation.z, Number.EPSILON );
+			expect( q1.w ).to.closeTo( rotation.w, Number.EPSILON );
 
 		} );
 

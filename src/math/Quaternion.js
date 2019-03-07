@@ -1,7 +1,9 @@
 import { MathUtils } from './MathUtils.js';
 import { Matrix3 } from './Matrix3.js';
+import { Vector3 } from './Vector3.js';
 
 const matrix = new Matrix3();
+const vector = new Vector3();
 
 /**
 * Class representing a quaternion.
@@ -346,6 +348,41 @@ class Quaternion {
 		this.x = ( x * ratioA ) + ( this.x * ratioB );
 		this.y = ( y * ratioA ) + ( this.y * ratioB );
 		this.z = ( z * ratioA ) + ( this.z * ratioB );
+
+		return this;
+
+	}
+
+	/**
+	* Extracts the rotation of the given 4x4 matrix and stores it in this quaternion.
+	*
+	* @param {Matrix4} m - A 4x4 matrix.
+	* @return {Quaternion} A reference to this quaternion.
+	*/
+	extractRotationFromMatrix( m ) {
+
+		const e = matrix.elements;
+		const me = m.elements;
+
+		// remove scaling from the 3x3 portion
+
+		const sx = 1 / vector.fromMatrix4Column( m, 0 ).length();
+		const sy = 1 / vector.fromMatrix4Column( m, 1 ).length();
+		const sz = 1 / vector.fromMatrix4Column( m, 2 ).length();
+
+		e[ 0 ] = me[ 0 ] * sx;
+		e[ 1 ] = me[ 1 ] * sx;
+		e[ 2 ] = me[ 2 ] * sx;
+
+		e[ 3 ] = me[ 4 ] * sy;
+		e[ 4 ] = me[ 5 ] * sy;
+		e[ 5 ] = me[ 6 ] * sy;
+
+		e[ 6 ] = me[ 8 ] * sz;
+		e[ 7 ] = me[ 9 ] * sz;
+		e[ 8 ] = me[ 10 ] * sz;
+
+		this.fromMatrix3( matrix );
 
 		return this;
 
