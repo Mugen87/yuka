@@ -66,6 +66,7 @@ describe( 'NavMesh', function () {
 			expect( navMesh ).to.have.a.property( 'spatialIndex' ).that.is.null;
 			expect( navMesh ).to.have.a.property( 'epsilonCoplanarTest' ).that.is.equal( 1e-3 );
 			expect( navMesh ).to.have.a.property( 'epsilonContainsTest' ).that.is.equal( 1 );
+			expect( navMesh ).to.have.a.property( '_borderEdges' ).that.is.an( 'array' );
 			expect( navMesh.graph.digraph ).to.be.true;
 
 		} );
@@ -103,6 +104,8 @@ describe( 'NavMesh', function () {
 			expect( edge1.to ).to.equal( 1 );
 			expect( edge2.from ).to.equal( 1 );
 			expect( edge2.to ).to.equal( 0 );
+
+			expect( navMesh._borderEdges ).to.have.lengthOf( 6 );
 
 		} );
 

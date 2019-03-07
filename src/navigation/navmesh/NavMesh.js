@@ -69,6 +69,10 @@ class NavMesh {
 		*/
 		this.epsilonContainsTest = 1;
 
+		//
+
+		this._borderEdges = new Array();
+
 	}
 
 	/**
@@ -361,45 +365,37 @@ class NavMesh {
 
 		let newRegion = this.getRegionForPoint( endPosition, this.epsilonContainsTest );
 
-		// endPosition lies outside navMesh
+		// if newRegion is null, "endPosition" lies outside of the navMesh
 
 		if ( newRegion === null ) {
 
 			if ( currentRegion === null ) throw new Error( 'YUKA.NavMesh.clampMovement(): No current region available.' );
 
-			// determine closest edge in current convex region
+			// determine closest border edge
 
 			let closestEdge = null;
 			let minDistance = Infinity;
 
-			let edge = currentRegion.edge;
+			for ( let i = 0, l = this._borderEdges.length; i < l; i ++ ) {
 
-			do {
+				const edge = this._borderEdges[ i ];
 
-				// only consider border edges
+				lineSegment.set( edge.vertex, edge.next.vertex );
+				const t = lineSegment.closestPointToPointParameter( startPosition );
+				lineSegment.at( t, pointOnLineSegment );
 
-				if ( edge.twin === null ) {
+				const distance = pointOnLineSegment.squaredDistanceTo( startPosition );
 
-					lineSegment.set( edge.vertex, edge.next.vertex );
-					const t = lineSegment.closestPointToPointParameter( startPosition );
-					lineSegment.at( t, pointOnLineSegment );
+				if ( distance < minDistance ) {
 
-					const distance = pointOnLineSegment.squaredDistanceTo( startPosition );
+					minDistance = distance;
 
-					if ( distance < minDistance ) {
-
-						minDistance = distance;
-
-						closestEdge = edge;
-						closestPoint.copy( pointOnLineSegment );
-
-					}
+					closestEdge = edge;
+					closestPoint.copy( pointOnLineSegment );
 
 				}
 
-				edge = edge.next;
-
-			} while ( edge !== currentRegion.edge );
+			}
 
 			// calculate movement and edge direction
 
@@ -559,13 +555,28 @@ class NavMesh {
 
 		}
 
-		//
+		// after the merging of convex regions, do some post-processing
 
 		for ( let i = 0, l = regions.length; i < l; i ++ ) {
 
 			const region = regions[ i ];
 
+			// compute the centroid of the region which can be used as
+			// a destination point in context of path finding
+
 			region.computeCentroid();
+
+			// gather all border edges used by clampMovement()
+
+			let edge = region.edge;
+
+			do {
+
+				if ( edge.twin === null ) this._borderEdges.push( edge );
+
+				edge = edge.next;
+
+			} while ( edge !== region.edge );
 
 		}
 
