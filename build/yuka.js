@@ -13893,6 +13893,7 @@
 	const movementDirection = new Vector3();
 	const newPosition = new Vector3();
 	const lineSegment = new LineSegment();
+	const edges = new Array();
 
 	/**
 	* Implementation of a navigation mesh. A navigation mesh is a network of convex polygons
@@ -14111,7 +14112,7 @@
 
 		/**
 		* Returns the region that contains the given point. The computational overhead
-		* of this method for complex navigation meshes can greatly reduced by using a spatial index.
+		* of this method for complex navigation meshes can be reduced by using a spatial index.
 		* If not convex region contains the point, *null* is returned.
 		*
 		* @param {Vector3} point - A point in 3D space.
@@ -14234,7 +14235,8 @@
 		/**
 		* This method can be used to restrict the movement of a game entity on the navigation mesh.
 		* Instead of preventing any form of translation when a game entity hits a border edge, the
-		* movement is clamped along the contour of the navigation mesh.
+		* movement is clamped along the contour of the navigation mesh. The computational overhead
+		* of this method for complex navigation meshes can be reduced by using a spatial index.
 		*
 		* @param {Polygon} currentRegion - The current convex region of the game entity.
 		* @param {Vector3} startPosition - The original start position of the entity for the current simulation step.
@@ -14254,29 +14256,7 @@
 
 				// determine closest border edge
 
-				let closestEdge = null;
-				let minDistance = Infinity;
-
-				for ( let i = 0, l = this._borderEdges.length; i < l; i ++ ) {
-
-					const edge = this._borderEdges[ i ];
-
-					lineSegment.set( edge.vertex, edge.next.vertex );
-					const t = lineSegment.closestPointToPointParameter( startPosition );
-					lineSegment.at( t, pointOnLineSegment );
-
-					const distance = pointOnLineSegment.squaredDistanceTo( startPosition );
-
-					if ( distance < minDistance ) {
-
-						minDistance = distance;
-
-						closestEdge = edge;
-						closestPoint.copy( pointOnLineSegment );
-
-					}
-
-				}
+				const closestEdge = this._getClosestBorderEdge( startPosition );
 
 				// calculate movement and edge direction
 
@@ -14542,6 +14522,74 @@
 			}
 
 			return this;
+
+		}
+
+		_getClosestBorderEdge( point ) {
+
+			let borderEdges;
+			let closestEdge = null;
+			let minDistance = Infinity;
+
+			if ( this.spatialIndex !== null ) {
+
+				edges.length = 0;
+
+				const index = this.spatialIndex.getIndexForPosition( point );
+				const regions = this.spatialIndex.cells[ index ].entries;
+
+				for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+					const region = regions[ i ];
+
+					let edge = region.edge;
+
+					do {
+
+						if ( edge.twin === null ) edges.push( edge );
+
+						edge = edge.next;
+
+					} while ( edge !== region.edge );
+
+				}
+
+				// user only border edges from adjacent convex regions (fast)
+
+				borderEdges = edges;
+
+			} else {
+
+				// use all border edges (slow)
+
+				borderEdges = this._borderEdges;
+
+			}
+
+			//
+
+			for ( let i = 0, l = borderEdges.length; i < l; i ++ ) {
+
+				const edge = borderEdges[ i ];
+
+				lineSegment.set( edge.vertex, edge.next.vertex );
+				const t = lineSegment.closestPointToPointParameter( point );
+				lineSegment.at( t, pointOnLineSegment );
+
+				const distance = pointOnLineSegment.squaredDistanceTo( point );
+
+				if ( distance < minDistance ) {
+
+					minDistance = distance;
+
+					closestEdge = edge;
+					closestPoint.copy( pointOnLineSegment );
+
+				}
+
+			}
+
+			return closestEdge;
 
 		}
 

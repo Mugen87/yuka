@@ -313,10 +313,47 @@ describe( 'NavMesh', function () {
 			expect( spatialIndex.cells[ 2 ].entries ).to.include( p1, p2 );
 			expect( spatialIndex.cells[ 3 ].entries ).to.include( p1, p2 );
 
+			navMesh.spatialIndex = null;
+
 		} );
 
 	} );
 
+	describe( '#_getClosestBorderEdge()', function () {
+
+		it( 'should return the closest border edge for the given point', function () {
+
+			const point = new Vector3( 0.9, 0, 0.5 );
+			const borderEdge = navMesh._getClosestBorderEdge( point );
+
+			const region = navMesh.regions[ 1 ];
+			const edge = region.edge.prev;
+
+			expect( borderEdge ).to.equal( edge );
+			expect( borderEdge.vertex ).to.deep.equal( { x: 1, y: 0, z: 1 } );
+
+		} );
+
+		it( 'should use a spatial index for computing the closest border edge', function () {
+
+			const spatialIndex = new CellSpacePartitioning( width, height, depth, cellsX, cellsY, cellsZ );
+			navMesh.spatialIndex = spatialIndex;
+			navMesh.updateSpatialIndex();
+
+			const point = new Vector3( 0.9, 0, 0.5 );
+			const borderEdge = navMesh._getClosestBorderEdge( point );
+
+			const region = navMesh.regions[ 1 ];
+			const edge = region.edge.prev;
+
+			expect( borderEdge ).to.equal( edge );
+			expect( borderEdge.vertex ).to.deep.equal( { x: 1, y: 0, z: 1 } );
+
+			navMesh.spatialIndex = null;
+
+		} );
+
+	} );
 
 	describe( '#clear()', function () {
 
