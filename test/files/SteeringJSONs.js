@@ -12,6 +12,7 @@ module.exports = {
 	InterposeBehavior: { "type": "InterposeBehavior", "active": true, "weight": 1, "entity1": null, "entity2": null, "deceleration": 1 },
 	ObstacleAvoidanceBehavior: { "type": "ObstacleAvoidanceBehavior", "active": true, "weight": 1, "obstacles": [], "brakingWeight": 1, "dBoxMinLength": 1 },
 	OffsetPursuitBehavior: { "type": "OffsetPursuitBehavior", "active": true, "weight": 1, "leader": null, "offset": { "x": 0, "y": 0, "z": 1 } },
+	OnPathBehavior: { "type": "OnPathBehavior", "active": true, "weight": 1, "path": { "type": "Path", "loop": false, "_waypoints": [], "_index": 0 }, "radius": 1, "predictionFactor": 2 },
 	PursuitBehavior: { "type": "PursuitBehavior", "active": true, "weight": 1, "evader": "4C06581E-448A-4557-835E-7A9D2CE20D30", "predictionFactor": 2 },
 	SeekBehavior: { "type": "SeekBehavior", "active": true, "weight": 1, "target": [ 0, 0, 1 ] },
 	SeparationBehavior: { "type": "SeparationBehavior", "active": true, "weight": 1 },

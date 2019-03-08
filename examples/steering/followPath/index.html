@@ -10,7 +10,8 @@
 
 	<section id="info">
 		<p>
-			This steering behavior produces a force that moves a vehicle along a series of waypoints forming a path.
+			This steering behavior produces a force that moves a vehicle along a series of waypoints forming a path.<br/>
+			An additional steering behavior (OnPath) can be used to realize a more strict path following.
 		</p>
 	</section>
 
@@ -18,10 +19,18 @@
 
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
+		import * as DAT from '../../lib/dat.gui.module.js';
 
 		let renderer, scene, camera;
 
 		let entityManager, time, vehicle;
+
+		let onPathBehavior;
+
+		const params = {
+			onPathActive: true,
+			radius: 0.1
+		};
 
 		init();
 		animate();
@@ -43,6 +52,15 @@
 			const vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
 			vehicleMesh.matrixAutoUpdate = false;
 			scene.add( vehicleMesh );
+
+			// dat.gui
+
+			const gui = new DAT.GUI( { width: 300 } );
+
+			gui.add( params, 'onPathActive' ).name( 'activate onPath' ).onChange( ( value ) => onPathBehavior.active = value );
+			gui.add( params, 'radius', 0.01, 1 ).name( 'radius' ).onChange( ( value ) => onPathBehavior.radius = value );
+
+			gui.open();
 
 			//
 
@@ -76,8 +94,16 @@
 
 			vehicle.position.copy( path.current() );
 
-			const followPathBehavior = new YUKA.FollowPathBehavior( path, 0.6 );
+			// use "FollowPathBehavior" for basic path following
+
+			const followPathBehavior = new YUKA.FollowPathBehavior( path, 0.5 );
 			vehicle.steering.add( followPathBehavior );
+
+			// use "OnPathBehavior" to realize a more strict path following.
+			// it's a separate steering behavior to provide more flexibility.
+
+			onPathBehavior = new YUKA.OnPathBehavior( path );
+			vehicle.steering.add( onPathBehavior );
 
 			entityManager.add( vehicle );
 
