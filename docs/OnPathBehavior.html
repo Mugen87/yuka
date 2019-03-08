@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,130 +48,1358 @@
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
-* Class for representing a timer.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-*/
-class Time {
+        <h2><span class="attribs"><span class="type-signature"></span></span>OnPathBehavior<span class="signature">(path, radius, predictionFactor)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>This steering behavior produces a force that keeps a vehicle close to its path. It is intended
+to use it in combination with <a href="FollowPathBehavior.html">FollowPathBehavior</a> in order to realize a more strict path following.</p></div>
+        
+    
+</header>
 
-	/**
-	* Constructs a new time object.
-	*/
-	constructor() {
+<article>
+    
+        <div class="container-overview">
+        
+            
 
-		/**
-		* The start time of this timer.
-		* @type Number
-		* @default 0
-		*/
-		this.startTime = 0;
+<dt>
+    
+        <h4 class="name" id="OnPathBehavior">
+            
+                new <span class="type-signature"></span>OnPathBehavior<span class="signature">(path, radius, predictionFactor)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="steering_behaviors_OnPathBehavior.js.html">steering/behaviors/OnPathBehavior.js</a></code>,
+                <code><a href="steering_behaviors_OnPathBehavior.js.html#line20">line 20</a></code>
+            </div>
+            
+        </h4>
 
-		/**
-		* The time stamp of the last simulation step.
-		* @type Number
-		* @default 0
-		*/
-		this.previousTime = 0;
+        
+    
+</dt>
+<dd>
 
-		/**
-		* The time stamp of the current simulation step.
-		* @type Number
-		* @default 0
-		*/
-		this.currentTime = 0;
+    
+    <div class="description">
+        <p>Constructs a new on path behavior.</p>
+    </div>
+    
 
-		/**
-		* Whether the Page Visibility API should be used to avoid large time
-		* delta values produced via inactivity or not. This setting is
-		* ignored if the browser does not support the API.
-		* @type Boolean
-		* @default true
-		*/
-		this.detectPageVisibility = true;
+    
 
-		//
+    
 
-		if ( typeof document !== 'undefined' &amp;&amp; document.hidden !== undefined ) {
+    
 
-			this._pageVisibilityHandler = handleVisibilityChange.bind( this );
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-			document.addEventListener( 'visibilitychange', this._pageVisibilityHandler, false );
+        <th>Type</th>
 
-		}
+        
 
-	}
+        
+        <th>Default</th>
+        
 
-	/**
-	* Returns the delta time in seconds for the current simulation step.
-	*
-	* @return {Number} The delta time in seconds.
-	*/
-	getDelta() {
+        <th class="last">Description</th>
+    </tr>
+    </thead>
 
-		return ( this.currentTime - this.previousTime ) / 1000;
+    <tbody>
+    
 
-	}
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
 
-	/**
-	* Returns the elapsed time in seconds of this timer.
-	*
-	* @return {Number} The elapsed time in seconds.
-	*/
-	getElapsed() {
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Path.html">Path</a></span>
 
-		return ( this.currentTime - this.startTime ) / 1000;
 
-	}
+            
+            </td>
 
-	/**
-	* Updates the internal state of this timer.
-	*
-	* @return {Time} A reference to this timer.
-	*/
-	update() {
+            
 
-		this.previousTime = this.currentTime;
-		this.currentTime = this.now();
+            
+                <td class="default">
+                
+                </td>
+            
 
-		return this;
+            <td class="description last"><p>The path to stay close to.</p></td>
+        </tr>
 
-	}
+    
 
-	/**
-	* Returns a current time value in milliseconds.
-	*
-	* @return {Number} A current time value in milliseconds.
-	*/
-	now() {
+        <tr>
+            
+                <td class="name"><code>radius</code></td>
+            
 
-		return ( typeof performance === 'undefined' ? Date : performance ).now();
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
 
-	}
 
-}
+            
+            </td>
 
-//
+            
 
-function handleVisibilityChange() {
+            
+                <td class="default">
+                
+                    0.1
+                
+                </td>
+            
 
-	if ( this.detectPageVisibility === true &amp;&amp; document.hidden === false ) {
+            <td class="description last"><p>Defines the width of the path. With a smaller radius, the vehicle will have to follow the path more closely.</p></td>
+        </tr>
 
-		// reset the current time when the app was inactive (window minimized or tab switched)
+    
 
-		this.currentTime = this.now();
+        <tr>
+            
+                <td class="name"><code>predictionFactor</code></td>
+            
 
-	}
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
 
-}
 
-export { Time };
-</code></pre>
-        </article>
-    </section>
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"><p>Determines how far the behavior predicts the movement of the vehicle.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="https://github.com/Mugen87">Mugen87</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+        </div>
+    
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="SteeringBehavior.html">SteeringBehavior</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="active">
+    <span class="type-signature"></span>active<span class="type-signature"> :Boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="steering_SteeringBehavior.js.html">steering/SteeringBehavior.js</a></code>,
+        <code><a href="steering_SteeringBehavior.js.html#line21">line 21</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Whether this steering behavior is active or not.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#active">SteeringBehavior#active</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>true</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="path">
+    <span class="type-signature"></span>path<span class="type-signature"> :<a href="Path.html">Path</a></span>
+    
+    <div class="container-source members">
+        <code><a href="steering_behaviors_OnPathBehavior.js.html">steering/behaviors/OnPathBehavior.js</a></code>,
+        <code><a href="steering_behaviors_OnPathBehavior.js.html#line37">line 37</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The path to stay close to.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Path.html">Path</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="predictionFactor">
+    <span class="type-signature"></span>predictionFactor<span class="type-signature"> :Number</span>
+    
+    <div class="container-source members">
+        <code><a href="steering_behaviors_OnPathBehavior.js.html">steering/behaviors/OnPathBehavior.js</a></code>,
+        <code><a href="steering_behaviors_OnPathBehavior.js.html#line51">line 51</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Determines how far the behavior predicts the movement of the vehicle.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Number</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>1</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="radius">
+    <span class="type-signature"></span>radius<span class="type-signature"> :Number</span>
+    
+    <div class="container-source members">
+        <code><a href="steering_behaviors_OnPathBehavior.js.html">steering/behaviors/OnPathBehavior.js</a></code>,
+        <code><a href="steering_behaviors_OnPathBehavior.js.html#line44">line 44</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Defines the width of the path. With a smaller radius, the vehicle will have to follow the path more closely.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Number</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>0.1</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="weight">
+    <span class="type-signature"></span>weight<span class="type-signature"> :Number</span>
+    
+    <div class="container-source members">
+        <code><a href="steering_SteeringBehavior.js.html">steering/SteeringBehavior.js</a></code>,
+        <code><a href="steering_SteeringBehavior.js.html#line28">line 28</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Can be used to tweak the amount that a steering force contributes to the total steering force.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Number</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#weight">SteeringBehavior#weight</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>1</li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id="calculate">
+            
+                <span class="type-signature"></span>calculate<span class="signature">(vehicle, force, delta)</span><span class="type-signature"> &rarr; {<a href="Vector3.html">Vector3</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="steering_behaviors_OnPathBehavior.js.html">steering/behaviors/OnPathBehavior.js</a></code>,
+                <code><a href="steering_behaviors_OnPathBehavior.js.html#line67">line 67</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Calculates the steering force for a single simulation step.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>vehicle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vehicle.html">Vehicle</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The game entity the force is produced for.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>force</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The force/result vector.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The time delta.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+
+
+
+- <p>The force/result vector.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#calculate">SteeringBehavior#calculate</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="fromJSON">
+            
+                <span class="type-signature"></span>fromJSON<span class="signature">(json)</span><span class="type-signature"> &rarr; {<a href="OnPathBehavior.html">OnPathBehavior</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="steering_behaviors_OnPathBehavior.js.html">steering/behaviors/OnPathBehavior.js</a></code>,
+                <code><a href="steering_behaviors_OnPathBehavior.js.html#line155">line 155</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Restores this instance from the given JSON object.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>json</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The JSON object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="OnPathBehavior.html">OnPathBehavior</a></span>
+
+
+
+
+
+- <p>A reference to this behavior.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#fromJSON">SteeringBehavior#fromJSON</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="resolveReferences">
+            
+                <span class="type-signature"></span>resolveReferences<span class="signature">(entities)</span><span class="type-signature"> &rarr; {<a href="SteeringBehavior.html">SteeringBehavior</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="steering_SteeringBehavior.js.html">steering/SteeringBehavior.js</a></code>,
+                <code><a href="steering_SteeringBehavior.js.html#line78">line 78</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Restores UUIDs with references to GameEntity objects.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>entities</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Map</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maps game entities to UUIDs.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="SteeringBehavior.html">SteeringBehavior</a></span>
+
+
+
+
+
+- <p>A reference to this steering behavior.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#resolveReferences">SteeringBehavior#resolveReferences</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="toJSON">
+            
+                <span class="type-signature"></span>toJSON<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="steering_behaviors_OnPathBehavior.js.html">steering/behaviors/OnPathBehavior.js</a></code>,
+                <code><a href="steering_behaviors_OnPathBehavior.js.html#line137">line 137</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Transforms this instance into a JSON object.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Object</span>
+
+
+
+
+
+- <p>The JSON object.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SteeringBehavior.html#toJSON">SteeringBehavior#toJSON</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
@@ -190,7 +1416,7 @@ export { Time };
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = '_sub'.replace(/"/g, '_');
+        var id = 'OnPathBehavior_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 
