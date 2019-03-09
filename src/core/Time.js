@@ -27,7 +27,6 @@ class Time {
 		/**
 		* The time stamp of the current simulation step.
 		* @type Number
-		* @default 0
 		*/
 		this.currentTime = this.now();
 
