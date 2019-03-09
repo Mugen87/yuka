@@ -18,7 +18,7 @@ describe( 'Time', function () {
 
 			expect( time ).to.have.a.property( 'startTime' ).that.is.equal( 0 );
 			expect( time ).to.have.a.property( 'previousTime' ).that.is.equal( 0 );
-			expect( time ).to.have.a.property( 'currentTime' ).that.is.equal( 0 );
+			expect( time ).to.have.a.property( 'currentTime' ).that.is.a( 'number' );
 			expect( time ).to.have.a.property( 'detectPageVisibility' ).that.is.true;
 
 		} );
@@ -81,10 +81,11 @@ describe( 'Time', function () {
 		it( 'should update the internal time values previous and current time', function () {
 
 			const time = new Time();
+			time.currentTime = 1;
 			time.update();
 
-			expect( time.previousTime ).to.equal( 0 );
-			expect( time.currentTime ).to.be.above( 0 );
+			expect( time.previousTime ).to.equal( 1 );
+			expect( time.currentTime ).to.be.above( 1 );
 
 		} );
 

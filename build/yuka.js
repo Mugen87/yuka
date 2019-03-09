@@ -8277,7 +8277,7 @@
 			* @type Number
 			* @default 0
 			*/
-			this.currentTime = 0;
+			this.currentTime = this.now();
 
 			/**
 			* Whether the Page Visibility API should be used to avoid large time
