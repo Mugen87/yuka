@@ -109,15 +109,24 @@ describe( 'FollowPathBehavior', function () {
 			const onPathBehavior = new OnPathBehavior( path, 1 );
 
 			const vehicle = new Vehicle();
+			vehicle.velocity.set( 2, 0, 1 );
 			const force = new Vector3();
 
 			onPathBehavior.calculate( vehicle, force );
 
 			expect( force ).to.deep.equal( { x: 0, y: 0, z: 0 } );
 
-			path.add( new Vector3( 0, 0, 10 ) );
+			path.add( new Vector3( 0, 0, 0 ) );
+			onPathBehavior.calculate( vehicle, force );
 
 			expect( force ).to.deep.equal( { x: 0, y: 0, z: 0 } );
+
+			// add additional point should trigger a force again
+
+			path.add( new Vector3( 0, 0, 10 ) );
+			onPathBehavior.calculate( vehicle, force );
+
+			expect( force ).to.deep.equal( { x: - 2, y: 0, z: 0 } );
 
 		} );
 

@@ -16550,7 +16550,7 @@
 			// the predicted position of the vehicle is outside the valid range.
 			// also ensure that the path length is greater than zero when performing a seek
 
-			if ( minDistance > ( this.radius * this.radius ) && l > 1 ) {
+			if ( minDistance > ( this.radius * this.radius ) && path._waypoints.length > 1 ) {
 
 				this._seek.target = closestNormalPoint;
 				this._seek.calculate( vehicle, force );
