@@ -22,7 +22,7 @@ class BoundingSphere {
 		this.center = center;
 
 		/**
-		*  The radius of the bounding sphere.
+		* The radius of the bounding sphere.
 		* @type Number
 		*/
 		this.radius = radius;

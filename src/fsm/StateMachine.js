@@ -305,7 +305,7 @@ class StateMachine {
 	* the state machine is able to pick the correct constructor in order to create custom states.
 	*
 	* @param {String} type - The name of the state type.
-	* @param {Function} constructor -  The constructor function.
+	* @param {Function} constructor - The constructor function.
 	* @return {StateMachine} A reference to this state machine.
 	*/
 	registerType( type, constructor ) {

@@ -75,7 +75,7 @@ class MessageDispatcher {
 	/**
 	* Used to process delayed messages.
 	*
-	* @param  {Number} delta - The time delta.
+	* @param {Number} delta - The time delta.
 	* @return {MessageDispatcher} A reference to this message dispatcher.
 	*/
 	dispatchDelayedMessages( delta ) {

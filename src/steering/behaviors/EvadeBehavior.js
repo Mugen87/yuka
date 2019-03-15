@@ -19,8 +19,8 @@ class EvadeBehavior extends SteeringBehavior {
 	* Constructs a new evade behavior.
 	*
 	* @param {MovingEntity} pursuer - The agent to evade from.
-	* @param {Number} panicDistance -  The agent only flees from the pursuer if it is inside this radius.
-	* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the pursuer.
+	* @param {Number} panicDistance - The agent only flees from the pursuer if it is inside this radius.
+	* @param {Number} predictionFactor - This factor determines how far the vehicle predicts the movement of the pursuer.
 	*/
 	constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
 

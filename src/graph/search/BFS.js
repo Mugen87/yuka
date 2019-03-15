@@ -117,7 +117,7 @@ class BFS {
 					queue.push( edge );
 
 					// the node is marked as visited here, BEFORE it is examined,
-					// because it ensures a maximum of N  edges are ever placed in the queue rather than E edges.
+					// because it ensures a maximum of N edges are ever placed in the queue rather than E edges.
 					// (N = number of nodes, E = number of edges)
 
 					this._visited.add( edge.to );

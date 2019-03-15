@@ -169,7 +169,7 @@ class Think extends CompositeGoal {
 	* Restores this instance from the given JSON object.
 	*
 	* @param {Object} json - The JSON object.
-  * @return {Think} A reference to this instance.
+	* @return {Think} A reference to this instance.
 	*/
 	fromJSON( json ) {
 
@@ -260,7 +260,7 @@ class Think extends CompositeGoal {
 	* goals or goal evaluators.
 	*
 	* @param {String} type - The name of the goal or goal evaluator.
-	* @param {Function} constructor -  The constructor function.
+	* @param {Function} constructor - The constructor function.
 	* @return {Think} A reference to this instance.
 	*/
 	registerType( type, constructor ) {

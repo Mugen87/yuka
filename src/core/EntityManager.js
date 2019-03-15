@@ -530,7 +530,7 @@ class EntityManager {
 	* game entities or triggers.
 	*
 	* @param {String} type - The name of the entity or trigger type.
-	* @param {Function} constructor -  The constructor function.
+	* @param {Function} constructor - The constructor function.
 	* @return {EntityManager} A reference to this entity manager.
 	*/
 	registerType( type, constructor ) {

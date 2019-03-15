@@ -74,7 +74,7 @@ class OnPathBehavior extends SteeringBehavior {
 		predictedPosition.addVectors( vehicle.position, translation );
 
 		// compute closest line segment and normal point. the normal point is computed by projecting
-		// the  predicted position of the vehicle on a line segment.
+		// the predicted position of the vehicle on a line segment.
 
 		let minDistance = Infinity;
 
@@ -112,7 +112,7 @@ class OnPathBehavior extends SteeringBehavior {
 
 			}
 
-   	}
+		}
 
 		// seek towards the projected point on the closest line segment if
 		// the predicted position of the vehicle is outside the valid range.

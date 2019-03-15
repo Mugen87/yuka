@@ -143,7 +143,7 @@ class Trigger {
 	 * trigger regions.
 	 *
 	 * @param {String} type - The name of the trigger region.
-	 * @param {Function} constructor -  The constructor function.
+	 * @param {Function} constructor - The constructor function.
 	 * @return {Trigger} A reference to this trigger.
 	 */
 	registerType( type, constructor ) {

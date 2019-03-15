@@ -21,8 +21,8 @@ class TaskQueue {
 
 		/**
 		* Used to control the asynchronous processing.
-		*  - timeout: After this amount of time (in ms), a scheduled task is executed even if
-		*	  doing so risks causing a negative performance impact (e.g. bad frame time).
+		* - timeout: After this amount of time (in ms), a scheduled task is executed even if
+		* doing so risks causing a negative performance impact (e.g. bad frame time).
 		* @type Object
 		*/
 		this.options = {

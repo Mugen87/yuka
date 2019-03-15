@@ -20,7 +20,7 @@ class PursuitBehavior extends SteeringBehavior {
 	* Constructs a new pursuit behavior.
 	*
 	* @param {MovingEntity} evader - The agent to pursue.
-	* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the evader.
+	* @param {Number} predictionFactor - This factor determines how far the vehicle predicts the movement of the evader.
 	*/
 	constructor( evader = null, predictionFactor = 1 ) {
 

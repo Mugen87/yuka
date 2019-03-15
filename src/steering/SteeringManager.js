@@ -29,7 +29,7 @@ class SteeringManager {
 	/**
 	* Constructs a new steering manager.
 	*
-	* @param  {Vehicle} vehicle - The vehicle that owns this steering manager.
+	* @param {Vehicle} vehicle - The vehicle that owns this steering manager.
 	*/
 	constructor( vehicle ) {
 
@@ -311,7 +311,7 @@ class SteeringManager {
 	 * steering behavior.
 	 *
 	 * @param {String} type - The name of the behavior type.
-	 * @param {Function} constructor -  The constructor function.
+	 * @param {Function} constructor - The constructor function.
 	 * @return {SteeringManager} A reference to this steering manager.
 	 */
 	registerType( type, constructor ) {

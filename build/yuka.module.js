@@ -270,7 +270,7 @@ class MessageDispatcher {
 	/**
 	* Used to process delayed messages.
 	*
-	* @param  {Number} delta - The time delta.
+	* @param {Number} delta - The time delta.
 	* @return {MessageDispatcher} A reference to this message dispatcher.
 	*/
 	dispatchDelayedMessages( delta ) {
@@ -3871,8 +3871,8 @@ class EvadeBehavior extends SteeringBehavior {
 	* Constructs a new evade behavior.
 	*
 	* @param {MovingEntity} pursuer - The agent to evade from.
-	* @param {Number} panicDistance -  The agent only flees from the pursuer if it is inside this radius.
-	* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the pursuer.
+	* @param {Number} panicDistance - The agent only flees from the pursuer if it is inside this radius.
+	* @param {Number} predictionFactor - This factor determines how far the vehicle predicts the movement of the pursuer.
 	*/
 	constructor( pursuer = null, panicDistance = 10, predictionFactor = 1 ) {
 
@@ -4428,7 +4428,7 @@ class BoundingSphere {
 		this.center = center;
 
 		/**
-		*  The radius of the bounding sphere.
+		* The radius of the bounding sphere.
 		* @type Number
 		*/
 		this.radius = radius;
@@ -5417,7 +5417,7 @@ class PursuitBehavior extends SteeringBehavior {
 	* Constructs a new pursuit behavior.
 	*
 	* @param {MovingEntity} evader - The agent to pursue.
-	* @param {Number} predictionFactor -  This factor determines how far the vehicle predicts the movement of the evader.
+	* @param {Number} predictionFactor - This factor determines how far the vehicle predicts the movement of the evader.
 	*/
 	constructor( evader = null, predictionFactor = 1 ) {
 
@@ -5769,7 +5769,7 @@ class SteeringManager {
 	/**
 	* Constructs a new steering manager.
 	*
-	* @param  {Vehicle} vehicle - The vehicle that owns this steering manager.
+	* @param {Vehicle} vehicle - The vehicle that owns this steering manager.
 	*/
 	constructor( vehicle ) {
 
@@ -6051,7 +6051,7 @@ class SteeringManager {
 	 * steering behavior.
 	 *
 	 * @param {String} type - The name of the behavior type.
-	 * @param {Function} constructor -  The constructor function.
+	 * @param {Function} constructor - The constructor function.
 	 * @return {SteeringManager} A reference to this steering manager.
 	 */
 	registerType( type, constructor ) {
@@ -6099,7 +6099,7 @@ class Smoother {
 	/**
 	* Constructs a new smoother.
 	*
-	* @param  {Number} count - The amount of samples the smoother will use to average a vector.
+	* @param {Number} count - The amount of samples the smoother will use to average a vector.
 	*/
 	constructor( count = 10 ) {
 
@@ -7149,7 +7149,7 @@ class Trigger {
 	 * trigger regions.
 	 *
 	 * @param {String} type - The name of the trigger region.
-	 * @param {Function} constructor -  The constructor function.
+	 * @param {Function} constructor - The constructor function.
 	 * @return {Trigger} A reference to this trigger.
 	 */
 	registerType( type, constructor ) {
@@ -7687,7 +7687,7 @@ class EntityManager {
 	* game entities or triggers.
 	*
 	* @param {String} type - The name of the entity or trigger type.
-	* @param {Function} constructor -  The constructor function.
+	* @param {Function} constructor - The constructor function.
 	* @return {EntityManager} A reference to this entity manager.
 	*/
 	registerType( type, constructor ) {
@@ -8779,7 +8779,7 @@ class StateMachine {
 	* the state machine is able to pick the correct constructor in order to create custom states.
 	*
 	* @param {String} type - The name of the state type.
-	* @param {Function} constructor -  The constructor function.
+	* @param {Function} constructor - The constructor function.
 	* @return {StateMachine} A reference to this state machine.
 	*/
 	registerType( type, constructor ) {
@@ -11521,7 +11521,7 @@ class Think extends CompositeGoal {
 	* Restores this instance from the given JSON object.
 	*
 	* @param {Object} json - The JSON object.
-  * @return {Think} A reference to this instance.
+	* @return {Think} A reference to this instance.
 	*/
 	fromJSON( json ) {
 
@@ -11612,7 +11612,7 @@ class Think extends CompositeGoal {
 	* goals or goal evaluators.
 	*
 	* @param {String} type - The name of the goal or goal evaluator.
-	* @param {Function} constructor -  The constructor function.
+	* @param {Function} constructor - The constructor function.
 	* @return {Think} A reference to this instance.
 	*/
 	registerType( type, constructor ) {
@@ -12808,7 +12808,7 @@ class BFS {
 					queue.push( edge );
 
 					// the node is marked as visited here, BEFORE it is examined,
-					// because it ensures a maximum of N  edges are ever placed in the queue rather than E edges.
+					// because it ensures a maximum of N edges are ever placed in the queue rather than E edges.
 					// (N = number of nodes, E = number of edges)
 
 					this._visited.add( edge.to );
@@ -16499,7 +16499,7 @@ class OnPathBehavior extends SteeringBehavior {
 		predictedPosition$3.addVectors( vehicle.position, translation$1 );
 
 		// compute closest line segment and normal point. the normal point is computed by projecting
-		// the  predicted position of the vehicle on a line segment.
+		// the predicted position of the vehicle on a line segment.
 
 		let minDistance = Infinity;
 
@@ -16537,7 +16537,7 @@ class OnPathBehavior extends SteeringBehavior {
 
 			}
 
-   	}
+		}
 
 		// seek towards the projected point on the closest line segment if
 		// the predicted position of the vehicle is outside the valid range.
@@ -16630,8 +16630,8 @@ class TaskQueue {
 
 		/**
 		* Used to control the asynchronous processing.
-		*  - timeout: After this amount of time (in ms), a scheduled task is executed even if
-		*	  doing so risks causing a negative performance impact (e.g. bad frame time).
+		* - timeout: After this amount of time (in ms), a scheduled task is executed even if
+		* doing so risks causing a negative performance impact (e.g. bad frame time).
 		* @type Object
 		*/
 		this.options = {
