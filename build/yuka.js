@@ -2723,7 +2723,7 @@
 			this.maxTurnRate = Math.PI;
 
 			/**
-			* If the entity can activate a trigger.
+			* Whether the entity can activate a trigger or not.
 			* @type Boolean
 			* @default true
 			*/
