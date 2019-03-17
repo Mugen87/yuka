@@ -114,6 +114,13 @@ class GameEntity {
 		this.maxTurnRate = Math.PI;
 
 		/**
+		* If the entity can activate a trigger.
+		* @type Boolean
+		* @default true
+		*/
+		this.canAcitivateTrigger = true;
+
+		/**
 		* A transformation matrix representing the world space of this game entity.
 		* @type Matrix4
 		*/
@@ -126,13 +133,6 @@ class GameEntity {
 		* @default null
 		*/
 		this.manager = null;
-
-		/**
-		 * If the entity can trigger a trigger.
-		 * @type {boolean}
-		 * @default true
-		 */
-		this.canAcitivateTrigger = true;
 
 		// private properties
 
