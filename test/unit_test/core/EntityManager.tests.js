@@ -14,6 +14,7 @@ const Telegram = YUKA.Telegram;
 const Trigger = YUKA.Trigger;
 const MovingEntity = YUKA.MovingEntity;
 const Vehicle = YUKA.Vehicle;
+const TriggerRegion = YUKA.TriggerRegion;
 
 describe( 'EntityManager', function () {
 
@@ -451,6 +452,26 @@ describe( 'EntityManager', function () {
 
 		} );
 
+		it( 'should only update an entity which can trigger a trigger', function () {
+
+			const manager = new EntityManager();
+			const entity1 = new CustomEntity();
+			entity1.canAcitivateTrigger = false;
+			const entity2 = new CustomEntity();
+			manager.add( entity1 );
+			manager.add( entity2 );
+			const delta = 1;
+
+			const customTriggerRegion = new CustomTriggerRegion();
+			const trigger = new CustomTrigger();
+			trigger.region = customTriggerRegion;
+
+			manager.updateTrigger( trigger, delta );
+			expect( entity1.updated ).to.be.false;
+			expect( entity2.updated ).to.be.true;
+
+		} );
+
 	} );
 
 	describe( '#sendMessage()', function () {
@@ -660,6 +681,22 @@ class CustomTrigger extends Trigger {
 	update() {
 
 		this.updated = true;
+
+	}
+
+	execute( entity ) {
+
+		entity.updated = true;
+
+	}
+
+}
+
+class CustomTriggerRegion extends TriggerRegion {
+
+	touching() {
+
+		return true;
 
 	}
 

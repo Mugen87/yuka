@@ -2730,6 +2730,13 @@ class GameEntity {
 		*/
 		this.manager = null;
 
+		/**
+		 * If the entity can trigger a trigger.
+		 * @type {boolean}
+		 * @default true
+		 */
+		this.canAcitivateTrigger = true;
+
 		// private properties
 
 		// local transformation matrix. no part of the public API due to caching
@@ -7484,7 +7491,7 @@ class EntityManager {
 
 				const entity = entities[ i ];
 
-				if ( entity.active === true ) {
+				if ( entity.active === true && entity.canAcitivateTrigger ) {
 
 					trigger.check( entity );
 

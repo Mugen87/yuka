@@ -327,7 +327,7 @@ class EntityManager {
 
 				const entity = entities[ i ];
 
-				if ( entity.active === true ) {
+				if ( entity.active === true && entity.canAcitivateTrigger ) {
 
 					trigger.check( entity );
 

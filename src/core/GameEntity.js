@@ -127,6 +127,13 @@ class GameEntity {
 		*/
 		this.manager = null;
 
+		/**
+		 * If the entity can trigger a trigger.
+		 * @type {boolean}
+		 * @default true
+		 */
+		this.canAcitivateTrigger = true;
+
 		// private properties
 
 		// local transformation matrix. no part of the public API due to caching
