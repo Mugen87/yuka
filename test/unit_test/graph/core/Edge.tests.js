@@ -4,7 +4,7 @@
 
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../../build/yuka.js' );
-const GraphJSONs = require( "../../../files/GraphJSONs.js" );
+const GraphJSONs = require( '../../../files/GraphJSONs.js' );
 
 const Edge = YUKA.Edge;
 

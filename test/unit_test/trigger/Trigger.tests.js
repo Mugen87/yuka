@@ -150,8 +150,8 @@ describe( 'Trigger', function () {
 			const triggerRR2 = new Trigger( ).fromJSON( TriggerJSONs.TriggerRR );
 			const triggerCR2 = new Trigger( );
 
-			triggerCR.registerType( "CustomTriggerRegion", CustomTriggerRegion );
-			triggerCR2.registerType( "CustomTriggerRegion", CustomTriggerRegion );
+			triggerCR.registerType( 'CustomTriggerRegion', CustomTriggerRegion );
+			triggerCR2.registerType( 'CustomTriggerRegion', CustomTriggerRegion );
 			triggerCR2.fromJSON( TriggerJSONs.TriggerCR );
 
 			expect( triggerSR2 ).to.be.deep.equal( triggerSR );
