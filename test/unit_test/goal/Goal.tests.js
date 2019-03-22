@@ -219,6 +219,19 @@ describe( 'Goal', function () {
 
 		} );
 
+		it( 'should set the status to "active" before activate() is called', function () {
+
+			// this goal contains logic in its activate() method that will lead to a fail of the goal.
+			// goals can already be completed, failed or even inactive after activate() was called
+
+			const goal = new FailGoal();
+
+			goal.activateIfInactive();
+
+			expect( goal.failed() ).to.be.true;
+
+		} );
+
 	} );
 
 	describe( '#toJSON()', function () {
@@ -303,6 +316,16 @@ class CustomGoal extends Goal {
 	activate() {
 
 		this.activateCalled = true;
+
+	}
+
+}
+
+class FailGoal extends Goal {
+
+	activate() {
+
+		this.status = STATUS.FAILED;
 
 	}
 

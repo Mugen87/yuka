@@ -10985,9 +10985,9 @@
 
 			if ( this.inactive() === true ) {
 
-				this.activate();
-
 				this.status = Goal.STATUS.ACTIVE;
+
+				this.activate();
 
 			}
 
