@@ -14196,7 +14196,7 @@
 
 			} else {
 
-				// source and target are not in same region, peforme search
+				// source and target are not in same region, perform search
 
 				const source = this.regions.indexOf( fromRegion );
 				const target = this.regions.indexOf( toRegion );
