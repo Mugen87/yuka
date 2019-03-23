@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,1032 +50,198 @@
 
 
 
-
-<section>
-
-<header>
-    
-        <h2><span class="attribs"><span class="type-signature"></span></span>MathUtils<span class="signature">()</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description"><p>Class with various math helpers.</p></div>
-        
-    
-</header>
-
-<article>
-    
-        <div class="container-overview">
-        
-            
-
-<dt>
-    
-        <h4 class="name" id="MathUtils">
-            
-                new <span class="type-signature"></span>MathUtils<span class="signature">()</span><span class="type-signature"></span>
-                
-            
-            <div class="container-source members">
-                <code><a href="math_MathUtils.js.html">math/MathUtils.js</a></code>,
-                <code><a href="math_MathUtils.js.html#line14">line 14</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li><a href="https://github.com/Mugen87">Mugen87</a></li>
-        </ul>
-    </dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-        
-        </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-                
-
-<dt>
-    
-        <h4 class="name" id=".area">
-            
-                <span class="type-signature"><span class="icon green">static</span> </span>area<span class="signature">(a, b, c)</span><span class="type-signature"> &rarr; {Number}</span>
-                
-            
-            <div class="container-source members">
-                <code><a href="math_MathUtils.js.html">math/MathUtils.js</a></code>,
-                <code><a href="math_MathUtils.js.html#line65">line 65</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Computes the signed area of a rectangle defined by three points.
-This method can also be used to calculate the area of a triangle.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>a</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Vector3.html">Vector3</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The first point in 3D space.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Vector3.html">Vector3</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The second point in 3D space.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>c</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Vector3.html">Vector3</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The third point in 3D space.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
-                
-
-
-
-<span class="param-type">Number</span>
-
-
-
-
-
-- <p>The signed area.</p>
-
-
-
-
-            
-    </div>
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id=".clamp">
-            
-                <span class="type-signature"><span class="icon green">static</span> </span>clamp<span class="signature">(value, value, value)</span><span class="type-signature"> &rarr; {Number}</span>
-                
-            
-            <div class="container-source members">
-                <code><a href="math_MathUtils.js.html">math/MathUtils.js</a></code>,
-                <code><a href="math_MathUtils.js.html#line24">line 24</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Ensures the given scalar value is within a given min/max range.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The value to clamp.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">min</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The min value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">max</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The max value.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
-                
-
-
-
-<span class="param-type">Number</span>
-
-
-
-
-
-- <p>The clamped value.</p>
-
-
-
-
-            
-    </div>
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+* A lookup table representing the cost associated from traveling from one
+* node to every other node in the navgiation mesh's graph.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class CostTable {
 
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id=".generateUUID">
-            
-                <span class="type-signature"><span class="icon green">static</span> </span>generateUUID<span class="signature">()</span><span class="type-signature"> &rarr; {String}</span>
-                
-            
-            <div class="container-source members">
-                <code><a href="math_MathUtils.js.html">math/MathUtils.js</a></code>,
-                <code><a href="math_MathUtils.js.html#line76">line 76</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Computes a RFC4122 Version 4 complied Universally Unique Identifier (UUID).</p>
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
-                
-
-
-
-<span class="param-type">String</span>
-
-
-
-
-
-- <p>The UUID.</p>
-
-
-
-
-            
-    </div>
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id=".randFloat">
-            
-                <span class="type-signature"><span class="icon green">static</span> </span>randFloat<span class="signature">(value, value)</span><span class="type-signature"> &rarr; {Number}</span>
-                
-            
-            <div class="container-source members">
-                <code><a href="math_MathUtils.js.html">math/MathUtils.js</a></code>,
-                <code><a href="math_MathUtils.js.html#line50">line 50</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Computes a random float value within a given min/max range.</p>
-    </div>
-    
-
-    
-
-    
-
-    
+	/**
+	* Creates a new cost table.
+	*/
+	constructor() {
 
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">min</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The min value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">max</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The max value.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
-                
-
-
-
-<span class="param-type">Number</span>
-
-
-
-
-
-- <p>The random float value.</p>
-
-
-
-
-            
-    </div>
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id=".randInt">
-            
-                <span class="type-signature"><span class="icon green">static</span> </span>randInt<span class="signature">(value, value)</span><span class="type-signature"> &rarr; {Number}</span>
-                
-            
-            <div class="container-source members">
-                <code><a href="math_MathUtils.js.html">math/MathUtils.js</a></code>,
-                <code><a href="math_MathUtils.js.html#line37">line 37</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Computes a random integer value within a given min/max range.</p>
-    </div>
-    
-
-    
-
-    
+		this._nodeMap = new Map();
 
-    
+	}
 
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
+	/**
+	* Inits the cost table for the given navigation mesh.
+	*
+	* @param {NavMesh} navMesh - The navigation mesh.
+	* @return {CostTable} A reference to this cost table.
+	*/
+	init( navMesh ) {
 
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
+		const graph = navMesh.graph;
+		const nodes = new Array();
 
-            <td class="type">
-            
-                
-<span class="param-type">min</span>
+		this.clear();
 
+		// iterate over all nodes
 
-            
-            </td>
+		graph.getNodes( nodes );
 
-            
+		for ( let i = 0, il = nodes.length; i &lt; il; i ++ ) {
 
-            
+			const from = nodes[ i ];
 
-            <td class="description last"><p>The min value.</p></td>
-        </tr>
+			// compute the distance to all other nodes
 
-    
+			for ( let j = 0, jl = nodes.length; j &lt; jl; j ++ ) {
 
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
+				const to = nodes[ j ];
 
-            <td class="type">
-            
-                
-<span class="param-type">max</span>
+				const path = navMesh.findPath( from.position, to.position );
+				const cost = computeDistanceOfPath( path );
 
+				this.set( from.index, to.index, cost );
 
-            
-            </td>
+			}
 
-            
+		}
 
-            
+		return this;
 
-            <td class="description last"><p>The max value.</p></td>
-        </tr>
+	}
 
-    
-    </tbody>
-</table>
+	/**
+	* Clears the cost table.
+	*
+	* @return {CostTable} A reference to this cost table.
+	*/
+	clear() {
 
-    </div>
-    
+		this._nodeMap.clear();
 
-    
+		return this;
 
-    
+	}
 
-    
+	/**
+	* Sets the cost for the given pair of navigation nodes.
+	*
+	* @param {Number} from - The start node index.
+	* @param {Number} to - The destintation node index.
+	* @param {Number} cost - The cost.
+	* @return {CostTable} A reference to this cost table.
+	*/
+	set( from, to, cost ) {
 
-    
+		const nodeMap = this._nodeMap;
 
-    
+		if ( nodeMap.has( from ) === false ) nodeMap.set( from, new Map() );
 
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
-                
+		const nodeCostMap = nodeMap.get( from );
 
+		nodeCostMap.set( to, cost );
 
+		return this;
 
-<span class="param-type">Number</span>
+	}
 
+	/**
+	* Returns the cost for the given pair of navigation nodes.
+	*
+	* @param {Number} from - The start node index.
+	* @param {Number} to - The destintation node index.
+	* @return {Number} The cost.
+	*/
+	get( from, to ) {
 
+		const nodeCostMap = this._nodeMap.get( from );
 
+		return nodeCostMap.get( to );
 
+	}
 
-- <p>The random integer value.</p>
+	/**
+	* Returns the size of the cost table (amount of entries).
+	*
+	* @return {Number} The size of the cost table.
+	*/
+	size() {
 
+		return this._nodeMap.size;
 
+	}
 
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
 
-            
-    </div>
-    
+		const json = {
+			nodes: []
+		};
 
-    
+		for ( let [ key, value ] of this._nodeMap.entries() ) {
 
+			json.nodes.push( { index: key, costs: Array.from( value ) } );
 
-<dl class="details">
+		}
 
-    
+		return json;
 
-    
+	}
 
-    
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {CostTable} A reference to this cost table.
+	*/
+	fromJSON( json ) {
 
-    
+		const nodes = json.nodes;
 
-    
+		for ( let i = 0, l = nodes.length; i &lt; l; i ++ ) {
 
-    
+			const node = nodes[ i ];
 
-    
+			const index = node.index;
+			const costs = new Map( node.costs );
 
-    
+			this._nodeMap.set( index, costs );
 
-    
+		}
 
-    
+		return this;
 
-    
+	}
 
-    
+}
 
-    
+//
 
-    
+function computeDistanceOfPath( path ) {
 
-    
-</dl>
+	let distance = 0;
 
+	for ( let i = 0, l = ( path.length - 1 ); i &lt; l; i ++ ) {
 
-    
+		const from = path[ i ];
+		const to = path[ i + 1 ];
 
-</dd>
+		distance += from.distanceTo( to );
 
-            </dl>
-    
+	}
 
-    
+	return distance;
 
-    
-</article>
+}
 
-</section>
+export { CostTable };
+</code></pre>
+        </article>
+    </section>
 
 
 
@@ -1090,7 +258,7 @@ This method can also be used to calculate the area of a triangle.</p>
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = 'MathUtils_sub'.replace(/"/g, '_');
+        var id = '_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 
