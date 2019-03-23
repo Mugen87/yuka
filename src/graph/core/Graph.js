@@ -366,10 +366,10 @@ class Graph {
 	}
 
 	/**
-	 * Transforms this instance into a JSON object.
-	 *
-	 * @return {Object} The JSON object.
-	 */
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
 	toJSON() {
 
 		const json = {
@@ -404,11 +404,11 @@ class Graph {
 	}
 
 	/**
-	 * Restores this instance from the given JSON object.
-	 *
-	 * @param {Object} json - The JSON object.
-	 * @return {Graph} A reference to this graph.
-	 */
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Graph} A reference to this graph.
+	*/
 	fromJSON( json ) {
 
 		this.digraph = json.digraph;

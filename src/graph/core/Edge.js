@@ -65,10 +65,10 @@ class Edge {
 	}
 
 	/**
-	 * Transforms this instance into a JSON object.
-	 *
-	 * @return {Object} The JSON object.
-	 */
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
 	toJSON() {
 
 		return {
@@ -81,11 +81,11 @@ class Edge {
 	}
 
 	/**
-	 * Restores this instance from the given JSON object.
-	 *
-	 * @param {Object} json - The JSON object.
-	 * @return {Edge} A reference to this edge.
-	 */
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Edge} A reference to this edge.
+	*/
 	fromJSON( json ) {
 
 		this.from = json.from;

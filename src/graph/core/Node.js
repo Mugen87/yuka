@@ -22,10 +22,10 @@ class Node {
 	}
 
 	/**
-	 * Transforms this instance into a JSON object.
-	 *
-	 * @return {Object} The JSON object.
-	 */
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
 	toJSON() {
 
 		return {
@@ -36,11 +36,11 @@ class Node {
 	}
 
 	/**
-	 * Restores this instance from the given JSON object.
-	 *
-	 * @param {Object} json - The JSON object.
-	 * @return {Node} A reference to this node.
-	 */
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Node} A reference to this node.
+	*/
 	fromJSON( json ) {
 
 		this.index = json.index;

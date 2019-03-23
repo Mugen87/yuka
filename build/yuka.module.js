@@ -11699,10 +11699,10 @@ class Edge {
 	}
 
 	/**
-	 * Transforms this instance into a JSON object.
-	 *
-	 * @return {Object} The JSON object.
-	 */
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
 	toJSON() {
 
 		return {
@@ -11715,11 +11715,11 @@ class Edge {
 	}
 
 	/**
-	 * Restores this instance from the given JSON object.
-	 *
-	 * @param {Object} json - The JSON object.
-	 * @return {Edge} A reference to this edge.
-	 */
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Edge} A reference to this edge.
+	*/
 	fromJSON( json ) {
 
 		this.from = json.from;
@@ -11756,10 +11756,10 @@ class Node {
 	}
 
 	/**
-	 * Transforms this instance into a JSON object.
-	 *
-	 * @return {Object} The JSON object.
-	 */
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
 	toJSON() {
 
 		return {
@@ -11770,11 +11770,11 @@ class Node {
 	}
 
 	/**
-	 * Restores this instance from the given JSON object.
-	 *
-	 * @param {Object} json - The JSON object.
-	 * @return {Node} A reference to this node.
-	 */
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Node} A reference to this node.
+	*/
 	fromJSON( json ) {
 
 		this.index = json.index;
@@ -12149,10 +12149,10 @@ class Graph {
 	}
 
 	/**
-	 * Transforms this instance into a JSON object.
-	 *
-	 * @return {Object} The JSON object.
-	 */
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
 	toJSON() {
 
 		const json = {
@@ -12187,11 +12187,11 @@ class Graph {
 	}
 
 	/**
-	 * Restores this instance from the given JSON object.
-	 *
-	 * @param {Object} json - The JSON object.
-	 * @return {Graph} A reference to this graph.
-	 */
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {Graph} A reference to this graph.
+	*/
 	fromJSON( json ) {
 
 		this.digraph = json.digraph;
@@ -13777,6 +13777,191 @@ class Corridor {
 }
 
 /**
+* A lookup table representing the cost associated from traveling from one
+* node to every other node in the navgiation mesh's graph.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class CostTable {
+
+	/**
+	* Creates a new cost table.
+	*/
+	constructor() {
+
+		this._nodeMap = new Map();
+
+	}
+
+	/**
+	* Inits the cost table for the given navigation mesh.
+	*
+	* @param {NavMesh} navMesh - The navigation mesh.
+	* @return {CostTable} A reference to this cost table.
+	*/
+	init( navMesh ) {
+
+		const graph = navMesh.graph;
+		const nodes = new Array();
+
+		this.clear();
+
+		// iterate over all nodes
+
+		graph.getNodes( nodes );
+
+		for ( let i = 0, il = nodes.length; i < il; i ++ ) {
+
+			const from = nodes[ i ];
+
+			// compute the distance to all other nodes
+
+			for ( let j = 0, jl = nodes.length; j < jl; j ++ ) {
+
+				const to = nodes[ j ];
+
+				const path = navMesh.findPath( from.position, to.position );
+				const cost = computeDistanceOfPath( path );
+
+				this.set( from.index, to.index, cost );
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+	/**
+	* Clears the cost table.
+	*
+	* @return {CostTable} A reference to this cost table.
+	*/
+	clear() {
+
+		this._nodeMap.clear();
+
+		return this;
+
+	}
+
+	/**
+	* Sets the cost for the given pair of navigation nodes.
+	*
+	* @param {Number} from - The start node index.
+	* @param {Number} to - The destintation node index.
+	* @param {Number} cost - The cost.
+	* @return {CostTable} A reference to this cost table.
+	*/
+	set( from, to, cost ) {
+
+		const nodeMap = this._nodeMap;
+
+		if ( nodeMap.has( from ) === false ) nodeMap.set( from, new Map() );
+
+		const nodeCostMap = nodeMap.get( from );
+
+		nodeCostMap.set( to, cost );
+
+		return this;
+
+	}
+
+	/**
+	* Returns the cost for the given pair of navigation nodes.
+	*
+	* @param {Number} from - The start node index.
+	* @param {Number} to - The destintation node index.
+	* @return {Number} The cost.
+	*/
+	get( from, to ) {
+
+		const nodeCostMap = this._nodeMap.get( from );
+
+		return nodeCostMap.get( to );
+
+	}
+
+	/**
+	* Returns the size of the cost table (amount of entries).
+	*
+	* @return {Number} The size of the cost table.
+	*/
+	size() {
+
+		return this._nodeMap.size;
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		const json = {
+			nodes: []
+		};
+
+		for ( let [ key, value ] of this._nodeMap.entries() ) {
+
+			json.nodes.push( { index: key, costs: Array.from( value ) } );
+
+		}
+
+		return json;
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {CostTable} A reference to this cost table.
+	*/
+	fromJSON( json ) {
+
+		const nodes = json.nodes;
+
+		for ( let i = 0, l = nodes.length; i < l; i ++ ) {
+
+			const node = nodes[ i ];
+
+			const index = node.index;
+			const costs = new Map( node.costs );
+
+			this._nodeMap.set( index, costs );
+
+		}
+
+		return this;
+
+	}
+
+}
+
+//
+
+function computeDistanceOfPath( path ) {
+
+	let distance = 0;
+
+	for ( let i = 0, l = ( path.length - 1 ); i < l; i ++ ) {
+
+		const from = path[ i ];
+		const to = path[ i + 1 ];
+
+		distance += from.distanceTo( to );
+
+	}
+
+	return distance;
+
+}
+
+/**
 * Implementation of a half-edge data structure, also known as
 * {@link https://en.wikipedia.org/wiki/Doubly_connected_edge_list Doubly connected edge list}.
 *
@@ -14153,6 +14338,19 @@ class NavMesh {
 	}
 
 	/**
+	* Returns the node index for the given region. The index represents
+	* the navigation node of a region in the navigation graph.
+	*
+	* @param {Polygon} region - The convex region.
+	* @return {Number} The respective node index.
+	*/
+	getNodeIndex( region ) {
+
+		return this.regions.indexOf( region );
+
+	}
+
+	/**
 	* Returns the shortest path that leads from the given start position to the end position.
 	* The computational overhead of this method for complex navigation meshes can greatly
 	* reduced by using a spatial index.
@@ -14192,8 +14390,8 @@ class NavMesh {
 
 			// source and target are not in same region, perform search
 
-			const source = this.regions.indexOf( fromRegion );
-			const target = this.regions.indexOf( toRegion );
+			const source = this.getNodeIndex( fromRegion );
+			const target = this.getNodeIndex( toRegion );
 
 			const astar = new AStar( graph, source, target );
 			astar.search();
@@ -14456,8 +14654,8 @@ class NavMesh {
 
 			const region = regions[ i ];
 
-			const regionIndices = new Array();
-			regionNeighbourhood.push( regionIndices );
+			const nodeIndices = new Array();
+			regionNeighbourhood.push( nodeIndices );
 
 			let edge = region.edge;
 
@@ -14469,15 +14667,15 @@ class NavMesh {
 
 				if ( edge.twin !== null ) {
 
-					const regionIndex = this.regions.indexOf( edge.twin.polygon );
+					const nodeIndex = this.getNodeIndex( edge.twin.polygon );
 
-					regionIndices.push( regionIndex ); // the index of the adjacent region
+					nodeIndices.push( nodeIndex ); // the node index of the adjacent region
 
 					// add node for this region to the graph if necessary
 
-					if ( graph.hasNode( this.regions.indexOf( edge.polygon ) ) === false ) {
+					if ( graph.hasNode( this.getNodeIndex( edge.polygon ) ) === false ) {
 
-						const node = new NavNode( this.regions.indexOf( edge.polygon ), edge.polygon.centroid );
+						const node = new NavNode( this.getNodeIndex( edge.polygon ), edge.polygon.centroid );
 
 						graph.addNode( node );
 
@@ -16731,4 +16929,4 @@ function runTaskQueue( deadline ) {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };

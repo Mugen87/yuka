@@ -54,6 +54,7 @@ export { NavEdge } from './navigation/core/NavEdge.js';
 export { NavNode } from './navigation/core/NavNode.js';
 export { GraphUtils } from './navigation/extra/GraphUtils.js';
 export { Corridor } from './navigation/navmesh/Corridor.js';
+export { CostTable } from './navigation/navmesh/CostTable.js';
 export { HalfEdge } from './navigation/navmesh/HalfEdge.js';
 export { NavMesh } from './navigation/navmesh/NavMesh.js';
 export { NavMeshLoader } from './navigation/navmesh/NavMeshLoader.js';

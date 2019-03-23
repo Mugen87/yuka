@@ -272,6 +272,19 @@ class NavMesh {
 	}
 
 	/**
+	* Returns the node index for the given region. The index represents
+	* the navigation node of a region in the navigation graph.
+	*
+	* @param {Polygon} region - The convex region.
+	* @return {Number} The respective node index.
+	*/
+	getNodeIndex( region ) {
+
+		return this.regions.indexOf( region );
+
+	}
+
+	/**
 	* Returns the shortest path that leads from the given start position to the end position.
 	* The computational overhead of this method for complex navigation meshes can greatly
 	* reduced by using a spatial index.
@@ -311,8 +324,8 @@ class NavMesh {
 
 			// source and target are not in same region, perform search
 
-			const source = this.regions.indexOf( fromRegion );
-			const target = this.regions.indexOf( toRegion );
+			const source = this.getNodeIndex( fromRegion );
+			const target = this.getNodeIndex( toRegion );
 
 			const astar = new AStar( graph, source, target );
 			astar.search();
@@ -575,8 +588,8 @@ class NavMesh {
 
 			const region = regions[ i ];
 
-			const regionIndices = new Array();
-			regionNeighbourhood.push( regionIndices );
+			const nodeIndices = new Array();
+			regionNeighbourhood.push( nodeIndices );
 
 			let edge = region.edge;
 
@@ -588,15 +601,15 @@ class NavMesh {
 
 				if ( edge.twin !== null ) {
 
-					const regionIndex = this.regions.indexOf( edge.twin.polygon );
+					const nodeIndex = this.getNodeIndex( edge.twin.polygon );
 
-					regionIndices.push( regionIndex ); // the index of the adjacent region
+					nodeIndices.push( nodeIndex ); // the node index of the adjacent region
 
 					// add node for this region to the graph if necessary
 
-					if ( graph.hasNode( this.regions.indexOf( edge.polygon ) ) === false ) {
+					if ( graph.hasNode( this.getNodeIndex( edge.polygon ) ) === false ) {
 
-						const node = new NavNode( this.regions.indexOf( edge.polygon ), edge.polygon.centroid );
+						const node = new NavNode( this.getNodeIndex( edge.polygon ), edge.polygon.centroid );
 
 						graph.addNode( node );
 

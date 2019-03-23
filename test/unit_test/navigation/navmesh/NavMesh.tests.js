@@ -188,6 +188,23 @@ describe( 'NavMesh', function () {
 
 	} );
 
+	describe( '#getNodeIndex()', function () {
+
+		it( 'should return the node index for the given region', function () {
+
+			const point1 = new Vector3( 0.5, 0, 0.5 );
+			const point2 = new Vector3( 0.9, 0, 0.9 );
+
+			const region1 = navMesh.getRegionForPoint( point1 );
+			const region2 = navMesh.getRegionForPoint( point2 );
+
+			expect( navMesh.getNodeIndex( region1 ) ).to.equal( 0 );
+			expect( navMesh.getNodeIndex( region2 ) ).to.equal( 1 );
+
+		} );
+
+	} );
+
 	describe( '#findPath()', function () {
 
 		it( 'should return a path as an array of Vector3 from the start to end position', function () {
