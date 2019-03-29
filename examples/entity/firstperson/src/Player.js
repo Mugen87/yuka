@@ -13,6 +13,7 @@ class Player extends MovingEntity {
 
 		super();
 
+		this.maxSpeed = 4;
 		this.height = 2;
 
 		this.head = new GameEntity();

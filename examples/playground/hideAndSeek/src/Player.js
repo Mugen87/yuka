@@ -42,7 +42,7 @@ class Player extends MovingEntity {
 		//
 
 		this.forward.set( 0, 0, - 1 );
-		this.maxSpeed = 80;
+		this.maxSpeed = 8;
 		this.updateOrientation = false;
 
 	}
