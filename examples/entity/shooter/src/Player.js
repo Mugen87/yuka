@@ -30,7 +30,7 @@ class Player extends MovingEntity {
 		//
 
 		this.forward.set( 0, 0, - 1 );
-		this.maxSpeed = 100;
+		this.maxSpeed = 10;
 		this.updateOrientation = false;
 
 	}

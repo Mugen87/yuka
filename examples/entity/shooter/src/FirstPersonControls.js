@@ -23,8 +23,9 @@ class FirstPersonControls extends EventDispatcher {
 		this.movementX = 0; // mouse left/right
 		this.movementY = 0; // mouse up/down
 
-		this.lookingSpeed = 1;
+		this.acceleration = 100;
 		this.brakingPower = 10;
+		this.lookingSpeed = 1;
 		this.headMovement = 0.75;
 
 		this.input = {
@@ -79,8 +80,8 @@ class FirstPersonControls extends EventDispatcher {
 		direction.x = Number( input.left ) - Number( input.right );
 		direction.normalize();
 
-		if ( input.forward || input.backward ) velocity.z -= direction.z * owner.maxSpeed * delta;
-		if ( input.left || input.right ) velocity.x -= direction.x * owner.maxSpeed * delta;
+		if ( input.forward || input.backward ) velocity.z -= direction.z * this.acceleration * delta;
+		if ( input.left || input.right ) velocity.x -= direction.x * this.acceleration * delta;
 
 		owner.velocity.copy( velocity ).applyRotation( owner.rotation );
 
