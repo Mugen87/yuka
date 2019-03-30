@@ -315,6 +315,21 @@ describe( 'NavMesh', function () {
 
 		} );
 
+		it( 'should not throw an error if start and end position are equal', function () {
+
+			const from = new Vector3( 2, 0, - 1 );
+			const to = new Vector3( 2, 0, - 1 );
+			const clampedPosition = new Vector3();
+
+			const currentRegion = navMesh.getRegionForPoint( new Vector3( 0.5, 0, 0.5 ) );
+
+			const newRegion = navMesh.clampMovement( currentRegion, from, to, clampedPosition );
+
+			expect( clampedPosition ).to.deep.equal( { x: 1, y: 0, z: 0 } );
+			expect( newRegion ).to.equal( p1 );
+
+		} );
+
 	} );
 
 	describe( '#updateSpatialIndex()', function () {
@@ -340,14 +355,19 @@ describe( 'NavMesh', function () {
 
 		it( 'should return the closest border edge for the given point', function () {
 
+			const closestBorderEdge = {
+				edge: null,
+				closestPoint: new Vector3()
+			};
+
 			const point = new Vector3( 0.9, 0, 0.5 );
-			const borderEdge = navMesh._getClosestBorderEdge( point );
+			navMesh._getClosestBorderEdge( point, closestBorderEdge );
 
 			const region = navMesh.regions[ 1 ];
 			const edge = region.edge.prev;
 
-			expect( borderEdge ).to.equal( edge );
-			expect( borderEdge.vertex ).to.deep.equal( { x: 1, y: 0, z: 1 } );
+			expect( closestBorderEdge.edge ).to.equal( edge );
+			expect( closestBorderEdge.closestPoint ).to.deep.equal( { x: 1, y: 0, z: 0.5 } );
 
 		} );
 
@@ -357,14 +377,19 @@ describe( 'NavMesh', function () {
 			navMesh.spatialIndex = spatialIndex;
 			navMesh.updateSpatialIndex();
 
+			const closestBorderEdge = {
+				edge: null,
+				closestPoint: new Vector3()
+			};
+
 			const point = new Vector3( 0.9, 0, 0.5 );
-			const borderEdge = navMesh._getClosestBorderEdge( point );
+			navMesh._getClosestBorderEdge( point, closestBorderEdge );
 
 			const region = navMesh.regions[ 1 ];
 			const edge = region.edge.prev;
 
-			expect( borderEdge ).to.equal( edge );
-			expect( borderEdge.vertex ).to.deep.equal( { x: 1, y: 0, z: 1 } );
+			expect( closestBorderEdge.edge ).to.equal( edge );
+			expect( closestBorderEdge.closestPoint ).to.deep.equal( { x: 1, y: 0, z: 0.5 } );
 
 			navMesh.spatialIndex = null;
 
