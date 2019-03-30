@@ -14073,12 +14073,15 @@ class HalfEdge {
 }
 
 const pointOnLineSegment = new Vector3();
-const closestPoint = new Vector3();
 const edgeDirection = new Vector3();
 const movementDirection = new Vector3();
 const newPosition = new Vector3();
 const lineSegment = new LineSegment();
 const edges = new Array();
+const closestBorderEdge = {
+	edge: null,
+	closestPoint: new Vector3()
+};
 
 /**
 * Implementation of a navigation mesh. A navigation mesh is a network of convex polygons
@@ -14454,17 +14457,30 @@ class NavMesh {
 
 			// determine closest border edge
 
-			const closestEdge = this._getClosestBorderEdge( startPosition );
+			this._getClosestBorderEdge( startPosition, closestBorderEdge );
+
+			const closestEdge = closestBorderEdge.edge;
+			const closestPoint = closestBorderEdge.closestPoint;
 
 			// calculate movement and edge direction
 
 			edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
 			const length = movementDirection.subVectors( endPosition, startPosition ).length();
-			movementDirection.divideScalar( length );
 
 			// this value influences the speed at which the entity moves along the edge
 
-			const f = edgeDirection.dot( movementDirection );
+			let f = 0;
+
+			// if startPosition and endPosition are equal, length becomes zero.
+			// it's important to test this edge case in order to avoid NaN values.
+
+			if ( length !== 0 ) {
+
+				movementDirection.divideScalar( length );
+
+				f = edgeDirection.dot( movementDirection );
+
+			}
 
 			// calculate new position on the edge
 
@@ -14723,10 +14739,9 @@ class NavMesh {
 
 	}
 
-	_getClosestBorderEdge( point ) {
+	_getClosestBorderEdge( point, closestBorderEdge ) {
 
 		let borderEdges;
-		let closestEdge = null;
 		let minDistance = Infinity;
 
 		if ( this.spatialIndex !== null ) {
@@ -14780,14 +14795,14 @@ class NavMesh {
 
 				minDistance = distance;
 
-				closestEdge = edge;
-				closestPoint.copy( pointOnLineSegment );
+				closestBorderEdge.edge = edge;
+				closestBorderEdge.closestPoint.copy( pointOnLineSegment );
 
 			}
 
 		}
 
-		return closestEdge;
+		return this;
 
 	}
 
