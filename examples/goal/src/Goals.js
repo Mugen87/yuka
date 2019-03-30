@@ -47,7 +47,7 @@ class RestGoal extends Goal {
 
 		owner.currentTime += owner.deltaTime;
 
-		if ( owner.currentTime >= owner.pickUpDuration ) {
+		if ( owner.currentTime >= owner.restDuration ) {
 
 			owner.currentTime = 0;
 			owner.currentTarget = null;
