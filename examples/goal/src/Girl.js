@@ -17,6 +17,9 @@ class Girl extends Vehicle {
 		this.mixer = mixer;
 		this.animations = animations;
 
+		const idle = this.animations.get( 'IDLE' );
+		idle.enabled = true;
+
 		this.ui = {
 			currentGoal: document.getElementById( 'currentGoal' ),
 			currentSubgoal: document.getElementById( 'currentSubgoal' )

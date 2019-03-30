@@ -47,10 +47,7 @@ class RestGoal extends Goal {
 
 		owner.currentTime += owner.deltaTime;
 
-		if ( owner.currentTime >= owner.pickUpDuration ) {
-
-			owner.currentTime = 0;
-			owner.currentTarget = null;
+		if ( owner.currentTime >= owner.restDuration ) {
 
 			this.status = Goal.STATUS.COMPLETED;
 
@@ -62,10 +59,8 @@ class RestGoal extends Goal {
 
 		const owner = this.owner;
 
+		owner.currentTime = 0;
 		owner.fatigueLevel = 0;
-
-		const idle = owner.animations.get( IDLE );
-		idle.fadeOut( owner.crossFadeDuration );
 
 	}
 
@@ -92,6 +87,9 @@ class GatherGoal extends CompositeGoal {
 		this.addSubgoal( new FindNextCollectibleGoal( owner ) );
 		this.addSubgoal( new SeekToCollectibleGoal( owner ) );
 		this.addSubgoal( new PickUpCollectibleGoal( owner ) );
+
+		const idle = owner.animations.get( IDLE );
+		idle.fadeOut( owner.crossFadeDuration );
 
 	}
 
