@@ -369,14 +369,30 @@ describe( 'Quaternion', function () {
 		it( 'should return a quaternion from euler angles', function () {
 
 			const q1 = new Quaternion().fromEuler( 0, 0, 0 );
-			const q2 = new Quaternion().fromEuler( Math.PI / 2, 0, 0 );
+			const q2 = new Quaternion().fromEuler( Math.PI / 2, Math.PI, 0 );
 
 			expect( q1 ).to.deep.equal( { x: 0, y: 0, z: 0, w: 1 } );
 
-			expect( q2.x ).to.closeTo( 0.7071067811865475, Number.EPSILON );
-			expect( q2.y ).to.closeTo( 0, Number.EPSILON );
-			expect( q2.z ).to.closeTo( 0, Number.EPSILON );
-			expect( q2.w ).to.closeTo( 0.7071067811865476, Number.EPSILON );
+			expect( q2.x ).to.closeTo( 0, Number.EPSILON );
+			expect( q2.y ).to.closeTo( 0.7071067811865476, Number.EPSILON );
+			expect( q2.z ).to.closeTo( - 0.7071067811865475, Number.EPSILON );
+			expect( q2.w ).to.closeTo( 0, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#toEuler()', function () {
+
+		it( 'should return a quaternion from euler angles', function () {
+
+			const q1 = new Quaternion().fromEuler( Math.PI / 2, Math.PI, 0 );
+
+			const euler = { x: 0, y: 0, z: 0 };
+
+			q1.toEuler( euler );
+
+			expect( euler ).to.deep.equal( { x: Math.PI / 2, y: Math.PI, z: 0 } );
 
 		} );
 

@@ -1957,7 +1957,7 @@ class Quaternion {
 	}
 
 	/**
-	* Sets the components of this quaternion from the an euler angle.
+	* Sets the components of this quaternion from the an euler angle (YXZ order).
 	*
 	* @param {Number} x - Rotation around x axis in radians.
 	* @param {Number} y - Rotation around y axis in radians.
@@ -1966,20 +1966,62 @@ class Quaternion {
 	*/
 	fromEuler( x, y, z ) {
 
-		const c1 = Math.cos( x / 2 );
-		const c2 = Math.cos( y / 2 );
+		// from 3D Math Primer for Graphics and Game Development
+		// 8.7.5 Converting Euler Angles to a Quaternion
+
+		// assuming YXZ (head/pitch/bank or yaw/pitch/roll) order
+
+		const c1 = Math.cos( y / 2 );
+		const c2 = Math.cos( x / 2 );
 		const c3 = Math.cos( z / 2 );
 
-		const s1 = Math.sin( x / 2 );
-		const s2 = Math.sin( y / 2 );
+		const s1 = Math.sin( y / 2 );
+		const s2 = Math.sin( x / 2 );
 		const s3 = Math.sin( z / 2 );
 
-		this.x = s1 * c2 * c3 + c1 * s2 * s3;
-		this.y = c1 * s2 * c3 - s1 * c2 * s3;
-		this.z = c1 * c2 * s3 + s1 * s2 * c3;
-		this.w = c1 * c2 * c3 - s1 * s2 * s3;
+		this.w = c1 * c2 * c3 + s1 * s2 * s3;
+		this.x = c1 * s2 * c3 + s1 * c2 * s3;
+		this.y = s1 * c2 * c3 - c1 * s2 * s3;
+		this.z = c1 * c2 * s3 - s1 * s2 * c3;
 
 		return this;
+
+	}
+
+	/**
+	* Returns an euler angel (YXZ order) representation of this quaternion.
+	*
+	* @param {Object} euler - The resulting euler angles.
+	* @return {Object} The resulting euler angles.
+	*/
+	toEuler( euler ) {
+
+		// from 3D Math Primer for Graphics and Game Development
+		// 8.7.6 Converting a Quaternion to Euler Angles
+
+		// extract pitch
+
+		const sp = - 2 * ( this.y * this.z - this.x * this.w );
+
+		// check for gimbal lock
+
+		if ( Math.abs( sp ) > 0.9999 ) {
+
+			// looking straight up or down
+
+			euler.x = Math.PI * 0.5 * sp;
+			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );
+			euler.z = 0;
+
+		} else {
+
+			euler.x = Math.asin( sp );
+			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );
+			euler.z = Math.atan2( this.x * this.y + this.w * this.z, 0.5 - this.x * this.x - this.z * this.z );
+
+		}
+
+		return euler;
 
 	}
 
