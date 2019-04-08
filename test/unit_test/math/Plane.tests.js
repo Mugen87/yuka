@@ -156,6 +156,26 @@ describe( 'Plane', function () {
 
 	} );
 
+	describe( '#projectPoint()', function () {
+
+		it( 'should project a point onto the given plane', function () {
+
+			const plane = new Plane( new Vector3( 0, 1, 0 ), - 2 );
+			const point1 = new Vector3( 5, 0, 0 );
+			const point2 = new Vector3( 5, 0, 3 );
+			const point3 = new Vector3( 5, - 3, 0 );
+			const point4 = new Vector3( 1, 2, 1 ); // point already on the plane
+			const result = new Vector3();
+
+			expect( plane.projectPoint( point1, result ) ).to.deep.equal( new Vector3( 5, 2, 0 ) );
+			expect( plane.projectPoint( point2, result ) ).to.deep.equal( new Vector3( 5, 2, 3 ) );
+			expect( plane.projectPoint( point3, result ) ).to.deep.equal( new Vector3( 5, 2, 0 ) );
+			expect( plane.projectPoint( point4, result ) ).to.deep.equal( new Vector3( 1, 2, 1 ) );
+
+		} );
+
+	} );
+
 	describe( '#equals()', function () {
 
 		it( 'should return true if both planes are equal else false', function () {
