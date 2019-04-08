@@ -184,6 +184,23 @@ describe( 'BoundingSphere', function () {
 
 	} );
 
+	describe( '#fromPoints()', function () {
+
+		it( 'should compute a bounding sphere that encloses the given set of points', function () {
+
+			const points = [ new Vector3( 1, 1, 1 ), new Vector3( - 2, 2, - 2 ) ];
+			const sphere = new BoundingSphere().fromPoints( points );
+
+			expect( sphere.center ).to.deep.equal( new Vector3( - 0.5, 1.5, - 0.5 ) );
+			expect( sphere.radius ).to.closeTo( 2.179449471770337, Number.EPSILON );
+
+			expect( sphere.containsPoint( points[ 0 ] ) ).to.be.true;
+			expect( sphere.containsPoint( points[ 1 ] ) ).to.be.true;
+
+		} );
+
+	} );
+
 	describe( '#applyMatrix4()', function () {
 
 		it( 'should transform this bounding sphere by the given 4x4 transformation matrix', function () {
