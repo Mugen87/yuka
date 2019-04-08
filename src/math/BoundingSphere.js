@@ -139,7 +139,7 @@ class BoundingSphere {
 	}
 
 	/**
-	* Sets the values of the bounding sphere from the given array of points.
+	* Computes a bounding sphere that encloses the given set of points.
 	*
 	* @param {Array} points - An array of 3D vectors representing points in 3D space.
 	* @return {BoundingSphere} A reference to this bounding sphere.
