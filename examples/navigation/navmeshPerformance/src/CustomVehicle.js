@@ -30,7 +30,7 @@ class CustomVehicle extends Vehicle {
 
 			this.currentRegion = currentRegion;
 
-			const distance = this.currentRegion.plane.distanceToPoint( this.position );
+			const distance = this.currentRegion.distanceToPoint( this.position );
 
 			this.position.y -= distance * 0.2;
 
