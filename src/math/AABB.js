@@ -267,7 +267,7 @@ class AABB {
 	}
 
 	/**
-	* Sets the values of the AABB from the given array of points.
+	* Computes an AABB that encloses the given set of points.
 	*
 	* @param {Array} points - An array of 3D vectors representing points in 3D space.
 	* @return {AABB} A reference to this AABB.

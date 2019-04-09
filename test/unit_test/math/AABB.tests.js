@@ -303,13 +303,16 @@ describe( 'AABB', function () {
 
 	describe( '#fromPoints()', function () {
 
-		it( 'should set the min and max vector of the AABB according to the given parameter', function () {
+		it( 'should compute an AABB that encloses the given set of points', function () {
 
 			const points = [ new Vector3( 1, 1, 1 ), new Vector3( - 2, 2, - 2 ) ];
 			const aabb = new AABB().fromPoints( points );
 
 			expect( aabb.min ).to.deep.equal( new Vector3( - 2, 1, - 2 ) );
 			expect( aabb.max ).to.deep.equal( new Vector3( 1, 2, 1 ) );
+
+			expect( aabb.containsPoint( points[ 0 ] ) ).to.be.true;
+			expect( aabb.containsPoint( points[ 1 ] ) ).to.be.true;
 
 		} );
 

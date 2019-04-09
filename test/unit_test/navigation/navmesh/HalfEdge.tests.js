@@ -124,4 +124,20 @@ describe( 'HalfEdge', function () {
 
 	} );
 
+	describe( '#linkOpponent()', function () {
+
+		it( 'should link the given opponent edge to this one', function () {
+
+			const halfEdge1 = new HalfEdge();
+			const halfEdge2 = new HalfEdge();
+
+			halfEdge1.linkOpponent( halfEdge2 );
+
+			expect( halfEdge1.twin ).to.equal( halfEdge2 );
+			expect( halfEdge2.twin ).to.equal( halfEdge1 );
+
+		} );
+
+	} );
+
 } );

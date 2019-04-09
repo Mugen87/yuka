@@ -123,6 +123,24 @@ class Plane {
 	}
 
 	/**
+	* Projects the given point onto the plane. The result is written
+	* to the given vector.
+	*
+	* @param {Vector3} point - The point to project onto the plane.
+	* @param {Vector3} result - The projected point.
+	* @return {Vector3} The projected point.
+	*/
+	projectPoint( point, result ) {
+
+		v1.copy( this.normal ).multiplyScalar( this.distanceToPoint( point ) );
+
+		result.subVectors( point, v1 );
+
+		return result;
+
+	}
+
+	/**
 	* Returns true if the given plane is deep equal with this plane.
 	*
 	* @param {Plane} plane - The plane to test.

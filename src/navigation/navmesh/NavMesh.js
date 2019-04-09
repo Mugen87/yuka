@@ -130,10 +130,9 @@ class NavMesh {
 
 				if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
 
-					// twin found, set references
+					// opponent edge found, set twin references
 
-					edge0.twin = edge1;
-					edge1.twin = edge0;
+					edge0.linkOpponent( edge1 );
 
 					// add edge to list
 

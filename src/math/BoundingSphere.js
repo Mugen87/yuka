@@ -1,4 +1,7 @@
+import { AABB } from './AABB.js';
 import { Vector3 } from './Vector3.js';
+
+const aabb = new AABB();
 
 /**
 * Class representing a bounding sphere.
@@ -132,6 +135,27 @@ class BoundingSphere {
 	getNormalFromSurfacePoint( point, result ) {
 
 		return result.subVectors( point, this.center ).normalize();
+
+	}
+
+	/**
+	* Computes a bounding sphere that encloses the given set of points.
+	*
+	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @return {BoundingSphere} A reference to this bounding sphere.
+	*/
+	fromPoints( points ) {
+
+		// Using an AABB is a simple way to compute a bounding sphere for a given set
+		// of points. However, there are other more complex algorithms that produce a
+		// more tight bounding sphere. For now, this approach is a good start.
+
+		aabb.fromPoints( points );
+
+		aabb.getCenter( this.center );
+		this.radius = this.center.distanceTo( aabb.max );
+
+		return this;
 
 	}
 
