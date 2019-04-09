@@ -14913,10 +14913,6 @@ function descending( a, b ) {
 
 }
 
-const v1$3 = new Vector3();
-const v2$1 = new Vector3();
-const t = new Vector3();
-
 /**
 * Class for representing a planar polygon with an arbitrary amount of edges.
 *
@@ -14935,12 +14931,6 @@ class Polygon {
 		* @type Vector3
 		*/
 		this.centroid = new Vector3();
-
-		/**
-		* The normal of this polygon.
-		* @type Vector3
-		*/
-		this.normal = new Vector3();
 
 		/**
 		* A reference to the first half-edge of this polygon.
@@ -15050,41 +15040,6 @@ class Polygon {
 		} while ( edge !== this.edge );
 
 		centroid.divideScalar( count );
-
-		return this;
-
-	}
-
-	/**
-	* Computes the normal for this polygon.
-	*
-	* @return {Polygon} A reference to this polygon.
-	*/
-	computeNormal() {
-
-		const normal = this.normal;
-
-		let edge0 = this.edge;
-		let edge1 = edge0.next;
-		let edge2 = edge1.next;
-
-		v2$1.subVectors( edge1.from(), edge0.from() );
-
-		normal.set( 0, 0, 0 );
-
-		do {
-
-			v1$3.copy( v2$1 );
-			v2$1.subVectors( edge2.from(), edge0.from() );
-
-			t.crossVectors( v1$3, v2$1 );
-			this.normal.add( t );
-
-			edge2 = edge2.next;
-
-		} while ( edge2 !== edge0 );
-
-		normal.normalize();
 
 		return this;
 
