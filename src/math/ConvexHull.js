@@ -1,4 +1,6 @@
 import { Logger } from '../core/Logger.js';
+import { Polygon } from '../navigation/navmesh/Polygon.js';
+import { HalfEdge } from '../navigation/navmesh/HalfEdge.js';
 
 /**
 * Class representing a convex hull.
@@ -58,6 +60,32 @@ class ConvexHull {
 	_generate() {
 
 		return this;
+
+	}
+
+}
+
+class Face extends Polygon {
+
+	constructor( a, b, c ) {
+
+		const edge0 = new HalfEdge( a, this );
+		const edge1 = new HalfEdge( b, this );
+		const edge2 = new HalfEdge( c, this );
+
+		// join edges
+
+		edge0.next = edge2.prev = edge1;
+		edge1.next = edge0.prev = edge2;
+		edge2.next = edge1.prev = edge0;
+
+		// main half edge reference
+
+		this.edge = edge0;
+
+		//
+
+		this.computeCentroid();
 
 	}
 
