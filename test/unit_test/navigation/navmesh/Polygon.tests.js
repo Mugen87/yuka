@@ -8,6 +8,7 @@ const YUKA = require( '../../../../build/yuka.js' );
 const Polygon = YUKA.Polygon;
 const HalfEdge = YUKA.HalfEdge;
 const Vector3 = YUKA.Vector3;
+const Plane = YUKA.Plane;
 
 //
 
@@ -18,7 +19,9 @@ describe( 'Polygon', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const polygon = new Polygon();
+			expect( polygon ).to.have.a.property( 'centroid' ).that.is.an.instanceof( Vector3 );
 			expect( polygon ).to.have.a.property( 'edge' ).that.is.null;
+			expect( polygon ).to.have.a.property( 'plane' ).that.is.an.instanceof( Plane );
 
 		} );
 
@@ -299,6 +302,33 @@ describe( 'Polygon', function () {
 
 			expect( polygon.coplanar() ).to.be.false;
 			expect( polygon.coplanar( 0.02 ) ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#distanceToPoint()', function () {
+
+		it( 'should compute the signed distance from the polyogn to the given point', function () {
+
+			const polygon = new Polygon();
+
+			const vertices = [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 1, 0, 0 )
+			];
+
+			polygon.fromContour( vertices );
+
+			const point1 = new Vector3( 0, 1, 0 );
+			const point2 = new Vector3( 0, 0, 0 );
+			const point3 = new Vector3( 0, - 2, 0 );
+
+			expect( polygon.distanceToPoint( point1 ) ).to.be.equal( 1 );
+			expect( polygon.distanceToPoint( point2 ) ).to.be.equal( 0 );
+			expect( polygon.distanceToPoint( point3 ) ).to.be.equal( - 2 );
 
 		} );
 

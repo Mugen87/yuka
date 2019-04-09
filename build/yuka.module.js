@@ -15147,6 +15147,19 @@ class Polygon {
 	}
 
 	/**
+	* Computes the signed distance from the given 3D vector to this polygon. The method
+	* uses the polygon's plane abstraction in order to compute this value.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Number} The signed distance from the given point to this polygon.
+	*/
+	distanceToPoint( point ) {
+
+		return this.plane.distanceToPoint( point );
+
+	}
+
+	/**
 	* Determines the contour (sequence of points) of this polygon and
 	* stores the result in the given array.
 	*
