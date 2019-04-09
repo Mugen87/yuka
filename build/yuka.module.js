@@ -14153,6 +14153,21 @@ class HalfEdge {
 
 	}
 
+	/**
+	* Links the given opponent half edge with this one.
+	*
+	* @param {HalfEdge} edge - The opponent edge to link.
+	* @return {HalfEdge} A reference to this half edge.
+	*/
+	linkOpponent( edge ) {
+
+		this.twin = edge;
+		edge.twin = this;
+
+		return this;
+
+	}
+
 }
 
 const pointOnLineSegment = new Vector3();
@@ -14279,10 +14294,9 @@ class NavMesh {
 
 				if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
 
-					// twin found, set references
+					// opponent edge found, set twin references
 
-					edge0.twin = edge1;
-					edge1.twin = edge0;
+					edge0.linkOpponent( edge1 );
 
 					// add edge to list
 

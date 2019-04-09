@@ -109,6 +109,21 @@ class HalfEdge {
 
 	}
 
+	/**
+	* Links the given opponent half edge with this one.
+	*
+	* @param {HalfEdge} edge - The opponent edge to link.
+	* @return {HalfEdge} A reference to this half edge.
+	*/
+	linkOpponent( edge ) {
+
+		this.twin = edge;
+		edge.twin = this;
+
+		return this;
+
+	}
+
 }
 
 export { HalfEdge };
