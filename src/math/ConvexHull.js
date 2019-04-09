@@ -38,7 +38,7 @@ class ConvexHull {
 
 		}
 
-		this._compute();
+		this._generate();
 
 		return this;
 
@@ -55,7 +55,7 @@ class ConvexHull {
 
 	// private API
 
-	_compute() {
+	_generate() {
 
 		return this;
 
@@ -63,7 +63,7 @@ class ConvexHull {
 
 }
 
-//
+// special data structures for the quick hull implementation
 
 class Vertex {
 
