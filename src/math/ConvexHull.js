@@ -70,7 +70,7 @@ class ConvexHull {
 
 		// all the half edges are created in ccw order thus the face is always pointing outside the hull
 
-		var face = new Face( vertex.point, horizonEdge.from(), horizonEdge.to() );
+		var face = new Face( vertex.point, horizonEdge.prev.vertex, horizonEdge.vertex );
 
 		this.faces.push( face );
 
@@ -494,11 +494,14 @@ class ConvexHull {
 
 		let vertex;
 
-		while ( vertex = this._nextVertexToAdd() ) {
+		// while ( vertex = this._nextVertexToAdd() ) {
+		//
+		// 	this._addVertexToHull( vertex );
+		//
+		// }
 
-			this._addVertexToHull( vertex );
-
-		}
+		this._addVertexToHull( this._nextVertexToAdd() );
+		this._addVertexToHull( this._nextVertexToAdd() );
 
 		this._reindexFaces();
 
@@ -516,7 +519,7 @@ class ConvexHull {
 
 		if ( this._assigned.empty() === false ) {
 
-			let maxDistance = this._tolerance;
+			let maxDistance = 0;
 
 			// grap the first available face and start with the first visible vertex of that face
 
