@@ -42,6 +42,7 @@ export { DFS } from './graph/search/DFS.js';
 export { Dijkstra } from './graph/search/Dijkstra.js';
 export { AABB } from './math/AABB.js';
 export { BoundingSphere } from './math/BoundingSphere.js';
+export { ConvexHull } from './math/ConvexHull.js';
 export { LineSegment } from './math/LineSegment.js';
 export { MathUtils } from './math/MathUtils.js';
 export { Matrix3 } from './math/Matrix3.js';

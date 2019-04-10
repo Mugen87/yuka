@@ -70,13 +70,13 @@ class ConvexHull {
 
 		// all the half edges are created in ccw order thus the face is always pointing outside the hull
 
-		var face = new Face( vertex, horizonEdge.tail(), horizonEdge.head() );
+		var face = new Face( vertex.point, horizonEdge.from(), horizonEdge.to() );
 
 		this.faces.push( face );
 
 		// join face.getEdge( - 1 ) with the horizon's opposite edge face.getEdge( - 1 ) = face.getEdge( 2 )
 
-		face.getEdge( - 1 ).setTwin( horizonEdge.twin );
+		face.getEdge( - 1 ).linkOpponent( horizonEdge.twin );
 
 		return face.getEdge( 0 ); // the half edge whose vertex is the given one
 
@@ -85,12 +85,12 @@ class ConvexHull {
 
 	_addNewFaces( vertex, horizon ) {
 
-		this.newFaces = [];
+		this._newFaces = [];
 
 		let firstSideEdge = null;
 		let previousSideEdge = null;
 
-		for ( let i = 0; i < horizon.length; i ++ ) {
+		for ( let i = 0, l = horizon.length; i < l; i ++ ) {
 
 			// returns the right side edge
 
@@ -104,18 +104,18 @@ class ConvexHull {
 
 				// joins face.getEdge( 1 ) with previousFace.getEdge( 0 )
 
-				sideEdge.next.setTwin( previousSideEdge );
+				sideEdge.next.linkOpponent( previousSideEdge );
 
 			}
 
-			this.newFaces.push( sideEdge.face );
+			this._newFaces.push( sideEdge.polygon );
 			previousSideEdge = sideEdge;
 
 		}
 
 		// perform final join of new faces
 
-		firstSideEdge.next.setTwin( previousSideEdge );
+		firstSideEdge.next.linkOpponent( previousSideEdge );
 
 		return this;
 
@@ -157,7 +157,7 @@ class ConvexHull {
 
 		// reassign 'unassigned' vertices to the new faces
 
-		this._resolveUnassignedPoints( this.newFaces );
+		this._resolveUnassignedPoints( this._newFaces );
 
 		return this;
 
@@ -190,7 +190,7 @@ class ConvexHull {
 
 		let distance, maxDistance = - Infinity;
 
-		distance = max.x.point - min.x.point;
+		distance = max.x.point.x - min.x.point.x;
 
 		if ( distance > maxDistance ) {
 
@@ -199,7 +199,7 @@ class ConvexHull {
 
 		}
 
-		distance = max.y.point - min.y.point;
+		distance = max.y.point.y - min.y.point.y;
 
 		if ( distance > maxDistance ) {
 
@@ -208,7 +208,7 @@ class ConvexHull {
 
 		}
 
-		distance = max.z.point - min.z.point;
+		distance = max.z.point.z - min.z.point.z;
 
 		if ( distance > maxDistance ) {
 
@@ -230,7 +230,7 @@ class ConvexHull {
 
 				line.closestPointToPoint( vertex.point, true, closestPoint );
 
-				distance = closestPoint.distanceToSquared( vertex.point );
+				distance = closestPoint.squaredDistanceTo( vertex.point );
 
 				if ( distance > maxDistance ) {
 
@@ -246,7 +246,7 @@ class ConvexHull {
 		// 3. The next vertex 'v3' is the one farthest to the plane 'v0', 'v1', 'v2'
 
 		maxDistance = - Infinity;
-		plane.setFromCoplanarPoints( v0.point, v1.point, v2.point );
+		plane.fromCoplanarPoints( v0.point, v1.point, v2.point );
 
 		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
@@ -274,10 +274,10 @@ class ConvexHull {
 			// the face is not able to see the point so 'plane.normal' is pointing outside the tetrahedron
 
 			faces.push(
-				new Face( v0, v1, v2 ),
-				new Face( v3, v1, v0 ),
-				new Face( v3, v2, v1 ),
-				new Face( v3, v0, v2 )
+				new Face( v0.point, v1.point, v2.point ),
+				new Face( v3.point, v1.point, v0.point ),
+				new Face( v3.point, v2.point, v1.point ),
+				new Face( v3.point, v0.point, v2.point )
 			);
 
 			// set the twin edge
@@ -299,10 +299,10 @@ class ConvexHull {
 			// the face is able to see the point so 'plane.normal' is pointing inside the tetrahedron
 
 			faces.push(
-				new Face( v0, v2, v1 ),
-				new Face( v3, v0, v1 ),
-				new Face( v3, v1, v2 ),
-				new Face( v3, v2, v0 )
+				new Face( v0.point, v2.point, v1.point ),
+				new Face( v3.point, v0.point, v1.point ),
+				new Face( v3.point, v1.point, v2.point ),
+				new Face( v3.point, v2.point, v0.point )
 			);
 
 			// set the twin edge
@@ -329,7 +329,7 @@ class ConvexHull {
 
 			if ( vertex !== v0 && vertex !== v1 && vertex !== v2 && vertex !== v3 ) {
 
-				maxDistance = this.tolerance;
+				maxDistance = this._tolerance;
 				let maxFace = null;
 
 				for ( let j = 0; j < 4; j ++ ) {
@@ -361,8 +361,8 @@ class ConvexHull {
 
 	_computeExtremes() {
 
-		const min = new THREE.Vector3( Infinity, Infinity, Infinity );
-		const max = new THREE.Vector3( - Infinity, - Infinity, - Infinity );
+		const min = new Vector3( Infinity, Infinity, Infinity );
+		const max = new Vector3( - Infinity, - Infinity, - Infinity );
 
 		const minVertices = { x: null, y: null, z: null };
 		const maxVertices = { x: null, y: null, z: null };
@@ -424,7 +424,7 @@ class ConvexHull {
 
 		// use min/max vectors to compute an optimal epsilon
 
-		this.tolerance = 3 * Number.EPSILON * (
+		this._tolerance = 3 * Number.EPSILON * (
 			Math.max( Math.abs( min.x ), Math.abs( max.x ) ) +
 			Math.max( Math.abs( min.y ), Math.abs( max.y ) ) +
 			Math.max( Math.abs( min.z ), Math.abs( max.z ) )
@@ -460,11 +460,11 @@ class ConvexHull {
 		do {
 
 			let twinEdge = edge.twin;
-			let oppositeFace = twinEdge.face;
+			let oppositeFace = twinEdge.polygon;
 
 			if ( oppositeFace.flag === Visible ) {
 
-				if ( oppositeFace.distanceToPoint( eyePoint ) > this.tolerance ) {
+				if ( oppositeFace.distanceToPoint( eyePoint ) > this._tolerance ) {
 
 					// the opposite face can see the vertex, so proceed with next edge
 
@@ -516,7 +516,7 @@ class ConvexHull {
 
 		if ( this._assigned.empty() === false ) {
 
-			let maxDistance = - Infinity;
+			let maxDistance = this._tolerance;
 
 			// grap the first available face and start with the first visible vertex of that face
 
@@ -628,7 +628,7 @@ class ConvexHull {
 
 	_resolveUnassignedPoints( newFaces ) {
 
-		if ( this._unassigned.Empty() === false ) {
+		if ( this._unassigned.empty() === false ) {
 
 			let vertex = this._unassigned.first();
 
@@ -637,7 +637,7 @@ class ConvexHull {
 				// buffer 'next' reference since addVertexToFace() can change it
 
 				let nextVertex = vertex.next;
-				let maxDistance = this.tolerance;
+				let maxDistance = this._tolerance;
 
 				let maxFace = null;
 
@@ -695,7 +695,7 @@ class Face extends Polygon {
 
 	getEdge( i ) {
 
-		const edge = this.edge;
+		let edge = this.edge;
 
 		while ( i > 0 ) {
 
