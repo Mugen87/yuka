@@ -20,8 +20,8 @@ class ConvexHull {
 
 	constructor() {
 
-		this.faces = [];
-		this.vertices = [];
+		this.faces = new Array();
+		this.vertices = new Array();
 
 		//
 
@@ -30,7 +30,7 @@ class ConvexHull {
 		this._assigned = new VertexList();
 		this._unassigned = new VertexList();
 
-		this._newFaces = [];
+		this._newFaces = new Array();
 
 	}
 
@@ -38,7 +38,7 @@ class ConvexHull {
 
 		if ( points.length < 4 ) {
 
-			Logger.error( 'YUKA.ConvexHull: The given points array needs at least four points' );
+			Logger.error( 'YUKA.ConvexHull: The given points array needs at least four points.' );
 			return this;
 
 		}
@@ -57,8 +57,8 @@ class ConvexHull {
 
 	makeEmpty() {
 
-		this.faces = [];
-		this.vertices = [];
+		this.faces.length = 0;
+		this.vertices.length = 0;
 
 		return this;
 
@@ -168,7 +168,7 @@ class ConvexHull {
 		this._assigned.clear();
 		this._unassigned.clear();
 
-		this._newFaces = [];
+		this._newFaces.length = 0;
 
 		return this;
 
@@ -552,7 +552,7 @@ class ConvexHull {
 	_reindexFaces() {
 
 		const faces = this.faces;
-		const activeFaces = [];
+		const activeFaces = new Array();
 
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
