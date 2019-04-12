@@ -4700,7 +4700,6 @@
 
 			if ( distance < minDistance ) {
 
-				minDistance = distance;
 				result.set( 0, 0, 1 * Math.sign( vector$1.z ) );
 
 			}
