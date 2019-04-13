@@ -185,6 +185,11 @@ describe( 'ConvexHull', function () {
 			convexHull._addVertexToFace( vertex1, face );
 			convexHull._addVertexToFace( vertex2, face );
 
+			expect( vertex1.prev ).to.be.null;
+			expect( vertex1.next ).to.equal( vertex2 );
+			expect( vertex2.prev ).to.equal( vertex1 );
+			expect( vertex2.next ).to.be.null;
+
 			// use first() and last() since we have only a single face
 
 			expect( convexHull._assigned.first() ).to.equal( vertex1 );
