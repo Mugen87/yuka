@@ -141,6 +141,57 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#_addVertexToFace()', function () {
+
+		it( 'should add a vertex to the given face', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face();
+			const vertex = new Vertex();
+
+			convexHull._addVertexToFace( vertex, face );
+
+			expect( vertex.face ).to.equal( face );
+			expect( face.outside ).to.equal( vertex );
+			expect( convexHull._assigned.first() ).to.equal( vertex );
+
+		} );
+
+		it( 'should ensure that the outside property of face always points to the first added vertex', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+
+			convexHull._addVertexToFace( vertex1, face );
+			convexHull._addVertexToFace( vertex2, face );
+
+			expect( vertex1.face ).to.equal( face );
+			expect( face.outside ).to.equal( vertex1 );
+
+		} );
+
+		it( 'should ensure that the last added vertex is always the last in the assigned vertex list', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+
+			convexHull._addVertexToFace( vertex1, face );
+			convexHull._addVertexToFace( vertex2, face );
+
+			expect( convexHull._assigned.first() ).to.equal( vertex1 );
+			expect( convexHull._assigned.last() ).to.equal( vertex2 );
+
+		} );
+
+	} );
+
 } );
 
 describe( 'Vertex', function () {
@@ -279,9 +330,9 @@ describe( 'VertexList', function () {
 
 	} );
 
-	describe( '#insertBefore()', function () {
+	describe( '#insertAfter()', function () {
 
-		it( 'should insert a vertex before the defined target vertex', function () {
+		it( 'should insert a vertex after the defined target vertex', function () {
 
 			const vertexList = new VertexList();
 			const vertex1 = new Vertex();
@@ -291,7 +342,7 @@ describe( 'VertexList', function () {
 			vertexList.append( vertex1 );
 			vertexList.append( vertex2 );
 
-			vertexList.insertBefore( vertex2, vertexNew );
+			vertexList.insertAfter( vertex1, vertexNew );
 
 			expect( vertex1.prev ).to.be.null;
 			expect( vertex1.next ).to.be.equal( vertexNew );
@@ -305,7 +356,7 @@ describe( 'VertexList', function () {
 
 		} );
 
-		it( 'should insert vertex before target (target is head of list)', function () {
+		it( 'should insert a vertex after the defined target vertex (target is tail of list)', function () {
 
 			const vertexList = new VertexList();
 			const vertex1 = new Vertex();
@@ -315,17 +366,17 @@ describe( 'VertexList', function () {
 			vertexList.append( vertex1 );
 			vertexList.append( vertex2 );
 
-			vertexList.insertBefore( vertex1, vertexNew );
+			vertexList.insertAfter( vertex2, vertexNew );
 
-			expect( vertexNew.prev ).to.be.null;
-			expect( vertexNew.next ).to.be.equal( vertex1 );
-			expect( vertex1.prev ).to.be.equal( vertexNew );
+			expect( vertex1.prev ).to.be.null;
 			expect( vertex1.next ).to.be.equal( vertex2 );
 			expect( vertex2.prev ).to.be.equal( vertex1 );
-			expect( vertex2.next ).to.be.null;
+			expect( vertex2.next ).to.be.equal( vertexNew );
+			expect( vertexNew.prev ).to.be.equal( vertex2 );
+			expect( vertexNew.next ).to.be.equal( null );
 
-			expect( vertexList.head ).to.be.equal( vertexNew );
-			expect( vertexList.tail ).to.be.equal( vertex2 );
+			expect( vertexList.head ).to.be.equal( vertex1 );
+			expect( vertexList.tail ).to.be.equal( vertexNew );
 
 
 		} );

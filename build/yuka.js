@@ -14153,7 +14153,7 @@
 
 			} else {
 
-				this._assigned.insertBefore( face.outside, vertex );
+				this._assigned.insertAfter( face.outside, vertex );
 
 			}
 
@@ -14544,10 +14544,10 @@
 
 				let maxDistance = 0;
 
-				// grap the first available face and start with the first visible vertex of that face
+				// grap the first available vertex and save the respective face
 
-				const face = this._assigned.first().face;
-				let vertex = face.outside;
+				let vertex = this._assigned.first();
+				const face = vertex.face;
 
 				// now calculate the farthest vertex that face can see
 
@@ -14691,7 +14691,7 @@
 
 					if ( maxFace !== null ) {
 
-						this.addVertexToFace( vertex, maxFace );
+						this._addVertexToFace( vertex, maxFace );
 
 					}
 
@@ -14790,22 +14790,22 @@
 
 		}
 
-		insertBefore( target, vertex ) {
+		insertAfter( target, vertex ) {
 
-			vertex.prev = target.prev;
-			vertex.next = target;
+			vertex.prev = target;
+			vertex.next = target.next;
 
-			if ( vertex.prev === null ) {
+			if ( ! vertex.next ) {
 
-				this.head = vertex;
+				this.tail = vertex;
 
 			} else {
 
-				vertex.prev.next = vertex;
+				vertex.next.prev = vertex;
 
 			}
 
-			target.prev = vertex;
+			target.next = vertex;
 
 			return this;
 
