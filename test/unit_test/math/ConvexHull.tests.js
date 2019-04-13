@@ -174,7 +174,7 @@ describe( 'ConvexHull', function () {
 
 		} );
 
-		it( 'should ensure that the last added vertex is always the last in the assigned vertex list', function () {
+		it( 'should ensure that the last added vertex is always the last in the vertex section of the assigned vertex list', function () {
 
 			const convexHull = new ConvexHull();
 
@@ -184,6 +184,8 @@ describe( 'ConvexHull', function () {
 
 			convexHull._addVertexToFace( vertex1, face );
 			convexHull._addVertexToFace( vertex2, face );
+
+			// use first() and last() since we have only a single face
 
 			expect( convexHull._assigned.first() ).to.equal( vertex1 );
 			expect( convexHull._assigned.last() ).to.equal( vertex2 );
