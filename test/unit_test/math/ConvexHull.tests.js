@@ -80,4 +80,65 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#_computeExtremes()', function () {
+
+		it( 'should compute the extreme values for a given set of vertices', function () {
+
+			const convexHull = new ConvexHull();
+
+			// prepare vertices
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				convexHull._vertices.push( new Vertex( points[ i ] ) );
+
+			}
+
+			// compute extreme values
+
+			const extremes = convexHull._computeExtremes();
+			const min = extremes.min;
+			const max = extremes.max;
+
+			// verify
+
+			expect( min.x.point ).to.deep.equal( new Vector3( - 9, 1, 11 ) ); // point with minimum x value
+			expect( min.y.point ).to.deep.equal( new Vector3( 14, - 14, 2 ) ); // point with minimum y value
+			expect( min.z.point ).to.deep.equal( new Vector3( 0, 14, - 8 ) ); // point with minimum z value
+
+			expect( max.x.point ).to.deep.equal( new Vector3( 14, - 14, 2 ) ); // point with maximum x value
+			expect( max.y.point ).to.deep.equal( new Vector3( 0, 14, - 8 ) ); // point with maximum y value
+			expect( max.z.point ).to.deep.equal( new Vector3( 2, 9, 19 ) ); // point with maximum z value
+
+			expect( convexHull._tolerance ).to.closeTo( 3.1308289294429414e-14, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#_updateFaces()', function () {
+
+		it( 'should ensure that no deleted or merged faces are part of the convex hull', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face1 = new Face();
+			face1.flag = 0; // visible
+			const face2 = new Face();
+			face2.flag = 1; // deleted
+			const face3 = new Face();
+			face3.flag = 2; // merged
+
+			convexHull.faces.push( face1, face2, face3 );
+			convexHull._updateFaces();
+
+			// verify
+
+			expect( convexHull.faces ).to.include( face1 );
+			expect( convexHull.faces ).to.not.include( [ face2, face3 ] );
+
+		} );
+
+	} );
+
 } );

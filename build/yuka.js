@@ -14006,8 +14006,9 @@
 	const plane$1 = new Plane();
 	const closestPoint = new Vector3();
 
-	const Visible = 0;
-	const Deleted = 1;
+	const VISIBLE = 0;
+	const DELETED = 1;
+	// const MERGED = 2;
 
 	/**
 	* Class representing a convex hull. This is an implementation of the Quickhull algorithm
@@ -14089,7 +14090,7 @@
 
 			// all the half edges are created in ccw order thus the face is always pointing outside the hull
 
-			var face = new Face( vertex.point, horizonEdge.prev.vertex, horizonEdge.vertex );
+			const face = new Face( vertex.point, horizonEdge.prev.vertex, horizonEdge.vertex );
 
 			this.faces.push( face );
 
@@ -14463,7 +14464,7 @@
 
 			this._removeAllVerticesFromFace( face );
 
-			face.flag = Deleted;
+			face.flag = DELETED;
 
 			let edge;
 
@@ -14485,7 +14486,7 @@
 				let twinEdge = edge.twin;
 				let oppositeFace = twinEdge.polygon;
 
-				if ( oppositeFace.flag === Visible ) {
+				if ( oppositeFace.flag === VISIBLE ) {
 
 					if ( oppositeFace.distanceToPoint( eyePoint ) > this._tolerance ) {
 
@@ -14525,7 +14526,7 @@
 
 			}
 
-			this._reindexFaces();
+			this._updateFaces();
 
 			this._reset();
 
@@ -14571,7 +14572,7 @@
 
 		}
 
-		_reindexFaces() {
+		_updateFaces() {
 
 			const faces = this.faces;
 			const activeFaces = new Array();
@@ -14580,7 +14581,9 @@
 
 				const face = faces[ i ];
 
-				if ( face.flag === Visible ) {
+				// only respect visible but not deleted or merged faces
+
+				if ( face.flag === VISIBLE ) {
 
 					activeFaces.push( face );
 
@@ -14588,7 +14591,8 @@
 
 			}
 
-			this.faces = activeFaces;
+			this.faces.length = 0;
+			this.faces.push( ...activeFaces );
 
 			return this;
 
@@ -14670,7 +14674,7 @@
 
 						const face = newFaces[ i ];
 
-						if ( face.flag === Visible ) {
+						if ( face.flag === VISIBLE ) {
 
 							const distance = face.distanceToPoint( vertex.point );
 
@@ -14710,7 +14714,7 @@
 			super();
 
 			this.outside = null; // reference to a vertex in a vertex list this face can see
-			this.flag = Visible;
+			this.flag = VISIBLE;
 
 			this.fromContour( [ a, b, c ] );
 
