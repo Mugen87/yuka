@@ -12,29 +12,54 @@ const Visible = 0;
 const Deleted = 1;
 
 /**
-* Class representing a convex hull.
+* Class representing a convex hull. This is an implementation of the Quickhull algorithm
+* based on the presentation {@link http://media.steampowered.com/apps/valve/2014/DirkGregorius_ImplementingQuickHull.pdf Implementing QuickHull}
+* by Dirk Gregorius (Valve Software) from GDC 2014. The algorithm has an average runtime
+* complexity of O(n*log(n)), whereas in the worst case it takes O(n²).
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
 class ConvexHull {
 
+	/**
+	* Constructs a new convex hull.
+	*/
 	constructor() {
 
+		/**
+		* An array of faces representing the convex hull.
+		* @type Array
+		*/
 		this.faces = new Array();
 
-		//
+		// private members
+
+		// tolerance value for various (float) compare operations
 
 		this._tolerance = - 1;
 
+		// this array represents the vertices which will be enclosed by the convex hull
+
 		this._vertices = new Array();
+
+		// two doubly linked lists for easier vertex processing
 
 		this._assigned = new VertexList();
 		this._unassigned = new VertexList();
+
+		// this array holds the new faces generated in a single interation of the algorithm
 
 		this._newFaces = new Array();
 
 	}
 
+	/**
+	* Computes a convex hull that encloses the given set of points. The computation requires
+	* at least four points.
+	*
+	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
 	fromPoints( points ) {
 
 		if ( points.length < 4 ) {
@@ -44,11 +69,15 @@ class ConvexHull {
 
 		}
 
+		// wrap all points into the internal vertex data structure
+
 		for ( let i = 0, l = points.length; i < l; i ++ ) {
 
 			this._vertices.push( new Vertex( points[ i ] ) );
 
 		}
+
+		// generate the convex hull
 
 		this._generate();
 
