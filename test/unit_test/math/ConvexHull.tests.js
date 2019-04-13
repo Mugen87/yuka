@@ -142,3 +142,208 @@ describe( 'ConvexHull', function () {
 	} );
 
 } );
+
+describe( 'Vertex', function () {
+
+	describe( '#constructor()', function () {
+
+		it( 'should create a Vertex with the given values', function () {
+
+			const vertex = new Vertex( new Vector3( 1, 1, 1 ) );
+
+			expect( vertex.point ).to.deep.equal( new Vector3( 1, 1, 1 ) );
+			expect( vertex.prev ).to.be.null;
+			expect( vertex.next ).to.be.null;
+			expect( vertex.face ).to.be.null;
+
+		} );
+
+	} );
+
+} );
+
+describe( 'VertexList', function () {
+
+	describe( '#constructor()', function () {
+
+		it( 'should create a VertexList with the default values', function () {
+
+			const vertexList = new VertexList();
+
+			expect( vertexList.head ).to.be.null;
+			expect( vertexList.tail ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#first()', function () {
+
+		it( 'should return null if the list is empty', function () {
+
+			const vertexList = new VertexList();
+
+			expect( vertexList.first() ).to.be.null;
+
+		} );
+
+		it( 'should return the head of the list', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex( new Vector3() );
+
+			vertexList.head = vertex;
+			expect( vertexList.first() ).to.be.equal( vertex );
+
+		} );
+
+	} );
+
+	describe( '#last()', function () {
+
+		it( 'should return null if the list is empty', function () {
+
+			const vertexList = new VertexList();
+
+			expect( vertexList.last() ).to.be.null;
+
+		} );
+
+		it( 'should return the tail of the list', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex( new Vector3() );
+
+			vertexList.tail = vertex;
+			expect( vertexList.last() ).to.be.equal( vertex );
+
+		} );
+
+	} );
+
+	describe( '#clear()', function () {
+
+		it( 'should clear the list', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex( new Vector3() );
+
+			vertexList.head = vertexList.tail = vertex;
+
+			vertexList.clear();
+
+			expect( vertexList.head ).to.be.null;
+			expect( vertexList.tail ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#append()', function () {
+
+		it( 'should append vertex to the list', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex( new Vector3() );
+			const vertexNew = new Vertex( new Vector3( 1, 0, 0 ) );
+
+			vertexList.head = vertexList.tail = vertex;
+
+			vertexList.append( vertexNew );
+
+			expect( vertexNew.prev ).to.be.equal( vertex );
+			expect( vertexNew.next ).to.be.null;
+
+			expect( vertex.next ).to.be.equal( vertexNew );
+
+			expect( vertexList.tail ).to.be.equal( vertexNew );
+
+		} );
+
+		it( 'should append vertex to the list, at the beginning if the list is empty', function () {
+
+			const vertexList = new VertexList();
+			const vertexNew = new Vertex( new Vector3( 1, 0, 0 ) );
+
+			vertexList.append( vertexNew );
+
+			expect( vertexNew.prev ).to.be.null;
+			expect( vertexNew.next ).to.be.null;
+
+			expect( vertexList.head ).to.be.equal( vertexNew );
+			expect( vertexList.tail ).to.be.equal( vertexNew );
+
+		} );
+
+	} );
+
+	describe( '#insertBefore()', function () {
+
+		it( 'should insert vertex before target', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex( new Vector3() );
+			const vertex1 = new Vertex( 1, 0, 0 );
+			const vertexNew = new Vertex( 1, 1, 1 );
+
+			vertexList.append( vertex );
+			vertexList.append( vertex1 );
+
+			vertexList.insertBefore( vertex1, vertexNew );
+			expect( vertex.next ).to.be.equal( vertexNew );
+			expect( vertexNew.prev ).to.be.equal( vertex );
+			expect( vertexNew.next ).to.be.equal( vertex1 );
+			expect( vertex1.prev ).to.be.equal( vertexNew );
+
+			expect( vertexList.head ).to.be.equal( vertex );
+			expect( vertexList.tail ).to.be.equal( vertex1 );
+
+
+		} );
+
+		it( 'should insert vertex before target (target is head of list)', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex( new Vector3() );
+			const vertex1 = new Vertex( 1, 0, 0 );
+			const vertexNew = new Vertex( 1, 1, 1 );
+
+			vertexList.append( vertex );
+			vertexList.append( vertex1 );
+
+			vertexList.insertBefore( vertex, vertexNew );
+
+			expect( vertexNew.prev ).to.be.null;
+			expect( vertexNew.next ).to.be.equal( vertex );
+			expect( vertex.prev ).to.be.equal( vertexNew );
+			expect( vertex.next ).to.be.equal( vertex1 );
+			expect( vertex1.prev ).to.be.equal( vertex );
+
+			expect( vertexList.head ).to.be.equal( vertexNew );
+			expect( vertexList.tail ).to.be.equal( vertex1 );
+
+
+		} );
+
+	} );
+
+	//todo appendChain, remove, removeChain
+
+	describe( '#empty()', function () {
+
+		it( 'should return if the list is empty or not', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex( new Vector3() );
+
+			expect( vertexList.empty() ).to.be.true;
+
+			vertexList.append( vertex );
+
+			expect( vertexList.empty() ).to.be.false;
+
+		} );
+
+	} );
+
+} );
