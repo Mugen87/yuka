@@ -190,7 +190,7 @@ describe( 'VertexList', function () {
 		it( 'should return the head of the list', function () {
 
 			const vertexList = new VertexList();
-			const vertex = new Vertex( new Vector3() );
+			const vertex = new Vertex();
 
 			vertexList.head = vertex;
 			expect( vertexList.first() ).to.be.equal( vertex );
@@ -212,7 +212,7 @@ describe( 'VertexList', function () {
 		it( 'should return the tail of the list', function () {
 
 			const vertexList = new VertexList();
-			const vertex = new Vertex( new Vector3() );
+			const vertex = new Vertex();
 
 			vertexList.tail = vertex;
 			expect( vertexList.last() ).to.be.equal( vertex );
@@ -226,7 +226,7 @@ describe( 'VertexList', function () {
 		it( 'should clear the list', function () {
 
 			const vertexList = new VertexList();
-			const vertex = new Vertex( new Vector3() );
+			const vertex = new Vertex();
 
 			vertexList.head = vertexList.tail = vertex;
 
@@ -241,11 +241,11 @@ describe( 'VertexList', function () {
 
 	describe( '#append()', function () {
 
-		it( 'should append vertex to the list', function () {
+		it( 'should append a vertex to the list', function () {
 
 			const vertexList = new VertexList();
-			const vertex = new Vertex( new Vector3() );
-			const vertexNew = new Vertex( new Vector3( 1, 0, 0 ) );
+			const vertex = new Vertex();
+			const vertexNew = new Vertex();
 
 			vertexList.head = vertexList.tail = vertex;
 
@@ -254,16 +254,18 @@ describe( 'VertexList', function () {
 			expect( vertexNew.prev ).to.be.equal( vertex );
 			expect( vertexNew.next ).to.be.null;
 
+			expect( vertex.prev ).to.be.null;
 			expect( vertex.next ).to.be.equal( vertexNew );
 
+			expect( vertexList.head ).to.be.equal( vertex );
 			expect( vertexList.tail ).to.be.equal( vertexNew );
 
 		} );
 
-		it( 'should append vertex to the list, at the beginning if the list is empty', function () {
+		it( 'should ensure the first vertex of the list is the head and tail', function () {
 
 			const vertexList = new VertexList();
-			const vertexNew = new Vertex( new Vector3( 1, 0, 0 ) );
+			const vertexNew = new Vertex();
 
 			vertexList.append( vertexNew );
 
@@ -279,48 +281,51 @@ describe( 'VertexList', function () {
 
 	describe( '#insertBefore()', function () {
 
-		it( 'should insert vertex before target', function () {
+		it( 'should insert a vertex before the defined target vertex', function () {
 
 			const vertexList = new VertexList();
-			const vertex = new Vertex( new Vector3() );
-			const vertex1 = new Vertex( 1, 0, 0 );
-			const vertexNew = new Vertex( 1, 1, 1 );
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+			const vertexNew = new Vertex();
 
-			vertexList.append( vertex );
 			vertexList.append( vertex1 );
+			vertexList.append( vertex2 );
 
-			vertexList.insertBefore( vertex1, vertexNew );
-			expect( vertex.next ).to.be.equal( vertexNew );
-			expect( vertexNew.prev ).to.be.equal( vertex );
-			expect( vertexNew.next ).to.be.equal( vertex1 );
-			expect( vertex1.prev ).to.be.equal( vertexNew );
+			vertexList.insertBefore( vertex2, vertexNew );
 
-			expect( vertexList.head ).to.be.equal( vertex );
-			expect( vertexList.tail ).to.be.equal( vertex1 );
+			expect( vertex1.prev ).to.be.null;
+			expect( vertex1.next ).to.be.equal( vertexNew );
+			expect( vertexNew.prev ).to.be.equal( vertex1 );
+			expect( vertexNew.next ).to.be.equal( vertex2 );
+			expect( vertex2.prev ).to.be.equal( vertexNew );
+			expect( vertex2.next ).to.be.null;
 
+			expect( vertexList.head ).to.be.equal( vertex1 );
+			expect( vertexList.tail ).to.be.equal( vertex2 );
 
 		} );
 
 		it( 'should insert vertex before target (target is head of list)', function () {
 
 			const vertexList = new VertexList();
-			const vertex = new Vertex( new Vector3() );
-			const vertex1 = new Vertex( 1, 0, 0 );
-			const vertexNew = new Vertex( 1, 1, 1 );
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+			const vertexNew = new Vertex();
 
-			vertexList.append( vertex );
 			vertexList.append( vertex1 );
+			vertexList.append( vertex2 );
 
-			vertexList.insertBefore( vertex, vertexNew );
+			vertexList.insertBefore( vertex1, vertexNew );
 
 			expect( vertexNew.prev ).to.be.null;
-			expect( vertexNew.next ).to.be.equal( vertex );
-			expect( vertex.prev ).to.be.equal( vertexNew );
-			expect( vertex.next ).to.be.equal( vertex1 );
-			expect( vertex1.prev ).to.be.equal( vertex );
+			expect( vertexNew.next ).to.be.equal( vertex1 );
+			expect( vertex1.prev ).to.be.equal( vertexNew );
+			expect( vertex1.next ).to.be.equal( vertex2 );
+			expect( vertex2.prev ).to.be.equal( vertex1 );
+			expect( vertex2.next ).to.be.null;
 
 			expect( vertexList.head ).to.be.equal( vertexNew );
-			expect( vertexList.tail ).to.be.equal( vertex1 );
+			expect( vertexList.tail ).to.be.equal( vertex2 );
 
 
 		} );
@@ -331,10 +336,10 @@ describe( 'VertexList', function () {
 
 	describe( '#empty()', function () {
 
-		it( 'should return if the list is empty or not', function () {
+		it( 'should return true if the list is empty', function () {
 
 			const vertexList = new VertexList();
-			const vertex = new Vertex( new Vector3() );
+			const vertex = new Vertex();
 
 			expect( vertexList.empty() ).to.be.true;
 

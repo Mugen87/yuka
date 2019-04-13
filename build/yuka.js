@@ -14750,7 +14750,7 @@
 
 	class Vertex {
 
-		constructor( point ) {
+		constructor( point = new Vector3() ) {
 
 			this.point = point;
 			this.prev = null;
