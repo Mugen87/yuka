@@ -21,11 +21,12 @@ class ConvexHull {
 	constructor() {
 
 		this.faces = new Array();
-		this.vertices = new Array();
 
 		//
 
 		this._tolerance = - 1;
+
+		this._vertices = new Array();
 
 		this._assigned = new VertexList();
 		this._unassigned = new VertexList();
@@ -45,20 +46,11 @@ class ConvexHull {
 
 		for ( let i = 0, l = points.length; i < l; i ++ ) {
 
-			this.vertices.push( new Vertex( points[ i ] ) );
+			this._vertices.push( new Vertex( points[ i ] ) );
 
 		}
 
 		this._generate();
-
-		return this;
-
-	}
-
-	makeEmpty() {
-
-		this.faces.length = 0;
-		this.vertices.length = 0;
 
 		return this;
 
@@ -163,7 +155,11 @@ class ConvexHull {
 
 	}
 
-	_cleanup() {
+	_reset() {
+
+		this._tolerance = - 1;
+
+		this._vertices.length = 0;
 
 		this._assigned.clear();
 		this._unassigned.clear();
@@ -178,7 +174,7 @@ class ConvexHull {
 
 		let v0, v1, v2, v3;
 
-		const vertices = this.vertices;
+		const vertices = this._vertices;
 		const extremes = this._computeExtremes();
 		const min = extremes.min;
 		const max = extremes.max;
@@ -369,9 +365,9 @@ class ConvexHull {
 
 		// compute the min/max points on all six directions
 
-		for ( let i = 0, l = this.vertices.length; i < l; i ++ ) {
+		for ( let i = 0, l = this._vertices.length; i < l; i ++ ) {
 
-			const vertex = this.vertices[ i ];
+			const vertex = this._vertices[ i ];
 			const point = vertex.point;
 
 			// update the min coordinates
@@ -490,22 +486,21 @@ class ConvexHull {
 
 	_generate() {
 
+		this.faces.length = 0;
+
 		this._computeInitialHull();
 
 		let vertex;
 
-		// while ( vertex = this._nextVertexToAdd() ) {
-		//
-		// 	this._addVertexToHull( vertex );
-		//
-		// }
+		while ( vertex = this._nextVertexToAdd() ) {
 
-		this._addVertexToHull( this._nextVertexToAdd() );
-		this._addVertexToHull( this._nextVertexToAdd() );
+			this._addVertexToHull( vertex );
+
+		}
 
 		this._reindexFaces();
 
-		this._cleanup();
+		this._reset();
 
 		return this;
 
@@ -683,7 +678,7 @@ class ConvexHull {
 
 class Face extends Polygon {
 
-	constructor( a, b, c ) {
+	constructor( a = new Vector3(), b = new Vector3(), c = new Vector3() ) {
 
 		super();
 
@@ -894,4 +889,4 @@ class VertexList {
 
 }
 
-export { ConvexHull };
+export { ConvexHull, Vertex, VertexList, Face };
