@@ -390,7 +390,7 @@
 
 	}
 
-	const lut = [];
+	const lut = new Array();
 
 	for ( let i = 0; i < 256; i ++ ) {
 
@@ -6542,7 +6542,7 @@
 			*/
 			this.count = count;
 
-			this._history = []; // this holds the history
+			this._history = new Array(); // this holds the history
 			this._slot = 0; // the current sample slot
 
 			// initialize history with Vector3s
@@ -7239,7 +7239,7 @@
 
 	}
 
-	const candidates = [];
+	const candidates = new Array();
 
 	/**
 	* This class is used for managing all central objects of a game like
@@ -8960,7 +8960,7 @@
 		*
 		* @param {Array} terms - An arbitrary amount of fuzzy terms.
 		*/
-		constructor( terms = [] ) {
+		constructor( terms = new Array() ) {
 
 			super();
 
@@ -9108,7 +9108,7 @@
 		*/
 		constructor( fuzzyTerm = null ) {
 
-			const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : [];
+			const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : new Array();
 
 			super( terms );
 
@@ -9223,7 +9223,7 @@
 		*/
 		constructor( fuzzyTerm = null ) {
 
-			const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : [];
+			const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : new Array();
 
 			super( terms );
 
@@ -12248,12 +12248,12 @@
 				digraph: this.digraph
 			};
 
-			const edges = [];
-			const nodes = [];
+			const edges = new Array();
+			const nodes = new Array();
 
 			for ( let [ key, value ] of this._nodes.entries() ) {
 
-				const adjacencyList = [];
+				const adjacencyList = new Array();
 
 				this.getEdgesOfNode( key, adjacencyList );
 
@@ -13990,7 +13990,7 @@
 		toJSON() {
 
 			const json = {
-				nodes: []
+				nodes: new Array()
 			};
 
 			for ( let [ key, value ] of this._nodeMap.entries() ) {
@@ -15446,7 +15446,7 @@
 
 			if ( ! dependencies ) {
 
-				const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || [];
+				const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || new Array();
 
 				dependencies = Promise.all( definitions.map( ( definition, index ) => {
 

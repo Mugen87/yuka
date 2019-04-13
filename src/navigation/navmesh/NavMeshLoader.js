@@ -210,7 +210,7 @@ class Parser {
 
 		if ( ! dependencies ) {
 
-			const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || [];
+			const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || new Array();
 
 			dependencies = Promise.all( definitions.map( ( definition, index ) => {
 

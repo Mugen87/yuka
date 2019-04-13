@@ -5,7 +5,7 @@ import { Vehicle } from '../steering/Vehicle';
 import { Trigger } from '../trigger/Trigger.js';
 import { Logger } from './Logger.js';
 
-const candidates = [];
+const candidates = new Array();
 
 /**
 * This class is used for managing all central objects of a game like

@@ -377,12 +377,12 @@ class Graph {
 			digraph: this.digraph
 		};
 
-		const edges = [];
-		const nodes = [];
+		const edges = new Array();
+		const nodes = new Array();
 
 		for ( let [ key, value ] of this._nodes.entries() ) {
 
-			const adjacencyList = [];
+			const adjacencyList = new Array();
 
 			this.getEdgesOfNode( key, adjacencyList );
 
