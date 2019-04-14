@@ -200,6 +200,141 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#_nextVertexToAdd()', function () {
+
+		it( 'should pick the first face from the assigned list and return the farthest vertex that face can see', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face(
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 )
+			); // CCW order
+
+			const vertex1 = new Vertex( new Vector3( 0, 1, 0 ) );
+			const vertex2 = new Vertex( new Vector3( 0, 2, 0 ) );
+			const vertex3 = new Vertex( new Vector3( 0, 1.5, 0 ) );
+			const vertex4 = new Vertex( new Vector3( 0, 3, 0 ) );
+
+			convexHull._addVertexToFace( vertex1, face );
+			convexHull._addVertexToFace( vertex2, face );
+			convexHull._addVertexToFace( vertex3, face );
+			convexHull._addVertexToFace( vertex4, new Face() ); // assign different face
+
+			const vertex = convexHull._nextVertexToAdd();
+
+			expect( vertex ).to.equal( vertex2 );
+
+		} );
+
+		it( 'should return null if all vertices lie behind the face', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face(
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 )
+			); // CCW order
+
+			const vertex1 = new Vertex( new Vector3( 0, - 1, 0 ) );
+			const vertex2 = new Vertex( new Vector3( 0, - 2, 0 ) );
+
+			convexHull._addVertexToFace( vertex1, face );
+			convexHull._addVertexToFace( vertex2, face );
+
+			const vertex = convexHull._nextVertexToAdd();
+
+			expect( vertex ).to.be.null;
+
+		} );
+
+		it( 'should return null if the assigned list is empty', function () {
+
+			const convexHull = new ConvexHull();
+			const vertex = convexHull._nextVertexToAdd();
+			expect( vertex ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#_resolveUnassignedPoints()', function () {
+
+		it( 'should try to assign all unassigned points to a newly created face farthest away', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face1 = new Face(
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 )
+			);
+
+			const face2 = new Face(
+				new Vector3( 0, 0, 2 ),
+				new Vector3( 0, 1, 2 ),
+				new Vector3( 1, 1, 2 )
+			);
+
+			const newFaces = [ face1, face2 ];
+
+			const vertex = new Vertex( new Vector3( 0, 2, 0 ) );
+			convexHull._unassigned.append( vertex );
+
+			convexHull._resolveUnassignedPoints( newFaces );
+
+			expect( vertex.face ).to.equal( face1 );
+			expect( face1.outside ).to.equal( vertex );
+			expect( face2.outside ).to.be.null;
+
+		} );
+
+		it( 'should only assign vertices to visible faces', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face(
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 )
+			);
+			face.flag = 1; // DELETED
+
+			const newFaces = [ face ];
+
+			const vertex = new Vertex( new Vector3( 0, 2, 0 ) );
+			convexHull._unassigned.append( vertex );
+
+			convexHull._resolveUnassignedPoints( newFaces );
+
+			expect( vertex.face ).to.be.null;
+			expect( face.outside ).to.be.null;
+
+		} );
+
+		it( 'should do thing if the unassigned list is empty', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face(
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0, 1 ),
+				new Vector3( 1, 0, 1 )
+			);
+			face.flag = 1; // DELETED
+
+			const newFaces = [ face ];
+
+			convexHull._resolveUnassignedPoints( newFaces );
+
+			expect( face.outside ).to.be.null;
+
+		} );
+
+	} );
+
 	describe( '#_removeVertexFromFace()', function () {
 
 		it( 'should remove a vertex from the given face', function () {

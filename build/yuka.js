@@ -14540,7 +14540,7 @@
 
 		_nextVertexToAdd() {
 
-			let nextVertex;
+			let nextVertex = null;
 
 			// if the 'assigned' list of vertices is empty, no vertices are left
 
