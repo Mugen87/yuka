@@ -2013,7 +2013,7 @@ class Quaternion {
 			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );
 			euler.z = 0;
 
-		} else {
+		} else { //todo test
 
 			euler.x = Math.asin( sp );
 			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );
@@ -9516,7 +9516,7 @@ class LeftSCurveFuzzySet extends FuzzySet {
 
 				return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
 
-			} else {
+			} else { //todo test
 
 				return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
 
@@ -14161,10 +14161,6 @@ class ConvexHull {
 
 		this._unassigned.clear();
 
-		// remove 'vertex' from 'vertex.face' so that it can't be added to the 'unassigned' vertex list
-
-		this._removeVertexFromFace( vertex, vertex.face );
-
 		this._computeHorizon( vertex.point, null, vertex.face, horizon );
 
 		this._addNewFaces( vertex, horizon );
@@ -14454,9 +14450,17 @@ class ConvexHull {
 
 	_computeHorizon( eyePoint, crossEdge, face, horizon ) {
 
-		// moves face's vertices to the 'unassigned' vertex list
+		if ( face.outside ) {
 
-		this._removeAllVerticesFromFace( face );
+			// mark the face vertices to be reassigned to other faces
+
+			this._unassigned.appendChain( face.outside );
+
+			// now remove all vertices from the given face
+
+			this._removeAllVerticesFromFace( face );
+
+		}
 
 		face.flag = DELETED;
 
@@ -14599,21 +14603,20 @@ class ConvexHull {
 			// reference to the first and last vertex of this face
 
 			const firstVertex = face.outside;
+			firstVertex.face = null;
+
 			let lastVertex = face.outside;
 
 			while ( lastVertex.next !== null && lastVertex.next.face === face ) {
 
 				lastVertex = lastVertex.next;
+				lastVertex.face = null;
 
 			}
 
-			this._assigned.removeChain( firstVertex, lastVertex );
-
-			// mark the vertices to be reassigned to other faces
-
-			this._unassigned.appendChain( firstVertex );
-
 			face.outside = null;
+
+			this._assigned.removeChain( firstVertex, lastVertex );
 
 		}
 
@@ -14622,6 +14625,8 @@ class ConvexHull {
 	}
 
 	_removeVertexFromFace( vertex, face ) {
+
+		vertex.face = null;
 
 		if ( vertex === face.outside ) {
 
@@ -14845,8 +14850,6 @@ class VertexList {
 			vertex = vertex.next;
 
 		}
-
-		vertex.next = null;
 
 		this.tail = vertex;
 
@@ -16333,7 +16336,7 @@ class Parser {
 
 		} else {
 
-			// non-indexed geometry
+			// non-indexed geometry //todo test
 
 			for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
 

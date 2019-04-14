@@ -200,6 +200,85 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#_removeVertexFromFace()', function () {
+
+		it( 'should remove a vertex from the given face', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face();
+			const vertex = new Vertex();
+
+			convexHull._addVertexToFace( vertex, face );
+			convexHull._removeVertexFromFace( vertex, face );
+
+			expect( vertex.face ).to.be.null;
+			expect( face.outside ).to.be.null;
+			expect( convexHull._assigned.empty() ).to.be.true;
+
+		} );
+
+		it( 'should set the outside reference of the face to the next visible vertex', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+
+			convexHull._addVertexToFace( vertex1, face );
+			convexHull._addVertexToFace( vertex2, face );
+
+			expect( face.outside ).to.equal( vertex1 );
+			expect( convexHull._assigned.first() ).to.equal( vertex1 );
+			expect( convexHull._assigned.last() ).to.equal( vertex2 );
+
+			convexHull._removeVertexFromFace( vertex1, face );
+
+			expect( vertex1.face ).to.be.null;
+			expect( face.outside ).to.equal( vertex2 );
+			expect( convexHull._assigned.first() ).to.equal( vertex2 );
+			expect( convexHull._assigned.last() ).to.equal( vertex2 );
+
+		} );
+
+	} );
+
+	describe( '#_removeAllVerticesFromFace()', function () {
+
+		it( 'should remove a all vertices from the given face', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+
+			convexHull._addVertexToFace( vertex1, face );
+			convexHull._addVertexToFace( vertex2, face );
+
+			convexHull._removeAllVerticesFromFace( face );
+
+			expect( vertex1.face ).to.be.null;
+			expect( vertex2.face ).to.be.null;
+			expect( face.outside ).to.be.null;
+
+			expect( convexHull._assigned.empty() ).to.be.true;
+
+		} );
+
+		it( 'should do nothing if the face has no vertices', function () {
+
+			const convexHull = new ConvexHull();
+
+			const face = new Face();
+			convexHull._removeAllVerticesFromFace( face );
+			expect( face.outside ).to.be.null;
+
+		} );
+
+	} );
+
 } );
 
 describe( 'Face', function () {
