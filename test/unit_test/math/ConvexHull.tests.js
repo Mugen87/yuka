@@ -201,6 +201,51 @@ describe( 'ConvexHull', function () {
 
 } );
 
+describe( 'Face', function () {
+
+	describe( '#constructor()', function () {
+
+		it( 'should create a Face with the given values', function () {
+
+			const face = new Face( new Vector3( 1, 0, 0 ), new Vector3( 1, 0, 1 ), new Vector3( 0, 0, 0 ) );
+
+			//default values
+			expect( face.outside ).to.be.null;
+			expect( face.flag ).to.be.equal( 0 ); // VISIBLE
+
+			//create from contour and compute centroid
+			expect( face.centroid ).to.not.be.equal( new Vector3() );
+			expect( face.edge ).to.be.not.null;
+			expect( face.plane ).to.be.not.equal( new YUKA.Plane() );
+
+		} );
+
+	} );
+
+	describe( '#getEdge()', function () {
+
+		it( 'should return the edge at position i', function () {
+
+			const face = new Face( new Vector3( 1, 0, 0 ), new Vector3( 1, 0, 1 ), new Vector3( 0, 0, 0 ) );
+
+			const edge = face.getEdge( 1 );
+			expect( edge ).to.be.equal( face.edge.next );
+
+		} );
+
+		it( 'should return the edge at position -i', function () {
+
+			const face = new Face( new Vector3( 1, 0, 0 ), new Vector3( 1, 0, 1 ), new Vector3( 0, 0, 0 ) );
+
+			const edge = face.getEdge( - 1 );
+			expect( edge ).to.be.equal( face.edge.prev );
+
+		} );
+
+	} );
+
+} );
+
 describe( 'Vertex', function () {
 
 	describe( '#constructor()', function () {
