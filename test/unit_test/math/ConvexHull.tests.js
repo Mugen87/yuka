@@ -54,6 +54,17 @@ describe( 'ConvexHull', function () {
 
 		} );
 
+		it( 'should print a warning if less than four points are provided', function () {
+
+			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
+
+			new ConvexHull().fromPoints( [] );
+			new ConvexHull().fromPoints( [ new Vector3() ] );
+			new ConvexHull().fromPoints( [ new Vector3(), new Vector3() ] );
+			new ConvexHull().fromPoints( [ new Vector3(), new Vector3(), new Vector3() ] );
+
+		} );
+
 	} );
 
 	describe( '#_reset()', function () {
@@ -146,7 +157,7 @@ describe( 'ConvexHull', function () {
 			const face3 = convexHull.faces[ 2 ];
 			const face4 = convexHull.faces[ 3 ];
 
-			expect( face1.edge.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
+			expect( face1.edge.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
 			expect( face2.edge.vertex ).to.deep.equal( new Vector3( - 7, - 5, 0 ) );
 			expect( face3.edge.vertex ).to.deep.equal( new Vector3( - 7, - 5, 0 ) );
 			expect( face4.edge.vertex ).to.deep.equal( new Vector3( - 7, - 5, 0 ) );
@@ -156,7 +167,7 @@ describe( 'ConvexHull', function () {
 			expect( convexHull._assigned.first().face ).to.equal( face1 );
 			expect( convexHull._assigned.first().point ).to.deep.equal( new Vector3( 7, 4, 8 ) );
 
-			expect( convexHull._assigned.last().face ).to.equal( face2 );
+			expect( convexHull._assigned.last().face ).to.equal( face3 );
 			expect( convexHull._assigned.last().point ).to.deep.equal( new Vector3( - 9, 1, 11 ) );
 
 		} );
@@ -199,18 +210,50 @@ describe( 'ConvexHull', function () {
 			const face3 = convexHull.faces[ 2 ];
 			const face4 = convexHull.faces[ 3 ];
 
-			expect( face1.edge.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
+			expect( face1.edge.vertex ).to.deep.equal( new Vector3( - 7, - 20, 0 ) );
 			expect( face2.edge.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
 			expect( face3.edge.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
 			expect( face4.edge.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
 
 			// two points are still no part of the hull
 
-			expect( convexHull._assigned.first().face ).to.equal( face2 );
+			expect( convexHull._assigned.first().face ).to.equal( face3 );
 			expect( convexHull._assigned.first().point ).to.deep.equal( new Vector3( 7, 4, 8 ) );
 
 			expect( convexHull._assigned.last().face ).to.equal( face1 );
 			expect( convexHull._assigned.last().point ).to.deep.equal( new Vector3( - 9, 1, 11 ) );
+
+		} );
+
+		it( 'should use the correct extreme points in all three dimensions', function () {
+
+			const convexHull = new ConvexHull();
+
+			const points = [
+				new YUKA.Vector3( 1, 2, 25 ),
+				new YUKA.Vector3( 9, 1, 4 ),
+				new YUKA.Vector3( 3, 6, - 3 ),
+				new YUKA.Vector3( - 7, - 4, - 20 )
+			];
+
+			// prepare vertices
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				convexHull._vertices.push( new Vertex( points[ i ] ) );
+
+			}
+
+			// compute initial hull
+
+			convexHull._computeInitialHull();
+
+			// verify
+
+			expect( convexHull.faces[ 0 ].edge.vertex ).to.deep.equal( new Vector3( - 7, - 4, - 20 ) );
+			expect( convexHull.faces[ 1 ].edge.vertex ).to.deep.equal( new Vector3( 3, 6, - 3 ) );
+			expect( convexHull.faces[ 2 ].edge.vertex ).to.deep.equal( new Vector3( 3, 6, - 3 ) );
+			expect( convexHull.faces[ 3 ].edge.vertex ).to.deep.equal( new Vector3( 3, 6, - 3 ) );
 
 		} );
 
@@ -250,14 +293,46 @@ describe( 'ConvexHull', function () {
 			const halfEdge2 = horizon[ 1 ];
 			const halfEdge3 = horizon[ 2 ];
 
-			expect( halfEdge1.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
-			expect( halfEdge2.vertex ).to.deep.equal( new Vector3( 2, 9, 19 ) );
-			expect( halfEdge3.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
+			expect( halfEdge1.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
+			expect( halfEdge2.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
+			expect( halfEdge3.vertex ).to.deep.equal( new Vector3( 2, 9, 19 ) );
 
 			expect( face.flag ).to.equal( 1 ); // DELETED
 			expect( face.outside ).to.be.null;
 
 			expect( convexHull._unassigned.first() ).to.equal( vertex );
+
+		} );
+
+		it( 'should only use visible faces to build the horizon', function () {
+
+			const convexHull = new ConvexHull();
+
+			// prepare vertices
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				convexHull._vertices.push( new Vertex( points[ i ] ) );
+
+			}
+
+			// compute initial hull
+
+			convexHull._computeInitialHull();
+
+			// compute the horizon for the first vertex addition
+
+			const vertex = convexHull._nextVertexToAdd();
+			const face = vertex.face;
+			const horizon = [];
+
+			face.edge.twin.polygon.flag = 1;
+
+			convexHull._computeHorizon( vertex.point, null, face, horizon );
+
+			// verify
+
+			expect( horizon ).to.have.lengthOf( 2 );
 
 		} );
 
@@ -488,12 +563,16 @@ describe( 'ConvexHull', function () {
 			const convexHull = new ConvexHull();
 
 			const face = new Face();
-			const vertex = new Vertex();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
 
-			convexHull._addVertexToFace( vertex, face );
-			convexHull._removeVertexFromFace( vertex, face );
+			convexHull._addVertexToFace( vertex1, face );
+			convexHull._addVertexToFace( vertex2, face );
+			convexHull._removeVertexFromFace( vertex2, face );
+			convexHull._removeVertexFromFace( vertex1, face );
 
-			expect( vertex.face ).to.be.null;
+			expect( vertex1.face ).to.be.null;
+			expect( vertex2.face ).to.be.null;
 			expect( face.outside ).to.be.null;
 			expect( convexHull._assigned.empty() ).to.be.true;
 

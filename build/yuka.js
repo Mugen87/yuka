@@ -14208,16 +14208,16 @@
 			// (max.y - min.y)
 			// (max.z - min.z)
 
-			let distance, maxDistance = - Infinity;
+			// check x
 
-			distance = max.x.point.x - min.x.point.x;
+			let distance, maxDistance;
 
-			if ( distance > maxDistance ) {
+			distance = maxDistance = max.x.point.x - min.x.point.x;
 
-				v0 = min.x;
-				v1 = max.x;
+			v0 = min.x;
+			v1 = max.x;
 
-			}
+			// check y
 
 			distance = max.y.point.y - min.y.point.y;
 
@@ -14226,7 +14226,11 @@
 				v0 = min.y;
 				v1 = max.y;
 
+				maxDistance = distance;
+
 			}
+
+			// check z
 
 			distance = max.z.point.z - min.z.point.z;
 
