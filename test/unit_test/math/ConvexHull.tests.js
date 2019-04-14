@@ -216,6 +216,53 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#_computeHorizon()', function () {
+
+		it( 'should compute the horizon from the given parameters', function () {
+
+			const convexHull = new ConvexHull();
+
+			// prepare vertices
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				convexHull._vertices.push( new Vertex( points[ i ] ) );
+
+			}
+
+			// compute initial hull
+
+			convexHull._computeInitialHull();
+
+			// compute the horizon for the first vertex addition
+
+			const vertex = convexHull._nextVertexToAdd();
+			const face = vertex.face;
+			const horizon = [];
+
+			convexHull._computeHorizon( vertex.point, null, face, horizon );
+
+			// verify
+
+			expect( horizon ).to.have.lengthOf( 3 );
+
+			const halfEdge1 = horizon[ 0 ];
+			const halfEdge2 = horizon[ 1 ];
+			const halfEdge3 = horizon[ 2 ];
+
+			expect( halfEdge1.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
+			expect( halfEdge2.vertex ).to.deep.equal( new Vector3( 2, 9, 19 ) );
+			expect( halfEdge3.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
+
+			expect( face.flag ).to.equal( 1 ); // DELETED
+			expect( face.outside ).to.be.null;
+
+			expect( convexHull._unassigned.first() ).to.equal( vertex );
+
+		} );
+
+	} );
+
 	describe( '#_updateFaces()', function () {
 
 		it( 'should ensure that no deleted or merged faces are part of the convex hull', function () {
