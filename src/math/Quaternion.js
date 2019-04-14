@@ -445,7 +445,7 @@ class Quaternion {
 			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );
 			euler.z = 0;
 
-		} else {
+		} else { //todo test
 
 			euler.x = Math.asin( sp );
 			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );

@@ -184,7 +184,7 @@ class Parser {
 
 		} else {
 
-			// non-indexed geometry
+			// non-indexed geometry //todo test
 
 			for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
 

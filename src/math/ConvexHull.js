@@ -854,7 +854,7 @@ class VertexList {
 
 		}
 
-		vertex.next = null;
+		vertex.next = null; //todo line is useless see while condition
 
 		this.tail = vertex;
 

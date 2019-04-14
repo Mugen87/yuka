@@ -75,7 +75,7 @@ class LeftSCurveFuzzySet extends FuzzySet {
 
 				return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
 
-			} else {
+			} else { //todo test
 
 				return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
 
