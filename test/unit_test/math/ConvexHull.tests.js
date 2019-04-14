@@ -10,6 +10,7 @@ const ConvexHull = YUKA.ConvexHull;
 const Face = YUKA.CHFace;
 const Vertex = YUKA.CHVertex;
 const VertexList = YUKA.CHVertexList;
+const Plane = YUKA.Plane;
 const Vector3 = YUKA.Vector3;
 
 const points = [
@@ -209,14 +210,16 @@ describe( 'Face', function () {
 
 			const face = new Face( new Vector3( 1, 0, 0 ), new Vector3( 1, 0, 1 ), new Vector3( 0, 0, 0 ) );
 
-			//default values
+			// default values
+
 			expect( face.outside ).to.be.null;
 			expect( face.flag ).to.be.equal( 0 ); // VISIBLE
 
-			//create from contour and compute centroid
+			// create from contour and compute centroid
+
 			expect( face.centroid ).to.not.be.equal( new Vector3() );
 			expect( face.edge ).to.be.not.null;
-			expect( face.plane ).to.be.not.equal( new YUKA.Plane() );
+			expect( face.plane ).to.be.not.equal( new Plane() );
 
 		} );
 
@@ -437,7 +440,7 @@ describe( 'VertexList', function () {
 
 	describe( '#appendChain()', function () {
 
-		it( 'should append a single vertex to the list, like append method', function () {
+		it( 'should append a single vertex to the list, like append()', function () {
 
 			const vertexList = new VertexList();
 			const vertex = new Vertex();
@@ -447,18 +450,17 @@ describe( 'VertexList', function () {
 
 			vertexList.appendChain( vertexNew );
 
-			expect( vertexNew.prev ).to.be.equal( vertex );
-			expect( vertexNew.next ).to.be.null;
-
 			expect( vertex.prev ).to.be.null;
 			expect( vertex.next ).to.be.equal( vertexNew );
+			expect( vertexNew.prev ).to.be.equal( vertex );
+			expect( vertexNew.next ).to.be.null;
 
 			expect( vertexList.head ).to.be.equal( vertex );
 			expect( vertexList.tail ).to.be.equal( vertexNew );
 
 		} );
 
-		it( 'should ensure the first vertex of the list is the head and tail, like append method', function () {
+		it( 'should ensure the first vertex of the list is the head and tail, like append()', function () {
 
 			const vertexList = new VertexList();
 			const vertexNew = new Vertex();
@@ -473,7 +475,7 @@ describe( 'VertexList', function () {
 
 		} );
 
-		it( 'should append a chain to the list', function () {
+		it( 'should append a chain of vertices to the list', function () {
 
 			const vertexList = new VertexList();
 			const vertex = new Vertex();
@@ -482,15 +484,14 @@ describe( 'VertexList', function () {
 
 			vertex1.next = vertex2;
 			vertex2.prev = vertex1;
-			vertexList.append( vertex );
 
+			vertexList.append( vertex );
 			vertexList.appendChain( vertex1 );
 
+			expect( vertex.prev ).to.be.null;
 			expect( vertex.next ).to.be.equal( vertex1 );
-
 			expect( vertex1.prev ).to.be.equal( vertex );
 			expect( vertex1.next ).to.be.equal( vertex2 );
-
 			expect( vertex2.prev ).to.be.equal( vertex1 );
 			expect( vertex2.next ).to.be.null;
 
@@ -511,7 +512,6 @@ describe( 'VertexList', function () {
 			vertexList.append( vertexToRemove );
 			vertexList.append( vertex2 );
 
-
 			vertexList.remove( vertexToRemove );
 
 			expect( vertex1.prev ).to.be.null;
@@ -527,9 +527,7 @@ describe( 'VertexList', function () {
 			const vertexList = new VertexList();
 			const vertexToRemove = new Vertex();
 
-
 			vertexList.append( vertexToRemove );
-
 			vertexList.remove( vertexToRemove );
 
 			expect( vertexList.head ).to.be.null;
@@ -582,8 +580,6 @@ describe( 'VertexList', function () {
 		} );
 
 	} );
-
-
 
 	describe( '#empty()', function () {
 
