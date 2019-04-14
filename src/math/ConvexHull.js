@@ -460,13 +460,15 @@ class ConvexHull {
 
 		if ( face.outside ) {
 
-			// mark the face vertices to be reassigned to other faces
+			const startVertex = face.outside;
 
-			this._unassigned.appendChain( face.outside );
-
-			// now remove all vertices from the given face
+			// remove all vertices from the given face
 
 			this._removeAllVerticesFromFace( face );
+
+			// mark the face vertices to be reassigned to other faces
+
+			this._unassigned.appendChain( startVertex );
 
 		}
 
@@ -887,6 +889,9 @@ class VertexList {
 
 		}
 
+		vertex.prev = null;
+		vertex.next = null;
+
 		return this;
 
 	}
@@ -912,6 +917,9 @@ class VertexList {
 			b.next.prev = a.prev;
 
 		}
+
+		a.prev = null;
+		b.next = null;
 
 		return this;
 

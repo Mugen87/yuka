@@ -7,6 +7,7 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const ConvexHull = YUKA.ConvexHull;
+const HalfEdge = YUKA.HalfEdge;
 const Face = YUKA.CHFace;
 const Vertex = YUKA.CHVertex;
 const VertexList = YUKA.CHVertexList;
@@ -112,6 +113,51 @@ describe( 'ConvexHull', function () {
 			expect( max.z.point ).to.deep.equal( new Vector3( 2, 9, 19 ) ); // point with maximum z value
 
 			expect( convexHull._tolerance ).to.closeTo( 3.1308289294429414e-14, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#_computeInitialHull()', function () {
+
+		it( 'should compute the initial convex hull (the first major step of the algorithm)', function () {
+
+			const convexHull = new ConvexHull();
+
+			// prepare vertices
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				convexHull._vertices.push( new Vertex( points[ i ] ) );
+
+			}
+
+			// compute initial hull
+
+			convexHull._computeInitialHull();
+
+
+			// verify
+
+			expect( convexHull.faces ).to.have.lengthOf( 4 ); // initial tetrahedron
+
+			const face1 = convexHull.faces[ 0 ];
+			const face2 = convexHull.faces[ 1 ];
+			const face3 = convexHull.faces[ 2 ];
+			const face4 = convexHull.faces[ 3 ];
+
+			expect( face1.edge.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
+			expect( face2.edge.vertex ).to.deep.equal( new Vector3( - 7, - 5, 0 ) );
+			expect( face3.edge.vertex ).to.deep.equal( new Vector3( - 7, - 5, 0 ) );
+			expect( face4.edge.vertex ).to.deep.equal( new Vector3( - 7, - 5, 0 ) );
+
+			// two points are still no part of the hull
+
+			expect( convexHull._assigned.first().face ).to.equal( face1 );
+			expect( convexHull._assigned.first().point ).to.deep.equal( new Vector3( 7, 4, 8 ) );
+
+			expect( convexHull._assigned.last().face ).to.equal( face2 );
+			expect( convexHull._assigned.last().point ).to.deep.equal( new Vector3( - 9, 1, 11 ) );
 
 		} );
 
@@ -409,6 +455,77 @@ describe( 'ConvexHull', function () {
 			const face = new Face();
 			convexHull._removeAllVerticesFromFace( face );
 			expect( face.outside ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#_addAdjoiningFace()', function () {
+
+		it( 'should add a face connecting the given point with the given half edge', function () {
+
+			const convexHull = new ConvexHull();
+
+			const vertex = new Vertex( new Vector3( 0, 0, 0 ) );
+
+			const halfEdge1 = new HalfEdge( new Vector3( 0, 0, 1 ) );
+			const halfEdge2 = new HalfEdge( new Vector3( 1, 0, 1 ) );
+			const halfEdge3 = new HalfEdge( new Vector3( 1, 0, 1 ) );
+			halfEdge1.prev = halfEdge2;
+			halfEdge1.twin = halfEdge3;
+
+			convexHull._addAdjoiningFace( vertex, halfEdge1 );
+
+			expect( convexHull.faces ).to.have.lengthOf( 1 );
+
+			const face = convexHull.faces[ 0 ];
+
+			// check if the face is correctly linked to the existing half edge of the twin's face
+
+			expect( face.getEdge( - 1 ).twin ).to.equal( halfEdge3 );
+
+		} );
+
+	} );
+
+	describe( '#_addNewFaces()', function () {
+
+		it( 'should add new faces to the convex hull enclosing the given vertex along the horizon', function () {
+
+			const convexHull = new ConvexHull();
+
+			const vertex = new Vertex( new Vector3( 7, 4, 8 ) );
+
+			const halfEdge1 = new HalfEdge( new Vector3( 0, 14, - 8 ) );
+			const halfEdge2 = new HalfEdge( new Vector3( 2, 9, 19 ) );
+			const halfEdge3 = new HalfEdge( new Vector3( 14, - 14, 2 ) );
+
+			halfEdge1.prev = new HalfEdge( new Vector3( 14, - 14, 2 ) );
+			halfEdge2.prev = new HalfEdge( new Vector3( 0, 14, - 8 ) );
+			halfEdge3.prev = new HalfEdge( new Vector3( 2, 9, 19 ) );
+
+			halfEdge1.twin = new HalfEdge();
+			halfEdge2.twin = new HalfEdge();
+			halfEdge3.twin = new HalfEdge();
+
+			const horizon = [ halfEdge1, halfEdge2, halfEdge3 ];
+
+			convexHull._addNewFaces( vertex, horizon );
+
+			expect( convexHull.faces ).to.have.lengthOf( 3 );
+
+			const face1 = convexHull.faces[ 0 ];
+			const face2 = convexHull.faces[ 1 ];
+			const face3 = convexHull.faces[ 2 ];
+
+			// check if the side edges are correctly linked
+
+			expect( face1.edge.twin ).to.equal( face2.edge.next );
+			expect( face1.edge.next.twin ).to.equal( face3.edge );
+			expect( face2.edge.twin ).to.equal( face3.edge.next );
+			expect( face2.edge.next.twin ).to.equal( face1.edge );
+			expect( face3.edge.twin ).to.equal( face1.edge.next );
+			expect( face3.edge.next.twin ).to.equal( face2.edge );
 
 		} );
 
@@ -734,6 +851,9 @@ describe( 'VertexList', function () {
 			expect( vertex2.prev ).to.be.equal( vertex1 );
 			expect( vertex2.next ).to.be.null;
 
+			expect( vertexToRemove.prev ).to.be.null;
+			expect( vertexToRemove.next ).to.be.null;
+
 		} );
 
 		it( 'should remove a vertex from the list and adjust head and tail if necessary', function () {
@@ -773,6 +893,9 @@ describe( 'VertexList', function () {
 
 			expect( vertex2.prev ).to.be.equal( vertex1 );
 			expect( vertex2.next ).to.be.null;
+
+			expect( vertexToRemove1.prev ).to.be.null;
+			expect( vertexToRemove2.next ).to.be.null;
 
 		} );
 
