@@ -161,6 +161,59 @@ describe( 'ConvexHull', function () {
 
 		} );
 
+		it( 'should compute the initial convex hull if the fourth point is on the different of the tetrahedron its ground plane', function () {
+
+			const convexHull = new ConvexHull();
+
+			const points = [
+				new YUKA.Vector3( 1, 1, 1 ),
+				new YUKA.Vector3( 4, - 1, 4 ),
+				new YUKA.Vector3( 3, 6, - 3 ),
+				new YUKA.Vector3( - 7, - 20, 0 ), // y-component changed
+				new YUKA.Vector3( 2, 9, 19 ),
+				new YUKA.Vector3( 7, 4, 8 ),
+				new YUKA.Vector3( 14, - 14, 2 ),
+				new YUKA.Vector3( - 9, 1, 11 ),
+				new YUKA.Vector3( 0, 14, - 8 )
+			];
+
+			// prepare vertices
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				convexHull._vertices.push( new Vertex( points[ i ] ) );
+
+			}
+
+			// compute initial hull
+
+			convexHull._computeInitialHull();
+
+
+			// verify
+
+			expect( convexHull.faces ).to.have.lengthOf( 4 ); // initial tetrahedron
+
+			const face1 = convexHull.faces[ 0 ];
+			const face2 = convexHull.faces[ 1 ];
+			const face3 = convexHull.faces[ 2 ];
+			const face4 = convexHull.faces[ 3 ];
+
+			expect( face1.edge.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
+			expect( face2.edge.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
+			expect( face3.edge.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
+			expect( face4.edge.vertex ).to.deep.equal( new Vector3( 14, - 14, 2 ) );
+
+			// two points are still no part of the hull
+
+			expect( convexHull._assigned.first().face ).to.equal( face2 );
+			expect( convexHull._assigned.first().point ).to.deep.equal( new Vector3( 7, 4, 8 ) );
+
+			expect( convexHull._assigned.last().face ).to.equal( face1 );
+			expect( convexHull._assigned.last().point ).to.deep.equal( new Vector3( - 9, 1, 11 ) );
+
+		} );
+
 	} );
 
 	describe( '#_updateFaces()', function () {
