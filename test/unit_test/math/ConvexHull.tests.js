@@ -390,7 +390,155 @@ describe( 'VertexList', function () {
 
 	} );
 
-	//todo appendChain, remove, removeChain
+	describe( '#appendChain()', function () {
+
+		it( 'should append a single vertex to the list, like append method', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex();
+			const vertexNew = new Vertex();
+
+			vertexList.head = vertexList.tail = vertex;
+
+			vertexList.appendChain( vertexNew );
+
+			expect( vertexNew.prev ).to.be.equal( vertex );
+			expect( vertexNew.next ).to.be.null;
+
+			expect( vertex.prev ).to.be.null;
+			expect( vertex.next ).to.be.equal( vertexNew );
+
+			expect( vertexList.head ).to.be.equal( vertex );
+			expect( vertexList.tail ).to.be.equal( vertexNew );
+
+		} );
+
+		it( 'should ensure the first vertex of the list is the head and tail, like append method', function () {
+
+			const vertexList = new VertexList();
+			const vertexNew = new Vertex();
+
+			vertexList.appendChain( vertexNew );
+
+			expect( vertexNew.prev ).to.be.null;
+			expect( vertexNew.next ).to.be.null;
+
+			expect( vertexList.head ).to.be.equal( vertexNew );
+			expect( vertexList.tail ).to.be.equal( vertexNew );
+
+		} );
+
+		it( 'should append a chain to the list', function () {
+
+			const vertexList = new VertexList();
+			const vertex = new Vertex();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+
+			vertex1.next = vertex2;
+			vertex2.prev = vertex1;
+			vertexList.append( vertex );
+
+			vertexList.appendChain( vertex1 );
+
+			expect( vertex.next ).to.be.equal( vertex1 );
+
+			expect( vertex1.prev ).to.be.equal( vertex );
+			expect( vertex1.next ).to.be.equal( vertex2 );
+
+			expect( vertex2.prev ).to.be.equal( vertex1 );
+			expect( vertex2.next ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#remove()', function () {
+
+		it( 'should remove a vertex from the list', function () {
+
+			const vertexList = new VertexList();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+			const vertexToRemove = new Vertex();
+
+			vertexList.append( vertex1 );
+			vertexList.append( vertexToRemove );
+			vertexList.append( vertex2 );
+
+
+			vertexList.remove( vertexToRemove );
+
+			expect( vertex1.prev ).to.be.null;
+			expect( vertex1.next ).to.be.equal( vertex2 );
+
+			expect( vertex2.prev ).to.be.equal( vertex1 );
+			expect( vertex2.next ).to.be.null;
+
+		} );
+
+		it( 'should remove a vertex from the list and adjust head and tail if necessary', function () {
+
+			const vertexList = new VertexList();
+			const vertexToRemove = new Vertex();
+
+
+			vertexList.append( vertexToRemove );
+
+			vertexList.remove( vertexToRemove );
+
+			expect( vertexList.head ).to.be.null;
+			expect( vertexList.tail ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#removeChain()', function () {
+
+		it( 'should remove a chain of vertices from the list', function () {
+
+			const vertexList = new VertexList();
+			const vertex1 = new Vertex();
+			const vertex2 = new Vertex();
+			const vertexToRemove1 = new Vertex();
+			const vertexToRemove2 = new Vertex();
+
+			vertexList.append( vertex1 );
+			vertexList.append( vertexToRemove1 );
+			vertexList.append( vertexToRemove2 );
+			vertexList.append( vertex2 );
+
+			vertexList.removeChain( vertexToRemove1, vertexToRemove2 );
+
+			expect( vertex1.prev ).to.be.null;
+			expect( vertex1.next ).to.be.equal( vertex2 );
+
+			expect( vertex2.prev ).to.be.equal( vertex1 );
+			expect( vertex2.next ).to.be.null;
+
+		} );
+
+		it( 'should remove a chain of vertices from the list and adjust head and tail if necessary', function () {
+
+			const vertexList = new VertexList();
+
+			const vertexToRemove1 = new Vertex();
+			const vertexToRemove2 = new Vertex();
+
+			vertexList.append( vertexToRemove1 );
+			vertexList.append( vertexToRemove2 );
+
+			vertexList.removeChain( vertexToRemove1, vertexToRemove2 );
+
+			expect( vertexList.head ).to.be.null;
+			expect( vertexList.tail ).to.be.null;
+
+		} );
+
+	} );
+
+
 
 	describe( '#empty()', function () {
 
