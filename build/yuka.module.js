@@ -14040,7 +14040,7 @@ class ConvexHull {
 		this._assigned = new VertexList();
 		this._unassigned = new VertexList();
 
-		// this array holds the new faces generated in a single interation of the algorithm
+		// this array holds the new faces generated in a single iteration of the algorithm
 
 		this._newFaces = new Array();
 
@@ -14146,6 +14146,8 @@ class ConvexHull {
 
 	// private API
 
+		// adds a single face to the convex hull by connecting it with the respective horizon edge
+
 	_addAdjoiningFace( vertex, horizonEdge ) {
 
 		// all the half edges are created in ccw order thus the face is always pointing outside the hull
@@ -14160,8 +14162,9 @@ class ConvexHull {
 
 		return face.getEdge( 0 ); // the half edge whose vertex is the given one
 
-
 	}
+
+	// adds new faces by connecting the horizon with the new point of the convex hull
 
 	_addNewFaces( vertex, horizon ) {
 
@@ -14201,6 +14204,9 @@ class ConvexHull {
 
 	}
 
+	// assigns a single vertex to the given face. that means this face can "see"
+	// the vertex and its distance to the vertex is greater than all other faces
+
 	_addVertexToFace( vertex, face ) {
 
 		vertex.face = face;
@@ -14221,6 +14227,9 @@ class ConvexHull {
 
 	}
 
+	// the base iteration of the algorithm. adds a new vertex to the convex hull by
+	// connecting faces from the horizon with it.
+
 	_addVertexToHull( vertex ) {
 
 		const horizon = [];
@@ -14239,6 +14248,8 @@ class ConvexHull {
 
 	}
 
+	// frees memory by resetting internal data structures
+
 	_reset() {
 
 		this._vertices.length = 0;
@@ -14251,6 +14262,9 @@ class ConvexHull {
 		return this;
 
 	}
+
+	// computes the initial hull of the algorithm. it's a tetrahedron created
+	// with the extreme vertices of the given set of points
 
 	_computeInitialHull() {
 
@@ -14441,6 +14455,8 @@ class ConvexHull {
 
 	}
 
+	// computes the extreme vertices of used to compute the inital convex hull
+
 	_computeExtremes() {
 
 		const min = new Vector3( Infinity, Infinity, Infinity );
@@ -14516,6 +14532,9 @@ class ConvexHull {
 
 	}
 
+	// computes the horizon, an array of edges enclosing the faces that are able
+	// to see the new vertex
+
 	_computeHorizon( eyePoint, crossEdge, face, horizon ) {
 
 		if ( face.outside ) {
@@ -14580,6 +14599,8 @@ class ConvexHull {
 
 	}
 
+	// this method controls the basic flow of the algorithm
+
 	_generate() {
 
 		this.faces.length = 0;
@@ -14601,6 +14622,8 @@ class ConvexHull {
 		return this;
 
 	}
+
+	// determines the next vertex that should added to the convex hull
 
 	_nextVertexToAdd() {
 
@@ -14640,6 +14663,9 @@ class ConvexHull {
 
 	}
 
+	// updates the faces array after the computation of the convex hull
+	// it ensures only visible faces are in the result set
+
 	_updateFaces() {
 
 		const faces = this.faces;
@@ -14665,6 +14691,9 @@ class ConvexHull {
 		return this;
 
 	}
+
+	// removes all vertices from the given face. necessary when deleting a face
+	// which is necessary when the hull is going to be expanded
 
 	_removeAllVerticesFromFace( face ) {
 
@@ -14693,6 +14722,8 @@ class ConvexHull {
 		return this;
 
 	}
+
+	// removes a single vertex from the given face
 
 	_removeVertexFromFace( vertex, face ) {
 
@@ -14723,6 +14754,10 @@ class ConvexHull {
 		return this;
 
 	}
+
+	// ensure that all unassigned points are reassigned to other faces of the
+	// current convex hull. this method is always executed after the hull was
+	// expanded
 
 	_resolveUnassignedPoints( newFaces ) {
 

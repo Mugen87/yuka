@@ -162,7 +162,7 @@ describe( 'ConvexHull', function () {
 
 		} );
 
-		it( 'should return false if a point is outside convex hull', function () {
+		it( 'should return false if a point is outside the convex hull', function () {
 
 			const point = new Vector3( 14, - 15, 2 );
 
