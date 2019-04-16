@@ -44,6 +44,77 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#set()', function () {
+
+		it( 'should set the given faces to this convex hull.s', function () {
+
+			const convexHull = new ConvexHull();
+			const faces = [];
+
+			convexHull.set( faces );
+
+			expect( convexHull.faces ).to.equal( faces );
+
+		} );
+
+	} );
+
+	describe( '#copy()', function () {
+
+		it( 'should copy all values from the given object', function () {
+
+			const face1 = new Face();
+			const face2 = new Face();
+			const face3 = new Face();
+
+			const convexHull1 = new ConvexHull();
+			const convexHull2 = new ConvexHull();
+
+			convexHull1.faces.push( face1, face2 );
+			convexHull2.faces.push( face3 );
+
+			convexHull2.copy( convexHull1 );
+
+			expect( convexHull2.faces ).to.have.lengthOf( 2 );
+			expect( convexHull2.faces ).to.include( face1, face2 );
+			expect( convexHull2.faces ).to.not.include( face3 );
+
+		} );
+
+	} );
+
+	describe( '#clone()', function () {
+
+		it( 'should create a new object', function () {
+
+			const face1 = new Face();
+			const face2 = new Face();
+
+			const convexHull1 = new ConvexHull();
+			convexHull1.faces.push( face1, face2 );
+
+			const convexHull2 = convexHull1.clone();
+
+			expect( convexHull1 ).not.to.equal( convexHull2 );
+
+		} );
+
+		it( 'should copy the values of the current object to the new one', function () {
+
+			const face1 = new Face();
+			const face2 = new Face();
+
+			const convexHull1 = new ConvexHull();
+			convexHull1.faces.push( face1, face2 );
+
+			const convexHull2 = convexHull1.clone();
+
+			expect( convexHull2.faces ).to.include( face1, face2 );
+
+		} );
+
+	} );
+
 	describe( '#fromPoints()', function () {
 
 		it( 'should compute a convex hull that encloses the given set of points', function () {
@@ -67,13 +138,46 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#containsPoint()', function () {
+
+		const convexHull = new ConvexHull().fromPoints( points );
+
+		it( 'should return true if a point is inside the convex hull', function () {
+
+			const point = new Vector3();
+
+			expect( convexHull.containsPoint( point ) ).to.be.true;
+
+		} );
+
+		it( 'should return true if a point is exactly on the convex hull', function () {
+
+			const point1 = new Vector3( 0, 14, - 8 ); // vertex of a face
+			const point2 = new Vector3( 7, 0, - 3 ); // point on a face edge
+			const point3 = new Vector3( 7, 2, 2.5 ); // point on face (center)
+
+			expect( convexHull.containsPoint( point1 ) ).to.be.true;
+			expect( convexHull.containsPoint( point2 ) ).to.be.true;
+			expect( convexHull.containsPoint( point3 ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if a point is outside convex hull', function () {
+
+			const point = new Vector3( 14, - 15, 2 );
+
+			expect( convexHull.containsPoint( point ) ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#_reset()', function () {
 
 		it( 'should reset the internal properties to their default values', function () {
 
 			const convexHull = new ConvexHull();
 
-			convexHull._tolerance = Number.EPSILON;
 			convexHull._vertices.push( new Vertex() );
 			convexHull._assigned.append( new Vertex() );
 			convexHull._unassigned.append( new Vertex() );
@@ -81,7 +185,6 @@ describe( 'ConvexHull', function () {
 
 			convexHull._reset();
 
-			expect( convexHull._tolerance ).to.equal( - 1 );
 			expect( convexHull._vertices ).to.have.lengthOf( 0 );
 			expect( convexHull._assigned.head ).to.be.null;
 			expect( convexHull._assigned.tail ).to.be.null;

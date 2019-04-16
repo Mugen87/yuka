@@ -14047,6 +14047,72 @@ class ConvexHull {
 	}
 
 	/**
+	* Sets the given faces to this convex hull.
+	*
+	* @param {Array} faces - The new faces of the convex hull.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	set( faces ) {
+
+		this.faces = faces;
+
+		return this;
+
+	}
+
+	/**
+	* Copies the faces from the given convex hull to this convex hull.
+	*
+	* @param {ConvexHull} convexHull - The convex hull to copy.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	copy( convexHull ) {
+
+		this.faces.length = 0;
+		this.faces.push( ...convexHull.faces );
+
+		return this;
+
+	}
+
+	/**
+	* Creates a new convex hull and copies all values from this convex hull.
+	*
+	* @return {ConvexHull} A new convex hull.
+	*/
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	/**
+	* Returns true if the given point is inside this convex hull.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Boolean} Whether the given point is inside this convex hull or not.
+	*/
+	containsPoint( point ) {
+
+		const faces = this.faces;
+
+		// use the internal plane abstraction of each face in order to test
+		// on what half space the point lies
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			// if the signed distance is greater zero, the point is outside and
+			// we can stop the processing
+
+			if ( faces[ i ].distanceToPoint( point ) > this._tolerance ) return false;
+
+		}
+
+		return true;
+
+	}
+
+	/**
 	* Computes a convex hull that encloses the given set of points. The computation requires
 	* at least four points.
 	*
@@ -14174,8 +14240,6 @@ class ConvexHull {
 	}
 
 	_reset() {
-
-		this._tolerance = - 1;
 
 		this._vertices.length = 0;
 
