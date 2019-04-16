@@ -14152,7 +14152,7 @@
 
 		// private API
 
-			// adds a single face to the convex hull by connecting it with the respective horizon edge
+		// adds a single face to the convex hull by connecting it with the respective horizon edge
 
 		_addAdjoiningFace( vertex, horizonEdge ) {
 
