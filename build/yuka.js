@@ -1,19 +1,19 @@
 /**
  * @license
  * The MIT License
- *
+ * 
  * Copyright © 2018 Yuka authors
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -14461,7 +14461,7 @@
 
 		}
 
-		// computes the extreme vertices of used to compute the inital convex hull
+		// computes the extreme vertices of used to compute the initial convex hull
 
 		_computeExtremes() {
 
@@ -14621,11 +14621,125 @@
 
 			}
 
+			this._mergeFaces( this._getSortedEdgeList() );
+
 			this._updateFaces();
 
 			this._reset();
 
 			return this;
+
+		}
+
+		// merges Faces/Polygons if the result is still convex and coplanar
+
+		_mergeFaces( edgeList ) {
+
+			const regions = this.faces;
+
+			const cache = {
+				leftPrev: null,
+				leftNext: null,
+				rightPrev: null,
+				rightNext: null
+			};
+
+			// process edges from longest to shortest
+
+			for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
+
+				const entry = edgeList[ i ];
+
+				let candidate = entry;
+
+				// cache current references for possible restore
+
+				cache.prev = candidate.prev;
+				cache.next = candidate.next;
+				cache.prevTwin = candidate.twin.prev;
+				cache.nextTwin = candidate.twin.next;
+
+				// temporarily change the first polygon in order to represent both polygons
+
+				candidate.prev.next = candidate.twin.next;
+				candidate.next.prev = candidate.twin.prev;
+				candidate.twin.prev.next = candidate.next;
+				candidate.twin.next.prev = candidate.prev;
+
+				const polygon = candidate.polygon;
+				polygon.edge = candidate.prev;
+
+				if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
+
+					// correct polygon reference of all edges
+
+					let edge = polygon.edge;
+
+					do {
+
+						edge.polygon = polygon;
+
+						edge = edge.next;
+
+					} while ( edge !== polygon.edge );
+
+					// delete obsolete polygon
+
+					const index = regions.indexOf( entry.edge.twin.polygon );
+					regions.splice( index, 1 );
+
+				} else {
+
+					// restore
+
+					cache.prev.next = candidate;
+					cache.next.prev = candidate;
+					cache.prevTwin.next = candidate.twin;
+					cache.nextTwin.prev = candidate.twin;
+
+					polygon.edge = candidate;
+
+				}
+
+			}
+
+			// after the merging of convex regions, do some post-processing
+
+			for ( let i = 0, l = regions.length; i < l; i ++ ) {
+
+				const region = regions[ i ];
+
+				// compute the centroid of the region which can be used as
+				// a destination point in context of path finding
+
+				region.computeCentroid();
+
+			}
+
+		}
+
+		//returns the sorted list of all edges, by length
+
+		_getSortedEdgeList() {
+
+			const result = new Array();
+
+			for ( let i = 0, l = this.faces.length; i < l; i ++ ) {
+
+				const face = this.faces[ i ];
+				const firstEdge = face.edge;
+				let edge = firstEdge;
+
+				do {
+
+					result.push( edge );
+					edge = edge.next;
+
+				} while ( edge !== firstEdge );
+
+				return result.sort( ( a, b ) => a.length() - b.length() );
+
+			}
 
 		}
 
