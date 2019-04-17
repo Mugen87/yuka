@@ -12,6 +12,7 @@ const Vector3 = YUKA.Vector3;
 const AABB = YUKA.AABB;
 const Plane = YUKA.Plane;
 const BoundingSphere = YUKA.BoundingSphere;
+const ConvexHull = YUKA.ConvexHull;
 
 const v1 = new Vector3( 2, 2, 2 );
 const v2 = new Vector3( 0, 0, 1 );
@@ -449,6 +450,100 @@ describe( 'Ray', function () {
 
 			const result = ray.intersectsPlane( plane );
 			expect( result ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#intersectConvexHull()', function () {
+
+		const points = [
+			new Vector3( 1, 1, 1 ),
+			new Vector3( 4, - 1, 4 ),
+			new Vector3( 3, 6, - 3 ),
+			new Vector3( - 7, - 5, 0 ),
+			new Vector3( 2, 9, 19 ),
+			new Vector3( 7, 4, 8 ),
+			new Vector3( 14, - 14, 2 ),
+			new Vector3( - 9, 1, 11 ),
+			new Vector3( 0, 14, - 8 )
+		];
+
+		const convexHull = new ConvexHull().fromPoints( points );
+
+		it( 'should fill the given result vector with the intersection point of a ray/convex hull intersection test', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, - 1 ) );
+			const result = new Vector3();
+
+			ray.intersectConvexHull( convexHull, result );
+
+			expect( result.x ).to.equal( 0 );
+			expect( result.y ).to.equal( 0 );
+			expect( result.z ).to.closeTo( 11.426934097421203, Number.EPSILON );
+
+		} );
+
+		it( 'should return null if the ray does not intersect the convex hull', function () {
+
+			const ray = new Ray( new Vector3( - 10, 3, 20 ), new Vector3( - 0.8, 1, - 1 ).normalize() );
+
+			expect( ray.intersectConvexHull( convexHull, new Vector3() ) ).to.be.null;
+
+		} );
+
+		it( 'should return null if the ray origin is outside the convex hull and turned away', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, 1 ) );
+
+			expect( ray.intersectConvexHull( convexHull, new Vector3() ) ).to.be.null;
+
+		} );
+
+		it( 'should return an intersection if the ray starts inside the convex hull', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, - 1 ) );
+			const result = new Vector3();
+
+			ray.intersectConvexHull( convexHull, result );
+
+			expect( result.x ).to.equal( 0 );
+			expect( result.y ).to.equal( 0 );
+			expect( result.z ).to.closeTo( - 2.484848484848485, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#intersectsConvexHull()', function () {
+
+		const points = [
+			new Vector3( 1, 1, 1 ),
+			new Vector3( 4, - 1, 4 ),
+			new Vector3( 3, 6, - 3 ),
+			new Vector3( - 7, - 5, 0 ),
+			new Vector3( 2, 9, 19 ),
+			new Vector3( 7, 4, 8 ),
+			new Vector3( 14, - 14, 2 ),
+			new Vector3( - 9, 1, 11 ),
+			new Vector3( 0, 14, - 8 )
+		];
+
+		const convexHull = new ConvexHull().fromPoints( points );
+
+		it( 'should return true if the ray intersects the convex hull', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, - 1 ) );
+
+			expect( ray.intersectsConvexHull( convexHull ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if the ray does not intersect the convex hull', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, 1 ) );
+
+			expect( ray.intersectsConvexHull( convexHull ) ).to.be.false;
 
 		} );
 
