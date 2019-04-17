@@ -136,12 +136,12 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/sphere intersection test. Returns either true or false if
-	 * there is a intersection or not.
-	 *
-	 * @param {BoundingSphere} sphere - A bounding sphere.
-	 * @return {boolean} Whether there is an intersection or not.
-	 */
+	* Performs a ray/sphere intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {BoundingSphere} sphere - A bounding sphere.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
 	intersectsBoundingSphere( sphere ) {
 
 		const v1 = new Vector3();
@@ -246,12 +246,12 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/AABB intersection test. Returns either true or false if
-	 * there is a intersection or not.
-	 *
-	 * @param {AABB} aabb - An axis-aligned bounding box.
-	 * @return {boolean} Whether there is an intersection or not.
-	 */
+	* Performs a ray/AABB intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {AABB} aabb - An axis-aligned bounding box.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
 	intersectsAABB( aabb ) {
 
 		return this.intersectAABB( aabb, v1 ) !== null;
@@ -301,12 +301,12 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/plane intersection test. Returns either true or false if
-	 * there is a intersection or not.
-	 *
-	 * @param {Plane} plane - A plane.
-	 * @return {boolean} Whether there is an intersection or not.
-	 */
+	* Performs a ray/plane intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {Plane} plane - A plane.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
 	intersectsPlane( plane ) {
 
 		// check if the ray lies on the plane first
@@ -330,6 +330,104 @@ class Ray {
 		// ray origin is behind the plane (and is pointing behind it)
 
 		return false;
+
+	}
+
+	/**
+	* Performs a ray/convex hull intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	* The implementation is based on "Fast Ray-Convex Polyhedron Intersection"
+	* by Eric Haines, GRAPHICS GEMS II
+	*
+	* @param {ConvexHull} convexHull - A convex hull.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectConvexHull( convexHull, result ) {
+
+		const faces = convexHull.faces;
+
+		let tNear = - Infinity;
+		let tFar = Infinity;
+
+		// otherwise perform intersection tests on plane level
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			const plane = face.plane;
+
+			const vN = plane.distanceToPoint( this.origin );
+			const vD = plane.normal.dot( this.direction );
+
+			// if the origin is on the positive side of a plane (so the plane can "see" the origin) and
+			// the ray is turned away or parallel to the plane, there is no intersection
+
+			if ( vN > 0 && vD >= 0 ) return null;
+
+			// compute the distance from the ray’s origin to the intersection with the plane
+
+			const t = - vN / vD;
+
+			// only proceed if the distance is positive. since the ray has a direction, the intersection point
+			// would lie "behind" the origin with a negative distance
+
+			if ( t < 0 ) continue;
+
+			// now categorized plane as front-facing or back-facing
+
+			if ( vD > 0 ) {
+
+				//  plane faces away from the ray, so this plane is a back-face
+
+				tFar = Math.min( t, tFar );
+
+			} else {
+
+				// front-face
+
+				tNear = Math.max( t, tNear );
+
+			}
+
+			if ( tNear > tFar ) {
+
+				// if tNear ever is greater than tFar, the ray must miss the convex hull
+
+				return null;
+
+			}
+
+		}
+
+		// evaluate intersection point
+
+		// always try tNear first since its the closer intersection point
+
+		if ( tNear !== - Infinity ) {
+
+			this.at( tNear, result );
+
+		} else {
+
+			this.at( tFar, result );
+
+		}
+
+		return result;
+
+	}
+
+	/**
+	* Performs a ray/convex hull intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {ConvexHull} convexHull - A convex hull.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
+	intersectsConvexHull( convexHull ) {
+
+		return this.intersectConvexHull( convexHull, v1 ) !== null;
 
 	}
 
