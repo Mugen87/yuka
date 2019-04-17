@@ -109,8 +109,8 @@ class ConvexHull {
 
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-			// if the signed distance is greater zero, the point is outside and
-			// we can stop the processing
+			// if the signed distance is greater than the tolernce value, the point
+			// is outside and we can stop processing
 
 			if ( faces[ i ].distanceToPoint( point ) > this._tolerance ) return false;
 
@@ -633,7 +633,7 @@ class ConvexHull {
 
 	}
 
-	// merges Faces/Polygons if the result is still convex and coplanar
+	// merges faces if the result is still convex and coplanar
 
 	_mergeFaces( edgeList ) {
 
@@ -671,7 +671,7 @@ class ConvexHull {
 			const polygon = candidate.polygon;
 			polygon.edge = candidate.prev;
 
-			if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
+			if ( polygon.convex() === true && polygon.coplanar( this._tolerance ) === true ) {
 
 				// correct polygon reference of all edges
 
@@ -709,18 +709,13 @@ class ConvexHull {
 
 		for ( let i = 0, l = regions.length; i < l; i ++ ) {
 
-			const region = regions[ i ];
-
-			// compute the centroid of the region which can be used as
-			// a destination point in context of path finding
-
-			region.computeCentroid();
+			regions[ i ].computeCentroid();
 
 		}
 
 	}
 
-	//returns the sorted list of all edges, by length
+	// returns the sorted list of all edges, by length
 
 	_getSortedEdgeList() {
 
@@ -730,6 +725,7 @@ class ConvexHull {
 
 			const face = this.faces[ i ];
 			const firstEdge = face.edge;
+
 			let edge = firstEdge;
 
 			do {
