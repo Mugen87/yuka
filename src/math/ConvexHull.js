@@ -463,7 +463,7 @@ class ConvexHull {
 
 	}
 
-	// computes the extreme vertices of used to compute the inital convex hull
+	// computes the extreme vertices of used to compute the initial convex hull
 
 	_computeExtremes() {
 
