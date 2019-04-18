@@ -350,8 +350,6 @@ class Ray {
 		let tNear = - Infinity;
 		let tFar = Infinity;
 
-		// otherwise perform intersection tests on plane level
-
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
 			const face = faces[ i ];
@@ -367,12 +365,12 @@ class Ray {
 
 			// compute the distance from the ray’s origin to the intersection with the plane
 
-			const t = - vN / vD;
+			const t = ( vD !== 0 ) ? ( - vN / vD ) : 0;
 
 			// only proceed if the distance is positive. since the ray has a direction, the intersection point
 			// would lie "behind" the origin with a negative distance
 
-			if ( t < 0 ) continue;
+			if ( t <= 0 ) continue;
 
 			// now categorized plane as front-facing or back-facing
 

@@ -513,6 +513,21 @@ describe( 'Ray', function () {
 
 		} );
 
+		it( 'should return an intersection if the ray is parallel to a plane an intersects the convex hull', function () {
+
+			const normal = new Vector3().subVectors( new Vector3( 14, - 14, 2 ), new Vector3( 0, 14, - 8 ) );
+
+			const ray = new Ray( new Vector3( 0, 0, 0 ), normal.normalize() );
+			const result = new Vector3();
+
+			ray.intersectConvexHull( convexHull, result );
+
+			expect( result.x ).to.closeTo( 4.475597772682606, Number.EPSILON );
+			expect( result.y ).to.closeTo( - 8.951195545365213, Number.EPSILON );
+			expect( result.z ).to.closeTo( 3.1968555519161477, Number.EPSILON );
+
+		} );
+
 	} );
 
 	describe( '#intersectsConvexHull()', function () {
