@@ -400,14 +400,14 @@ describe( 'ConvexHull', function () {
 			expect( halfEdge2.vertex ).to.deep.equal( new Vector3( 0, 14, - 8 ) );
 			expect( halfEdge3.vertex ).to.deep.equal( new Vector3( 2, 9, 19 ) );
 
-			expect( face.flag ).to.equal( 1 ); // DELETED
+			expect( face.active ).to.be.false;
 			expect( face.outside ).to.be.null;
 
 			expect( convexHull._unassigned.first() ).to.equal( vertex );
 
 		} );
 
-		it( 'should only use visible faces to build the horizon', function () {
+		it( 'should only use active faces to build the horizon', function () {
 
 			const convexHull = new ConvexHull();
 
@@ -429,7 +429,7 @@ describe( 'ConvexHull', function () {
 			const face = vertex.face;
 			const horizon = [];
 
-			face.edge.twin.polygon.flag = 1;
+			face.edge.twin.polygon.active = false;
 
 			convexHull._computeHorizon( vertex.point, null, face, horizon );
 
@@ -448,19 +448,16 @@ describe( 'ConvexHull', function () {
 			const convexHull = new ConvexHull();
 
 			const face1 = new Face();
-			face1.flag = 0; // visible
 			const face2 = new Face();
-			face2.flag = 1; // deleted
-			const face3 = new Face();
-			face3.flag = 2; // merged
+			face2.active = false;
 
-			convexHull.faces.push( face1, face2, face3 );
+			convexHull.faces.push( face1, face2 );
 			convexHull._updateFaces();
 
 			// verify
 
 			expect( convexHull.faces ).to.include( face1 );
-			expect( convexHull.faces ).to.not.include( [ face2, face3 ] );
+			expect( convexHull.faces ).to.not.include( face2 );
 
 		} );
 
@@ -624,7 +621,7 @@ describe( 'ConvexHull', function () {
 				new Vector3( 0, 0, 1 ),
 				new Vector3( 1, 0, 1 )
 			);
-			face.flag = 1; // DELETED
+			face.active = false;
 
 			const newFaces = [ face ];
 
@@ -647,7 +644,7 @@ describe( 'ConvexHull', function () {
 				new Vector3( 0, 0, 1 ),
 				new Vector3( 1, 0, 1 )
 			);
-			face.flag = 1; // DELETED
+			face.active = false;
 
 			const newFaces = [ face ];
 
@@ -837,6 +834,21 @@ describe( 'ConvexHull', function () {
 
 		it( 'should merge faces if the resulting ones are still convex and coplanar, ', function () {
 
+			const points = [
+				new YUKA.Vector3( 1, 1, 1 ),
+				new YUKA.Vector3( 1, 1, - 1 ),
+				new YUKA.Vector3( 1, - 1, 1 ),
+				new YUKA.Vector3( 1, - 1, - 1 ),
+				new YUKA.Vector3( - 1, 1, 1 ),
+				new YUKA.Vector3( - 1, 1, - 1 ),
+				new YUKA.Vector3( - 1, - 1, 1 ),
+				new YUKA.Vector3( - 1, - 1, - 1 )
+			];
+
+			const convexHull = new ConvexHull().fromPoints( points );
+
+			expect( convexHull.faces ).to.have.lengthOf( 6 );
+
 		} );
 
 	} );
@@ -854,7 +866,7 @@ describe( 'Face', function () {
 			// default values
 
 			expect( face.outside ).to.be.null;
-			expect( face.flag ).to.be.equal( 0 ); // VISIBLE
+			expect( face.active ).to.be.true;
 
 			// create from contour and compute centroid
 

@@ -249,6 +249,23 @@ describe( 'Polygon', function () {
 
 		} );
 
+		it( 'should respect the CCW parameter that allows to define the winding order', function () {
+
+			const polygon = new Polygon();
+
+			const vertices = [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 1, 0, 0 ),
+				new Vector3( 1, 0, 1 ),
+				new Vector3( 0, 0, 1 )
+			];
+
+			polygon.fromContour( vertices ); // normally a concave contour
+
+			expect( polygon.convex( false ) ).to.be.true;
+
+		} );
+
 	} );
 
 	describe( '#coplanar()', function () {

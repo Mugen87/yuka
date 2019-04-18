@@ -182,9 +182,10 @@ class Polygon {
 	/**
 	* Returns true if the polygon is convex.
 	*
+	* @param {Boolean} ccw - Whether the winding order is CCW or not.
 	* @return {Boolean} Whether this polygon is convex or not.
 	*/
-	convex() {
+	convex( ccw = true ) {
 
 		let edge = this.edge;
 
@@ -194,9 +195,13 @@ class Polygon {
 			const v2 = edge.to();
 			const v3 = edge.next.to();
 
-			if ( leftOn( v1, v2, v3 ) === false ) {
+			if ( ccw ) {
 
-				return false;
+				if ( leftOn( v1, v2, v3 ) === false )	return false;
+
+			} else {
+
+				if ( leftOn( v3, v2, v1 ) === false ) return false;
 
 			}
 

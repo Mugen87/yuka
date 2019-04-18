@@ -13955,9 +13955,10 @@
 		/**
 		* Returns true if the polygon is convex.
 		*
+		* @param {Boolean} ccw - Whether the winding order is CCW or not.
 		* @return {Boolean} Whether this polygon is convex or not.
 		*/
-		convex() {
+		convex( ccw = true ) {
 
 			let edge = this.edge;
 
@@ -13967,9 +13968,13 @@
 				const v2 = edge.to();
 				const v3 = edge.next.to();
 
-				if ( leftOn( v1, v2, v3 ) === false ) {
+				if ( ccw ) {
 
-					return false;
+					if ( leftOn( v1, v2, v3 ) === false )	return false;
+
+				} else {
+
+					if ( leftOn( v3, v2, v1 ) === false ) return false;
 
 				}
 
@@ -14101,10 +14106,7 @@
 	const line = new LineSegment();
 	const plane$1 = new Plane();
 	const closestPoint = new Vector3();
-
-	const VISIBLE = 0;
-	const DELETED = 1;
-	const MERGED = 2;
+	const up = new Vector3( 0, 1, 0 );
 
 	/**
 	* Class representing a convex hull. This is an implementation of the Quickhull algorithm
@@ -14653,7 +14655,7 @@
 
 			}
 
-			face.flag = DELETED;
+			face.active = false;
 
 			let edge;
 
@@ -14675,7 +14677,7 @@
 				let twinEdge = edge.twin;
 				let oppositeFace = twinEdge.polygon;
 
-				if ( oppositeFace.flag === VISIBLE ) {
+				if ( oppositeFace.active ) {
 
 					if ( oppositeFace.distanceToPoint( eyePoint ) > this._tolerance ) {
 
@@ -14720,8 +14722,6 @@
 			this._updateFaces();
 
 			this._mergeFaces();
-
-			this._updateFaces();
 
 			this._reset();
 
@@ -14769,7 +14769,9 @@
 				const polygon = candidate.polygon;
 				polygon.edge = candidate.prev;
 
-				if ( polygon.convex() === true && polygon.coplanar( this._tolerance ) === true ) {
+				const ccw = polygon.plane.normal.dot( up ) >= 0;
+
+				if ( polygon.convex( ccw ) === true && polygon.coplanar( this._tolerance ) === true ) {
 
 					// correct polygon reference of all edges
 
@@ -14785,7 +14787,8 @@
 
 					// delete obsolete polygon
 
-					entry.twin.polygon.flag = MERGED;
+					const index = faces.indexOf( entry.twin.polygon );
+					faces.splice( index, 1 );
 
 				} else {
 
@@ -14900,7 +14903,7 @@
 
 				// only respect visible but not deleted or merged faces
 
-				if ( face.flag === VISIBLE ) {
+				if ( face.active ) {
 
 					activeFaces.push( face );
 
@@ -15001,7 +15004,7 @@
 
 						const face = newFaces[ i ];
 
-						if ( face.flag === VISIBLE ) {
+						if ( face.active ) {
 
 							const distance = face.distanceToPoint( vertex.point );
 
@@ -15041,7 +15044,7 @@
 			super();
 
 			this.outside = null; // reference to a vertex in a vertex list this face can see
-			this.flag = VISIBLE;
+			this.active = true;
 
 			this.fromContour( [ a, b, c ] );
 
