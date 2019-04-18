@@ -813,6 +813,26 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#_getSortedEdgeList()', function () {
+
+		it( 'should return a array with all halfedges of the convex hull sorted by length in descending order, ', function () {
+
+			const convexHull = new ConvexHull().fromPoints( points );
+
+			const edges = convexHull._getSortedEdgeList();
+
+			expect( edges ).to.have.lengthOf( 24 ); // 8 faces x 3 half edges
+
+			for ( let i = 1, l = edges.length; i < l; i ++ ) {
+
+				expect( edges[ i ].length() ).to.be.at.most( edges[ i - 1 ].length() );
+
+			}
+
+		} );
+
+	} );
+
 } );
 
 describe( 'Face', function () {

@@ -715,7 +715,7 @@ class ConvexHull {
 
 	}
 
-	// returns the sorted list of all edges, by length
+	// return a array with all halfedges of the convex hull sorted by length in descending order
 
 	_getSortedEdgeList() {
 
@@ -735,9 +735,9 @@ class ConvexHull {
 
 			} while ( edge !== firstEdge );
 
-			return result.sort( ( a, b ) => a.length() - b.length() );
-
 		}
+
+		return result.sort( ( a, b ) => b.length() - a.length() );
 
 	}
 
