@@ -14098,7 +14098,7 @@ const closestPoint = new Vector3();
 
 const VISIBLE = 0;
 const DELETED = 1;
-// const MERGED = 2;
+const MERGED = 2;
 
 /**
 * Class representing a convex hull. This is an implementation of the Quickhull algorithm
@@ -14711,7 +14711,9 @@ class ConvexHull {
 
 		}
 
-		this._mergeFaces( this._getSortedEdgeList() );
+		this._updateFaces();
+
+		this._mergeFaces();
 
 		this._updateFaces();
 
@@ -14723,9 +14725,9 @@ class ConvexHull {
 
 	// merges faces if the result is still convex and coplanar
 
-	_mergeFaces( edgeList ) {
+	_mergeFaces() {
 
-		const regions = this.faces;
+		const faces = this.faces;
 
 		const cache = {
 			leftPrev: null,
@@ -14734,11 +14736,13 @@ class ConvexHull {
 			rightNext: null
 		};
 
+		const edges = this._getSortedEdgeList();
+
 		// process edges from longest to shortest
 
-		for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
+		for ( let i = 0, l = edges.length; i < l; i ++ ) {
 
-			const entry = edgeList[ i ];
+			const entry = edges[ i ];
 
 			let candidate = entry;
 
@@ -14775,8 +14779,7 @@ class ConvexHull {
 
 				// delete obsolete polygon
 
-				const index = regions.indexOf( entry.edge.twin.polygon );
-				regions.splice( index, 1 );
+				entry.twin.polygon.flag = MERGED;
 
 			} else {
 
@@ -14793,39 +14796,47 @@ class ConvexHull {
 
 		}
 
-		// after the merging of convex regions, do some post-processing
+		// recompute centroid
 
-		for ( let i = 0, l = regions.length; i < l; i ++ ) {
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-			regions[ i ].computeCentroid();
+			faces[ i ].computeCentroid();
 
 		}
 
 	}
 
-	// returns the sorted list of all edges, by length
+	// return a array with all halfedges of the convex hull sorted by length in descending order
 
 	_getSortedEdgeList() {
 
+		const faces = this.faces;
 		const result = new Array();
 
-		for ( let i = 0, l = this.faces.length; i < l; i ++ ) {
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-			const face = this.faces[ i ];
+			const face = faces[ i ];
 			const firstEdge = face.edge;
 
 			let edge = firstEdge;
 
 			do {
 
-				result.push( edge );
+				// only add the edge if the twin was not added before
+
+				if ( result.includes( edge.twin ) === false ) {
+
+					result.push( edge );
+
+				}
+
 				edge = edge.next;
 
 			} while ( edge !== firstEdge );
 
-			return result.sort( ( a, b ) => a.length() - b.length() );
-
 		}
+
+		return result.sort( ( a, b ) => b.length() - a.length() );
 
 	}
 

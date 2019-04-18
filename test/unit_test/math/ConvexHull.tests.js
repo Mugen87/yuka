@@ -815,19 +815,27 @@ describe( 'ConvexHull', function () {
 
 	describe( '#_getSortedEdgeList()', function () {
 
-		it( 'should return a array with all halfedges of the convex hull sorted by length in descending order, ', function () {
+		it( 'should return a array with all half edges of the convex hull sorted by length in descending order, ', function () {
 
 			const convexHull = new ConvexHull().fromPoints( points );
 
 			const edges = convexHull._getSortedEdgeList();
 
-			expect( edges ).to.have.lengthOf( 24 ); // 8 faces x 3 half edges
+			expect( edges ).to.have.lengthOf( 12 ); // 8 faces x 3 half edges / 2 (only consider a single edge not two half edges)
 
 			for ( let i = 1, l = edges.length; i < l; i ++ ) {
 
 				expect( edges[ i ].length() ).to.be.at.most( edges[ i - 1 ].length() );
 
 			}
+
+		} );
+
+	} );
+
+	describe( '#_mergeFaces()', function () {
+
+		it( 'should merge faces if the resulting ones are still convex and coplanar, ', function () {
 
 		} );
 
