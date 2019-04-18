@@ -18359,11 +18359,13 @@
 	exports.CHVertex = Vertex;
 	exports.CHVertexList = VertexList;
 	exports.CHFace = Face;
+	exports.HalfEdge = HalfEdge;
 	exports.LineSegment = LineSegment;
 	exports.MathUtils = MathUtils;
 	exports.Matrix3 = Matrix3;
 	exports.Matrix4 = Matrix4;
 	exports.Plane = Plane;
+	exports.Polygon = Polygon;
 	exports.Quaternion = Quaternion;
 	exports.Ray = Ray;
 	exports.Vector3 = Vector3;
@@ -18372,10 +18374,8 @@
 	exports.GraphUtils = GraphUtils;
 	exports.Corridor = Corridor;
 	exports.CostTable = CostTable;
-	exports.HalfEdge = HalfEdge;
 	exports.NavMesh = NavMesh;
 	exports.NavMeshLoader = NavMeshLoader;
-	exports.Polygon = Polygon;
 	exports.Cell = Cell;
 	exports.CellSpacePartitioning = CellSpacePartitioning;
 	exports.MemoryRecord = MemoryRecord;

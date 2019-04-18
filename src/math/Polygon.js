@@ -1,8 +1,8 @@
 import { HalfEdge } from './HalfEdge.js';
-import { Plane } from '../../math/Plane.js';
-import { Vector3 } from '../../math/Vector3.js';
-import { Logger } from '../../core/Logger.js';
-import { MathUtils } from '../../math/MathUtils.js';
+import { Plane } from './Plane.js';
+import { Vector3 } from './Vector3.js';
+import { MathUtils } from './MathUtils.js';
+import { Logger } from '../core/Logger.js';
 
 /**
 * Class for representing a planar polygon with an arbitrary amount of edges.

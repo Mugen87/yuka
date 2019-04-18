@@ -4,7 +4,7 @@ import { NavNode } from '../core/NavNode.js';
 import { NavEdge } from '../core/NavEdge.js';
 import { Vector3 } from '../../math/Vector3.js';
 import { LineSegment } from '../../math/LineSegment.js';
-import { Corridor } from "./Corridor.js";
+import { Corridor } from './Corridor.js';
 
 const pointOnLineSegment = new Vector3();
 const edgeDirection = new Vector3();

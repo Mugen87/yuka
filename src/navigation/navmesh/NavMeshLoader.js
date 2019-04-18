@@ -1,6 +1,6 @@
 import { Logger } from '../../core/Logger.js';
 import { Vector3 } from '../../math/Vector3.js';
-import { Polygon } from './Polygon.js';
+import { Polygon } from '../../math/Polygon.js';
 import { NavMesh } from './NavMesh.js';
 
 /**

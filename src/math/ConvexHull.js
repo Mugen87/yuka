@@ -2,7 +2,7 @@ import { LineSegment } from './LineSegment.js';
 import { Plane } from './Plane.js';
 import { Vector3 } from './Vector3.js';
 import { Logger } from '../core/Logger.js';
-import { Polygon } from '../navigation/navmesh/Polygon.js';
+import { Polygon } from './Polygon.js';
 
 const line = new LineSegment();
 const plane = new Plane();

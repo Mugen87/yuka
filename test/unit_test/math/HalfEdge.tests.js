@@ -3,7 +3,7 @@
  */
 
 const expect = require( 'chai' ).expect;
-const YUKA = require( '../../../../build/yuka.js' );
+const YUKA = require( '../../../build/yuka.js' );
 
 const HalfEdge = YUKA.HalfEdge;
 const Vector3 = YUKA.Vector3;
