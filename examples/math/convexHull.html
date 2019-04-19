@@ -57,19 +57,6 @@
 			new YUKA.Vector3( 0, 14, - 8 )
 		];
 
-		// full enclosed
-
-		// const points2 = [
-		// 	new YUKA.Vector3( 1, 1, 1 ),
-		// 	new YUKA.Vector3( 1, 1, - 1 ),
-		// 	new YUKA.Vector3( 1, - 1, 1 ),
-		// 	new YUKA.Vector3( 1, - 1, - 1 ),
-		// 	new YUKA.Vector3( - 1, 1, 1 ),
-		// 	new YUKA.Vector3( - 1, 1, - 1 ),
-		// 	new YUKA.Vector3( - 1, - 1, 1 ),
-		// 	new YUKA.Vector3( - 1, - 1, - 1 )
-		// ];
-
 		// overlapping
 
 		const points2 = [
@@ -82,45 +69,6 @@
 			new YUKA.Vector3( 5, 5, 7 ),
 			new YUKA.Vector3( 5, 5, 5 )
 		];
-
-		// outside, AB
-
-		// const points2 = [
-		// 	new YUKA.Vector3( 10, 10, 10 ),
-		// 	new YUKA.Vector3( 10, 10, 8 ),
-		// 	new YUKA.Vector3( 10, 8, 10 ),
-		// 	new YUKA.Vector3( 10, 8, 8 ),
-		// 	new YUKA.Vector3( 8, 10, 10 ),
-		// 	new YUKA.Vector3( 8, 10, 8 ),
-		// 	new YUKA.Vector3( 8, 8, 10 ),
-		// 	new YUKA.Vector3( 8, 8, 8 )
-		// ];
-
-		// outside, BA
-
-		// const points2 = [
-		// 	new YUKA.Vector3( 20, 18, 20 ),
-		// 	new YUKA.Vector3( 20, 18, - 20 ),
-		// 	new YUKA.Vector3( 20, 16, 20 ),
-		// 	new YUKA.Vector3( 20, 16, - 20 ),
-		// 	new YUKA.Vector3( - 20, 18, 20 ),
-		// 	new YUKA.Vector3( - 20, 18, - 20 ),
-		// 	new YUKA.Vector3( - 20, 16, 20 ),
-		// 	new YUKA.Vector3( - 20, 16, - 20 )
-		// ];
-
-		// outside, edges test
-
-		// const points2 = [
-		// 	new YUKA.Vector3( 2, 14, 5 ),
-		// 	new YUKA.Vector3( 2, 14, 6 ),
-		// 	new YUKA.Vector3( 2, 12, 5 ),
-		// 	new YUKA.Vector3( 2, 12, 6 ),
-		// 	new YUKA.Vector3( 0, 14, 5 ),
-		// 	new YUKA.Vector3( 0, 14, 6 ),
-		// 	new YUKA.Vector3( 0, 12, 5 ),
-		// 	new YUKA.Vector3( 0, 12, 6 )
-		// ];
 
 		const hull1 = createConvexHull( points1 );
 		const hull2 = createConvexHull( points2 );

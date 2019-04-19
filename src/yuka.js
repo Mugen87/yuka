@@ -52,6 +52,7 @@ export { Plane } from './math/Plane.js';
 export { Polygon } from './math/Polygon.js';
 export { Quaternion } from './math/Quaternion.js';
 export { Ray } from './math/Ray.js';
+export { SAT } from './math/SAT.js';
 export { Vector3 } from './math/Vector3.js';
 export { NavEdge } from './navigation/core/NavEdge.js';
 export { NavNode } from './navigation/core/NavNode.js';

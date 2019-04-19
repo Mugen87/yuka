@@ -18606,6 +18606,7 @@
 	exports.Polygon = Polygon;
 	exports.Quaternion = Quaternion;
 	exports.Ray = Ray;
+	exports.SAT = SAT;
 	exports.Vector3 = Vector3;
 	exports.NavEdge = NavEdge;
 	exports.NavNode = NavNode;

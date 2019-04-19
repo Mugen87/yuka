@@ -172,6 +172,50 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#intersectsConvexHull()', function () {
+
+		const convexHull = new ConvexHull().fromPoints( points );
+
+		it( 'should return true if this convex hull does intersect with the given one.', function () {
+
+			const points2 = [
+				new Vector3( 7, 7, 7 ),
+				new Vector3( 7, 7, 5 ),
+				new Vector3( 7, 5, 7 ),
+				new Vector3( 7, 5, 5 ),
+				new Vector3( 5, 7, 7 ),
+				new Vector3( 5, 7, 5 ),
+				new Vector3( 5, 5, 7 ),
+				new Vector3( 5, 5, 5 )
+			];
+
+			const convexHull2 = new ConvexHull().fromPoints( points2 );
+
+			expect( convexHull.intersectsConvexHull( convexHull2 ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if this convex hull does not intersect with the given one.', function () {
+
+			const points2 = [
+				new Vector3( 10, 10, 10 ),
+				new Vector3( 10, 10, 8 ),
+				new Vector3( 10, 8, 10 ),
+				new Vector3( 10, 8, 8 ),
+				new Vector3( 8, 10, 10 ),
+				new Vector3( 8, 10, 8 ),
+				new Vector3( 8, 8, 10 ),
+				new Vector3( 8, 8, 8 )
+			];
+
+			const convexHull2 = new ConvexHull().fromPoints( points2 );
+
+			expect( convexHull.intersectsConvexHull( convexHull2 ) ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#_reset()', function () {
 
 		it( 'should reset the internal properties to their default values', function () {
