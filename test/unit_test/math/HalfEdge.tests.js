@@ -140,4 +140,22 @@ describe( 'HalfEdge', function () {
 
 	} );
 
+	describe( '#getDirection()', function () {
+
+		it( 'should compute the direction of this half edge and store it in the given vector', function () {
+
+			const halfEdge = new HalfEdge();
+			const nextEdge = new HalfEdge( new Vector3( 0, 0, 2 ) );
+			halfEdge.next = nextEdge;
+
+			const direction = new Vector3();
+
+			halfEdge.getDirection( direction );
+
+			expect( direction ).to.deep.equal( new Vector3( 0, 0, 1 ) );
+
+		} );
+
+	} );
+
 } );

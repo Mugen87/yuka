@@ -94,8 +94,8 @@ class SAT {
 
 						// compute axis
 
-						directionA.subVectors( edgeA.to(), edgeA.from() ).normalize(); // consider to implement HalfEdge.getDirection()
-						directionB.subVectors( edgeB.to(), edgeB.from() ).normalize();
+						edgeA.getDirection( directionA );
+						edgeB.getDirection( directionB );
 
 						axis.crossVectors( directionA, directionB );
 

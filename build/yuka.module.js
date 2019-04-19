@@ -13739,8 +13739,8 @@ class SAT {
 
 						// compute axis
 
-						directionA.subVectors( edgeA.to(), edgeA.from() ).normalize(); // consider to implement HalfEdge.getDirection()
-						directionB.subVectors( edgeB.to(), edgeB.from() ).normalize();
+						edgeA.getDirection( directionA );
+						edgeB.getDirection( directionB );
 
 						axis.crossVectors( directionA, directionB );
 
@@ -13991,6 +13991,19 @@ class HalfEdge {
 		edge.twin = this;
 
 		return this;
+
+	}
+
+	/**
+	* Computes the direction of this half edge. The method assumes the half edge
+	* has a valid reference to a next half edge.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getDirection( result ) {
+
+		return result.subVectors( this.next.vertex, this.vertex ).normalize();
 
 	}
 
@@ -16372,7 +16385,7 @@ class NavMesh {
 
 			// calculate movement and edge direction
 
-			edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
+			closestEdge.getDirection( edgeDirection );
 			const length = movementDirection.subVectors( endPosition, startPosition ).length();
 
 			// this value influences the speed at which the entity moves along the edge

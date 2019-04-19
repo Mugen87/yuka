@@ -124,6 +124,19 @@ class HalfEdge {
 
 	}
 
+	/**
+	* Computes the direction of this half edge. The method assumes the half edge
+	* has a valid reference to a next half edge.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getDirection( result ) {
+
+		return result.subVectors( this.next.vertex, this.vertex ).normalize();
+
+	}
+
 }
 
 export { HalfEdge };

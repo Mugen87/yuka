@@ -397,7 +397,7 @@ class NavMesh {
 
 			// calculate movement and edge direction
 
-			edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
+			closestEdge.getDirection( edgeDirection );
 			const length = movementDirection.subVectors( endPosition, startPosition ).length();
 
 			// this value influences the speed at which the entity moves along the edge
