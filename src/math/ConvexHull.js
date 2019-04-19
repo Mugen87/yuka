@@ -1,5 +1,6 @@
 import { LineSegment } from './LineSegment.js';
 import { Plane } from './Plane.js';
+import { SAT } from './SAT.js';
 import { Vector3 } from './Vector3.js';
 import { Logger } from '../core/Logger.js';
 import { Polygon } from './Polygon.js';
@@ -8,6 +9,7 @@ const line = new LineSegment();
 const plane = new Plane();
 const closestPoint = new Vector3();
 const up = new Vector3( 0, 1, 0 );
+const sat = new SAT();
 
 /**
 * Class representing a convex hull. This is an implementation of the Quickhull algorithm
@@ -114,6 +116,18 @@ class ConvexHull {
 		}
 
 		return true;
+
+	}
+
+	/**
+	* Returns true if this convex hull intersects with the given one.
+	*
+	* @param {ConvexHull} convexHull - The convex hull to test.
+	* @return {Boolean} Whether this convex hull intersects with the given one or not.
+	*/
+	intersectsConvexHull( convexHull ) {
+
+		return sat.intersects( this.faces, convexHull.faces );
 
 	}
 
