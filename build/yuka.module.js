@@ -13652,6 +13652,8 @@ const directionB = new Vector3();
 const c = new Vector3();
 const d = new Vector3();
 
+const edgeCache = new Set();
+
 /**
 * Implementation of the separating axis theorem (SAT). Used to detect intersections
 * between convex polyhedra. The code is based on the presentation {@link http://twvideo01.ubm-us.net/o1/vault/gdc2013/slides/822403Gregorius_Dirk_TheSeparatingAxisTest.pdf The Separating Axis Test between convex polyhedra}
@@ -13680,6 +13682,8 @@ class SAT {
 		if ( resultBA ) return false;
 
 		const resultEdges = this._checkEdgeDirections( polyhedronA, polyhedronB );
+
+		edgeCache.clear();
 
 		if ( resultEdges ) return false;
 
@@ -13728,44 +13732,60 @@ class SAT {
 
 			do {
 
-				// iterate over all polygons of polyhedron B
+				// only test unique edges
 
-				for ( let i = 0, l = polyhedronB.length; i < l; i ++ ) {
+				if ( edgeCache.has( edgeA.twin ) === false ) {
 
-					const polygonB = polyhedronB[ i ];
-					let edgeB = polygonB.edge;
+					edgeCache.add( edgeA );
 
-					// iterate over all edges of B's current polygon
+					// iterate over all polygons of polyhedron B
 
-					do {
+					for ( let i = 0, l = polyhedronB.length; i < l; i ++ ) {
 
-						edgeA.getDirection( directionA );
-						edgeB.getDirection( directionB );
+						const polygonB = polyhedronB[ i ];
+						let edgeB = polygonB.edge;
 
-						// edge pruning: only consider edges if they build a face on the minkowski difference
+						// iterate over all edges of B's current polygon
 
-						if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
+						do {
 
-							// compute axis
+							// only test unique edges
 
-							axis.crossVectors( directionA, directionB );
+							if ( edgeCache.has( edgeB.twin ) === false ) {
 
-							this._projectOnAxis( polyhedronA, axis, intervalA );
-							this._projectOnAxis( polyhedronB, axis, intervalB );
+								edgeCache.add( edgeB );
 
-							// compare intervals
+								edgeA.getDirection( directionA );
+								edgeB.getDirection( directionB );
 
-							if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
+								// edge pruning: only consider edges if they build a face on the minkowski difference
 
-								return true; // intervals do not intersect, separating axis found
+								if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
+
+									// compute axis
+
+									axis.crossVectors( directionA, directionB );
+
+									this._projectOnAxis( polyhedronA, axis, intervalA );
+									this._projectOnAxis( polyhedronB, axis, intervalB );
+
+									// compare intervals
+
+									if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
+
+										return true; // intervals do not intersect, separating axis found
+
+									}
+
+								}
 
 							}
 
-						}
+							edgeB = edgeB.next;
 
-						edgeB = edgeB.next;
+						} while ( edgeB !== polygonB.edge );
 
-					} while ( edgeB !== polygonB.edge );
+					}
 
 				}
 
