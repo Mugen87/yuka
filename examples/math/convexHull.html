@@ -10,7 +10,7 @@
 
 	<section id="info">
 		<p>
-
+			Demonstrates an intersection test between two convex hulls.
 		</p>
 	</section>
 
@@ -21,7 +21,6 @@
 	import { OrbitControls } from '../lib/OrbitControls.module.js';
 
 	import { createConvexHullHelper } from './common/js/ConvexHullHelper.js';
-
 
 	let renderer, scene, camera;
 
@@ -39,7 +38,7 @@
 		//
 
 		renderer = new THREE.WebGLRenderer( { antialias: true } );
-		// renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
 
@@ -56,8 +55,6 @@
 			new YUKA.Vector3( - 9, 1, 11 ),
 			new YUKA.Vector3( 0, 14, - 8 )
 		];
-
-		// overlapping
 
 		const points2 = [
 			new YUKA.Vector3( 2, 14, 5 ),
@@ -112,7 +109,7 @@
 
 		const geometry = new THREE.BufferGeometry();
 		geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-		const material = new THREE.PointsMaterial();
+		const material = new THREE.PointsMaterial( { size: 0.5 } );
 
 		const pointCloud = new THREE.Points( geometry, material );
 		scene.add( pointCloud );
