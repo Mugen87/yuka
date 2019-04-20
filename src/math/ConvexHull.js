@@ -15,7 +15,7 @@ const sat = new SAT();
 * Class representing a convex hull. This is an implementation of the Quickhull algorithm
 * based on the presentation {@link http://media.steampowered.com/apps/valve/2014/DirkGregorius_ImplementingQuickHull.pdf Implementing QuickHull}
 * by Dirk Gregorius (Valve Software) from GDC 2014. The algorithm has an average runtime
-* complexity of O(n*log(n)), whereas in the worst case it takes O(n²).
+* complexity of O(nlog(n)), whereas in the worst case it takes O(n²).
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */

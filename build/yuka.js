@@ -13979,7 +13979,7 @@
 		/**
 		* Returns the head of this half-edge. That's a reference to the own vertex.
 		*
-		* @return {Vector3} The vertex.
+		* @return {Vector3} The head vertex.
 		*/
 		head() {
 
@@ -14044,7 +14044,7 @@
 
 		/**
 		* Computes the direction of this half edge. The method assumes the half edge
-		* has a valid reference to a next half edge.
+		* has a valid reference to a previous half edge.
 		*
 		* @param {Vector3} result - The result vector.
 		* @return {Vector3} The result vector.
@@ -14393,7 +14393,7 @@
 	* Class representing a convex hull. This is an implementation of the Quickhull algorithm
 	* based on the presentation {@link http://media.steampowered.com/apps/valve/2014/DirkGregorius_ImplementingQuickHull.pdf Implementing QuickHull}
 	* by Dirk Gregorius (Valve Software) from GDC 2014. The algorithm has an average runtime
-	* complexity of O(n*log(n)), whereas in the worst case it takes O(n²).
+	* complexity of O(nlog(n)), whereas in the worst case it takes O(n²).
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
 	*/

@@ -62,7 +62,7 @@ class HalfEdge {
 	/**
 	* Returns the head of this half-edge. That's a reference to the own vertex.
 	*
-	* @return {Vector3} The vertex.
+	* @return {Vector3} The head vertex.
 	*/
 	head() {
 
@@ -127,7 +127,7 @@ class HalfEdge {
 
 	/**
 	* Computes the direction of this half edge. The method assumes the half edge
-	* has a valid reference to a next half edge.
+	* has a valid reference to a previous half edge.
 	*
 	* @param {Vector3} result - The result vector.
 	* @return {Vector3} The result vector.
