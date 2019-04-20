@@ -64,7 +64,7 @@ class ConvexHull extends Polyhedron {
 
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-			// if the signed distance is greater than the tolernce value, the point
+			// if the signed distance is greater than the tolerance value, the point
 			// is outside and we can stop processing
 
 			if ( faces[ i ].distanceToPoint( point ) > this._tolerance ) return false;
