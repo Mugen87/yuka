@@ -7,8 +7,6 @@ const directionB = new Vector3();
 
 const c = new Vector3();
 const d = new Vector3();
-const bxa = new Vector3();
-const dxc = new Vector3();
 
 /**
 * Implementation of the separating axis theorem (SAT). Used to detect intersections
@@ -97,14 +95,14 @@ class SAT {
 
 					do {
 
+						edgeA.getDirection( directionA );
+						edgeB.getDirection( directionB );
+
 						// edge pruning: only consider edges if they build a face on the minkowski difference
 
-						if ( this._minkowskiFace( edgeA, edgeB ) ) {
+						if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
 
 							// compute axis
-
-							edgeA.getDirection( directionA );
-							edgeB.getDirection( directionB );
 
 							axis.crossVectors( directionA, directionB );
 
@@ -213,7 +211,7 @@ class SAT {
 
 	// returns true if the given edges build a face on the minkowski difference
 
-	_minkowskiFace( edgeA, edgeB ) {
+	_minkowskiFace( edgeA, directionA, edgeB, directionB ) {
 
 		// get face normals which define the vertices of the arcs on the gauss map
 
@@ -229,13 +227,13 @@ class SAT {
 
 		// compute triple products
 
-		bxa.crossVectors( b, a );
-		dxc.crossVectors( d, c );
+		// it's not necessary to compute the cross product since edges of convex polyhedron
+		// have same direction as the cross product between their adjacent face normals
 
-		const cba = c.dot( bxa );
-		const dba = d.dot( bxa );
-		const adc = a.dot( dxc );
-		const bdc = b.dot( dxc );
+		const cba = c.dot( directionA );
+		const dba = d.dot( directionA );
+		const adc = a.dot( directionB );
+		const bdc = b.dot( directionB );
 
 		// check signs of plane test
 

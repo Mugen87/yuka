@@ -43,9 +43,9 @@ function createConvexRegionHelper( navMesh ) {
 
 		for ( let i = 1, l = triangleCount; i <= l; i ++ ) {
 
-			const v1 = edges[ 0 ].from();
-			const v2 = edges[ i + 0 ].from();
-			const v3 = edges[ i + 1 ].from();
+			const v1 = edges[ 0 ].vertex;
+			const v2 = edges[ i + 0 ].vertex;
+			const v3 = edges[ i + 1 ].vertex;
 
 			positions.push( v1.x, v1.y, v1.z );
 			positions.push( v2.x, v2.y, v2.z );

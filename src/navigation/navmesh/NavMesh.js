@@ -128,7 +128,7 @@ class NavMesh {
 
 				let edge1 = initialEdgeList[ j ];
 
-				if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
+				if ( edge0.tail().equals( edge1.head() ) && edge0.head().equals( edge1.tail() ) ) {
 
 					// opponent edge found, set twin references
 
@@ -421,7 +421,7 @@ class NavMesh {
 
 			// the following value "t" tells us if the point exceeds the line segment
 
-			lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
+			lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
 			const t = lineSegment.closestPointToPointParameter( newPosition, false );
 
 			//
@@ -718,7 +718,7 @@ class NavMesh {
 
 			const edge = borderEdges[ i ];
 
-			lineSegment.set( edge.vertex, edge.next.vertex );
+			lineSegment.set( edge.prev.vertex, edge.vertex );
 			const t = lineSegment.closestPointToPointParameter( point );
 			lineSegment.at( t, pointOnLineSegment );
 

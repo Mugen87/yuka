@@ -122,7 +122,7 @@ class Polygon {
 
 		do {
 
-			centroid.add( edge.from() );
+			centroid.add( edge.vertex );
 
 			count ++;
 
@@ -152,8 +152,8 @@ class Polygon {
 
 		do {
 
-			const v1 = edge.from();
-			const v2 = edge.to();
+			const v1 = edge.tail();
+			const v2 = edge.head();
 
 			if ( leftOn( v1, v2, point ) === false ) {
 
@@ -191,9 +191,9 @@ class Polygon {
 
 		do {
 
-			const v1 = edge.from();
-			const v2 = edge.to();
-			const v3 = edge.next.to();
+			const v1 = edge.tail();
+			const v2 = edge.head();
+			const v3 = edge.next.head();
 
 			if ( ccw ) {
 
@@ -226,7 +226,7 @@ class Polygon {
 
 		do {
 
-			const distance = plane.distanceToPoint( edge.from() );
+			const distance = plane.distanceToPoint( edge.vertex );
 
 			if ( Math.abs( distance ) > epsilon ) {
 
@@ -301,8 +301,8 @@ class Polygon {
 
 				if ( edge.twin.polygon === polygon ) {
 
-					portalEdge.left = edge.vertex;
-					portalEdge.right = edge.next.vertex;
+					portalEdge.left = edge.prev.vertex;
+					portalEdge.right = edge.vertex;
 					return portalEdge;
 
 				}

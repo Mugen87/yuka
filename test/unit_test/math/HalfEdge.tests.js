@@ -37,38 +37,38 @@ describe( 'HalfEdge', function () {
 
 	} );
 
-	describe( '#from()', function () {
+	describe( '#tail()', function () {
 
-		it( 'should return the start vertex of the half edge', function () {
-
-			const vertex = new Vector3( 1, 1, 1 );
-			const halfEdge = new HalfEdge( vertex );
-
-			expect( halfEdge.from() ).to.equal( halfEdge.vertex );
-
-		} );
-
-	} );
-
-	describe( '#to()', function () {
-
-		it( 'should return the end vertex of the half edge (vertex of the next half edge)', function () {
+		it( 'should return the start vertex of the half edge (vertex of the prev half edge)', function () {
 
 			const vertex = new Vector3( 1, 1, 1 );
 			const halfEdge1 = new HalfEdge();
 			const halfEdge2 = new HalfEdge( vertex );
 
-			halfEdge1.next = halfEdge2;
+			halfEdge1.prev = halfEdge2;
 
-			expect( halfEdge1.to() ).to.equal( halfEdge2.vertex );
+			expect( halfEdge1.tail() ).to.equal( halfEdge2.vertex );
 
 		} );
 
-		it( 'should return null if the reference to the next half edge is null', function () {
+		it( 'should return null if the reference to the prev half edge is null', function () {
 
 			const halfEdge = new HalfEdge();
 
-			expect( halfEdge.to() ).to.be.null;
+			expect( halfEdge.tail() ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#head()', function () {
+
+		it( 'should return the end vertex of the half edge', function () {
+
+			const vertex = new Vector3( 1, 1, 1 );
+			const halfEdge = new HalfEdge( vertex );
+
+			expect( halfEdge.head() ).to.equal( halfEdge.vertex );
 
 		} );
 
@@ -78,18 +78,16 @@ describe( 'HalfEdge', function () {
 
 		it( 'should return length of the half edge (euclidean distance from start to end vertex)', function () {
 
-			const from = new Vector3( 0, 0, 0 );
-			const to = new Vector3( 0, 0, 2 );
-			const halfEdge1 = new HalfEdge( from );
-			const halfEdge2 = new HalfEdge( to );
+			const halfEdge1 = new HalfEdge( new Vector3( 0, 0, 2 ) );
+			const halfEdge2 = new HalfEdge( new Vector3( 0, 0, 0 ) );
 
-			halfEdge1.next = halfEdge2;
+			halfEdge1.prev = halfEdge2;
 
 			expect( halfEdge1.length() ).to.equal( 2 );
 
 		} );
 
-		it( 'should return - 1 if the reference to the next half edge is null', function () {
+		it( 'should return - 1 if the reference to the prev half edge is null', function () {
 
 			const halfEdge = new HalfEdge();
 
@@ -103,18 +101,16 @@ describe( 'HalfEdge', function () {
 
 		it( 'should return length in squared space of the half edge (squared euclidean distance from start to end vertex)', function () {
 
-			const from = new Vector3( 0, 0, 0 );
-			const to = new Vector3( 0, 0, 2 );
-			const halfEdge1 = new HalfEdge( from );
-			const halfEdge2 = new HalfEdge( to );
+			const halfEdge1 = new HalfEdge( new Vector3( 0, 0, 2 ) );
+			const halfEdge2 = new HalfEdge( new Vector3( 0, 0, 0 ) );
 
-			halfEdge1.next = halfEdge2;
+			halfEdge1.prev = halfEdge2;
 
 			expect( halfEdge1.squaredLength() ).to.equal( 4 );
 
 		} );
 
-		it( 'should return - 1 if the reference to the next half edge is null', function () {
+		it( 'should return - 1 if the reference to the prev half edge is null', function () {
 
 			const halfEdge = new HalfEdge();
 
@@ -144,13 +140,12 @@ describe( 'HalfEdge', function () {
 
 		it( 'should compute the direction of this half edge and store it in the given vector', function () {
 
-			const halfEdge = new HalfEdge();
-			const nextEdge = new HalfEdge( new Vector3( 0, 0, 2 ) );
-			halfEdge.next = nextEdge;
+			const halfEdge1 = new HalfEdge( new Vector3( 0, 0, 2 ) );
+			const halfEdge2 = new HalfEdge( new Vector3( 0, 0, 0 ) );
+			halfEdge1.prev = halfEdge2;
 
 			const direction = new Vector3();
-
-			halfEdge.getDirection( direction );
+			halfEdge1.getDirection( direction );
 
 			expect( direction ).to.deep.equal( new Vector3( 0, 0, 1 ) );
 

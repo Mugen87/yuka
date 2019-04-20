@@ -364,7 +364,7 @@ describe( 'NavMesh', function () {
 			navMesh._getClosestBorderEdge( point, closestBorderEdge );
 
 			const region = navMesh.regions[ 1 ];
-			const edge = region.edge.prev;
+			const edge = region.edge;
 
 			expect( closestBorderEdge.edge ).to.equal( edge );
 			expect( closestBorderEdge.closestPoint ).to.deep.equal( { x: 1, y: 0, z: 0.5 } );
@@ -386,7 +386,7 @@ describe( 'NavMesh', function () {
 			navMesh._getClosestBorderEdge( point, closestBorderEdge );
 
 			const region = navMesh.regions[ 1 ];
-			const edge = region.edge.prev;
+			const edge = region.edge;
 
 			expect( closestBorderEdge.edge ).to.equal( edge );
 			expect( closestBorderEdge.closestPoint ).to.deep.equal( { x: 1, y: 0, z: 0.5 } );

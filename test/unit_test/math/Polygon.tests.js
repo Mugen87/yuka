@@ -389,26 +389,26 @@ describe( 'Polygon', function () {
 
 			const vertices1 = [
 				new Vector3( 0, 0, 0 ),
-				new Vector3( 1, 0, 0 ),
 				new Vector3( 0.5, 0, - 1 ),
+				new Vector3( 1, 0, 0 )
 			];
 
 			const vertices2 = [
 				new Vector3( 0, 0, 0 ),
-				new Vector3( 0.5, 0, 1 ),
-				new Vector3( 1, 0, 0 )
+				new Vector3( 1, 0, 0 ),
+				new Vector3( 0.5, 0, 1 )
 			];
 
 			polygon1.fromContour( vertices1 );
 			polygon2.fromContour( vertices2 );
 
-			polygon1.edge.twin = polygon2.edge.prev;
+			polygon1.edge.twin = polygon2.edge.next;
 
 			const portalEdge = { left: null, right: null };
 
 			polygon1.getPortalEdgeTo( polygon2, portalEdge );
-			expect( portalEdge.left ).to.equal( vertices1[ 0 ] );
-			expect( portalEdge.right ).to.equal( vertices1[ 1 ] );
+			expect( portalEdge.left ).to.equal( vertices1[ 2 ] );
+			expect( portalEdge.right ).to.equal( vertices1[ 0 ] );
 
 			polygon1.getPortalEdgeTo( polygon3, portalEdge );
 			expect( portalEdge.left ).to.be.null;

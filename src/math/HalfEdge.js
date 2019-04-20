@@ -48,24 +48,25 @@ class HalfEdge {
 	}
 
 	/**
-	* Returns the origin vertex of this half-edge.
+	* Returns the tail of this half-edge. That's a reference to the previous
+	* half-edge vertex.
 	*
-	* @return {Vector3} The origin vertex.
+	* @return {Vector3} The tail vertex.
 	*/
-	from() {
+	tail() {
 
-		return this.vertex;
+		return this.prev ? this.prev.vertex : null;
 
 	}
 
 	/**
-	* Returns the destination vertex of this half-edge.
+	* Returns the head of this half-edge. That's a reference to the own vertex.
 	*
-	* @return {Vector3} The destination vertex.
+	* @return {Vector3} The vertex.
 	*/
-	to() {
+	head() {
 
-		return this.next ? this.next.vertex : null;
+		return this.vertex;
 
 	}
 
@@ -76,12 +77,12 @@ class HalfEdge {
 	*/
 	length() {
 
-		const from = this.from();
-		const to = this.to();
+		const tail = this.tail();
+		const head = this.head();
 
-		if ( to !== null ) {
+		if ( tail !== null ) {
 
-			return from.distanceTo( to );
+			return tail.distanceTo( head );
 
 		}
 
@@ -96,12 +97,12 @@ class HalfEdge {
 	*/
 	squaredLength() {
 
-		const from = this.from();
-		const to = this.to();
+		const tail = this.tail();
+		const head = this.head();
 
-		if ( to !== null ) {
+		if ( tail !== null ) {
 
-			return from.squaredDistanceTo( to );
+			return tail.squaredDistanceTo( head );
 
 		}
 
@@ -133,7 +134,7 @@ class HalfEdge {
 	*/
 	getDirection( result ) {
 
-		return result.subVectors( this.next.vertex, this.vertex ).normalize();
+		return result.subVectors( this.vertex, this.prev.vertex ).normalize();
 
 	}
 

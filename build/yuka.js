@@ -13658,8 +13658,6 @@
 
 	const c = new Vector3();
 	const d = new Vector3();
-	const bxa = new Vector3();
-	const dxc = new Vector3();
 
 	/**
 	* Implementation of the separating axis theorem (SAT). Used to detect intersections
@@ -13748,14 +13746,14 @@
 
 						do {
 
+							edgeA.getDirection( directionA );
+							edgeB.getDirection( directionB );
+
 							// edge pruning: only consider edges if they build a face on the minkowski difference
 
-							if ( this._minkowskiFace( edgeA, edgeB ) ) {
+							if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
 
 								// compute axis
-
-								edgeA.getDirection( directionA );
-								edgeB.getDirection( directionB );
 
 								axis.crossVectors( directionA, directionB );
 
@@ -13864,7 +13862,7 @@
 
 		// returns true if the given edges build a face on the minkowski difference
 
-		_minkowskiFace( edgeA, edgeB ) {
+		_minkowskiFace( edgeA, directionA, edgeB, directionB ) {
 
 			// get face normals which define the vertices of the arcs on the gauss map
 
@@ -13880,13 +13878,13 @@
 
 			// compute triple products
 
-			bxa.crossVectors( b, a );
-			dxc.crossVectors( d, c );
+			// it's not necessary to compute the cross product since edges of convex polyhedron
+			// have same direction as the cross product between their adjacent face normals
 
-			const cba = c.dot( bxa );
-			const dba = d.dot( bxa );
-			const adc = a.dot( dxc );
-			const bdc = b.dot( dxc );
+			const cba = c.dot( directionA );
+			const dba = d.dot( directionA );
+			const adc = a.dot( directionB );
+			const bdc = b.dot( directionB );
 
 			// check signs of plane test
 
@@ -13967,24 +13965,25 @@
 		}
 
 		/**
-		* Returns the origin vertex of this half-edge.
+		* Returns the tail of this half-edge. That's a reference to the previous
+		* half-edge vertex.
 		*
-		* @return {Vector3} The origin vertex.
+		* @return {Vector3} The tail vertex.
 		*/
-		from() {
+		tail() {
 
-			return this.vertex;
+			return this.prev ? this.prev.vertex : null;
 
 		}
 
 		/**
-		* Returns the destination vertex of this half-edge.
+		* Returns the head of this half-edge. That's a reference to the own vertex.
 		*
-		* @return {Vector3} The destination vertex.
+		* @return {Vector3} The vertex.
 		*/
-		to() {
+		head() {
 
-			return this.next ? this.next.vertex : null;
+			return this.vertex;
 
 		}
 
@@ -13995,12 +13994,12 @@
 		*/
 		length() {
 
-			const from = this.from();
-			const to = this.to();
+			const tail = this.tail();
+			const head = this.head();
 
-			if ( to !== null ) {
+			if ( tail !== null ) {
 
-				return from.distanceTo( to );
+				return tail.distanceTo( head );
 
 			}
 
@@ -14015,12 +14014,12 @@
 		*/
 		squaredLength() {
 
-			const from = this.from();
-			const to = this.to();
+			const tail = this.tail();
+			const head = this.head();
 
-			if ( to !== null ) {
+			if ( tail !== null ) {
 
-				return from.squaredDistanceTo( to );
+				return tail.squaredDistanceTo( head );
 
 			}
 
@@ -14052,7 +14051,7 @@
 		*/
 		getDirection( result ) {
 
-			return result.subVectors( this.next.vertex, this.vertex ).normalize();
+			return result.subVectors( this.vertex, this.prev.vertex ).normalize();
 
 		}
 
@@ -14176,7 +14175,7 @@
 
 			do {
 
-				centroid.add( edge.from() );
+				centroid.add( edge.vertex );
 
 				count ++;
 
@@ -14206,8 +14205,8 @@
 
 			do {
 
-				const v1 = edge.from();
-				const v2 = edge.to();
+				const v1 = edge.tail();
+				const v2 = edge.head();
 
 				if ( leftOn( v1, v2, point ) === false ) {
 
@@ -14245,9 +14244,9 @@
 
 			do {
 
-				const v1 = edge.from();
-				const v2 = edge.to();
-				const v3 = edge.next.to();
+				const v1 = edge.tail();
+				const v2 = edge.head();
+				const v3 = edge.next.head();
 
 				if ( ccw ) {
 
@@ -14280,7 +14279,7 @@
 
 			do {
 
-				const distance = plane.distanceToPoint( edge.from() );
+				const distance = plane.distanceToPoint( edge.vertex );
 
 				if ( Math.abs( distance ) > epsilon ) {
 
@@ -14355,8 +14354,8 @@
 
 					if ( edge.twin.polygon === polygon ) {
 
-						portalEdge.left = edge.vertex;
-						portalEdge.right = edge.next.vertex;
+						portalEdge.left = edge.prev.vertex;
+						portalEdge.right = edge.vertex;
 						return portalEdge;
 
 					}
@@ -16165,7 +16164,7 @@
 
 					let edge1 = initialEdgeList[ j ];
 
-					if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
+					if ( edge0.tail().equals( edge1.head() ) && edge0.head().equals( edge1.tail() ) ) {
 
 						// opponent edge found, set twin references
 
@@ -16458,7 +16457,7 @@
 
 				// the following value "t" tells us if the point exceeds the line segment
 
-				lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
+				lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
 				const t = lineSegment.closestPointToPointParameter( newPosition, false );
 
 				//
@@ -16755,7 +16754,7 @@
 
 				const edge = borderEdges[ i ];
 
-				lineSegment.set( edge.vertex, edge.next.vertex );
+				lineSegment.set( edge.prev.vertex, edge.vertex );
 				const t = lineSegment.closestPointToPointParameter( point );
 				lineSegment.at( t, pointOnLineSegment );
 
