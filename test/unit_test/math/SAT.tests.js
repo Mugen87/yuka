@@ -43,7 +43,7 @@ describe( 'SAT', function () {
 
 			const sat = new SAT();
 
-			expect( sat.intersects( convexHull1.faces, convexHull2.faces ) ).to.be.true;
+			expect( sat.intersects( convexHull1, convexHull2 ) ).to.be.true;
 
 		} );
 
@@ -65,7 +65,7 @@ describe( 'SAT', function () {
 
 			const sat = new SAT();
 
-			expect( sat.intersects( convexHull1.faces, convexHull2.faces ) ).to.be.true;
+			expect( sat.intersects( convexHull1, convexHull2 ) ).to.be.true;
 
 		} );
 
@@ -87,7 +87,7 @@ describe( 'SAT', function () {
 
 			const sat = new SAT();
 
-			expect( sat.intersects( convexHull1.faces, convexHull2.faces ) ).to.be.false;
+			expect( sat.intersects( convexHull1, convexHull2 ) ).to.be.false;
 
 		} );
 
@@ -109,7 +109,7 @@ describe( 'SAT', function () {
 
 			const sat = new SAT();
 
-			expect( sat.intersects( convexHull1.faces, convexHull2.faces ) ).to.be.false;
+			expect( sat.intersects( convexHull1, convexHull2 ) ).to.be.false;
 
 		} );
 
@@ -131,7 +131,7 @@ describe( 'SAT', function () {
 
 			const sat = new SAT();
 
-			expect( sat.intersects( convexHull1.faces, convexHull2.faces ) ).to.be.false;
+			expect( sat.intersects( convexHull1, convexHull2 ) ).to.be.false;
 
 		} );
 

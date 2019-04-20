@@ -50,6 +50,7 @@ export { Matrix3 } from './math/Matrix3.js';
 export { Matrix4 } from './math/Matrix4.js';
 export { Plane } from './math/Plane.js';
 export { Polygon } from './math/Polygon.js';
+export { Polyhedron } from './math/Polyhedron.js';
 export { Quaternion } from './math/Quaternion.js';
 export { Ray } from './math/Ray.js';
 export { SAT } from './math/SAT.js';

@@ -4,6 +4,7 @@ import { SAT } from './SAT.js';
 import { Vector3 } from './Vector3.js';
 import { Logger } from '../core/Logger.js';
 import { Polygon } from './Polygon.js';
+import { Polyhedron } from './Polyhedron.js';
 
 const line = new LineSegment();
 const plane = new Plane();
@@ -18,21 +19,16 @@ const sat = new SAT();
 * complexity of O(nlog(n)), whereas in the worst case it takes O(n²).
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
+* @augments Polyhedron
 */
-class ConvexHull {
+class ConvexHull extends Polyhedron {
 
 	/**
 	* Constructs a new convex hull.
 	*/
 	constructor() {
 
-		/**
-		* An array of faces representing the convex hull.
-		* @type Array
-		*/
-		this.faces = new Array();
-
-		// private members
+		super();
 
 		// tolerance value for various (float) compare operations
 
@@ -50,46 +46,6 @@ class ConvexHull {
 		// this array holds the new faces generated in a single iteration of the algorithm
 
 		this._newFaces = new Array();
-
-	}
-
-	/**
-	* Sets the given faces to this convex hull.
-	*
-	* @param {Array} faces - The new faces of the convex hull.
-	* @return {ConvexHull} A reference to this convex hull.
-	*/
-	set( faces ) {
-
-		this.faces = faces;
-
-		return this;
-
-	}
-
-	/**
-	* Copies the faces from the given convex hull to this convex hull.
-	*
-	* @param {ConvexHull} convexHull - The convex hull to copy.
-	* @return {ConvexHull} A reference to this convex hull.
-	*/
-	copy( convexHull ) {
-
-		this.faces.length = 0;
-		this.faces.push( ...convexHull.faces );
-
-		return this;
-
-	}
-
-	/**
-	* Creates a new convex hull and copies all values from this convex hull.
-	*
-	* @return {ConvexHull} A new convex hull.
-	*/
-	clone() {
-
-		return new this.constructor().copy( this );
 
 	}
 
@@ -127,7 +83,7 @@ class ConvexHull {
 	*/
 	intersectsConvexHull( convexHull ) {
 
-		return sat.intersects( this.faces, convexHull.faces );
+		return sat.intersects( this, convexHull );
 
 	}
 
@@ -659,6 +615,7 @@ class ConvexHull {
 	_mergeFaces() {
 
 		const faces = this.faces;
+		const edges = this.edges;
 
 		const cache = {
 			leftPrev: null,
@@ -667,7 +624,11 @@ class ConvexHull {
 			rightNext: null
 		};
 
-		const edges = this._getSortedEdgeList();
+		// gather unique edges and temporarily sort them
+
+		this.computeEdgeList();
+
+		edges.sort( ( a, b ) => b.length() - a.length() );
 
 		// process edges from longest to shortest
 
@@ -730,7 +691,7 @@ class ConvexHull {
 
 		}
 
-		// recompute centroid
+		// recompute centroid of faces
 
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
@@ -738,39 +699,13 @@ class ConvexHull {
 
 		}
 
-	}
+		// compute centroid of convex hull and the final edge list
 
-	// return a array with all halfedges of the convex hull sorted by length in descending order
+		this.computeCentroid();
 
-	_getSortedEdgeList() {
+		this.computeEdgeList();
 
-		const faces = this.faces;
-		const result = new Array();
-
-		for ( let i = 0, l = faces.length; i < l; i ++ ) {
-
-			const face = faces[ i ];
-			const firstEdge = face.edge;
-
-			let edge = firstEdge;
-
-			do {
-
-				// only add the edge if the twin was not added before
-
-				if ( result.includes( edge.twin ) === false ) {
-
-					result.push( edge );
-
-				}
-
-				edge = edge.next;
-
-			} while ( edge !== firstEdge );
-
-		}
-
-		return result.sort( ( a, b ) => b.length() - a.length() );
+		return this;
 
 	}
 

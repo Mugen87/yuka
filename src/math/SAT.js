@@ -8,9 +8,6 @@ const directionB = new Vector3();
 const c = new Vector3();
 const d = new Vector3();
 
-const edgesA = new Set();
-const edgesB = new Set();
-
 /**
 * Implementation of the separating axis theorem (SAT). Used to detect intersections
 * between convex polyhedra. The code is based on the presentation {@link http://twvideo01.ubm-us.net/o1/vault/gdc2013/slides/822403Gregorius_Dirk_TheSeparatingAxisTest.pdf The Separating Axis Test between convex polyhedra}
@@ -24,8 +21,8 @@ class SAT {
 	* Returns true if the given convex polyhedra intersect. A polyhedron is just
 	* an array of {@link Polygon} objects.
 	*
-	* @param {Array} polyhedronA - The first convex polyhedron.
-	* @param {Array} polyhedronB - The second convex polyhedron.
+	* @param {Polyhedron} polyhedronA - The first convex polyhedron.
+	* @param {Polyhedron} polyhedronB - The second convex polyhedron.
 	* @return {Boolean} Whether there is an intersection or not.
 	*/
 	intersects( polyhedronA, polyhedronB ) {
@@ -40,9 +37,6 @@ class SAT {
 
 		const resultEdges = this._checkEdgeDirections( polyhedronA, polyhedronB );
 
-		edgesA.clear();
-		edgesB.clear();
-
 		if ( resultEdges ) return false;
 
 		// no separating axis found, the polyhedra must intersect
@@ -56,10 +50,12 @@ class SAT {
 
 	_checkFaceDirections( polyhedronA, polyhedronB ) {
 
-		for ( let i = 0, l = polyhedronA.length; i < l; i ++ ) {
+		const faces = polyhedronA.faces;
 
-			const polygon = polyhedronA[ i ];
-			const plane = polygon.plane;
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			const plane = face.plane;
 
 			oppositeNormal.copy( plane.normal ).multiplyScalar( - 1 );
 
@@ -74,84 +70,47 @@ class SAT {
 
 	}
 
-	// check with possible separating axes computed with the cross product between
+	// check with possible separating axes computed via the cross product between
 	// all edge combinations of both polyhedra
 
 	_checkEdgeDirections( polyhedronA, polyhedronB ) {
 
-		// iterate over all polygons of polyhedron A
+		const edgesA = polyhedronA.edges;
+		const edgesB = polyhedronB.edges;
 
-		for ( let i = 0, l = polyhedronA.length; i < l; i ++ ) {
+		for ( let i = 0, il = edgesA.length; i < il; i ++ ) {
 
-			const polygonA = polyhedronA[ i ];
-			let edgeA = polygonA.edge;
+			const edgeA = edgesA[ i ];
 
-			// iterate over all edges of A's current polygon
+			for ( let j = 0, jl = edgesB.length; j < jl; j ++ ) {
 
-			do {
+				const edgeB = edgesB[ j ];
 
-				// only test unique edges
+				edgeA.getDirection( directionA );
+				edgeB.getDirection( directionB );
 
-				if ( edgesA.has( edgeA.twin ) === false ) {
+				// edge pruning: only consider edges if they build a face on the minkowski difference
 
-					edgesA.add( edgeA );
+				if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
 
-					// iterate over all polygons of polyhedron B
+					// compute axis
 
-					for ( let i = 0, l = polyhedronB.length; i < l; i ++ ) {
+					axis.crossVectors( directionA, directionB );
 
-						const polygonB = polyhedronB[ i ];
-						let edgeB = polygonB.edge;
+					this._projectOnAxis( polyhedronA, axis, intervalA );
+					this._projectOnAxis( polyhedronB, axis, intervalB );
 
-						// iterate over all edges of B's current polygon
+					// compare intervals
 
-						do {
+					if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
 
-							// only test unique edges
-
-							if ( edgesB.has( edgeB.twin ) === false ) {
-
-								edgesB.add( edgeB );
-
-								edgeA.getDirection( directionA );
-								edgeB.getDirection( directionB );
-
-								// edge pruning: only consider edges if they build a face on the minkowski difference
-
-								if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
-
-									// compute axis
-
-									axis.crossVectors( directionA, directionB );
-
-									this._projectOnAxis( polyhedronA, axis, intervalA );
-									this._projectOnAxis( polyhedronB, axis, intervalB );
-
-									// compare intervals
-
-									if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
-
-										return true; // intervals do not intersect, separating axis found
-
-									}
-
-								}
-
-							}
-
-							edgeB = edgeB.next;
-
-						} while ( edgeB !== polygonB.edge );
+						return true; // intervals do not intersect, separating axis found
 
 					}
 
-					edgesB.clear();
-
 				}
 
-				edgeA = edgeA.next;
-
-			} while ( edgeA !== polygonA.edge );
+			}
 
 		}
 
@@ -168,10 +127,12 @@ class SAT {
 
 		// iterate over all polygons
 
-		for ( let i = 0, l = polyhedron.length; i < l; i ++ ) {
+		const faces = polyhedron.faces;
 
-			const polygon = polyhedron[ i ];
-			let edge = polygon.edge;
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			let edge = face.edge;
 
 			// iterate over all edges
 
@@ -191,7 +152,7 @@ class SAT {
 
 				edge = edge.next;
 
-			} while ( edge !== polygon.edge );
+			} while ( edge !== face.edge );
 
 		}
 
@@ -204,14 +165,16 @@ class SAT {
 
 	_projectOnAxis( polyhedron, axis, interval ) {
 
+		const faces = polyhedron.faces;
+
 		interval.reset();
 
 		// iterate over all polygons
 
-		for ( let i = 0, l = polyhedron.length; i < l; i ++ ) {
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-			const polygon = polyhedron[ i ];
-			let edge = polygon.edge;
+			const face = faces[ i ];
+			let edge = face.edge;
 
 			// iterate over all edges
 
@@ -225,7 +188,7 @@ class SAT {
 
 				edge = edge.next;
 
-			} while ( edge !== polygon.edge );
+			} while ( edge !== face.edge );
 
 		}
 

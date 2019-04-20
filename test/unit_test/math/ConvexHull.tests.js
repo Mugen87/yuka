@@ -34,83 +34,11 @@ describe( 'ConvexHull', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const convexHull = new ConvexHull();
-			expect( convexHull.faces ).to.be.of.an( 'array' );
 			expect( convexHull._tolerance ).to.equal( - 1 );
 			expect( convexHull._vertices ).to.be.of.an( 'array' );
 			expect( convexHull._assigned ).to.be.an.instanceof( VertexList );
 			expect( convexHull._unassigned ).to.be.an.instanceof( VertexList );
 			expect( convexHull._newFaces ).to.be.of.an( 'array' );
-
-		} );
-
-	} );
-
-	describe( '#set()', function () {
-
-		it( 'should set the given faces to this convex hull.s', function () {
-
-			const convexHull = new ConvexHull();
-			const faces = [];
-
-			convexHull.set( faces );
-
-			expect( convexHull.faces ).to.equal( faces );
-
-		} );
-
-	} );
-
-	describe( '#copy()', function () {
-
-		it( 'should copy all values from the given object', function () {
-
-			const face1 = new Face();
-			const face2 = new Face();
-			const face3 = new Face();
-
-			const convexHull1 = new ConvexHull();
-			const convexHull2 = new ConvexHull();
-
-			convexHull1.faces.push( face1, face2 );
-			convexHull2.faces.push( face3 );
-
-			convexHull2.copy( convexHull1 );
-
-			expect( convexHull2.faces ).to.have.lengthOf( 2 );
-			expect( convexHull2.faces ).to.include( face1, face2 );
-			expect( convexHull2.faces ).to.not.include( face3 );
-
-		} );
-
-	} );
-
-	describe( '#clone()', function () {
-
-		it( 'should create a new object', function () {
-
-			const face1 = new Face();
-			const face2 = new Face();
-
-			const convexHull1 = new ConvexHull();
-			convexHull1.faces.push( face1, face2 );
-
-			const convexHull2 = convexHull1.clone();
-
-			expect( convexHull1 ).not.to.equal( convexHull2 );
-
-		} );
-
-		it( 'should copy the values of the current object to the new one', function () {
-
-			const face1 = new Face();
-			const face2 = new Face();
-
-			const convexHull1 = new ConvexHull();
-			convexHull1.faces.push( face1, face2 );
-
-			const convexHull2 = convexHull1.clone();
-
-			expect( convexHull2.faces ).to.include( face1, face2 );
 
 		} );
 
@@ -879,26 +807,6 @@ describe( 'ConvexHull', function () {
 			expect( face2.edge.next.twin ).to.equal( face1.edge );
 			expect( face3.edge.twin ).to.equal( face1.edge.next );
 			expect( face3.edge.next.twin ).to.equal( face2.edge );
-
-		} );
-
-	} );
-
-	describe( '#_getSortedEdgeList()', function () {
-
-		it( 'should return a array with all half edges of the convex hull sorted by length in descending order, ', function () {
-
-			const convexHull = new ConvexHull().fromPoints( points );
-
-			const edges = convexHull._getSortedEdgeList();
-
-			expect( edges ).to.have.lengthOf( 12 ); // 8 faces x 3 half edges / 2 (only consider a single edge not two half edges)
-
-			for ( let i = 1, l = edges.length; i < l; i ++ ) {
-
-				expect( edges[ i ].length() ).to.be.at.most( edges[ i - 1 ].length() );
-
-			}
 
 		} );
 
