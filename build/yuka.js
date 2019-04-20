@@ -14759,6 +14759,16 @@
 
 			}
 
+			// handle case where all points lie in one plane
+
+			if ( plane$1.distanceToPoint( v3.point ) === 0 ) {
+
+				throw 'ERROR: YUKA.ConvexHull: All extreme points lie in a single plane. Unable to compute convex hull.';
+
+			}
+
+			// build initial tetrahedron
+
 			const faces = this.faces;
 
 			if ( plane$1.distanceToPoint( v3.point ) < 0 ) {

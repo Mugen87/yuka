@@ -4,6 +4,7 @@
  */
 
 const expect = require( 'chai' ).expect;
+const should = require( 'chai' ).should();
 const YUKA = require( '../../../build/yuka.js' );
 
 const ConvexHull = YUKA.ConvexHull;
@@ -324,15 +325,15 @@ describe( 'ConvexHull', function () {
 			const convexHull = new ConvexHull();
 
 			const points = [
-				new YUKA.Vector3( 1, 1, 1 ),
-				new YUKA.Vector3( 4, - 1, 4 ),
-				new YUKA.Vector3( 3, 6, - 3 ),
-				new YUKA.Vector3( - 7, - 20, 0 ), // y-component changed
-				new YUKA.Vector3( 2, 9, 19 ),
-				new YUKA.Vector3( 7, 4, 8 ),
-				new YUKA.Vector3( 14, - 14, 2 ),
-				new YUKA.Vector3( - 9, 1, 11 ),
-				new YUKA.Vector3( 0, 14, - 8 )
+				new Vector3( 1, 1, 1 ),
+				new Vector3( 4, - 1, 4 ),
+				new Vector3( 3, 6, - 3 ),
+				new Vector3( - 7, - 20, 0 ), // y-component changed
+				new Vector3( 2, 9, 19 ),
+				new Vector3( 7, 4, 8 ),
+				new Vector3( 14, - 14, 2 ),
+				new Vector3( - 9, 1, 11 ),
+				new Vector3( 0, 14, - 8 )
 			];
 
 			// prepare vertices
@@ -377,10 +378,10 @@ describe( 'ConvexHull', function () {
 			const convexHull = new ConvexHull();
 
 			const points = [
-				new YUKA.Vector3( 1, 2, 25 ),
-				new YUKA.Vector3( 9, 1, 4 ),
-				new YUKA.Vector3( 3, 6, - 3 ),
-				new YUKA.Vector3( - 7, - 4, - 20 )
+				new Vector3( 1, 2, 25 ),
+				new Vector3( 9, 1, 4 ),
+				new Vector3( 3, 6, - 3 ),
+				new Vector3( - 7, - 4, - 20 )
 			];
 
 			// prepare vertices
@@ -401,6 +402,35 @@ describe( 'ConvexHull', function () {
 			expect( convexHull.faces[ 1 ].edge.vertex ).to.deep.equal( new Vector3( 3, 6, - 3 ) );
 			expect( convexHull.faces[ 2 ].edge.vertex ).to.deep.equal( new Vector3( 3, 6, - 3 ) );
 			expect( convexHull.faces[ 3 ].edge.vertex ).to.deep.equal( new Vector3( 3, 6, - 3 ) );
+
+		} );
+
+		it( 'should throw an exception if all extreme points lie in a single plane', function () {
+
+			const convexHull = new ConvexHull();
+
+			const points = [
+				new Vector3( 1, 1, 0 ),
+				new Vector3( 1, 1, 0 ),
+				new Vector3( 1, - 1, 0 ),
+				new Vector3( 1, - 1, 0 ),
+				new Vector3( - 1, 1, 0 ),
+				new Vector3( - 1, 1, 0 ),
+				new Vector3( - 1, - 1, 0 ),
+				new Vector3( - 1, - 1, 0 )
+			];
+
+			// prepare vertices
+
+			for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+				convexHull._vertices.push( new Vertex( points[ i ] ) );
+
+			}
+
+			// compute initial hull
+
+			should.throw( () => convexHull._computeInitialHull() );
 
 		} );
 
@@ -879,14 +909,14 @@ describe( 'ConvexHull', function () {
 		it( 'should merge faces if the resulting ones are still convex and coplanar, ', function () {
 
 			const points = [
-				new YUKA.Vector3( 1, 1, 1 ),
-				new YUKA.Vector3( 1, 1, - 1 ),
-				new YUKA.Vector3( 1, - 1, 1 ),
-				new YUKA.Vector3( 1, - 1, - 1 ),
-				new YUKA.Vector3( - 1, 1, 1 ),
-				new YUKA.Vector3( - 1, 1, - 1 ),
-				new YUKA.Vector3( - 1, - 1, 1 ),
-				new YUKA.Vector3( - 1, - 1, - 1 )
+				new Vector3( 1, 1, 1 ),
+				new Vector3( 1, 1, - 1 ),
+				new Vector3( 1, - 1, 1 ),
+				new Vector3( 1, - 1, - 1 ),
+				new Vector3( - 1, 1, 1 ),
+				new Vector3( - 1, 1, - 1 ),
+				new Vector3( - 1, - 1, 1 ),
+				new Vector3( - 1, - 1, - 1 )
 			];
 
 			const convexHull = new ConvexHull().fromPoints( points );
