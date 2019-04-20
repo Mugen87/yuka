@@ -1,0 +1,1257 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Yuka | Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+        
+            <link type="text/css" rel="stylesheet" href="custom.css">
+        
+    
+    <link rel="shortcut icon" type="image/x-icon" href="https://mugen87.github.io/yuka/favicon.ico">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        
+            <img src="img/toast-ui.png" width="100%" height="100%">
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">YUKA</a></h1>
+        
+            <span class="version">v0.0.1</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="AABB.html">AABB</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="AABB_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="AABB.html#max">max</a></li><li><a href="AABB.html#min">min</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="AABB.html#applyMatrix4">applyMatrix4</a></li><li><a href="AABB.html#clampPoint">clampPoint</a></li><li><a href="AABB.html#clone">clone</a></li><li><a href="AABB.html#containsPoint">containsPoint</a></li><li><a href="AABB.html#copy">copy</a></li><li><a href="AABB.html#equals">equals</a></li><li><a href="AABB.html#expand">expand</a></li><li><a href="AABB.html#fromCenterAndSize">fromCenterAndSize</a></li><li><a href="AABB.html#fromJSON">fromJSON</a></li><li><a href="AABB.html#fromPoints">fromPoints</a></li><li><a href="AABB.html#getCenter">getCenter</a></li><li><a href="AABB.html#getNormalFromSurfacePoint">getNormalFromSurfacePoint</a></li><li><a href="AABB.html#getSize">getSize</a></li><li><a href="AABB.html#intersectsAABB">intersectsAABB</a></li><li><a href="AABB.html#intersectsBoundingSphere">intersectsBoundingSphere</a></li><li><a href="AABB.html#set">set</a></li><li><a href="AABB.html#toJSON">toJSON</a></li></ul></div></li><li><a href="AlignmentBehavior.html">AlignmentBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="AlignmentBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="AlignmentBehavior.html#active">active</a></li><li><a href="AlignmentBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="AlignmentBehavior.html#calculate">calculate</a></li><li><a href="AlignmentBehavior.html#fromJSON">fromJSON</a></li><li><a href="AlignmentBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="AlignmentBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="ArriveBehavior.html">ArriveBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ArriveBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ArriveBehavior.html#active">active</a></li><li><a href="ArriveBehavior.html#deceleration">deceleration</a></li><li><a href="ArriveBehavior.html#target">target</a></li><li><a href="ArriveBehavior.html#tolerance">tolerance</a></li><li><a href="ArriveBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ArriveBehavior.html#calculate">calculate</a></li><li><a href="ArriveBehavior.html#fromJSON">fromJSON</a></li><li><a href="ArriveBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="ArriveBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="AStar.html">AStar</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="AStar_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="AStar.html#found">found</a></li><li><a href="AStar.html#graph">graph</a></li><li><a href="AStar.html#heuristic">heuristic</a></li><li><a href="AStar.html#source">source</a></li><li><a href="AStar.html#target">target</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="AStar.html#clear">clear</a></li><li><a href="AStar.html#getPath">getPath</a></li><li><a href="AStar.html#getSearchTree">getSearchTree</a></li><li><a href="AStar.html#search">search</a></li></ul></div></li><li><a href="BFS.html">BFS</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="BFS_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BFS.html#found">found</a></li><li><a href="BFS.html#graph">graph</a></li><li><a href="BFS.html#source">source</a></li><li><a href="BFS.html#target">target</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BFS.html#clear">clear</a></li><li><a href="BFS.html#getPath">getPath</a></li><li><a href="BFS.html#getSearchTree">getSearchTree</a></li><li><a href="BFS.html#search">search</a></li></ul></div></li><li><a href="BoundingSphere.html">BoundingSphere</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="BoundingSphere_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BoundingSphere.html#center">center</a></li><li><a href="BoundingSphere.html#radius">radius</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BoundingSphere.html#applyMatrix4">applyMatrix4</a></li><li><a href="BoundingSphere.html#clampPoint">clampPoint</a></li><li><a href="BoundingSphere.html#clone">clone</a></li><li><a href="BoundingSphere.html#containsPoint">containsPoint</a></li><li><a href="BoundingSphere.html#copy">copy</a></li><li><a href="BoundingSphere.html#equals">equals</a></li><li><a href="BoundingSphere.html#fromJSON">fromJSON</a></li><li><a href="BoundingSphere.html#fromPoints">fromPoints</a></li><li><a href="BoundingSphere.html#getNormalFromSurfacePoint">getNormalFromSurfacePoint</a></li><li><a href="BoundingSphere.html#intersectsBoundingSphere">intersectsBoundingSphere</a></li><li><a href="BoundingSphere.html#set">set</a></li><li><a href="BoundingSphere.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Cell.html">Cell</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Cell_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Cell.html#aabb">aabb</a></li><li><a href="Cell.html#entries">entries</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Cell.html#add">add</a></li><li><a href="Cell.html#empty">empty</a></li><li><a href="Cell.html#fromJSON">fromJSON</a></li><li><a href="Cell.html#intersects">intersects</a></li><li><a href="Cell.html#makeEmpty">makeEmpty</a></li><li><a href="Cell.html#remove">remove</a></li><li><a href="Cell.html#resolveReferences">resolveReferences</a></li><li><a href="Cell.html#toJSON">toJSON</a></li></ul></div></li><li><a href="CellSpacePartitioning.html">CellSpacePartitioning</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CellSpacePartitioning_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="CellSpacePartitioning.html#cells">cells</a></li><li><a href="CellSpacePartitioning.html#cellsX">cellsX</a></li><li><a href="CellSpacePartitioning.html#cellsY">cellsY</a></li><li><a href="CellSpacePartitioning.html#cellsZ">cellsZ</a></li><li><a href="CellSpacePartitioning.html#depth">depth</a></li><li><a href="CellSpacePartitioning.html#height">height</a></li><li><a href="CellSpacePartitioning.html#width">width</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="CellSpacePartitioning.html#addEntityToPartition">addEntityToPartition</a></li><li><a href="CellSpacePartitioning.html#addPolygon">addPolygon</a></li><li><a href="CellSpacePartitioning.html#fromJSON">fromJSON</a></li><li><a href="CellSpacePartitioning.html#getIndexForPosition">getIndexForPosition</a></li><li><a href="CellSpacePartitioning.html#makeEmpty">makeEmpty</a></li><li><a href="CellSpacePartitioning.html#query">query</a></li><li><a href="CellSpacePartitioning.html#removeEntityFromPartition">removeEntityFromPartition</a></li><li><a href="CellSpacePartitioning.html#resolveReferences">resolveReferences</a></li><li><a href="CellSpacePartitioning.html#toJSON">toJSON</a></li><li><a href="CellSpacePartitioning.html#updateEntity">updateEntity</a></li></ul></div></li><li><a href="CohesionBehavior.html">CohesionBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CohesionBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="CohesionBehavior.html#active">active</a></li><li><a href="CohesionBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="CohesionBehavior.html#calculate">calculate</a></li><li><a href="CohesionBehavior.html#fromJSON">fromJSON</a></li><li><a href="CohesionBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="CohesionBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="CompositeGoal.html">CompositeGoal</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CompositeGoal_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="CompositeGoal.html#owner">owner</a></li><li><a href="CompositeGoal.html#status">status</a></li><li><a href="CompositeGoal.html#subgoals">subgoals</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="CompositeGoal.html#activate">activate</a></li><li><a href="CompositeGoal.html#activateIfInactive">activateIfInactive</a></li><li><a href="CompositeGoal.html#active">active</a></li><li><a href="CompositeGoal.html#addSubgoal">addSubgoal</a></li><li><a href="CompositeGoal.html#clearSubgoals">clearSubgoals</a></li><li><a href="CompositeGoal.html#completed">completed</a></li><li><a href="CompositeGoal.html#currentSubgoal">currentSubgoal</a></li><li><a href="CompositeGoal.html#execute">execute</a></li><li><a href="CompositeGoal.html#executeSubgoals">executeSubgoals</a></li><li><a href="CompositeGoal.html#failed">failed</a></li><li><a href="CompositeGoal.html#fromJSON">fromJSON</a></li><li><a href="CompositeGoal.html#handleMessage">handleMessage</a></li><li><a href="CompositeGoal.html#hasSubgoals">hasSubgoals</a></li><li><a href="CompositeGoal.html#inactive">inactive</a></li><li><a href="CompositeGoal.html#removeSubgoal">removeSubgoal</a></li><li><a href="CompositeGoal.html#replanIfFailed">replanIfFailed</a></li><li><a href="CompositeGoal.html#resolveReferences">resolveReferences</a></li><li><a href="CompositeGoal.html#terminate">terminate</a></li><li><a href="CompositeGoal.html#toJSON">toJSON</a></li></ul></div></li><li><a href="ConvexHull.html">ConvexHull</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ConvexHull_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ConvexHull.html#faces">faces</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ConvexHull.html#clone">clone</a></li><li><a href="ConvexHull.html#containsPoint">containsPoint</a></li><li><a href="ConvexHull.html#copy">copy</a></li><li><a href="ConvexHull.html#fromPoints">fromPoints</a></li><li><a href="ConvexHull.html#intersectsConvexHull">intersectsConvexHull</a></li><li><a href="ConvexHull.html#set">set</a></li></ul></div></li><li><a href="Corridor.html">Corridor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Corridor_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Corridor.html#portalEdges">portalEdges</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Corridor.html#generate">generate</a></li><li><a href="Corridor.html#push">push</a></li></ul></div></li><li><a href="CostTable.html">CostTable</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CostTable_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="CostTable.html#clear">clear</a></li><li><a href="CostTable.html#fromJSON">fromJSON</a></li><li><a href="CostTable.html#get">get</a></li><li><a href="CostTable.html#init">init</a></li><li><a href="CostTable.html#set">set</a></li><li><a href="CostTable.html#size">size</a></li><li><a href="CostTable.html#toJSON">toJSON</a></li></ul></div></li><li><a href="DFS.html">DFS</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="DFS_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="DFS.html#found">found</a></li><li><a href="DFS.html#graph">graph</a></li><li><a href="DFS.html#source">source</a></li><li><a href="DFS.html#target">target</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="DFS.html#clear">clear</a></li><li><a href="DFS.html#getPath">getPath</a></li><li><a href="DFS.html#getSearchTree">getSearchTree</a></li><li><a href="DFS.html#search">search</a></li></ul></div></li><li><a href="Dijkstra.html">Dijkstra</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Dijkstra_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Dijkstra.html#found">found</a></li><li><a href="Dijkstra.html#graph">graph</a></li><li><a href="Dijkstra.html#source">source</a></li><li><a href="Dijkstra.html#target">target</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Dijkstra.html#clear">clear</a></li><li><a href="Dijkstra.html#getPath">getPath</a></li><li><a href="Dijkstra.html#getSearchTree">getSearchTree</a></li><li><a href="Dijkstra.html#search">search</a></li></ul></div></li><li><a href="Edge.html">Edge</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Edge_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Edge.html#cost">cost</a></li><li><a href="Edge.html#from">from</a></li><li><a href="Edge.html#to">to</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Edge.html#clone">clone</a></li><li><a href="Edge.html#copy">copy</a></li><li><a href="Edge.html#fromJSON">fromJSON</a></li><li><a href="Edge.html#toJSON">toJSON</a></li></ul></div></li><li><a href="EntityManager.html">EntityManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EntityManager_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="EntityManager.html#entities">entities</a></li><li><a href="EntityManager.html#spatialIndex">spatialIndex</a></li><li><a href="EntityManager.html#triggers">triggers</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="EntityManager.html#add">add</a></li><li><a href="EntityManager.html#addTrigger">addTrigger</a></li><li><a href="EntityManager.html#clear">clear</a></li><li><a href="EntityManager.html#fromJSON">fromJSON</a></li><li><a href="EntityManager.html#getEntityByName">getEntityByName</a></li><li><a href="EntityManager.html#registerType">registerType</a></li><li><a href="EntityManager.html#remove">remove</a></li><li><a href="EntityManager.html#removeTrigger">removeTrigger</a></li><li><a href="EntityManager.html#sendMessage">sendMessage</a></li><li><a href="EntityManager.html#toJSON">toJSON</a></li><li><a href="EntityManager.html#update">update</a></li><li><a href="EntityManager.html#updateEntity">updateEntity</a></li><li><a href="EntityManager.html#updateNeighborhood">updateNeighborhood</a></li><li><a href="EntityManager.html#updateTrigger">updateTrigger</a></li></ul></div></li><li><a href="EvadeBehavior.html">EvadeBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EvadeBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="EvadeBehavior.html#active">active</a></li><li><a href="EvadeBehavior.html#panicDistance">panicDistance</a></li><li><a href="EvadeBehavior.html#predictionFactor">predictionFactor</a></li><li><a href="EvadeBehavior.html#pursuer">pursuer</a></li><li><a href="EvadeBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="EvadeBehavior.html#calculate">calculate</a></li><li><a href="EvadeBehavior.html#fromJSON">fromJSON</a></li><li><a href="EvadeBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="EvadeBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="EventDispatcher.html">EventDispatcher</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EventDispatcher_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="EventDispatcher.html#addEventListener">addEventListener</a></li><li><a href="EventDispatcher.html#dispatchEvent">dispatchEvent</a></li><li><a href="EventDispatcher.html#hasEventListener">hasEventListener</a></li><li><a href="EventDispatcher.html#removeEventListener">removeEventListener</a></li></ul></div></li><li><a href="FleeBehavior.html">FleeBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FleeBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FleeBehavior.html#active">active</a></li><li><a href="FleeBehavior.html#panicDistance">panicDistance</a></li><li><a href="FleeBehavior.html#target">target</a></li><li><a href="FleeBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FleeBehavior.html#calculate">calculate</a></li><li><a href="FleeBehavior.html#fromJSON">fromJSON</a></li><li><a href="FleeBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="FleeBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="FollowPathBehavior.html">FollowPathBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FollowPathBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FollowPathBehavior.html#active">active</a></li><li><a href="FollowPathBehavior.html#nextWaypointDistance">nextWaypointDistance</a></li><li><a href="FollowPathBehavior.html#path">path</a></li><li><a href="FollowPathBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FollowPathBehavior.html#calculate">calculate</a></li><li><a href="FollowPathBehavior.html#fromJSON">fromJSON</a></li><li><a href="FollowPathBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="FollowPathBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="FuzzyAND.html">FuzzyAND</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyAND_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyAND.html#terms">terms</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyAND.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="FuzzyAND.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="FuzzyAND.html#toJSON">toJSON</a></li><li><a href="FuzzyAND.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="FuzzyCompositeTerm.html">FuzzyCompositeTerm</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyCompositeTerm_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyCompositeTerm.html#terms">terms</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyCompositeTerm.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="FuzzyCompositeTerm.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="FuzzyCompositeTerm.html#toJSON">toJSON</a></li><li><a href="FuzzyCompositeTerm.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="FuzzyFAIRLY.html">FuzzyFAIRLY</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyFAIRLY_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyFAIRLY.html#terms">terms</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyFAIRLY.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="FuzzyFAIRLY.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="FuzzyFAIRLY.html#toJSON">toJSON</a></li><li><a href="FuzzyFAIRLY.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="FuzzyModule.html">FuzzyModule</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyModule_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyModule.html#flvs">flvs</a></li><li><a href="FuzzyModule.html#rules">rules</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyModule.html#addFLV">addFLV</a></li><li><a href="FuzzyModule.html#addRule">addRule</a></li><li><a href="FuzzyModule.html#defuzzify">defuzzify</a></li><li><a href="FuzzyModule.html#fromJSON">fromJSON</a></li><li><a href="FuzzyModule.html#fuzzify">fuzzify</a></li><li><a href="FuzzyModule.html#removeFLV">removeFLV</a></li><li><a href="FuzzyModule.html#removeRule">removeRule</a></li><li><a href="FuzzyModule.html#toJSON">toJSON</a></li></ul></div></li><li><a href="FuzzyOR.html">FuzzyOR</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyOR_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyOR.html#terms">terms</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyOR.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="FuzzyOR.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="FuzzyOR.html#toJSON">toJSON</a></li><li><a href="FuzzyOR.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="FuzzyRule.html">FuzzyRule</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyRule_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyRule.html#antecedent">antecedent</a></li><li><a href="FuzzyRule.html#consequence">consequence</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyRule.html#evaluate">evaluate</a></li><li><a href="FuzzyRule.html#fromJSON">fromJSON</a></li><li><a href="FuzzyRule.html#initConsequence">initConsequence</a></li><li><a href="FuzzyRule.html#toJSON">toJSON</a></li></ul></div></li><li><a href="FuzzySet.html">FuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="FuzzySet.html#left">left</a></li><li><a href="FuzzySet.html#representativeValue">representativeValue</a></li><li><a href="FuzzySet.html#right">right</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="FuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="FuzzySet.html#fromJSON">fromJSON</a></li><li><a href="FuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="FuzzySet.html#toJSON">toJSON</a></li><li><a href="FuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="FuzzyTerm.html">FuzzyTerm</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyTerm_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyTerm.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="FuzzyTerm.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="FuzzyTerm.html#toJSON">toJSON</a></li><li><a href="FuzzyTerm.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="FuzzyVariable.html">FuzzyVariable</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyVariable_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyVariable.html#fuzzySets">fuzzySets</a></li><li><a href="FuzzyVariable.html#maxRange">maxRange</a></li><li><a href="FuzzyVariable.html#minRange">minRange</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyVariable.html#add">add</a></li><li><a href="FuzzyVariable.html#defuzzifyCentroid">defuzzifyCentroid</a></li><li><a href="FuzzyVariable.html#defuzzifyMaxAv">defuzzifyMaxAv</a></li><li><a href="FuzzyVariable.html#fromJSON">fromJSON</a></li><li><a href="FuzzyVariable.html#fuzzify">fuzzify</a></li><li><a href="FuzzyVariable.html#remove">remove</a></li><li><a href="FuzzyVariable.html#toJSON">toJSON</a></li></ul></div></li><li><a href="FuzzyVERY.html">FuzzyVERY</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FuzzyVERY_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FuzzyVERY.html#terms">terms</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FuzzyVERY.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="FuzzyVERY.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="FuzzyVERY.html#toJSON">toJSON</a></li><li><a href="FuzzyVERY.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="GameEntity.html">GameEntity</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="GameEntity_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="GameEntity.html#active">active</a></li><li><a href="GameEntity.html#boundingRadius">boundingRadius</a></li><li><a href="GameEntity.html#canAcitivateTrigger">canAcitivateTrigger</a></li><li><a href="GameEntity.html#children">children</a></li><li><a href="GameEntity.html#forward">forward</a></li><li><a href="GameEntity.html#manager">manager</a></li><li><a href="GameEntity.html#maxTurnRate">maxTurnRate</a></li><li><a href="GameEntity.html#name">name</a></li><li><a href="GameEntity.html#neighborhoodRadius">neighborhoodRadius</a></li><li><a href="GameEntity.html#neighbors">neighbors</a></li><li><a href="GameEntity.html#parent">parent</a></li><li><a href="GameEntity.html#position">position</a></li><li><a href="GameEntity.html#rotation">rotation</a></li><li><a href="GameEntity.html#scale">scale</a></li><li><a href="GameEntity.html#up">up</a></li><li><a href="GameEntity.html#updateNeighborhood">updateNeighborhood</a></li><li><a href="GameEntity.html#worldMatrix">worldMatrix</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="GameEntity.html#add">add</a></li><li><a href="GameEntity.html#fromJSON">fromJSON</a></li><li><a href="GameEntity.html#getDirection">getDirection</a></li><li><a href="GameEntity.html#getWorldDirection">getWorldDirection</a></li><li><a href="GameEntity.html#getWorldPosition">getWorldPosition</a></li><li><a href="GameEntity.html#handleMessage">handleMessage</a></li><li><a href="GameEntity.html#lineOfSightTest">lineOfSightTest</a></li><li><a href="GameEntity.html#lookAt">lookAt</a></li><li><a href="GameEntity.html#remove">remove</a></li><li><a href="GameEntity.html#resolveReferences">resolveReferences</a></li><li><a href="GameEntity.html#rotateTo">rotateTo</a></li><li><a href="GameEntity.html#sendMessage">sendMessage</a></li><li><a href="GameEntity.html#setRenderComponent">setRenderComponent</a></li><li><a href="GameEntity.html#start">start</a></li><li><a href="GameEntity.html#toJSON">toJSON</a></li><li><a href="GameEntity.html#update">update</a></li><li><a href="GameEntity.html#updateWorldMatrix">updateWorldMatrix</a></li></ul></div></li><li><a href="Goal.html">Goal</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Goal_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Goal.html#owner">owner</a></li><li><a href="Goal.html#status">status</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Goal.html#activate">activate</a></li><li><a href="Goal.html#activateIfInactive">activateIfInactive</a></li><li><a href="Goal.html#active">active</a></li><li><a href="Goal.html#completed">completed</a></li><li><a href="Goal.html#execute">execute</a></li><li><a href="Goal.html#failed">failed</a></li><li><a href="Goal.html#fromJSON">fromJSON</a></li><li><a href="Goal.html#handleMessage">handleMessage</a></li><li><a href="Goal.html#inactive">inactive</a></li><li><a href="Goal.html#replanIfFailed">replanIfFailed</a></li><li><a href="Goal.html#resolveReferences">resolveReferences</a></li><li><a href="Goal.html#terminate">terminate</a></li><li><a href="Goal.html#toJSON">toJSON</a></li></ul></div></li><li><a href="GoalEvaluator.html">GoalEvaluator</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="GoalEvaluator_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="GoalEvaluator.html#characterBias">characterBias</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="GoalEvaluator.html#calculateDesirability">calculateDesirability</a></li><li><a href="GoalEvaluator.html#fromJSON">fromJSON</a></li><li><a href="GoalEvaluator.html#setGoal">setGoal</a></li><li><a href="GoalEvaluator.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Graph.html">Graph</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Graph_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Graph.html#digraph">digraph</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Graph.html#addEdge">addEdge</a></li><li><a href="Graph.html#addNode">addNode</a></li><li><a href="Graph.html#clear">clear</a></li><li><a href="Graph.html#fromJSON">fromJSON</a></li><li><a href="Graph.html#getEdge">getEdge</a></li><li><a href="Graph.html#getEdgeCount">getEdgeCount</a></li><li><a href="Graph.html#getEdgesOfNode">getEdgesOfNode</a></li><li><a href="Graph.html#getNode">getNode</a></li><li><a href="Graph.html#getNodeCount">getNodeCount</a></li><li><a href="Graph.html#getNodes">getNodes</a></li><li><a href="Graph.html#hasEdge">hasEdge</a></li><li><a href="Graph.html#hasNode">hasNode</a></li><li><a href="Graph.html#removeEdge">removeEdge</a></li><li><a href="Graph.html#removeNode">removeNode</a></li><li><a href="Graph.html#toJSON">toJSON</a></li></ul></div></li><li><a href="GraphUtils.html">GraphUtils</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="GraphUtils_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="GraphUtils.html#.createGridLayout">createGridLayout</a></li></ul></div></li><li><a href="HalfEdge.html">HalfEdge</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="HalfEdge_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="HalfEdge.html#next">next</a></li><li><a href="HalfEdge.html#polygon">polygon</a></li><li><a href="HalfEdge.html#prev">prev</a></li><li><a href="HalfEdge.html#twin">twin</a></li><li><a href="HalfEdge.html#vertex">vertex</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="HalfEdge.html#getDirection">getDirection</a></li><li><a href="HalfEdge.html#head">head</a></li><li><a href="HalfEdge.html#length">length</a></li><li><a href="HalfEdge.html#linkOpponent">linkOpponent</a></li><li><a href="HalfEdge.html#squaredLength">squaredLength</a></li><li><a href="HalfEdge.html#tail">tail</a></li></ul></div></li><li><a href="HeuristicPolicyDijkstra.html">HeuristicPolicyDijkstra</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="HeuristicPolicyDijkstra_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="HeuristicPolicyDijkstra.html#.calculate">calculate</a></li></ul></div></li><li><a href="HeuristicPolicyEuclid.html">HeuristicPolicyEuclid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="HeuristicPolicyEuclid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="HeuristicPolicyEuclid.html#.calculate">calculate</a></li></ul></div></li><li><a href="HeuristicPolicyEuclidSquared.html">HeuristicPolicyEuclidSquared</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="HeuristicPolicyEuclidSquared_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="HeuristicPolicyEuclidSquared.html#.calculate">calculate</a></li></ul></div></li><li><a href="HeuristicPolicyManhattan.html">HeuristicPolicyManhattan</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="HeuristicPolicyManhattan_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="HeuristicPolicyManhattan.html#.calculate">calculate</a></li></ul></div></li><li><a href="InterposeBehavior.html">InterposeBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="InterposeBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="InterposeBehavior.html#active">active</a></li><li><a href="InterposeBehavior.html#deceleration">deceleration</a></li><li><a href="InterposeBehavior.html#entity1">entity1</a></li><li><a href="InterposeBehavior.html#entity2">entity2</a></li><li><a href="InterposeBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="InterposeBehavior.html#calculate">calculate</a></li><li><a href="InterposeBehavior.html#fromJSON">fromJSON</a></li><li><a href="InterposeBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="InterposeBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="LeftSCurveFuzzySet.html">LeftSCurveFuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LeftSCurveFuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LeftSCurveFuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="LeftSCurveFuzzySet.html#left">left</a></li><li><a href="LeftSCurveFuzzySet.html#midpoint">midpoint</a></li><li><a href="LeftSCurveFuzzySet.html#representativeValue">representativeValue</a></li><li><a href="LeftSCurveFuzzySet.html#right">right</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LeftSCurveFuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="LeftSCurveFuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="LeftSCurveFuzzySet.html#fromJSON">fromJSON</a></li><li><a href="LeftSCurveFuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="LeftSCurveFuzzySet.html#toJSON">toJSON</a></li><li><a href="LeftSCurveFuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="LeftShoulderFuzzySet.html">LeftShoulderFuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LeftShoulderFuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LeftShoulderFuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="LeftShoulderFuzzySet.html#left">left</a></li><li><a href="LeftShoulderFuzzySet.html#midpoint">midpoint</a></li><li><a href="LeftShoulderFuzzySet.html#representativeValue">representativeValue</a></li><li><a href="LeftShoulderFuzzySet.html#right">right</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LeftShoulderFuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="LeftShoulderFuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="LeftShoulderFuzzySet.html#fromJSON">fromJSON</a></li><li><a href="LeftShoulderFuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="LeftShoulderFuzzySet.html#toJSON">toJSON</a></li><li><a href="LeftShoulderFuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="LineSegment.html">LineSegment</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LineSegment_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LineSegment.html#from">from</a></li><li><a href="LineSegment.html#to">to</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LineSegment.html#at">at</a></li><li><a href="LineSegment.html#clone">clone</a></li><li><a href="LineSegment.html#closestPointToPoint">closestPointToPoint</a></li><li><a href="LineSegment.html#closestPointToPointParameter">closestPointToPointParameter</a></li><li><a href="LineSegment.html#copy">copy</a></li><li><a href="LineSegment.html#delta">delta</a></li><li><a href="LineSegment.html#equals">equals</a></li><li><a href="LineSegment.html#set">set</a></li></ul></div></li><li><a href="Logger.html">Logger</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Logger_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Logger.html#.error">error</a></li><li><a href="Logger.html#.log">log</a></li><li><a href="Logger.html#.setLevel">setLevel</a></li><li><a href="Logger.html#.warn">warn</a></li></ul></div></li><li><a href="MathUtils.html">MathUtils</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MathUtils_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="MathUtils.html#.area">area</a></li><li><a href="MathUtils.html#.clamp">clamp</a></li><li><a href="MathUtils.html#.generateUUID">generateUUID</a></li><li><a href="MathUtils.html#.randFloat">randFloat</a></li><li><a href="MathUtils.html#.randInt">randInt</a></li></ul></div></li><li><a href="Matrix3.html">Matrix3</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Matrix3_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Matrix3.html#elements">elements</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Matrix3.html#clone">clone</a></li><li><a href="Matrix3.html#copy">copy</a></li><li><a href="Matrix3.html#equals">equals</a></li><li><a href="Matrix3.html#extractBasis">extractBasis</a></li><li><a href="Matrix3.html#fromArray">fromArray</a></li><li><a href="Matrix3.html#fromMatrix4">fromMatrix4</a></li><li><a href="Matrix3.html#fromQuaternion">fromQuaternion</a></li><li><a href="Matrix3.html#identity">identity</a></li><li><a href="Matrix3.html#lookAt">lookAt</a></li><li><a href="Matrix3.html#makeBasis">makeBasis</a></li><li><a href="Matrix3.html#multiply">multiply</a></li><li><a href="Matrix3.html#multiplyMatrices">multiplyMatrices</a></li><li><a href="Matrix3.html#multiplyScalar">multiplyScalar</a></li><li><a href="Matrix3.html#premultiply">premultiply</a></li><li><a href="Matrix3.html#set">set</a></li><li><a href="Matrix3.html#toArray">toArray</a></li><li><a href="Matrix3.html#transpose">transpose</a></li></ul></div></li><li><a href="Matrix4.html">Matrix4</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Matrix4_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Matrix4.html#elements">elements</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Matrix4.html#clone">clone</a></li><li><a href="Matrix4.html#compose">compose</a></li><li><a href="Matrix4.html#copy">copy</a></li><li><a href="Matrix4.html#equals">equals</a></li><li><a href="Matrix4.html#extractBasis">extractBasis</a></li><li><a href="Matrix4.html#fromArray">fromArray</a></li><li><a href="Matrix4.html#fromQuaternion">fromQuaternion</a></li><li><a href="Matrix4.html#getInverse">getInverse</a></li><li><a href="Matrix4.html#getMaxScale">getMaxScale</a></li><li><a href="Matrix4.html#identity">identity</a></li><li><a href="Matrix4.html#makeBasis">makeBasis</a></li><li><a href="Matrix4.html#multiply">multiply</a></li><li><a href="Matrix4.html#multiplyMatrices">multiplyMatrices</a></li><li><a href="Matrix4.html#multiplyScalar">multiplyScalar</a></li><li><a href="Matrix4.html#premultiply">premultiply</a></li><li><a href="Matrix4.html#scale">scale</a></li><li><a href="Matrix4.html#set">set</a></li><li><a href="Matrix4.html#setPosition">setPosition</a></li><li><a href="Matrix4.html#toArray">toArray</a></li><li><a href="Matrix4.html#transpose">transpose</a></li></ul></div></li><li><a href="MemoryRecord.html">MemoryRecord</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MemoryRecord_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MemoryRecord.html#entity">entity</a></li><li><a href="MemoryRecord.html#lastSensedPosition">lastSensedPosition</a></li><li><a href="MemoryRecord.html#timeBecameVisible">timeBecameVisible</a></li><li><a href="MemoryRecord.html#timeLastSensed">timeLastSensed</a></li><li><a href="MemoryRecord.html#visible">visible</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MemoryRecord.html#fromJSON">fromJSON</a></li><li><a href="MemoryRecord.html#resolveReferences">resolveReferences</a></li><li><a href="MemoryRecord.html#toJSON">toJSON</a></li></ul></div></li><li><a href="MemorySystem.html">MemorySystem</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MemorySystem_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MemorySystem.html#memorySpan">memorySpan</a></li><li><a href="MemorySystem.html#owner">owner</a></li><li><a href="MemorySystem.html#records">records</a></li><li><a href="MemorySystem.html#recordsMap">recordsMap</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MemorySystem.html#clear">clear</a></li><li><a href="MemorySystem.html#createRecord">createRecord</a></li><li><a href="MemorySystem.html#deleteRecord">deleteRecord</a></li><li><a href="MemorySystem.html#fromJSON">fromJSON</a></li><li><a href="MemorySystem.html#getRecord">getRecord</a></li><li><a href="MemorySystem.html#getValidMemoryRecords">getValidMemoryRecords</a></li><li><a href="MemorySystem.html#hasRecord">hasRecord</a></li><li><a href="MemorySystem.html#resolveReferences">resolveReferences</a></li><li><a href="MemorySystem.html#toJSON">toJSON</a></li></ul></div></li><li><a href="MeshGeometry.html">MeshGeometry</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MeshGeometry_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="MeshGeometry.html#computeBoundingVolume">computeBoundingVolume</a></li><li><a href="MeshGeometry.html#fromJSON">fromJSON</a></li><li><a href="MeshGeometry.html#intersectRay">intersectRay</a></li><li><a href="MeshGeometry.html#toJSON">toJSON</a></li></ul></div></li><li><a href="MessageDispatcher.html">MessageDispatcher</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MessageDispatcher_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MessageDispatcher.html#delayedTelegrams">delayedTelegrams</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MessageDispatcher.html#clear">clear</a></li><li><a href="MessageDispatcher.html#deliver">deliver</a></li><li><a href="MessageDispatcher.html#dispatch">dispatch</a></li><li><a href="MessageDispatcher.html#dispatchDelayedMessages">dispatchDelayedMessages</a></li><li><a href="MessageDispatcher.html#fromJSON">fromJSON</a></li><li><a href="MessageDispatcher.html#resolveReferences">resolveReferences</a></li><li><a href="MessageDispatcher.html#toJSON">toJSON</a></li></ul></div></li><li><a href="MovingEntity.html">MovingEntity</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MovingEntity_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="MovingEntity.html#active">active</a></li><li><a href="MovingEntity.html#boundingRadius">boundingRadius</a></li><li><a href="MovingEntity.html#canAcitivateTrigger">canAcitivateTrigger</a></li><li><a href="MovingEntity.html#children">children</a></li><li><a href="MovingEntity.html#forward">forward</a></li><li><a href="MovingEntity.html#manager">manager</a></li><li><a href="MovingEntity.html#maxSpeed">maxSpeed</a></li><li><a href="MovingEntity.html#maxTurnRate">maxTurnRate</a></li><li><a href="MovingEntity.html#name">name</a></li><li><a href="MovingEntity.html#neighborhoodRadius">neighborhoodRadius</a></li><li><a href="MovingEntity.html#neighbors">neighbors</a></li><li><a href="MovingEntity.html#parent">parent</a></li><li><a href="MovingEntity.html#position">position</a></li><li><a href="MovingEntity.html#rotation">rotation</a></li><li><a href="MovingEntity.html#scale">scale</a></li><li><a href="MovingEntity.html#up">up</a></li><li><a href="MovingEntity.html#updateNeighborhood">updateNeighborhood</a></li><li><a href="MovingEntity.html#updateOrientation">updateOrientation</a></li><li><a href="MovingEntity.html#velocity">velocity</a></li><li><a href="MovingEntity.html#worldMatrix">worldMatrix</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="MovingEntity.html#add">add</a></li><li><a href="MovingEntity.html#fromJSON">fromJSON</a></li><li><a href="MovingEntity.html#getDirection">getDirection</a></li><li><a href="MovingEntity.html#getSpeed">getSpeed</a></li><li><a href="MovingEntity.html#getSpeedSquared">getSpeedSquared</a></li><li><a href="MovingEntity.html#getWorldDirection">getWorldDirection</a></li><li><a href="MovingEntity.html#getWorldPosition">getWorldPosition</a></li><li><a href="MovingEntity.html#handleMessage">handleMessage</a></li><li><a href="MovingEntity.html#lineOfSightTest">lineOfSightTest</a></li><li><a href="MovingEntity.html#lookAt">lookAt</a></li><li><a href="MovingEntity.html#remove">remove</a></li><li><a href="MovingEntity.html#resolveReferences">resolveReferences</a></li><li><a href="MovingEntity.html#rotateTo">rotateTo</a></li><li><a href="MovingEntity.html#sendMessage">sendMessage</a></li><li><a href="MovingEntity.html#setRenderComponent">setRenderComponent</a></li><li><a href="MovingEntity.html#start">start</a></li><li><a href="MovingEntity.html#toJSON">toJSON</a></li><li><a href="MovingEntity.html#update">update</a></li><li><a href="MovingEntity.html#updateWorldMatrix">updateWorldMatrix</a></li></ul></div></li><li><a href="NavEdge.html">NavEdge</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="NavEdge_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="NavEdge.html#cost">cost</a></li><li><a href="NavEdge.html#from">from</a></li><li><a href="NavEdge.html#to">to</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="NavEdge.html#clone">clone</a></li><li><a href="NavEdge.html#copy">copy</a></li><li><a href="NavEdge.html#fromJSON">fromJSON</a></li><li><a href="NavEdge.html#toJSON">toJSON</a></li></ul></div></li><li><a href="NavMesh.html">NavMesh</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="NavMesh_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="NavMesh.html#epsilonContainsTest">epsilonContainsTest</a></li><li><a href="NavMesh.html#epsilonCoplanarTest">epsilonCoplanarTest</a></li><li><a href="NavMesh.html#graph">graph</a></li><li><a href="NavMesh.html#regions">regions</a></li><li><a href="NavMesh.html#spatialIndex">spatialIndex</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="NavMesh.html#clampMovement">clampMovement</a></li><li><a href="NavMesh.html#clear">clear</a></li><li><a href="NavMesh.html#findPath">findPath</a></li><li><a href="NavMesh.html#fromPolygons">fromPolygons</a></li><li><a href="NavMesh.html#getClosestRegion">getClosestRegion</a></li><li><a href="NavMesh.html#getNodeIndex">getNodeIndex</a></li><li><a href="NavMesh.html#getRandomRegion">getRandomRegion</a></li><li><a href="NavMesh.html#getRegionForPoint">getRegionForPoint</a></li><li><a href="NavMesh.html#updateSpatialIndex">updateSpatialIndex</a></li></ul></div></li><li><a href="NavMeshLoader.html">NavMeshLoader</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="NavMeshLoader_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="NavMeshLoader.html#load">load</a></li></ul></div></li><li><a href="NavNode.html">NavNode</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="NavNode_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="NavNode.html#index">index</a></li><li><a href="NavNode.html#position">position</a></li><li><a href="NavNode.html#userData">userData</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="NavNode.html#fromJSON">fromJSON</a></li><li><a href="NavNode.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Node.html">Node</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Node_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Node.html#index">index</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Node.html#fromJSON">fromJSON</a></li><li><a href="Node.html#toJSON">toJSON</a></li></ul></div></li><li><a href="NormalDistFuzzySet.html">NormalDistFuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="NormalDistFuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="NormalDistFuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="NormalDistFuzzySet.html#left">left</a></li><li><a href="NormalDistFuzzySet.html#midpoint">midpoint</a></li><li><a href="NormalDistFuzzySet.html#representativeValue">representativeValue</a></li><li><a href="NormalDistFuzzySet.html#right">right</a></li><li><a href="NormalDistFuzzySet.html#standardDeviation">standardDeviation</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="NormalDistFuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="NormalDistFuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="NormalDistFuzzySet.html#fromJSON">fromJSON</a></li><li><a href="NormalDistFuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="NormalDistFuzzySet.html#toJSON">toJSON</a></li><li><a href="NormalDistFuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="ObstacleAvoidanceBehavior.html">ObstacleAvoidanceBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ObstacleAvoidanceBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ObstacleAvoidanceBehavior.html#active">active</a></li><li><a href="ObstacleAvoidanceBehavior.html#brakingWeight">brakingWeight</a></li><li><a href="ObstacleAvoidanceBehavior.html#dBoxMinLength">dBoxMinLength</a></li><li><a href="ObstacleAvoidanceBehavior.html#obstacles">obstacles</a></li><li><a href="ObstacleAvoidanceBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ObstacleAvoidanceBehavior.html#calculate">calculate</a></li><li><a href="ObstacleAvoidanceBehavior.html#fromJSON">fromJSON</a></li><li><a href="ObstacleAvoidanceBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="ObstacleAvoidanceBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="OffsetPursuitBehavior.html">OffsetPursuitBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="OffsetPursuitBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="OffsetPursuitBehavior.html#active">active</a></li><li><a href="OffsetPursuitBehavior.html#leader">leader</a></li><li><a href="OffsetPursuitBehavior.html#offset">offset</a></li><li><a href="OffsetPursuitBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="OffsetPursuitBehavior.html#calculate">calculate</a></li><li><a href="OffsetPursuitBehavior.html#fromJSON">fromJSON</a></li><li><a href="OffsetPursuitBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="OffsetPursuitBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="OnPathBehavior.html">OnPathBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="OnPathBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="OnPathBehavior.html#active">active</a></li><li><a href="OnPathBehavior.html#path">path</a></li><li><a href="OnPathBehavior.html#predictionFactor">predictionFactor</a></li><li><a href="OnPathBehavior.html#radius">radius</a></li><li><a href="OnPathBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="OnPathBehavior.html#calculate">calculate</a></li><li><a href="OnPathBehavior.html#fromJSON">fromJSON</a></li><li><a href="OnPathBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="OnPathBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Path.html">Path</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Path_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Path.html#loop">loop</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Path.html#add">add</a></li><li><a href="Path.html#advance">advance</a></li><li><a href="Path.html#clear">clear</a></li><li><a href="Path.html#current">current</a></li><li><a href="Path.html#finished">finished</a></li><li><a href="Path.html#fromJSON">fromJSON</a></li><li><a href="Path.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Plane.html">Plane</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Plane_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Plane.html#constant">constant</a></li><li><a href="Plane.html#normal">normal</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Plane.html#clone">clone</a></li><li><a href="Plane.html#copy">copy</a></li><li><a href="Plane.html#distanceToPoint">distanceToPoint</a></li><li><a href="Plane.html#equals">equals</a></li><li><a href="Plane.html#fromCoplanarPoints">fromCoplanarPoints</a></li><li><a href="Plane.html#fromNormalAndCoplanarPoint">fromNormalAndCoplanarPoint</a></li><li><a href="Plane.html#projectPoint">projectPoint</a></li><li><a href="Plane.html#set">set</a></li></ul></div></li><li><a href="Polygon.html">Polygon</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Polygon_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Polygon.html#centroid">centroid</a></li><li><a href="Polygon.html#edge">edge</a></li><li><a href="Polygon.html#plane">plane</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Polygon.html#computeCentroid">computeCentroid</a></li><li><a href="Polygon.html#contains">contains</a></li><li><a href="Polygon.html#convex">convex</a></li><li><a href="Polygon.html#coplanar">coplanar</a></li><li><a href="Polygon.html#distanceToPoint">distanceToPoint</a></li><li><a href="Polygon.html#fromContour">fromContour</a></li><li><a href="Polygon.html#getContour">getContour</a></li><li><a href="Polygon.html#getPortalEdgeTo">getPortalEdgeTo</a></li></ul></div></li><li><a href="PriorityQueue.html">PriorityQueue</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PriorityQueue_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PriorityQueue.html#compare">compare</a></li><li><a href="PriorityQueue.html#data">data</a></li><li><a href="PriorityQueue.html#length">length</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PriorityQueue.html#peek">peek</a></li><li><a href="PriorityQueue.html#pop">pop</a></li><li><a href="PriorityQueue.html#push">push</a></li></ul></div></li><li><a href="PursuitBehavior.html">PursuitBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PursuitBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PursuitBehavior.html#active">active</a></li><li><a href="PursuitBehavior.html#evader">evader</a></li><li><a href="PursuitBehavior.html#predictionFactor">predictionFactor</a></li><li><a href="PursuitBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PursuitBehavior.html#calculate">calculate</a></li><li><a href="PursuitBehavior.html#fromJSON">fromJSON</a></li><li><a href="PursuitBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="PursuitBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Quaternion.html">Quaternion</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Quaternion_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Quaternion.html#w">w</a></li><li><a href="Quaternion.html#x">x</a></li><li><a href="Quaternion.html#y">y</a></li><li><a href="Quaternion.html#z">z</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Quaternion.html#angleTo">angleTo</a></li><li><a href="Quaternion.html#clone">clone</a></li><li><a href="Quaternion.html#conjugate">conjugate</a></li><li><a href="Quaternion.html#copy">copy</a></li><li><a href="Quaternion.html#dot">dot</a></li><li><a href="Quaternion.html#equals">equals</a></li><li><a href="Quaternion.html#extractRotationFromMatrix">extractRotationFromMatrix</a></li><li><a href="Quaternion.html#fromArray">fromArray</a></li><li><a href="Quaternion.html#fromEuler">fromEuler</a></li><li><a href="Quaternion.html#fromMatrix3">fromMatrix3</a></li><li><a href="Quaternion.html#inverse">inverse</a></li><li><a href="Quaternion.html#length">length</a></li><li><a href="Quaternion.html#lookAt">lookAt</a></li><li><a href="Quaternion.html#multiply">multiply</a></li><li><a href="Quaternion.html#multiplyQuaternions">multiplyQuaternions</a></li><li><a href="Quaternion.html#normalize">normalize</a></li><li><a href="Quaternion.html#premultiply">premultiply</a></li><li><a href="Quaternion.html#rotateTo">rotateTo</a></li><li><a href="Quaternion.html#set">set</a></li><li><a href="Quaternion.html#slerp">slerp</a></li><li><a href="Quaternion.html#squaredLength">squaredLength</a></li><li><a href="Quaternion.html#toArray">toArray</a></li><li><a href="Quaternion.html#toEuler">toEuler</a></li></ul></div></li><li><a href="Ray.html">Ray</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Ray_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Ray.html#direction">direction</a></li><li><a href="Ray.html#origin">origin</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Ray.html#applyMatrix4">applyMatrix4</a></li><li><a href="Ray.html#at">at</a></li><li><a href="Ray.html#clone">clone</a></li><li><a href="Ray.html#copy">copy</a></li><li><a href="Ray.html#equals">equals</a></li><li><a href="Ray.html#intersectAABB">intersectAABB</a></li><li><a href="Ray.html#intersectBoundingSphere">intersectBoundingSphere</a></li><li><a href="Ray.html#intersectConvexHull">intersectConvexHull</a></li><li><a href="Ray.html#intersectPlane">intersectPlane</a></li><li><a href="Ray.html#intersectsAABB">intersectsAABB</a></li><li><a href="Ray.html#intersectsBoundingSphere">intersectsBoundingSphere</a></li><li><a href="Ray.html#intersectsConvexHull">intersectsConvexHull</a></li><li><a href="Ray.html#intersectsPlane">intersectsPlane</a></li><li><a href="Ray.html#intersectTriangle">intersectTriangle</a></li><li><a href="Ray.html#set">set</a></li></ul></div></li><li><a href="RectangularTriggerRegion.html">RectangularTriggerRegion</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="RectangularTriggerRegion_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="RectangularTriggerRegion.html#fromJSON">fromJSON</a></li><li><a href="RectangularTriggerRegion.html#fromPositionAndSize">fromPositionAndSize</a></li><li><a href="RectangularTriggerRegion.html#toJSON">toJSON</a></li><li><a href="RectangularTriggerRegion.html#touching">touching</a></li></ul></div></li><li><a href="Regulator.html">Regulator</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Regulator_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Regulator.html#updateFrequency">updateFrequency</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Regulator.html#ready">ready</a></li></ul></div></li><li><a href="RightSCurveFuzzySet.html">RightSCurveFuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="RightSCurveFuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="RightSCurveFuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="RightSCurveFuzzySet.html#left">left</a></li><li><a href="RightSCurveFuzzySet.html#midpoint">midpoint</a></li><li><a href="RightSCurveFuzzySet.html#representativeValue">representativeValue</a></li><li><a href="RightSCurveFuzzySet.html#right">right</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="RightSCurveFuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="RightSCurveFuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="RightSCurveFuzzySet.html#fromJSON">fromJSON</a></li><li><a href="RightSCurveFuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="RightSCurveFuzzySet.html#toJSON">toJSON</a></li><li><a href="RightSCurveFuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="RightShoulderFuzzySet.html">RightShoulderFuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="RightShoulderFuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="RightShoulderFuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="RightShoulderFuzzySet.html#left">left</a></li><li><a href="RightShoulderFuzzySet.html#midpoint">midpoint</a></li><li><a href="RightShoulderFuzzySet.html#representativeValue">representativeValue</a></li><li><a href="RightShoulderFuzzySet.html#right">right</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="RightShoulderFuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="RightShoulderFuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="RightShoulderFuzzySet.html#fromJSON">fromJSON</a></li><li><a href="RightShoulderFuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="RightShoulderFuzzySet.html#toJSON">toJSON</a></li><li><a href="RightShoulderFuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="SAT.html">SAT</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SAT_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="SAT.html#intersects">intersects</a></li></ul></div></li><li><a href="SeekBehavior.html">SeekBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SeekBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SeekBehavior.html#active">active</a></li><li><a href="SeekBehavior.html#target">target</a></li><li><a href="SeekBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SeekBehavior.html#calculate">calculate</a></li><li><a href="SeekBehavior.html#fromJSON">fromJSON</a></li><li><a href="SeekBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="SeekBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="SeparationBehavior.html">SeparationBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SeparationBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SeparationBehavior.html#active">active</a></li><li><a href="SeparationBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SeparationBehavior.html#calculate">calculate</a></li><li><a href="SeparationBehavior.html#fromJSON">fromJSON</a></li><li><a href="SeparationBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="SeparationBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="SingletonFuzzySet.html">SingletonFuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SingletonFuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SingletonFuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="SingletonFuzzySet.html#left">left</a></li><li><a href="SingletonFuzzySet.html#midpoint">midpoint</a></li><li><a href="SingletonFuzzySet.html#representativeValue">representativeValue</a></li><li><a href="SingletonFuzzySet.html#right">right</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SingletonFuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="SingletonFuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="SingletonFuzzySet.html#fromJSON">fromJSON</a></li><li><a href="SingletonFuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="SingletonFuzzySet.html#toJSON">toJSON</a></li><li><a href="SingletonFuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="Smoother.html">Smoother</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Smoother_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Smoother.html#count">count</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Smoother.html#calculate">calculate</a></li><li><a href="Smoother.html#fromJSON">fromJSON</a></li><li><a href="Smoother.html#toJSON">toJSON</a></li></ul></div></li><li><a href="SphericalTriggerRegion.html">SphericalTriggerRegion</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SphericalTriggerRegion_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="SphericalTriggerRegion.html#fromJSON">fromJSON</a></li><li><a href="SphericalTriggerRegion.html#toJSON">toJSON</a></li><li><a href="SphericalTriggerRegion.html#touching">touching</a></li></ul></div></li><li><a href="State.html">State</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="State_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="State.html#enter">enter</a></li><li><a href="State.html#execute">execute</a></li><li><a href="State.html#exit">exit</a></li><li><a href="State.html#fromJSON">fromJSON</a></li><li><a href="State.html#onMessage">onMessage</a></li><li><a href="State.html#resolveReferences">resolveReferences</a></li><li><a href="State.html#toJSON">toJSON</a></li></ul></div></li><li><a href="StateMachine.html">StateMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="StateMachine_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="StateMachine.html#currentState">currentState</a></li><li><a href="StateMachine.html#globalState">globalState</a></li><li><a href="StateMachine.html#owner">owner</a></li><li><a href="StateMachine.html#previousState">previousState</a></li><li><a href="StateMachine.html#states">states</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="StateMachine.html#add">add</a></li><li><a href="StateMachine.html#changeTo">changeTo</a></li><li><a href="StateMachine.html#fromJSON">fromJSON</a></li><li><a href="StateMachine.html#get">get</a></li><li><a href="StateMachine.html#handleMessage">handleMessage</a></li><li><a href="StateMachine.html#in">in</a></li><li><a href="StateMachine.html#registerType">registerType</a></li><li><a href="StateMachine.html#remove">remove</a></li><li><a href="StateMachine.html#resolveReferences">resolveReferences</a></li><li><a href="StateMachine.html#revert">revert</a></li><li><a href="StateMachine.html#toJSON">toJSON</a></li><li><a href="StateMachine.html#update">update</a></li></ul></div></li><li><a href="SteeringBehavior.html">SteeringBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SteeringBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SteeringBehavior.html#active">active</a></li><li><a href="SteeringBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SteeringBehavior.html#calculate">calculate</a></li><li><a href="SteeringBehavior.html#fromJSON">fromJSON</a></li><li><a href="SteeringBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="SteeringBehavior.html#toJSON">toJSON</a></li></ul></div></li><li><a href="SteeringManager.html">SteeringManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SteeringManager_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SteeringManager.html#behaviors">behaviors</a></li><li><a href="SteeringManager.html#vehicle">vehicle</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SteeringManager.html#add">add</a></li><li><a href="SteeringManager.html#calculate">calculate</a></li><li><a href="SteeringManager.html#clear">clear</a></li><li><a href="SteeringManager.html#fromJSON">fromJSON</a></li><li><a href="SteeringManager.html#registerType">registerType</a></li><li><a href="SteeringManager.html#remove">remove</a></li><li><a href="SteeringManager.html#resolveReferences">resolveReferences</a></li><li><a href="SteeringManager.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Task.html">Task</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Task_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Task.html#execute">execute</a></li></ul></div></li><li><a href="TaskQueue.html">TaskQueue</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="TaskQueue_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="TaskQueue.html#options">options</a></li><li><a href="TaskQueue.html#tasks">tasks</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="TaskQueue.html#enqueue">enqueue</a></li><li><a href="TaskQueue.html#update">update</a></li></ul></div></li><li><a href="Telegram.html">Telegram</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Telegram_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Telegram.html#data">data</a></li><li><a href="Telegram.html#delay">delay</a></li><li><a href="Telegram.html#message">message</a></li><li><a href="Telegram.html#receiver">receiver</a></li><li><a href="Telegram.html#sender">sender</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Telegram.html#fromJSON">fromJSON</a></li><li><a href="Telegram.html#resolveReferences">resolveReferences</a></li><li><a href="Telegram.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Think.html">Think</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Think_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Think.html#evaluators">evaluators</a></li><li><a href="Think.html#owner">owner</a></li><li><a href="Think.html#status">status</a></li><li><a href="Think.html#subgoals">subgoals</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Think.html#activate">activate</a></li><li><a href="Think.html#activateIfInactive">activateIfInactive</a></li><li><a href="Think.html#active">active</a></li><li><a href="Think.html#addEvaluator">addEvaluator</a></li><li><a href="Think.html#addSubgoal">addSubgoal</a></li><li><a href="Think.html#arbitrate">arbitrate</a></li><li><a href="Think.html#clearSubgoals">clearSubgoals</a></li><li><a href="Think.html#completed">completed</a></li><li><a href="Think.html#currentSubgoal">currentSubgoal</a></li><li><a href="Think.html#execute">execute</a></li><li><a href="Think.html#executeSubgoals">executeSubgoals</a></li><li><a href="Think.html#failed">failed</a></li><li><a href="Think.html#fromJSON">fromJSON</a></li><li><a href="Think.html#handleMessage">handleMessage</a></li><li><a href="Think.html#hasSubgoals">hasSubgoals</a></li><li><a href="Think.html#inactive">inactive</a></li><li><a href="Think.html#registerType">registerType</a></li><li><a href="Think.html#removeEvaluator">removeEvaluator</a></li><li><a href="Think.html#removeSubgoal">removeSubgoal</a></li><li><a href="Think.html#replanIfFailed">replanIfFailed</a></li><li><a href="Think.html#resolveReferences">resolveReferences</a></li><li><a href="Think.html#terminate">terminate</a></li><li><a href="Think.html#toJSON">toJSON</a></li></ul></div></li><li><a href="Time.html">Time</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Time_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Time.html#currentTime">currentTime</a></li><li><a href="Time.html#detectPageVisibility">detectPageVisibility</a></li><li><a href="Time.html#previousTime">previousTime</a></li><li><a href="Time.html#startTime">startTime</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Time.html#getDelta">getDelta</a></li><li><a href="Time.html#getElapsed">getElapsed</a></li><li><a href="Time.html#now">now</a></li><li><a href="Time.html#update">update</a></li></ul></div></li><li><a href="TriangularFuzzySet.html">TriangularFuzzySet</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="TriangularFuzzySet_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="TriangularFuzzySet.html#degreeOfMembership">degreeOfMembership</a></li><li><a href="TriangularFuzzySet.html#left">left</a></li><li><a href="TriangularFuzzySet.html#midpoint">midpoint</a></li><li><a href="TriangularFuzzySet.html#representativeValue">representativeValue</a></li><li><a href="TriangularFuzzySet.html#right">right</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="TriangularFuzzySet.html#clearDegreeOfMembership">clearDegreeOfMembership</a></li><li><a href="TriangularFuzzySet.html#computeDegreeOfMembership">computeDegreeOfMembership</a></li><li><a href="TriangularFuzzySet.html#fromJSON">fromJSON</a></li><li><a href="TriangularFuzzySet.html#getDegreeOfMembership">getDegreeOfMembership</a></li><li><a href="TriangularFuzzySet.html#toJSON">toJSON</a></li><li><a href="TriangularFuzzySet.html#updateDegreeOfMembership">updateDegreeOfMembership</a></li></ul></div></li><li><a href="Trigger.html">Trigger</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Trigger_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Trigger.html#active">active</a></li><li><a href="Trigger.html#region">region</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Trigger.html#check">check</a></li><li><a href="Trigger.html#execute">execute</a></li><li><a href="Trigger.html#fromJSON">fromJSON</a></li><li><a href="Trigger.html#registerType">registerType</a></li><li><a href="Trigger.html#toJSON">toJSON</a></li><li><a href="Trigger.html#update">update</a></li></ul></div></li><li><a href="TriggerRegion.html">TriggerRegion</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="TriggerRegion_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="TriggerRegion.html#fromJSON">fromJSON</a></li><li><a href="TriggerRegion.html#toJSON">toJSON</a></li><li><a href="TriggerRegion.html#touching">touching</a></li></ul></div></li><li><a href="Vector3.html">Vector3</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Vector3_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Vector3.html#x">x</a></li><li><a href="Vector3.html#y">y</a></li><li><a href="Vector3.html#z">z</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Vector3.html#add">add</a></li><li><a href="Vector3.html#addScalar">addScalar</a></li><li><a href="Vector3.html#addVectors">addVectors</a></li><li><a href="Vector3.html#angleTo">angleTo</a></li><li><a href="Vector3.html#applyMatrix4">applyMatrix4</a></li><li><a href="Vector3.html#applyRotation">applyRotation</a></li><li><a href="Vector3.html#clamp">clamp</a></li><li><a href="Vector3.html#clone">clone</a></li><li><a href="Vector3.html#copy">copy</a></li><li><a href="Vector3.html#cross">cross</a></li><li><a href="Vector3.html#crossVectors">crossVectors</a></li><li><a href="Vector3.html#distanceTo">distanceTo</a></li><li><a href="Vector3.html#divide">divide</a></li><li><a href="Vector3.html#divideScalar">divideScalar</a></li><li><a href="Vector3.html#divideVectors">divideVectors</a></li><li><a href="Vector3.html#dot">dot</a></li><li><a href="Vector3.html#equals">equals</a></li><li><a href="Vector3.html#extractPositionFromMatrix">extractPositionFromMatrix</a></li><li><a href="Vector3.html#fromArray">fromArray</a></li><li><a href="Vector3.html#fromMatrix3Column">fromMatrix3Column</a></li><li><a href="Vector3.html#fromMatrix4Column">fromMatrix4Column</a></li><li><a href="Vector3.html#fromSpherical">fromSpherical</a></li><li><a href="Vector3.html#length">length</a></li><li><a href="Vector3.html#manhattanDistanceTo">manhattanDistanceTo</a></li><li><a href="Vector3.html#manhattanLength">manhattanLength</a></li><li><a href="Vector3.html#max">max</a></li><li><a href="Vector3.html#min">min</a></li><li><a href="Vector3.html#multiply">multiply</a></li><li><a href="Vector3.html#multiplyScalar">multiplyScalar</a></li><li><a href="Vector3.html#multiplyVectors">multiplyVectors</a></li><li><a href="Vector3.html#normalize">normalize</a></li><li><a href="Vector3.html#reflect">reflect</a></li><li><a href="Vector3.html#set">set</a></li><li><a href="Vector3.html#squaredDistanceTo">squaredDistanceTo</a></li><li><a href="Vector3.html#squaredLength">squaredLength</a></li><li><a href="Vector3.html#sub">sub</a></li><li><a href="Vector3.html#subScalar">subScalar</a></li><li><a href="Vector3.html#subVectors">subVectors</a></li><li><a href="Vector3.html#toArray">toArray</a></li><li><a href="Vector3.html#transformDirection">transformDirection</a></li></ul></div></li><li><a href="Vehicle.html">Vehicle</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Vehicle_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Vehicle.html#active">active</a></li><li><a href="Vehicle.html#boundingRadius">boundingRadius</a></li><li><a href="Vehicle.html#canAcitivateTrigger">canAcitivateTrigger</a></li><li><a href="Vehicle.html#children">children</a></li><li><a href="Vehicle.html#forward">forward</a></li><li><a href="Vehicle.html#manager">manager</a></li><li><a href="Vehicle.html#mass">mass</a></li><li><a href="Vehicle.html#maxForce">maxForce</a></li><li><a href="Vehicle.html#maxSpeed">maxSpeed</a></li><li><a href="Vehicle.html#maxTurnRate">maxTurnRate</a></li><li><a href="Vehicle.html#name">name</a></li><li><a href="Vehicle.html#neighborhoodRadius">neighborhoodRadius</a></li><li><a href="Vehicle.html#neighbors">neighbors</a></li><li><a href="Vehicle.html#parent">parent</a></li><li><a href="Vehicle.html#position">position</a></li><li><a href="Vehicle.html#rotation">rotation</a></li><li><a href="Vehicle.html#scale">scale</a></li><li><a href="Vehicle.html#smoother">smoother</a></li><li><a href="Vehicle.html#steering">steering</a></li><li><a href="Vehicle.html#up">up</a></li><li><a href="Vehicle.html#updateNeighborhood">updateNeighborhood</a></li><li><a href="Vehicle.html#updateOrientation">updateOrientation</a></li><li><a href="Vehicle.html#velocity">velocity</a></li><li><a href="Vehicle.html#worldMatrix">worldMatrix</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Vehicle.html#add">add</a></li><li><a href="Vehicle.html#fromJSON">fromJSON</a></li><li><a href="Vehicle.html#getDirection">getDirection</a></li><li><a href="Vehicle.html#getSpeed">getSpeed</a></li><li><a href="Vehicle.html#getSpeedSquared">getSpeedSquared</a></li><li><a href="Vehicle.html#getWorldDirection">getWorldDirection</a></li><li><a href="Vehicle.html#getWorldPosition">getWorldPosition</a></li><li><a href="Vehicle.html#handleMessage">handleMessage</a></li><li><a href="Vehicle.html#lineOfSightTest">lineOfSightTest</a></li><li><a href="Vehicle.html#lookAt">lookAt</a></li><li><a href="Vehicle.html#remove">remove</a></li><li><a href="Vehicle.html#resolveReferences">resolveReferences</a></li><li><a href="Vehicle.html#rotateTo">rotateTo</a></li><li><a href="Vehicle.html#sendMessage">sendMessage</a></li><li><a href="Vehicle.html#setRenderComponent">setRenderComponent</a></li><li><a href="Vehicle.html#start">start</a></li><li><a href="Vehicle.html#toJSON">toJSON</a></li><li><a href="Vehicle.html#update">update</a></li><li><a href="Vehicle.html#updateWorldMatrix">updateWorldMatrix</a></li></ul></div></li><li><a href="Vision.html">Vision</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Vision_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Vision.html#fieldOfView">fieldOfView</a></li><li><a href="Vision.html#obstacles">obstacles</a></li><li><a href="Vision.html#owner">owner</a></li><li><a href="Vision.html#range">range</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Vision.html#addObstacle">addObstacle</a></li><li><a href="Vision.html#fromJSON">fromJSON</a></li><li><a href="Vision.html#removeObstacle">removeObstacle</a></li><li><a href="Vision.html#resolveReferences">resolveReferences</a></li><li><a href="Vision.html#toJSON">toJSON</a></li><li><a href="Vision.html#visible">visible</a></li></ul></div></li><li><a href="WanderBehavior.html">WanderBehavior</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WanderBehavior_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="WanderBehavior.html#active">active</a></li><li><a href="WanderBehavior.html#distance">distance</a></li><li><a href="WanderBehavior.html#jitter">jitter</a></li><li><a href="WanderBehavior.html#radius">radius</a></li><li><a href="WanderBehavior.html#weight">weight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="WanderBehavior.html#calculate">calculate</a></li><li><a href="WanderBehavior.html#fromJSON">fromJSON</a></li><li><a href="WanderBehavior.html#resolveReferences">resolveReferences</a></li><li><a href="WanderBehavior.html#toJSON">toJSON</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#runTaskQueue">runTaskQueue</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { LineSegment } from './LineSegment.js';
+import { Plane } from './Plane.js';
+import { SAT } from './SAT.js';
+import { Vector3 } from './Vector3.js';
+import { Logger } from '../core/Logger.js';
+import { Polygon } from './Polygon.js';
+
+const line = new LineSegment();
+const plane = new Plane();
+const closestPoint = new Vector3();
+const up = new Vector3( 0, 1, 0 );
+const sat = new SAT();
+
+/**
+* Class representing a convex hull. This is an implementation of the Quickhull algorithm
+* based on the presentation {@link http://media.steampowered.com/apps/valve/2014/DirkGregorius_ImplementingQuickHull.pdf Implementing QuickHull}
+* by Dirk Gregorius (Valve Software) from GDC 2014. The algorithm has an average runtime
+* complexity of O(nlog(n)), whereas in the worst case it takes O(n²).
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class ConvexHull {
+
+	/**
+	* Constructs a new convex hull.
+	*/
+	constructor() {
+
+		/**
+		* An array of faces representing the convex hull.
+		* @type Array
+		*/
+		this.faces = new Array();
+
+		// private members
+
+		// tolerance value for various (float) compare operations
+
+		this._tolerance = - 1;
+
+		// this array represents the vertices which will be enclosed by the convex hull
+
+		this._vertices = new Array();
+
+		// two doubly linked lists for easier vertex processing
+
+		this._assigned = new VertexList();
+		this._unassigned = new VertexList();
+
+		// this array holds the new faces generated in a single iteration of the algorithm
+
+		this._newFaces = new Array();
+
+	}
+
+	/**
+	* Sets the given faces to this convex hull.
+	*
+	* @param {Array} faces - The new faces of the convex hull.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	set( faces ) {
+
+		this.faces = faces;
+
+		return this;
+
+	}
+
+	/**
+	* Copies the faces from the given convex hull to this convex hull.
+	*
+	* @param {ConvexHull} convexHull - The convex hull to copy.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	copy( convexHull ) {
+
+		this.faces.length = 0;
+		this.faces.push( ...convexHull.faces );
+
+		return this;
+
+	}
+
+	/**
+	* Creates a new convex hull and copies all values from this convex hull.
+	*
+	* @return {ConvexHull} A new convex hull.
+	*/
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	/**
+	* Returns true if the given point is inside this convex hull.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Boolean} Whether the given point is inside this convex hull or not.
+	*/
+	containsPoint( point ) {
+
+		const faces = this.faces;
+
+		// use the internal plane abstraction of each face in order to test
+		// on what half space the point lies
+
+		for ( let i = 0, l = faces.length; i &lt; l; i ++ ) {
+
+			// if the signed distance is greater than the tolernce value, the point
+			// is outside and we can stop processing
+
+			if ( faces[ i ].distanceToPoint( point ) > this._tolerance ) return false;
+
+		}
+
+		return true;
+
+	}
+
+	/**
+	* Returns true if this convex hull intersects with the given one.
+	*
+	* @param {ConvexHull} convexHull - The convex hull to test.
+	* @return {Boolean} Whether this convex hull intersects with the given one or not.
+	*/
+	intersectsConvexHull( convexHull ) {
+
+		return sat.intersects( this.faces, convexHull.faces );
+
+	}
+
+	/**
+	* Computes a convex hull that encloses the given set of points. The computation requires
+	* at least four points.
+	*
+	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	fromPoints( points ) {
+
+		if ( points.length &lt; 4 ) {
+
+			Logger.error( 'YUKA.ConvexHull: The given points array needs at least four points.' );
+			return this;
+
+		}
+
+		// wrap all points into the internal vertex data structure
+
+		for ( let i = 0, l = points.length; i &lt; l; i ++ ) {
+
+			this._vertices.push( new Vertex( points[ i ] ) );
+
+		}
+
+		// generate the convex hull
+
+		this._generate();
+
+		return this;
+
+	}
+
+	// private API
+
+	// adds a single face to the convex hull by connecting it with the respective horizon edge
+
+	_addAdjoiningFace( vertex, horizonEdge ) {
+
+		// all the half edges are created in ccw order thus the face is always pointing outside the hull
+
+		const face = new Face( vertex.point, horizonEdge.prev.vertex, horizonEdge.vertex );
+
+		this.faces.push( face );
+
+		// join face.getEdge( - 1 ) with the horizon's opposite edge face.getEdge( - 1 ) = face.getEdge( 2 )
+
+		face.getEdge( - 1 ).linkOpponent( horizonEdge.twin );
+
+		return face.getEdge( 0 ); // the half edge whose vertex is the given one
+
+	}
+
+	// adds new faces by connecting the horizon with the new point of the convex hull
+
+	_addNewFaces( vertex, horizon ) {
+
+		this._newFaces = [];
+
+		let firstSideEdge = null;
+		let previousSideEdge = null;
+
+		for ( let i = 0, l = horizon.length; i &lt; l; i ++ ) {
+
+			// returns the right side edge
+
+			let sideEdge = this._addAdjoiningFace( vertex, horizon[ i ] );
+
+			if ( firstSideEdge === null ) {
+
+				firstSideEdge = sideEdge;
+
+			} else {
+
+				// joins face.getEdge( 1 ) with previousFace.getEdge( 0 )
+
+				sideEdge.next.linkOpponent( previousSideEdge );
+
+			}
+
+			this._newFaces.push( sideEdge.polygon );
+			previousSideEdge = sideEdge;
+
+		}
+
+		// perform final join of new faces
+
+		firstSideEdge.next.linkOpponent( previousSideEdge );
+
+		return this;
+
+	}
+
+	// assigns a single vertex to the given face. that means this face can "see"
+	// the vertex and its distance to the vertex is greater than all other faces
+
+	_addVertexToFace( vertex, face ) {
+
+		vertex.face = face;
+
+		if ( face.outside === null ) {
+
+			this._assigned.append( vertex );
+
+			face.outside = vertex;
+
+		} else {
+
+			this._assigned.insertAfter( face.outside, vertex );
+
+		}
+
+		return this;
+
+	}
+
+	// the base iteration of the algorithm. adds a new vertex to the convex hull by
+	// connecting faces from the horizon with it.
+
+	_addVertexToHull( vertex ) {
+
+		const horizon = [];
+
+		this._unassigned.clear();
+
+		this._computeHorizon( vertex.point, null, vertex.face, horizon );
+
+		this._addNewFaces( vertex, horizon );
+
+		// reassign 'unassigned' vertices to the new faces
+
+		this._resolveUnassignedPoints( this._newFaces );
+
+		return this;
+
+	}
+
+	// frees memory by resetting internal data structures
+
+	_reset() {
+
+		this._vertices.length = 0;
+
+		this._assigned.clear();
+		this._unassigned.clear();
+
+		this._newFaces.length = 0;
+
+		return this;
+
+	}
+
+	// computes the initial hull of the algorithm. it's a tetrahedron created
+	// with the extreme vertices of the given set of points
+
+	_computeInitialHull() {
+
+		let v0, v1, v2, v3;
+
+		const vertices = this._vertices;
+		const extremes = this._computeExtremes();
+		const min = extremes.min;
+		const max = extremes.max;
+
+		// 1. Find the two points 'p0' and 'p1' with the greatest 1d separation
+		// (max.x - min.x)
+		// (max.y - min.y)
+		// (max.z - min.z)
+
+		// check x
+
+		let distance, maxDistance;
+
+		distance = maxDistance = max.x.point.x - min.x.point.x;
+
+		v0 = min.x;
+		v1 = max.x;
+
+		// check y
+
+		distance = max.y.point.y - min.y.point.y;
+
+		if ( distance > maxDistance ) {
+
+			v0 = min.y;
+			v1 = max.y;
+
+			maxDistance = distance;
+
+		}
+
+		// check z
+
+		distance = max.z.point.z - min.z.point.z;
+
+		if ( distance > maxDistance ) {
+
+			v0 = min.z;
+			v1 = max.z;
+
+		}
+
+		// 2. The next vertex 'v2' is the one farthest to the line formed by 'v0' and 'v1'
+
+		maxDistance = - Infinity;
+		line.set( v0.point, v1.point );
+
+		for ( let i = 0, l = vertices.length; i &lt; l; i ++ ) {
+
+			const vertex = vertices[ i ];
+
+			if ( vertex !== v0 &amp;&amp; vertex !== v1 ) {
+
+				line.closestPointToPoint( vertex.point, true, closestPoint );
+
+				distance = closestPoint.squaredDistanceTo( vertex.point );
+
+				if ( distance > maxDistance ) {
+
+					maxDistance = distance;
+					v2 = vertex;
+
+				}
+
+			}
+
+		}
+
+		// 3. The next vertex 'v3' is the one farthest to the plane 'v0', 'v1', 'v2'
+
+		maxDistance = - Infinity;
+		plane.fromCoplanarPoints( v0.point, v1.point, v2.point );
+
+		for ( let i = 0, l = vertices.length; i &lt; l; i ++ ) {
+
+			const vertex = vertices[ i ];
+
+			if ( vertex !== v0 &amp;&amp; vertex !== v1 &amp;&amp; vertex !== v2 ) {
+
+				distance = Math.abs( plane.distanceToPoint( vertex.point ) );
+
+				if ( distance > maxDistance ) {
+
+					maxDistance = distance;
+					v3 = vertex;
+
+				}
+
+			}
+
+		}
+
+		const faces = this.faces;
+
+		if ( plane.distanceToPoint( v3.point ) &lt; 0 ) {
+
+			// the face is not able to see the point so 'plane.normal' is pointing outside the tetrahedron
+
+			faces.push(
+				new Face( v0.point, v1.point, v2.point ),
+				new Face( v3.point, v1.point, v0.point ),
+				new Face( v3.point, v2.point, v1.point ),
+				new Face( v3.point, v0.point, v2.point )
+			);
+
+			// set the twin edge
+
+			// join face[ i ] i > 0, with the first face
+
+			faces[ 1 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 1 ) );
+			faces[ 2 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 2 ) );
+			faces[ 3 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 0 ) );
+
+			// join face[ i ] with face[ i + 1 ], 1 &lt;= i &lt;= 3
+
+			faces[ 1 ].getEdge( 1 ).linkOpponent( faces[ 2 ].getEdge( 0 ) );
+			faces[ 2 ].getEdge( 1 ).linkOpponent( faces[ 3 ].getEdge( 0 ) );
+			faces[ 3 ].getEdge( 1 ).linkOpponent( faces[ 1 ].getEdge( 0 ) );
+
+		} else {
+
+			// the face is able to see the point so 'plane.normal' is pointing inside the tetrahedron
+
+			faces.push(
+				new Face( v0.point, v2.point, v1.point ),
+				new Face( v3.point, v0.point, v1.point ),
+				new Face( v3.point, v1.point, v2.point ),
+				new Face( v3.point, v2.point, v0.point )
+			);
+
+			// set the twin edge
+
+			// join face[ i ] i > 0, with the first face
+
+			faces[ 1 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 0 ) );
+			faces[ 2 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 2 ) );
+			faces[ 3 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 1 ) );
+
+			// join face[ i ] with face[ i + 1 ], 1 &lt;= i &lt;= 3
+
+			faces[ 1 ].getEdge( 0 ).linkOpponent( faces[ 2 ].getEdge( 1 ) );
+			faces[ 2 ].getEdge( 0 ).linkOpponent( faces[ 3 ].getEdge( 1 ) );
+			faces[ 3 ].getEdge( 0 ).linkOpponent( faces[ 1 ].getEdge( 1 ) );
+
+		}
+
+		// initial assignment of vertices to the faces of the tetrahedron
+
+		for ( let i = 0, l = vertices.length; i &lt; l; i ++ ) {
+
+			const vertex = vertices[ i ];
+
+			if ( vertex !== v0 &amp;&amp; vertex !== v1 &amp;&amp; vertex !== v2 &amp;&amp; vertex !== v3 ) {
+
+				maxDistance = this._tolerance;
+				let maxFace = null;
+
+				for ( let j = 0; j &lt; 4; j ++ ) {
+
+					distance = faces[ j ].distanceToPoint( vertex.point );
+
+					if ( distance > maxDistance ) {
+
+						maxDistance = distance;
+						maxFace = faces[ j ];
+
+					}
+
+				}
+
+				if ( maxFace !== null ) {
+
+					this._addVertexToFace( vertex, maxFace );
+
+				}
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+	// computes the extreme vertices of used to compute the initial convex hull
+
+	_computeExtremes() {
+
+		const min = new Vector3( Infinity, Infinity, Infinity );
+		const max = new Vector3( - Infinity, - Infinity, - Infinity );
+
+		const minVertices = { x: null, y: null, z: null };
+		const maxVertices = { x: null, y: null, z: null };
+
+		// compute the min/max points on all six directions
+
+		for ( let i = 0, l = this._vertices.length; i &lt; l; i ++ ) {
+
+			const vertex = this._vertices[ i ];
+			const point = vertex.point;
+
+			// update the min coordinates
+
+			if ( point.x &lt; min.x ) {
+
+				min.x = point.x;
+				minVertices.x = vertex;
+
+			}
+
+			if ( point.y &lt; min.y ) {
+
+				min.y = point.y;
+				minVertices.y = vertex;
+
+			}
+
+			if ( point.z &lt; min.z ) {
+
+				min.z = point.z;
+				minVertices.z = vertex;
+
+			}
+
+			// update the max coordinates
+
+			if ( point.x > max.x ) {
+
+				max.x = point.x;
+				maxVertices.x = vertex;
+
+			}
+
+			if ( point.y > max.y ) {
+
+				max.y = point.y;
+				maxVertices.y = vertex;
+
+			}
+
+			if ( point.z > max.z ) {
+
+				max.z = point.z;
+				maxVertices.z = vertex;
+
+			}
+
+		}
+
+		// use min/max vectors to compute an optimal epsilon
+
+		this._tolerance = 3 * Number.EPSILON * (
+			Math.max( Math.abs( min.x ), Math.abs( max.x ) ) +
+			Math.max( Math.abs( min.y ), Math.abs( max.y ) ) +
+			Math.max( Math.abs( min.z ), Math.abs( max.z ) )
+		);
+
+		return { min: minVertices, max: maxVertices };
+
+	}
+
+	// computes the horizon, an array of edges enclosing the faces that are able
+	// to see the new vertex
+
+	_computeHorizon( eyePoint, crossEdge, face, horizon ) {
+
+		if ( face.outside ) {
+
+			const startVertex = face.outside;
+
+			// remove all vertices from the given face
+
+			this._removeAllVerticesFromFace( face );
+
+			// mark the face vertices to be reassigned to other faces
+
+			this._unassigned.appendChain( startVertex );
+
+		}
+
+		face.active = false;
+
+		let edge;
+
+		if ( crossEdge === null ) {
+
+			edge = crossEdge = face.getEdge( 0 );
+
+		} else {
+
+			// start from the next edge since 'crossEdge' was already analyzed
+			// (actually 'crossEdge.twin' was the edge who called this method recursively)
+
+			edge = crossEdge.next;
+
+		}
+
+		do {
+
+			let twinEdge = edge.twin;
+			let oppositeFace = twinEdge.polygon;
+
+			if ( oppositeFace.active ) {
+
+				if ( oppositeFace.distanceToPoint( eyePoint ) > this._tolerance ) {
+
+					// the opposite face can see the vertex, so proceed with next edge
+
+					this._computeHorizon( eyePoint, twinEdge, oppositeFace, horizon );
+
+				} else {
+
+					// the opposite face can't see the vertex, so this edge is part of the horizon
+
+					horizon.push( edge );
+
+				}
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== crossEdge );
+
+		return this;
+
+	}
+
+	// this method controls the basic flow of the algorithm
+
+	_generate() {
+
+		this.faces.length = 0;
+
+		this._computeInitialHull();
+
+		let vertex;
+
+		while ( vertex = this._nextVertexToAdd() ) {
+
+			this._addVertexToHull( vertex );
+
+		}
+
+		this._updateFaces();
+
+		this._mergeFaces();
+
+		this._reset();
+
+		return this;
+
+	}
+
+	// merges faces if the result is still convex and coplanar
+
+	_mergeFaces() {
+
+		const faces = this.faces;
+
+		const cache = {
+			leftPrev: null,
+			leftNext: null,
+			rightPrev: null,
+			rightNext: null
+		};
+
+		const edges = this._getSortedEdgeList();
+
+		// process edges from longest to shortest
+
+		for ( let i = 0, l = edges.length; i &lt; l; i ++ ) {
+
+			const entry = edges[ i ];
+
+			let candidate = entry;
+
+			// cache current references for possible restore
+
+			cache.prev = candidate.prev;
+			cache.next = candidate.next;
+			cache.prevTwin = candidate.twin.prev;
+			cache.nextTwin = candidate.twin.next;
+
+			// temporarily change the first polygon in order to represent both polygons
+
+			candidate.prev.next = candidate.twin.next;
+			candidate.next.prev = candidate.twin.prev;
+			candidate.twin.prev.next = candidate.next;
+			candidate.twin.next.prev = candidate.prev;
+
+			const polygon = candidate.polygon;
+			polygon.edge = candidate.prev;
+
+			const ccw = polygon.plane.normal.dot( up ) >= 0;
+
+			if ( polygon.convex( ccw ) === true &amp;&amp; polygon.coplanar( this._tolerance ) === true ) {
+
+				// correct polygon reference of all edges
+
+				let edge = polygon.edge;
+
+				do {
+
+					edge.polygon = polygon;
+
+					edge = edge.next;
+
+				} while ( edge !== polygon.edge );
+
+				// delete obsolete polygon
+
+				const index = faces.indexOf( entry.twin.polygon );
+				faces.splice( index, 1 );
+
+			} else {
+
+				// restore
+
+				cache.prev.next = candidate;
+				cache.next.prev = candidate;
+				cache.prevTwin.next = candidate.twin;
+				cache.nextTwin.prev = candidate.twin;
+
+				polygon.edge = candidate;
+
+			}
+
+		}
+
+		// recompute centroid
+
+		for ( let i = 0, l = faces.length; i &lt; l; i ++ ) {
+
+			faces[ i ].computeCentroid();
+
+		}
+
+	}
+
+	// return a array with all halfedges of the convex hull sorted by length in descending order
+
+	_getSortedEdgeList() {
+
+		const faces = this.faces;
+		const result = new Array();
+
+		for ( let i = 0, l = faces.length; i &lt; l; i ++ ) {
+
+			const face = faces[ i ];
+			const firstEdge = face.edge;
+
+			let edge = firstEdge;
+
+			do {
+
+				// only add the edge if the twin was not added before
+
+				if ( result.includes( edge.twin ) === false ) {
+
+					result.push( edge );
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== firstEdge );
+
+		}
+
+		return result.sort( ( a, b ) => b.length() - a.length() );
+
+	}
+
+	// determines the next vertex that should added to the convex hull
+
+	_nextVertexToAdd() {
+
+		let nextVertex = null;
+
+		// if the 'assigned' list of vertices is empty, no vertices are left
+
+		if ( this._assigned.empty() === false ) {
+
+			let maxDistance = 0;
+
+			// grap the first available vertex and save the respective face
+
+			let vertex = this._assigned.first();
+			const face = vertex.face;
+
+			// now calculate the farthest vertex that face can see
+
+			do {
+
+				const distance = face.distanceToPoint( vertex.point );
+
+				if ( distance > maxDistance ) {
+
+					maxDistance = distance;
+					nextVertex = vertex;
+
+				}
+
+				vertex = vertex.next;
+
+			} while ( vertex !== null &amp;&amp; vertex.face === face );
+
+		}
+
+		return nextVertex;
+
+	}
+
+	// updates the faces array after the computation of the convex hull
+	// it ensures only visible faces are in the result set
+
+	_updateFaces() {
+
+		const faces = this.faces;
+		const activeFaces = new Array();
+
+		for ( let i = 0, l = faces.length; i &lt; l; i ++ ) {
+
+			const face = faces[ i ];
+
+			// only respect visible but not deleted or merged faces
+
+			if ( face.active ) {
+
+				activeFaces.push( face );
+
+			}
+
+		}
+
+		this.faces.length = 0;
+		this.faces.push( ...activeFaces );
+
+		return this;
+
+	}
+
+	// removes all vertices from the given face. necessary when deleting a face
+	// which is necessary when the hull is going to be expanded
+
+	_removeAllVerticesFromFace( face ) {
+
+		if ( face.outside !== null ) {
+
+			// reference to the first and last vertex of this face
+
+			const firstVertex = face.outside;
+			firstVertex.face = null;
+
+			let lastVertex = face.outside;
+
+			while ( lastVertex.next !== null &amp;&amp; lastVertex.next.face === face ) {
+
+				lastVertex = lastVertex.next;
+				lastVertex.face = null;
+
+			}
+
+			face.outside = null;
+
+			this._assigned.removeChain( firstVertex, lastVertex );
+
+		}
+
+		return this;
+
+	}
+
+	// removes a single vertex from the given face
+
+	_removeVertexFromFace( vertex, face ) {
+
+		vertex.face = null;
+
+		if ( vertex === face.outside ) {
+
+			// fix face.outside link
+
+			if ( vertex.next !== null &amp;&amp; vertex.next.face === face ) {
+
+				// face has at least 2 outside vertices, move the 'outside' reference
+
+				face.outside = vertex.next;
+
+			} else {
+
+				// vertex was the only outside vertex that face had
+
+				face.outside = null;
+
+			}
+
+		}
+
+		this._assigned.remove( vertex );
+
+		return this;
+
+	}
+
+	// ensure that all unassigned points are reassigned to other faces of the
+	// current convex hull. this method is always executed after the hull was
+	// expanded
+
+	_resolveUnassignedPoints( newFaces ) {
+
+		if ( this._unassigned.empty() === false ) {
+
+			let vertex = this._unassigned.first();
+
+			do {
+
+				// buffer 'next' reference since addVertexToFace() can change it
+
+				let nextVertex = vertex.next;
+				let maxDistance = this._tolerance;
+
+				let maxFace = null;
+
+				for ( let i = 0, l = newFaces.length; i &lt; l; i ++ ) {
+
+					const face = newFaces[ i ];
+
+					if ( face.active ) {
+
+						const distance = face.distanceToPoint( vertex.point );
+
+						if ( distance > maxDistance ) {
+
+							maxDistance = distance;
+							maxFace = face;
+
+						}
+
+					}
+
+				}
+
+				if ( maxFace !== null ) {
+
+					this._addVertexToFace( vertex, maxFace );
+
+				}
+
+				vertex = nextVertex;
+
+			} while ( vertex !== null );
+
+		}
+
+		return this;
+
+	}
+
+}
+
+class Face extends Polygon {
+
+	constructor( a = new Vector3(), b = new Vector3(), c = new Vector3() ) {
+
+		super();
+
+		this.outside = null; // reference to a vertex in a vertex list this face can see
+		this.active = true;
+
+		this.fromContour( [ a, b, c ] );
+
+		this.computeCentroid();
+
+	}
+
+	getEdge( i ) {
+
+		let edge = this.edge;
+
+		while ( i > 0 ) {
+
+			edge = edge.next;
+			i --;
+
+		}
+
+		while ( i &lt; 0 ) {
+
+			edge = edge.prev;
+			i ++;
+
+		}
+
+		return edge;
+
+	}
+
+}
+
+// special data structures for the quick hull implementation
+
+class Vertex {
+
+	constructor( point = new Vector3() ) {
+
+		this.point = point;
+		this.prev = null;
+		this.next = null;
+		this.face = null; // the face that is able to see this vertex
+
+	}
+
+}
+
+class VertexList {
+
+	constructor() {
+
+		this.head = null;
+		this.tail = null;
+
+	}
+
+	first() {
+
+		return this.head;
+
+	}
+
+	last() {
+
+		return this.tail;
+
+	}
+
+	clear() {
+
+		this.head = this.tail = null;
+
+		return this;
+
+	}
+
+	insertAfter( target, vertex ) {
+
+		vertex.prev = target;
+		vertex.next = target.next;
+
+		if ( ! vertex.next ) {
+
+			this.tail = vertex;
+
+		} else {
+
+			vertex.next.prev = vertex;
+
+		}
+
+		target.next = vertex;
+
+		return this;
+
+	}
+
+	append( vertex ) {
+
+		if ( this.head === null ) {
+
+			this.head = vertex;
+
+		} else {
+
+			this.tail.next = vertex;
+
+		}
+
+		vertex.prev = this.tail;
+		vertex.next = null; // the tail has no subsequent vertex
+
+		this.tail = vertex;
+
+		return this;
+
+	}
+
+	appendChain( vertex ) {
+
+		if ( this.head === null ) {
+
+			this.head = vertex;
+
+		} else {
+
+			this.tail.next = vertex;
+
+		}
+
+		vertex.prev = this.tail;
+
+		while ( vertex.next !== null ) {
+
+			vertex = vertex.next;
+
+		}
+
+		this.tail = vertex;
+
+		return this;
+
+	}
+
+	remove( vertex ) {
+
+		if ( vertex.prev === null ) {
+
+			this.head = vertex.next;
+
+		} else {
+
+			vertex.prev.next = vertex.next;
+
+		}
+
+		if ( vertex.next === null ) {
+
+			this.tail = vertex.prev;
+
+		} else {
+
+			vertex.next.prev = vertex.prev;
+
+		}
+
+		vertex.prev = null;
+		vertex.next = null;
+
+		return this;
+
+	}
+
+	removeChain( a, b ) {
+
+		if ( a.prev === null ) {
+
+			this.head = b.next;
+
+		} else {
+
+			a.prev.next = b.next;
+
+		}
+
+		if ( b.next === null ) {
+
+			this.tail = a.prev;
+
+		} else {
+
+			b.next.prev = a.prev;
+
+		}
+
+		a.prev = null;
+		b.next = null;
+
+		return this;
+
+	}
+
+	empty() {
+
+		return this.head === null;
+
+	}
+
+}
+
+export { ConvexHull, Vertex, VertexList, Face };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

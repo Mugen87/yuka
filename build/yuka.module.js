@@ -384,7 +384,7 @@ class MessageDispatcher {
 
 }
 
-const lut = [];
+const lut = new Array();
 
 for ( let i = 0; i < 256; i ++ ) {
 
@@ -2013,7 +2013,7 @@ class Quaternion {
 			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );
 			euler.z = 0;
 
-		} else {
+		} else { //todo test
 
 			euler.x = Math.asin( sp );
 			euler.y = Math.atan2( this.x * this.z + this.w * this.y, 0.5 - this.x * this.x - this.y * this.y );
@@ -4694,7 +4694,6 @@ class AABB {
 
 		if ( distance < minDistance ) {
 
-			minDistance = distance;
 			result.set( 0, 0, 1 * Math.sign( vector$1.z ) );
 
 		}
@@ -5163,12 +5162,12 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/sphere intersection test. Returns either true or false if
-	 * there is a intersection or not.
-	 *
-	 * @param {BoundingSphere} sphere - A bounding sphere.
-	 * @return {boolean} Whether there is an intersection or not.
-	 */
+	* Performs a ray/sphere intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {BoundingSphere} sphere - A bounding sphere.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
 	intersectsBoundingSphere( sphere ) {
 
 		const v1 = new Vector3();
@@ -5273,12 +5272,12 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/AABB intersection test. Returns either true or false if
-	 * there is a intersection or not.
-	 *
-	 * @param {AABB} aabb - An axis-aligned bounding box.
-	 * @return {boolean} Whether there is an intersection or not.
-	 */
+	* Performs a ray/AABB intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {AABB} aabb - An axis-aligned bounding box.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
 	intersectsAABB( aabb ) {
 
 		return this.intersectAABB( aabb, v1$1 ) !== null;
@@ -5328,12 +5327,12 @@ class Ray {
 	}
 
 	/**
-	 * Performs a ray/plane intersection test. Returns either true or false if
-	 * there is a intersection or not.
-	 *
-	 * @param {Plane} plane - A plane.
-	 * @return {boolean} Whether there is an intersection or not.
-	 */
+	* Performs a ray/plane intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {Plane} plane - A plane.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
 	intersectsPlane( plane ) {
 
 		// check if the ray lies on the plane first
@@ -5357,6 +5356,102 @@ class Ray {
 		// ray origin is behind the plane (and is pointing behind it)
 
 		return false;
+
+	}
+
+	/**
+	* Performs a ray/convex hull intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	* The implementation is based on "Fast Ray-Convex Polyhedron Intersection"
+	* by Eric Haines, GRAPHICS GEMS II
+	*
+	* @param {ConvexHull} convexHull - A convex hull.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectConvexHull( convexHull, result ) {
+
+		const faces = convexHull.faces;
+
+		let tNear = - Infinity;
+		let tFar = Infinity;
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			const plane = face.plane;
+
+			const vN = plane.distanceToPoint( this.origin );
+			const vD = plane.normal.dot( this.direction );
+
+			// if the origin is on the positive side of a plane (so the plane can "see" the origin) and
+			// the ray is turned away or parallel to the plane, there is no intersection
+
+			if ( vN > 0 && vD >= 0 ) return null;
+
+			// compute the distance from the ray’s origin to the intersection with the plane
+
+			const t = ( vD !== 0 ) ? ( - vN / vD ) : 0;
+
+			// only proceed if the distance is positive. since the ray has a direction, the intersection point
+			// would lie "behind" the origin with a negative distance
+
+			if ( t <= 0 ) continue;
+
+			// now categorized plane as front-facing or back-facing
+
+			if ( vD > 0 ) {
+
+				//  plane faces away from the ray, so this plane is a back-face
+
+				tFar = Math.min( t, tFar );
+
+			} else {
+
+				// front-face
+
+				tNear = Math.max( t, tNear );
+
+			}
+
+			if ( tNear > tFar ) {
+
+				// if tNear ever is greater than tFar, the ray must miss the convex hull
+
+				return null;
+
+			}
+
+		}
+
+		// evaluate intersection point
+
+		// always try tNear first since its the closer intersection point
+
+		if ( tNear !== - Infinity ) {
+
+			this.at( tNear, result );
+
+		} else {
+
+			this.at( tFar, result );
+
+		}
+
+		return result;
+
+	}
+
+	/**
+	* Performs a ray/convex hull intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {ConvexHull} convexHull - A convex hull.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
+	intersectsConvexHull( convexHull ) {
+
+		return this.intersectConvexHull( convexHull, v1$1 ) !== null;
 
 	}
 
@@ -6537,7 +6632,7 @@ class Smoother {
 		*/
 		this.count = count;
 
-		this._history = []; // this holds the history
+		this._history = new Array(); // this holds the history
 		this._slot = 0; // the current sample slot
 
 		// initialize history with Vector3s
@@ -7234,7 +7329,7 @@ class Trigger {
 
 }
 
-const candidates = [];
+const candidates = new Array();
 
 /**
 * This class is used for managing all central objects of a game like
@@ -7890,7 +7985,7 @@ const v2 = new Vector3();
 class Plane {
 
 	/**
-	* Constructs a new plane with the given values. The sign of {@link Plane#constant} determines the side of the plane on which the origin is located.
+	* Constructs a new plane with the given values.
 	*
 	* @param {Vector3} normal - The normal vector of the plane.
 	* @param {Number} constant - The distance of the plane from the origin.
@@ -8955,7 +9050,7 @@ class FuzzyCompositeTerm extends FuzzyTerm {
 	*
 	* @param {Array} terms - An arbitrary amount of fuzzy terms.
 	*/
-	constructor( terms = [] ) {
+	constructor( terms = new Array() ) {
 
 		super();
 
@@ -9103,7 +9198,7 @@ class FuzzyFAIRLY extends FuzzyCompositeTerm {
 	*/
 	constructor( fuzzyTerm = null ) {
 
-		const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : [];
+		const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : new Array();
 
 		super( terms );
 
@@ -9218,7 +9313,7 @@ class FuzzyVERY extends FuzzyCompositeTerm {
 	*/
 	constructor( fuzzyTerm = null ) {
 
-		const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : [];
+		const terms = ( fuzzyTerm !== null ) ? [ fuzzyTerm ] : new Array();
 
 		super( terms );
 
@@ -9516,7 +9611,7 @@ class LeftSCurveFuzzySet extends FuzzySet {
 
 				return 2 * ( Math.pow( ( value - right ) / ( midpoint - right ), 2 ) );
 
-			} else {
+			} else { //todo test
 
 				return 1 - ( 2 * ( Math.pow( ( value - midpoint ) / ( midpoint - right ), 2 ) ) );
 
@@ -12243,12 +12338,12 @@ class Graph {
 			digraph: this.digraph
 		};
 
-		const edges = [];
-		const nodes = [];
+		const edges = new Array();
+		const nodes = new Array();
 
 		for ( let [ key, value ] of this._nodes.entries() ) {
 
-			const adjacencyList = [];
+			const adjacencyList = new Array();
 
 			this.getEdgesOfNode( key, adjacencyList );
 
@@ -13549,6 +13644,1902 @@ class LineSegment {
 
 }
 
+const oppositeNormal = new Vector3();
+const axis = new Vector3();
+const directionA = new Vector3();
+const directionB = new Vector3();
+
+const c = new Vector3();
+const d = new Vector3();
+
+/**
+* Implementation of the separating axis theorem (SAT). Used to detect intersections
+* between convex polyhedra. The code is based on the presentation {@link http://twvideo01.ubm-us.net/o1/vault/gdc2013/slides/822403Gregorius_Dirk_TheSeparatingAxisTest.pdf The Separating Axis Test between convex polyhedra}
+* by Dirk Gregorius (Valve Software) from GDC 2013.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class SAT {
+
+	/**
+	* Returns true if the given convex polyhedra intersect. A polyhedron is just
+	* an array of {@link Polygon} objects.
+	*
+	* @param {Array} polyhedronA - The first convex polyhedron.
+	* @param {Array} polyhedronB - The second convex polyhedron.
+	* @return {Boolean} Whether there is an intersection or not.
+	*/
+	intersects( polyhedronA, polyhedronB ) {
+
+		const resultAB = this._checkFaceDirections( polyhedronA, polyhedronB );
+
+		if ( resultAB ) return false;
+
+		const resultBA = this._checkFaceDirections( polyhedronB, polyhedronA );
+
+		if ( resultBA ) return false;
+
+		const resultEdges = this._checkEdgeDirections( polyhedronA, polyhedronB );
+
+		if ( resultEdges ) return false;
+
+		// no separating axis found, the polyhedra must intersect
+
+		return true;
+
+	}
+
+	// check possible separating axes from the first given polyhedron. the axes
+	// are derived from the respective face normals
+
+	_checkFaceDirections( polyhedronA, polyhedronB ) {
+
+		for ( let i = 0, l = polyhedronA.length; i < l; i ++ ) {
+
+			const polygon = polyhedronA[ i ];
+			const plane = polygon.plane;
+
+			oppositeNormal.copy( plane.normal ).multiplyScalar( - 1 );
+
+			const supportVertex = this._getSupportVertex( polyhedronB, oppositeNormal );
+			const distance = plane.distanceToPoint( supportVertex );
+
+			if ( distance > 0 ) return true; // separating axis found
+
+		}
+
+		return false;
+
+	}
+
+	// check with possible separating axes computed with the cross product between
+	// all edge combinations of both polyhedra
+
+	_checkEdgeDirections( polyhedronA, polyhedronB ) {
+
+		// iterate over all polygons of polyhedron A
+
+		for ( let i = 0, l = polyhedronA.length; i < l; i ++ ) {
+
+			const polygonA = polyhedronA[ i ];
+			let edgeA = polygonA.edge;
+
+			// iterate over all edges of A's current polygon
+
+			do {
+
+				// iterate over all polygons of polyhedron B
+
+				for ( let i = 0, l = polyhedronB.length; i < l; i ++ ) {
+
+					const polygonB = polyhedronB[ i ];
+					let edgeB = polygonB.edge;
+
+					// iterate over all edges of B's current polygon
+
+					do {
+
+						edgeA.getDirection( directionA );
+						edgeB.getDirection( directionB );
+
+						// edge pruning: only consider edges if they build a face on the minkowski difference
+
+						if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
+
+							// compute axis
+
+							axis.crossVectors( directionA, directionB );
+
+							this._projectOnAxis( polyhedronA, axis, intervalA );
+							this._projectOnAxis( polyhedronB, axis, intervalB );
+
+							// compare intervals
+
+							if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
+
+								return true; // intervals do not intersect, separating axis found
+
+							}
+
+						}
+
+						edgeB = edgeB.next;
+
+					} while ( edgeB !== polygonB.edge );
+
+				}
+
+				edgeA = edgeA.next;
+
+			} while ( edgeA !== polygonA.edge );
+
+		}
+
+		return false;
+
+	}
+
+	// return the most extreme vertex into a given direction
+
+	_getSupportVertex( polyhedron, direction ) {
+
+		let maxProjection = - Infinity;
+		let supportVertex = null;
+
+		// iterate over all polygons
+
+		for ( let i = 0, l = polyhedron.length; i < l; i ++ ) {
+
+			const polygon = polyhedron[ i ];
+			let edge = polygon.edge;
+
+			// iterate over all edges
+
+			do {
+
+				const vertex = edge.vertex;
+				const projection = vertex.dot( direction );
+
+				// check vertex to find the best support point
+
+				if ( projection > maxProjection ) {
+
+					maxProjection = projection;
+					supportVertex = vertex;
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== polygon.edge );
+
+		}
+
+		return supportVertex;
+
+	}
+
+	// projects all vertices of a polyhedron on the given axis and stores
+	// the minimum and maximum projections in the given interval object
+
+	_projectOnAxis( polyhedron, axis, interval ) {
+
+		interval.reset();
+
+		// iterate over all polygons
+
+		for ( let i = 0, l = polyhedron.length; i < l; i ++ ) {
+
+			const polygon = polyhedron[ i ];
+			let edge = polygon.edge;
+
+			// iterate over all edges
+
+			do {
+
+				const vertex = edge.vertex;
+				const projection = vertex.dot( axis );
+
+				interval.min = Math.min( interval.min, projection );
+				interval.max = Math.max( interval.max, projection );
+
+				edge = edge.next;
+
+			} while ( edge !== polygon.edge );
+
+		}
+
+		return this;
+
+	}
+
+	// returns true if the given edges build a face on the minkowski difference
+
+	_minkowskiFace( edgeA, directionA, edgeB, directionB ) {
+
+		// get face normals which define the vertices of the arcs on the gauss map
+
+		const a = edgeA.polygon.plane.normal;
+		const b = edgeA.twin.polygon.plane.normal;
+		c.copy( edgeB.polygon.plane.normal );
+		d.copy( edgeB.twin.polygon.plane.normal );
+
+		// negate normals c and d to account for minkowski difference
+
+		c.multiplyScalar( - 1 );
+		d.multiplyScalar( - 1 );
+
+		// compute triple products
+
+		// it's not necessary to compute the cross product since edges of convex polyhedron
+		// have same direction as the cross product between their adjacent face normals
+
+		const cba = c.dot( directionA );
+		const dba = d.dot( directionA );
+		const adc = a.dot( directionB );
+		const bdc = b.dot( directionB );
+
+		// check signs of plane test
+
+		return ( ( cba * dba ) ) < 0 && ( ( adc * bdc ) < 0 ) && ( ( cba * bdc ) > 0 );
+
+	}
+
+}
+
+// private helper class representing a scalar interval
+
+class Interval {
+
+	constructor() {
+
+		this.min = Infinity;
+		this.max = - Infinity;
+
+	}
+
+	reset() {
+
+		this.min = Infinity;
+		this.max = - Infinity;
+
+	}
+
+}
+
+const intervalA = new Interval();
+const intervalB = new Interval();
+
+/**
+* Implementation of a half-edge data structure, also known as
+* {@link https://en.wikipedia.org/wiki/Doubly_connected_edge_list Doubly connected edge list}.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class HalfEdge {
+
+	/**
+	* Constructs a new half-edge.
+	*
+	* @param {Vector3} vertex - The (origin) vertex of this half-edge.
+	*/
+	constructor( vertex = new Vector3() ) {
+
+		/**
+		* The (origin) vertex of this half-edge.
+		* @type Vector3
+		*/
+		this.vertex = vertex;
+
+		/**
+		* A reference to the next half-edge.
+		* @type HalfEdge
+		*/
+		this.next = null;
+
+		/**
+		* A reference to the previous half-edge.
+		* @type HalfEdge
+		*/
+		this.prev = null;
+
+		/**
+		* A reference to the opponent half-edge.
+		* @type HalfEdge
+		*/
+		this.twin = null;
+
+		/**
+		* A reference to its polygon/face.
+		* @type Polygon
+		*/
+		this.polygon = null;
+
+	}
+
+	/**
+	* Returns the tail of this half-edge. That's a reference to the previous
+	* half-edge vertex.
+	*
+	* @return {Vector3} The tail vertex.
+	*/
+	tail() {
+
+		return this.prev ? this.prev.vertex : null;
+
+	}
+
+	/**
+	* Returns the head of this half-edge. That's a reference to the own vertex.
+	*
+	* @return {Vector3} The head vertex.
+	*/
+	head() {
+
+		return this.vertex;
+
+	}
+
+	/**
+	* Computes the length of this half-edge.
+	*
+	* @return {Number} The length of this half-edge.
+	*/
+	length() {
+
+		const tail = this.tail();
+		const head = this.head();
+
+		if ( tail !== null ) {
+
+			return tail.distanceTo( head );
+
+		}
+
+		return - 1;
+
+	}
+
+	/**
+	* Computes the squared length of this half-edge.
+	*
+	* @return {Number} The squared length of this half-edge.
+	*/
+	squaredLength() {
+
+		const tail = this.tail();
+		const head = this.head();
+
+		if ( tail !== null ) {
+
+			return tail.squaredDistanceTo( head );
+
+		}
+
+		return - 1;
+
+	}
+
+	/**
+	* Links the given opponent half edge with this one.
+	*
+	* @param {HalfEdge} edge - The opponent edge to link.
+	* @return {HalfEdge} A reference to this half edge.
+	*/
+	linkOpponent( edge ) {
+
+		this.twin = edge;
+		edge.twin = this;
+
+		return this;
+
+	}
+
+	/**
+	* Computes the direction of this half edge. The method assumes the half edge
+	* has a valid reference to a previous half edge.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getDirection( result ) {
+
+		return result.subVectors( this.vertex, this.prev.vertex ).normalize();
+
+	}
+
+}
+
+/**
+* Class for representing a planar polygon with an arbitrary amount of edges.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+* @author {@link https://github.com/robp94|robp94}
+*/
+class Polygon {
+
+	/**
+	* Constructs a new polygon.
+	*/
+	constructor() {
+
+		/**
+		* The centroid of this polygon.
+		* @type Vector3
+		*/
+		this.centroid = new Vector3();
+
+		/**
+		* A reference to the first half-edge of this polygon.
+		* @type HalfEdge
+		*/
+		this.edge = null;
+
+		/**
+		* A plane abstraction of this polygon.
+		* @type Plane
+		*/
+		this.plane = new Plane();
+
+	}
+
+	/**
+	* Creates the polygon based on the given array of points in 3D space.
+	* The method assumes the contour (the sequence of points) is defined
+	* in CCW order.
+	*
+	* @param {Array} points - The array of points.
+	* @return {Polygon} A reference to this polygon.
+	*/
+	fromContour( points ) {
+
+		const edges = new Array();
+
+		if ( points.length < 3 ) {
+
+			Logger.error( 'YUKA.Polygon: Unable to create polygon from contour. It needs at least three points.' );
+			return this;
+
+		}
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+			const edge = new HalfEdge( points[ i ] );
+			edges.push( edge );
+
+		}
+
+		// link edges
+
+		for ( let i = 0, l = edges.length; i < l; i ++ ) {
+
+			let current, prev, next;
+
+			if ( i === 0 ) {
+
+				current = edges[ i ];
+				prev = edges[ l - 1 ];
+			 	next = edges[ i + 1 ];
+
+			} else if ( i === ( l - 1 ) ) {
+
+				current = edges[ i ];
+			 	prev = edges[ i - 1 ];
+				next = edges[ 0 ];
+
+			} else {
+
+			 	current = edges[ i ];
+				prev = edges[ i - 1 ];
+				next = edges[ i + 1 ];
+
+			}
+
+			current.prev = prev;
+			current.next = next;
+			current.polygon = this;
+
+		}
+
+		//
+
+		this.edge = edges[ 0 ];
+
+		//
+
+		this.plane.fromCoplanarPoints( points[ 0 ], points[ 1 ], points[ 2 ] );
+
+		return this;
+
+	}
+
+	/**
+	* Computes the centroid for this polygon.
+	*
+	* @return {Polygon} A reference to this polygon.
+	*/
+	computeCentroid() {
+
+		const centroid = this.centroid;
+		let edge = this.edge;
+		let count = 0;
+
+		centroid.set( 0, 0, 0 );
+
+		do {
+
+			centroid.add( edge.vertex );
+
+			count ++;
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		centroid.divideScalar( count );
+
+		return this;
+
+	}
+
+	/**
+	* Returns true if the polygon contains the given point.
+	*
+	* @param {Vector3} point - The point to test.
+	* @param {Number} epsilon - A tolerance value.
+	* @return {Boolean} Whether this polygon contain the given point or not.
+	*/
+	contains( point, epsilon = 1e-3 ) {
+
+		const plane = this.plane;
+		let edge = this.edge;
+
+		// convex test
+
+		do {
+
+			const v1 = edge.tail();
+			const v2 = edge.head();
+
+			if ( leftOn( v1, v2, point ) === false ) {
+
+				return false;
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		// ensure the given point lies within a defined tolerance range
+
+		const distance = plane.distanceToPoint( point );
+
+		if ( Math.abs( distance ) > epsilon ) {
+
+			return false;
+
+		}
+
+		return true;
+
+	}
+
+	/**
+	* Returns true if the polygon is convex.
+	*
+	* @param {Boolean} ccw - Whether the winding order is CCW or not.
+	* @return {Boolean} Whether this polygon is convex or not.
+	*/
+	convex( ccw = true ) {
+
+		let edge = this.edge;
+
+		do {
+
+			const v1 = edge.tail();
+			const v2 = edge.head();
+			const v3 = edge.next.head();
+
+			if ( ccw ) {
+
+				if ( leftOn( v1, v2, v3 ) === false )	return false;
+
+			} else {
+
+				if ( leftOn( v3, v2, v1 ) === false ) return false;
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return true;
+
+	}
+
+	/**
+	* Returns true if the polygon is coplanar.
+	*
+	* @param {Number} epsilon - A tolerance value.
+	* @return {Boolean} Whether this polygon is coplanar or not.
+	*/
+	coplanar( epsilon = 1e-3 ) {
+
+		const plane = this.plane;
+		let edge = this.edge;
+
+		do {
+
+			const distance = plane.distanceToPoint( edge.vertex );
+
+			if ( Math.abs( distance ) > epsilon ) {
+
+				return false;
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return true;
+
+	}
+
+	/**
+	* Computes the signed distance from the given 3D vector to this polygon. The method
+	* uses the polygon's plane abstraction in order to compute this value.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Number} The signed distance from the given point to this polygon.
+	*/
+	distanceToPoint( point ) {
+
+		return this.plane.distanceToPoint( point );
+
+	}
+
+	/**
+	* Determines the contour (sequence of points) of this polygon and
+	* stores the result in the given array.
+	*
+	* @param {Array} result - The result array.
+	* @return {Array} The result array.
+	*/
+	getContour( result ) {
+
+		let edge = this.edge;
+
+		result.length = 0;
+
+		do {
+
+			result.push( edge.vertex );
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		return result;
+
+	}
+
+	/**
+	* Determines the portal edge that can be used to reach the
+	* given polygon over its twin reference. The result is stored
+	* in the given portal edge data structure. If the given polygon
+	* is no direct neighbor, the references of the portal edge data
+	* structure are set to null.
+	*
+	* @param {Polygon} polygon - The polygon to reach.
+	* @param {Object} portalEdge - The portal edge.
+	* @return {Object} The portal edge.
+	*/
+	getPortalEdgeTo( polygon, portalEdge ) {
+
+		let edge = this.edge;
+
+		do {
+
+			if ( edge.twin !== null ) {
+
+				if ( edge.twin.polygon === polygon ) {
+
+					portalEdge.left = edge.prev.vertex;
+					portalEdge.right = edge.vertex;
+					return portalEdge;
+
+				}
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== this.edge );
+
+		portalEdge.left = null;
+		portalEdge.right = null;
+
+		return portalEdge;
+
+	}
+
+}
+
+// from the book "Computational Geometry in C, Joseph O'Rourke"
+
+function leftOn( a, b, c ) {
+
+	return MathUtils.area( a, b, c ) >= 0;
+
+}
+
+const line = new LineSegment();
+const plane$1 = new Plane();
+const closestPoint = new Vector3();
+const up = new Vector3( 0, 1, 0 );
+const sat = new SAT();
+
+/**
+* Class representing a convex hull. This is an implementation of the Quickhull algorithm
+* based on the presentation {@link http://media.steampowered.com/apps/valve/2014/DirkGregorius_ImplementingQuickHull.pdf Implementing QuickHull}
+* by Dirk Gregorius (Valve Software) from GDC 2014. The algorithm has an average runtime
+* complexity of O(nlog(n)), whereas in the worst case it takes O(n²).
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class ConvexHull {
+
+	/**
+	* Constructs a new convex hull.
+	*/
+	constructor() {
+
+		/**
+		* An array of faces representing the convex hull.
+		* @type Array
+		*/
+		this.faces = new Array();
+
+		// private members
+
+		// tolerance value for various (float) compare operations
+
+		this._tolerance = - 1;
+
+		// this array represents the vertices which will be enclosed by the convex hull
+
+		this._vertices = new Array();
+
+		// two doubly linked lists for easier vertex processing
+
+		this._assigned = new VertexList();
+		this._unassigned = new VertexList();
+
+		// this array holds the new faces generated in a single iteration of the algorithm
+
+		this._newFaces = new Array();
+
+	}
+
+	/**
+	* Sets the given faces to this convex hull.
+	*
+	* @param {Array} faces - The new faces of the convex hull.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	set( faces ) {
+
+		this.faces = faces;
+
+		return this;
+
+	}
+
+	/**
+	* Copies the faces from the given convex hull to this convex hull.
+	*
+	* @param {ConvexHull} convexHull - The convex hull to copy.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	copy( convexHull ) {
+
+		this.faces.length = 0;
+		this.faces.push( ...convexHull.faces );
+
+		return this;
+
+	}
+
+	/**
+	* Creates a new convex hull and copies all values from this convex hull.
+	*
+	* @return {ConvexHull} A new convex hull.
+	*/
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	/**
+	* Returns true if the given point is inside this convex hull.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Boolean} Whether the given point is inside this convex hull or not.
+	*/
+	containsPoint( point ) {
+
+		const faces = this.faces;
+
+		// use the internal plane abstraction of each face in order to test
+		// on what half space the point lies
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			// if the signed distance is greater than the tolernce value, the point
+			// is outside and we can stop processing
+
+			if ( faces[ i ].distanceToPoint( point ) > this._tolerance ) return false;
+
+		}
+
+		return true;
+
+	}
+
+	/**
+	* Returns true if this convex hull intersects with the given one.
+	*
+	* @param {ConvexHull} convexHull - The convex hull to test.
+	* @return {Boolean} Whether this convex hull intersects with the given one or not.
+	*/
+	intersectsConvexHull( convexHull ) {
+
+		return sat.intersects( this.faces, convexHull.faces );
+
+	}
+
+	/**
+	* Computes a convex hull that encloses the given set of points. The computation requires
+	* at least four points.
+	*
+	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @return {ConvexHull} A reference to this convex hull.
+	*/
+	fromPoints( points ) {
+
+		if ( points.length < 4 ) {
+
+			Logger.error( 'YUKA.ConvexHull: The given points array needs at least four points.' );
+			return this;
+
+		}
+
+		// wrap all points into the internal vertex data structure
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+			this._vertices.push( new Vertex( points[ i ] ) );
+
+		}
+
+		// generate the convex hull
+
+		this._generate();
+
+		return this;
+
+	}
+
+	// private API
+
+	// adds a single face to the convex hull by connecting it with the respective horizon edge
+
+	_addAdjoiningFace( vertex, horizonEdge ) {
+
+		// all the half edges are created in ccw order thus the face is always pointing outside the hull
+
+		const face = new Face( vertex.point, horizonEdge.prev.vertex, horizonEdge.vertex );
+
+		this.faces.push( face );
+
+		// join face.getEdge( - 1 ) with the horizon's opposite edge face.getEdge( - 1 ) = face.getEdge( 2 )
+
+		face.getEdge( - 1 ).linkOpponent( horizonEdge.twin );
+
+		return face.getEdge( 0 ); // the half edge whose vertex is the given one
+
+	}
+
+	// adds new faces by connecting the horizon with the new point of the convex hull
+
+	_addNewFaces( vertex, horizon ) {
+
+		this._newFaces = [];
+
+		let firstSideEdge = null;
+		let previousSideEdge = null;
+
+		for ( let i = 0, l = horizon.length; i < l; i ++ ) {
+
+			// returns the right side edge
+
+			let sideEdge = this._addAdjoiningFace( vertex, horizon[ i ] );
+
+			if ( firstSideEdge === null ) {
+
+				firstSideEdge = sideEdge;
+
+			} else {
+
+				// joins face.getEdge( 1 ) with previousFace.getEdge( 0 )
+
+				sideEdge.next.linkOpponent( previousSideEdge );
+
+			}
+
+			this._newFaces.push( sideEdge.polygon );
+			previousSideEdge = sideEdge;
+
+		}
+
+		// perform final join of new faces
+
+		firstSideEdge.next.linkOpponent( previousSideEdge );
+
+		return this;
+
+	}
+
+	// assigns a single vertex to the given face. that means this face can "see"
+	// the vertex and its distance to the vertex is greater than all other faces
+
+	_addVertexToFace( vertex, face ) {
+
+		vertex.face = face;
+
+		if ( face.outside === null ) {
+
+			this._assigned.append( vertex );
+
+			face.outside = vertex;
+
+		} else {
+
+			this._assigned.insertAfter( face.outside, vertex );
+
+		}
+
+		return this;
+
+	}
+
+	// the base iteration of the algorithm. adds a new vertex to the convex hull by
+	// connecting faces from the horizon with it.
+
+	_addVertexToHull( vertex ) {
+
+		const horizon = [];
+
+		this._unassigned.clear();
+
+		this._computeHorizon( vertex.point, null, vertex.face, horizon );
+
+		this._addNewFaces( vertex, horizon );
+
+		// reassign 'unassigned' vertices to the new faces
+
+		this._resolveUnassignedPoints( this._newFaces );
+
+		return this;
+
+	}
+
+	// frees memory by resetting internal data structures
+
+	_reset() {
+
+		this._vertices.length = 0;
+
+		this._assigned.clear();
+		this._unassigned.clear();
+
+		this._newFaces.length = 0;
+
+		return this;
+
+	}
+
+	// computes the initial hull of the algorithm. it's a tetrahedron created
+	// with the extreme vertices of the given set of points
+
+	_computeInitialHull() {
+
+		let v0, v1, v2, v3;
+
+		const vertices = this._vertices;
+		const extremes = this._computeExtremes();
+		const min = extremes.min;
+		const max = extremes.max;
+
+		// 1. Find the two points 'p0' and 'p1' with the greatest 1d separation
+		// (max.x - min.x)
+		// (max.y - min.y)
+		// (max.z - min.z)
+
+		// check x
+
+		let distance, maxDistance;
+
+		distance = maxDistance = max.x.point.x - min.x.point.x;
+
+		v0 = min.x;
+		v1 = max.x;
+
+		// check y
+
+		distance = max.y.point.y - min.y.point.y;
+
+		if ( distance > maxDistance ) {
+
+			v0 = min.y;
+			v1 = max.y;
+
+			maxDistance = distance;
+
+		}
+
+		// check z
+
+		distance = max.z.point.z - min.z.point.z;
+
+		if ( distance > maxDistance ) {
+
+			v0 = min.z;
+			v1 = max.z;
+
+		}
+
+		// 2. The next vertex 'v2' is the one farthest to the line formed by 'v0' and 'v1'
+
+		maxDistance = - Infinity;
+		line.set( v0.point, v1.point );
+
+		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
+
+			const vertex = vertices[ i ];
+
+			if ( vertex !== v0 && vertex !== v1 ) {
+
+				line.closestPointToPoint( vertex.point, true, closestPoint );
+
+				distance = closestPoint.squaredDistanceTo( vertex.point );
+
+				if ( distance > maxDistance ) {
+
+					maxDistance = distance;
+					v2 = vertex;
+
+				}
+
+			}
+
+		}
+
+		// 3. The next vertex 'v3' is the one farthest to the plane 'v0', 'v1', 'v2'
+
+		maxDistance = - Infinity;
+		plane$1.fromCoplanarPoints( v0.point, v1.point, v2.point );
+
+		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
+
+			const vertex = vertices[ i ];
+
+			if ( vertex !== v0 && vertex !== v1 && vertex !== v2 ) {
+
+				distance = Math.abs( plane$1.distanceToPoint( vertex.point ) );
+
+				if ( distance > maxDistance ) {
+
+					maxDistance = distance;
+					v3 = vertex;
+
+				}
+
+			}
+
+		}
+
+		const faces = this.faces;
+
+		if ( plane$1.distanceToPoint( v3.point ) < 0 ) {
+
+			// the face is not able to see the point so 'plane.normal' is pointing outside the tetrahedron
+
+			faces.push(
+				new Face( v0.point, v1.point, v2.point ),
+				new Face( v3.point, v1.point, v0.point ),
+				new Face( v3.point, v2.point, v1.point ),
+				new Face( v3.point, v0.point, v2.point )
+			);
+
+			// set the twin edge
+
+			// join face[ i ] i > 0, with the first face
+
+			faces[ 1 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 1 ) );
+			faces[ 2 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 2 ) );
+			faces[ 3 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 0 ) );
+
+			// join face[ i ] with face[ i + 1 ], 1 <= i <= 3
+
+			faces[ 1 ].getEdge( 1 ).linkOpponent( faces[ 2 ].getEdge( 0 ) );
+			faces[ 2 ].getEdge( 1 ).linkOpponent( faces[ 3 ].getEdge( 0 ) );
+			faces[ 3 ].getEdge( 1 ).linkOpponent( faces[ 1 ].getEdge( 0 ) );
+
+		} else {
+
+			// the face is able to see the point so 'plane.normal' is pointing inside the tetrahedron
+
+			faces.push(
+				new Face( v0.point, v2.point, v1.point ),
+				new Face( v3.point, v0.point, v1.point ),
+				new Face( v3.point, v1.point, v2.point ),
+				new Face( v3.point, v2.point, v0.point )
+			);
+
+			// set the twin edge
+
+			// join face[ i ] i > 0, with the first face
+
+			faces[ 1 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 0 ) );
+			faces[ 2 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 2 ) );
+			faces[ 3 ].getEdge( 2 ).linkOpponent( faces[ 0 ].getEdge( 1 ) );
+
+			// join face[ i ] with face[ i + 1 ], 1 <= i <= 3
+
+			faces[ 1 ].getEdge( 0 ).linkOpponent( faces[ 2 ].getEdge( 1 ) );
+			faces[ 2 ].getEdge( 0 ).linkOpponent( faces[ 3 ].getEdge( 1 ) );
+			faces[ 3 ].getEdge( 0 ).linkOpponent( faces[ 1 ].getEdge( 1 ) );
+
+		}
+
+		// initial assignment of vertices to the faces of the tetrahedron
+
+		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
+
+			const vertex = vertices[ i ];
+
+			if ( vertex !== v0 && vertex !== v1 && vertex !== v2 && vertex !== v3 ) {
+
+				maxDistance = this._tolerance;
+				let maxFace = null;
+
+				for ( let j = 0; j < 4; j ++ ) {
+
+					distance = faces[ j ].distanceToPoint( vertex.point );
+
+					if ( distance > maxDistance ) {
+
+						maxDistance = distance;
+						maxFace = faces[ j ];
+
+					}
+
+				}
+
+				if ( maxFace !== null ) {
+
+					this._addVertexToFace( vertex, maxFace );
+
+				}
+
+			}
+
+		}
+
+		return this;
+
+	}
+
+	// computes the extreme vertices of used to compute the initial convex hull
+
+	_computeExtremes() {
+
+		const min = new Vector3( Infinity, Infinity, Infinity );
+		const max = new Vector3( - Infinity, - Infinity, - Infinity );
+
+		const minVertices = { x: null, y: null, z: null };
+		const maxVertices = { x: null, y: null, z: null };
+
+		// compute the min/max points on all six directions
+
+		for ( let i = 0, l = this._vertices.length; i < l; i ++ ) {
+
+			const vertex = this._vertices[ i ];
+			const point = vertex.point;
+
+			// update the min coordinates
+
+			if ( point.x < min.x ) {
+
+				min.x = point.x;
+				minVertices.x = vertex;
+
+			}
+
+			if ( point.y < min.y ) {
+
+				min.y = point.y;
+				minVertices.y = vertex;
+
+			}
+
+			if ( point.z < min.z ) {
+
+				min.z = point.z;
+				minVertices.z = vertex;
+
+			}
+
+			// update the max coordinates
+
+			if ( point.x > max.x ) {
+
+				max.x = point.x;
+				maxVertices.x = vertex;
+
+			}
+
+			if ( point.y > max.y ) {
+
+				max.y = point.y;
+				maxVertices.y = vertex;
+
+			}
+
+			if ( point.z > max.z ) {
+
+				max.z = point.z;
+				maxVertices.z = vertex;
+
+			}
+
+		}
+
+		// use min/max vectors to compute an optimal epsilon
+
+		this._tolerance = 3 * Number.EPSILON * (
+			Math.max( Math.abs( min.x ), Math.abs( max.x ) ) +
+			Math.max( Math.abs( min.y ), Math.abs( max.y ) ) +
+			Math.max( Math.abs( min.z ), Math.abs( max.z ) )
+		);
+
+		return { min: minVertices, max: maxVertices };
+
+	}
+
+	// computes the horizon, an array of edges enclosing the faces that are able
+	// to see the new vertex
+
+	_computeHorizon( eyePoint, crossEdge, face, horizon ) {
+
+		if ( face.outside ) {
+
+			const startVertex = face.outside;
+
+			// remove all vertices from the given face
+
+			this._removeAllVerticesFromFace( face );
+
+			// mark the face vertices to be reassigned to other faces
+
+			this._unassigned.appendChain( startVertex );
+
+		}
+
+		face.active = false;
+
+		let edge;
+
+		if ( crossEdge === null ) {
+
+			edge = crossEdge = face.getEdge( 0 );
+
+		} else {
+
+			// start from the next edge since 'crossEdge' was already analyzed
+			// (actually 'crossEdge.twin' was the edge who called this method recursively)
+
+			edge = crossEdge.next;
+
+		}
+
+		do {
+
+			let twinEdge = edge.twin;
+			let oppositeFace = twinEdge.polygon;
+
+			if ( oppositeFace.active ) {
+
+				if ( oppositeFace.distanceToPoint( eyePoint ) > this._tolerance ) {
+
+					// the opposite face can see the vertex, so proceed with next edge
+
+					this._computeHorizon( eyePoint, twinEdge, oppositeFace, horizon );
+
+				} else {
+
+					// the opposite face can't see the vertex, so this edge is part of the horizon
+
+					horizon.push( edge );
+
+				}
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== crossEdge );
+
+		return this;
+
+	}
+
+	// this method controls the basic flow of the algorithm
+
+	_generate() {
+
+		this.faces.length = 0;
+
+		this._computeInitialHull();
+
+		let vertex;
+
+		while ( vertex = this._nextVertexToAdd() ) {
+
+			this._addVertexToHull( vertex );
+
+		}
+
+		this._updateFaces();
+
+		this._mergeFaces();
+
+		this._reset();
+
+		return this;
+
+	}
+
+	// merges faces if the result is still convex and coplanar
+
+	_mergeFaces() {
+
+		const faces = this.faces;
+
+		const cache = {
+			leftPrev: null,
+			leftNext: null,
+			rightPrev: null,
+			rightNext: null
+		};
+
+		const edges = this._getSortedEdgeList();
+
+		// process edges from longest to shortest
+
+		for ( let i = 0, l = edges.length; i < l; i ++ ) {
+
+			const entry = edges[ i ];
+
+			let candidate = entry;
+
+			// cache current references for possible restore
+
+			cache.prev = candidate.prev;
+			cache.next = candidate.next;
+			cache.prevTwin = candidate.twin.prev;
+			cache.nextTwin = candidate.twin.next;
+
+			// temporarily change the first polygon in order to represent both polygons
+
+			candidate.prev.next = candidate.twin.next;
+			candidate.next.prev = candidate.twin.prev;
+			candidate.twin.prev.next = candidate.next;
+			candidate.twin.next.prev = candidate.prev;
+
+			const polygon = candidate.polygon;
+			polygon.edge = candidate.prev;
+
+			const ccw = polygon.plane.normal.dot( up ) >= 0;
+
+			if ( polygon.convex( ccw ) === true && polygon.coplanar( this._tolerance ) === true ) {
+
+				// correct polygon reference of all edges
+
+				let edge = polygon.edge;
+
+				do {
+
+					edge.polygon = polygon;
+
+					edge = edge.next;
+
+				} while ( edge !== polygon.edge );
+
+				// delete obsolete polygon
+
+				const index = faces.indexOf( entry.twin.polygon );
+				faces.splice( index, 1 );
+
+			} else {
+
+				// restore
+
+				cache.prev.next = candidate;
+				cache.next.prev = candidate;
+				cache.prevTwin.next = candidate.twin;
+				cache.nextTwin.prev = candidate.twin;
+
+				polygon.edge = candidate;
+
+			}
+
+		}
+
+		// recompute centroid
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			faces[ i ].computeCentroid();
+
+		}
+
+	}
+
+	// return a array with all halfedges of the convex hull sorted by length in descending order
+
+	_getSortedEdgeList() {
+
+		const faces = this.faces;
+		const result = new Array();
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			const firstEdge = face.edge;
+
+			let edge = firstEdge;
+
+			do {
+
+				// only add the edge if the twin was not added before
+
+				if ( result.includes( edge.twin ) === false ) {
+
+					result.push( edge );
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== firstEdge );
+
+		}
+
+		return result.sort( ( a, b ) => b.length() - a.length() );
+
+	}
+
+	// determines the next vertex that should added to the convex hull
+
+	_nextVertexToAdd() {
+
+		let nextVertex = null;
+
+		// if the 'assigned' list of vertices is empty, no vertices are left
+
+		if ( this._assigned.empty() === false ) {
+
+			let maxDistance = 0;
+
+			// grap the first available vertex and save the respective face
+
+			let vertex = this._assigned.first();
+			const face = vertex.face;
+
+			// now calculate the farthest vertex that face can see
+
+			do {
+
+				const distance = face.distanceToPoint( vertex.point );
+
+				if ( distance > maxDistance ) {
+
+					maxDistance = distance;
+					nextVertex = vertex;
+
+				}
+
+				vertex = vertex.next;
+
+			} while ( vertex !== null && vertex.face === face );
+
+		}
+
+		return nextVertex;
+
+	}
+
+	// updates the faces array after the computation of the convex hull
+	// it ensures only visible faces are in the result set
+
+	_updateFaces() {
+
+		const faces = this.faces;
+		const activeFaces = new Array();
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+
+			// only respect visible but not deleted or merged faces
+
+			if ( face.active ) {
+
+				activeFaces.push( face );
+
+			}
+
+		}
+
+		this.faces.length = 0;
+		this.faces.push( ...activeFaces );
+
+		return this;
+
+	}
+
+	// removes all vertices from the given face. necessary when deleting a face
+	// which is necessary when the hull is going to be expanded
+
+	_removeAllVerticesFromFace( face ) {
+
+		if ( face.outside !== null ) {
+
+			// reference to the first and last vertex of this face
+
+			const firstVertex = face.outside;
+			firstVertex.face = null;
+
+			let lastVertex = face.outside;
+
+			while ( lastVertex.next !== null && lastVertex.next.face === face ) {
+
+				lastVertex = lastVertex.next;
+				lastVertex.face = null;
+
+			}
+
+			face.outside = null;
+
+			this._assigned.removeChain( firstVertex, lastVertex );
+
+		}
+
+		return this;
+
+	}
+
+	// removes a single vertex from the given face
+
+	_removeVertexFromFace( vertex, face ) {
+
+		vertex.face = null;
+
+		if ( vertex === face.outside ) {
+
+			// fix face.outside link
+
+			if ( vertex.next !== null && vertex.next.face === face ) {
+
+				// face has at least 2 outside vertices, move the 'outside' reference
+
+				face.outside = vertex.next;
+
+			} else {
+
+				// vertex was the only outside vertex that face had
+
+				face.outside = null;
+
+			}
+
+		}
+
+		this._assigned.remove( vertex );
+
+		return this;
+
+	}
+
+	// ensure that all unassigned points are reassigned to other faces of the
+	// current convex hull. this method is always executed after the hull was
+	// expanded
+
+	_resolveUnassignedPoints( newFaces ) {
+
+		if ( this._unassigned.empty() === false ) {
+
+			let vertex = this._unassigned.first();
+
+			do {
+
+				// buffer 'next' reference since addVertexToFace() can change it
+
+				let nextVertex = vertex.next;
+				let maxDistance = this._tolerance;
+
+				let maxFace = null;
+
+				for ( let i = 0, l = newFaces.length; i < l; i ++ ) {
+
+					const face = newFaces[ i ];
+
+					if ( face.active ) {
+
+						const distance = face.distanceToPoint( vertex.point );
+
+						if ( distance > maxDistance ) {
+
+							maxDistance = distance;
+							maxFace = face;
+
+						}
+
+					}
+
+				}
+
+				if ( maxFace !== null ) {
+
+					this._addVertexToFace( vertex, maxFace );
+
+				}
+
+				vertex = nextVertex;
+
+			} while ( vertex !== null );
+
+		}
+
+		return this;
+
+	}
+
+}
+
+class Face extends Polygon {
+
+	constructor( a = new Vector3(), b = new Vector3(), c = new Vector3() ) {
+
+		super();
+
+		this.outside = null; // reference to a vertex in a vertex list this face can see
+		this.active = true;
+
+		this.fromContour( [ a, b, c ] );
+
+		this.computeCentroid();
+
+	}
+
+	getEdge( i ) {
+
+		let edge = this.edge;
+
+		while ( i > 0 ) {
+
+			edge = edge.next;
+			i --;
+
+		}
+
+		while ( i < 0 ) {
+
+			edge = edge.prev;
+			i ++;
+
+		}
+
+		return edge;
+
+	}
+
+}
+
+// special data structures for the quick hull implementation
+
+class Vertex {
+
+	constructor( point = new Vector3() ) {
+
+		this.point = point;
+		this.prev = null;
+		this.next = null;
+		this.face = null; // the face that is able to see this vertex
+
+	}
+
+}
+
+class VertexList {
+
+	constructor() {
+
+		this.head = null;
+		this.tail = null;
+
+	}
+
+	first() {
+
+		return this.head;
+
+	}
+
+	last() {
+
+		return this.tail;
+
+	}
+
+	clear() {
+
+		this.head = this.tail = null;
+
+		return this;
+
+	}
+
+	insertAfter( target, vertex ) {
+
+		vertex.prev = target;
+		vertex.next = target.next;
+
+		if ( ! vertex.next ) {
+
+			this.tail = vertex;
+
+		} else {
+
+			vertex.next.prev = vertex;
+
+		}
+
+		target.next = vertex;
+
+		return this;
+
+	}
+
+	append( vertex ) {
+
+		if ( this.head === null ) {
+
+			this.head = vertex;
+
+		} else {
+
+			this.tail.next = vertex;
+
+		}
+
+		vertex.prev = this.tail;
+		vertex.next = null; // the tail has no subsequent vertex
+
+		this.tail = vertex;
+
+		return this;
+
+	}
+
+	appendChain( vertex ) {
+
+		if ( this.head === null ) {
+
+			this.head = vertex;
+
+		} else {
+
+			this.tail.next = vertex;
+
+		}
+
+		vertex.prev = this.tail;
+
+		while ( vertex.next !== null ) {
+
+			vertex = vertex.next;
+
+		}
+
+		this.tail = vertex;
+
+		return this;
+
+	}
+
+	remove( vertex ) {
+
+		if ( vertex.prev === null ) {
+
+			this.head = vertex.next;
+
+		} else {
+
+			vertex.prev.next = vertex.next;
+
+		}
+
+		if ( vertex.next === null ) {
+
+			this.tail = vertex.prev;
+
+		} else {
+
+			vertex.next.prev = vertex.prev;
+
+		}
+
+		vertex.prev = null;
+		vertex.next = null;
+
+		return this;
+
+	}
+
+	removeChain( a, b ) {
+
+		if ( a.prev === null ) {
+
+			this.head = b.next;
+
+		} else {
+
+			a.prev.next = b.next;
+
+		}
+
+		if ( b.next === null ) {
+
+			this.tail = a.prev;
+
+		} else {
+
+			b.next.prev = a.prev;
+
+		}
+
+		a.prev = null;
+		b.next = null;
+
+		return this;
+
+	}
+
+	empty() {
+
+		return this.head === null;
+
+	}
+
+}
+
 /**
 * Class for representing navigation edges.
 *
@@ -13985,7 +15976,7 @@ class CostTable {
 	toJSON() {
 
 		const json = {
-			nodes: []
+			nodes: new Array()
 		};
 
 		for ( let [ key, value ] of this._nodeMap.entries() ) {
@@ -14041,132 +16032,6 @@ function computeDistanceOfPath( path ) {
 	}
 
 	return distance;
-
-}
-
-/**
-* Implementation of a half-edge data structure, also known as
-* {@link https://en.wikipedia.org/wiki/Doubly_connected_edge_list Doubly connected edge list}.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-*/
-class HalfEdge {
-
-	/**
-	* Constructs a new half-edge.
-	*
-	* @param {Vector3} vertex - The (origin) vertex of this half-edge.
-	*/
-	constructor( vertex = new Vector3() ) {
-
-		/**
-		* The (origin) vertex of this half-edge.
-		* @type Vector3
-		*/
-		this.vertex = vertex;
-
-		/**
-		* A reference to the next half-edge.
-		* @type HalfEdge
-		*/
-		this.next = null;
-
-		/**
-		* A reference to the previous half-edge.
-		* @type HalfEdge
-		*/
-		this.prev = null;
-
-		/**
-		* A reference to the opponent half-edge.
-		* @type HalfEdge
-		*/
-		this.twin = null;
-
-		/**
-		* A reference to its polygon/face.
-		* @type Polygon
-		*/
-		this.polygon = null;
-
-	}
-
-	/**
-	* Returns the origin vertex of this half-edge.
-	*
-	* @return {Vector3} The origin vertex.
-	*/
-	from() {
-
-		return this.vertex;
-
-	}
-
-	/**
-	* Returns the destination vertex of this half-edge.
-	*
-	* @return {Vector3} The destination vertex.
-	*/
-	to() {
-
-		return this.next ? this.next.vertex : null;
-
-	}
-
-	/**
-	* Computes the length of this half-edge.
-	*
-	* @return {Number} The length of this half-edge.
-	*/
-	length() {
-
-		const from = this.from();
-		const to = this.to();
-
-		if ( to !== null ) {
-
-			return from.distanceTo( to );
-
-		}
-
-		return - 1;
-
-	}
-
-	/**
-	* Computes the squared length of this half-edge.
-	*
-	* @return {Number} The squared length of this half-edge.
-	*/
-	squaredLength() {
-
-		const from = this.from();
-		const to = this.to();
-
-		if ( to !== null ) {
-
-			return from.squaredDistanceTo( to );
-
-		}
-
-		return - 1;
-
-	}
-
-	/**
-	* Links the given opponent half edge with this one.
-	*
-	* @param {HalfEdge} edge - The opponent edge to link.
-	* @return {HalfEdge} A reference to this half edge.
-	*/
-	linkOpponent( edge ) {
-
-		this.twin = edge;
-		edge.twin = this;
-
-		return this;
-
-	}
 
 }
 
@@ -14292,7 +16157,7 @@ class NavMesh {
 
 				let edge1 = initialEdgeList[ j ];
 
-				if ( edge0.from().equals( edge1.to() ) && edge0.to().equals( edge1.from() ) ) {
+				if ( edge0.tail().equals( edge1.head() ) && edge0.head().equals( edge1.tail() ) ) {
 
 					// opponent edge found, set twin references
 
@@ -14561,7 +16426,7 @@ class NavMesh {
 
 			// calculate movement and edge direction
 
-			edgeDirection.subVectors( closestEdge.next.vertex, closestEdge.vertex ).normalize();
+			closestEdge.getDirection( edgeDirection );
 			const length = movementDirection.subVectors( endPosition, startPosition ).length();
 
 			// this value influences the speed at which the entity moves along the edge
@@ -14585,7 +16450,7 @@ class NavMesh {
 
 			// the following value "t" tells us if the point exceeds the line segment
 
-			lineSegment.set( closestEdge.vertex, closestEdge.next.vertex );
+			lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
 			const t = lineSegment.closestPointToPointParameter( newPosition, false );
 
 			//
@@ -14882,7 +16747,7 @@ class NavMesh {
 
 			const edge = borderEdges[ i ];
 
-			lineSegment.set( edge.vertex, edge.next.vertex );
+			lineSegment.set( edge.prev.vertex, edge.vertex );
 			const t = lineSegment.closestPointToPointParameter( point );
 			lineSegment.at( t, pointOnLineSegment );
 
@@ -14910,327 +16775,6 @@ class NavMesh {
 function descending( a, b ) {
 
 	return ( a.cost < b.cost ) ? 1 : ( a.cost > b.cost ) ? - 1 : 0;
-
-}
-
-/**
-* Class for representing a planar polygon with an arbitrary amount of edges.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-* @author {@link https://github.com/robp94|robp94}
-*/
-class Polygon {
-
-	/**
-	* Constructs a new polygon.
-	*/
-	constructor() {
-
-		/**
-		* The centroid of this polygon.
-		* @type Vector3
-		*/
-		this.centroid = new Vector3();
-
-		/**
-		* A reference to the first half-edge of this polygon.
-		* @type HalfEdge
-		*/
-		this.edge = null;
-
-		/**
-		* A plane abstraction of this polygon.
-		* @type Plane
-		*/
-		this.plane = new Plane();
-
-	}
-
-	/**
-	* Creates the polygon based on the given array of points in 3D space.
-	* The method assumes the contour (the sequence of points) is defined
-	* in CCW order.
-	*
-	* @param {Array} points - The array of points.
-	* @return {Polygon} A reference to this polygon.
-	*/
-	fromContour( points ) {
-
-		const edges = new Array();
-
-		if ( points.length < 3 ) {
-
-			Logger.error( 'YUKA.Polygon: Unable to create polygon from contour. It needs at least three points.' );
-			return this;
-
-		}
-
-		for ( let i = 0, l = points.length; i < l; i ++ ) {
-
-			const edge = new HalfEdge( points[ i ] );
-			edges.push( edge );
-
-		}
-
-		// link edges
-
-		for ( let i = 0, l = edges.length; i < l; i ++ ) {
-
-			let current, prev, next;
-
-			if ( i === 0 ) {
-
-				current = edges[ i ];
-				prev = edges[ l - 1 ];
-			 	next = edges[ i + 1 ];
-
-			} else if ( i === ( l - 1 ) ) {
-
-				current = edges[ i ];
-			 	prev = edges[ i - 1 ];
-				next = edges[ 0 ];
-
-			} else {
-
-			 	current = edges[ i ];
-				prev = edges[ i - 1 ];
-				next = edges[ i + 1 ];
-
-			}
-
-			current.prev = prev;
-			current.next = next;
-			current.polygon = this;
-
-		}
-
-		//
-
-		this.edge = edges[ 0 ];
-
-		//
-
-		this.plane.fromCoplanarPoints( points[ 0 ], points[ 1 ], points[ 2 ] );
-
-		return this;
-
-	}
-
-	/**
-	* Computes the centroid for this polygon.
-	*
-	* @return {Polygon} A reference to this polygon.
-	*/
-	computeCentroid() {
-
-		const centroid = this.centroid;
-		let edge = this.edge;
-		let count = 0;
-
-		centroid.set( 0, 0, 0 );
-
-		do {
-
-			centroid.add( edge.from() );
-
-			count ++;
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		centroid.divideScalar( count );
-
-		return this;
-
-	}
-
-	/**
-	* Returns true if the polygon contains the given point.
-	*
-	* @param {Vector3} point - The point to test.
-	* @param {Number} epsilon - A tolerance value.
-	* @return {Boolean} Whether this polygon contain the given point or not.
-	*/
-	contains( point, epsilon = 1e-3 ) {
-
-		const plane = this.plane;
-		let edge = this.edge;
-
-		// convex test
-
-		do {
-
-			const v1 = edge.from();
-			const v2 = edge.to();
-
-			if ( leftOn( v1, v2, point ) === false ) {
-
-				return false;
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		// ensure the given point lies within a defined tolerance range
-
-		const distance = plane.distanceToPoint( point );
-
-		if ( Math.abs( distance ) > epsilon ) {
-
-			return false;
-
-		}
-
-		return true;
-
-	}
-
-	/**
-	* Returns true if the polygon is convex.
-	*
-	* @return {Boolean} Whether this polygon is convex or not.
-	*/
-	convex() {
-
-		let edge = this.edge;
-
-		do {
-
-			const v1 = edge.from();
-			const v2 = edge.to();
-			const v3 = edge.next.to();
-
-			if ( leftOn( v1, v2, v3 ) === false ) {
-
-				return false;
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		return true;
-
-	}
-
-	/**
-	* Returns true if the polygon is coplanar.
-	*
-	* @param {Number} epsilon - A tolerance value.
-	* @return {Boolean} Whether this polygon is coplanar or not.
-	*/
-	coplanar( epsilon = 1e-3 ) {
-
-		const plane = this.plane;
-		let edge = this.edge;
-
-		do {
-
-			const distance = plane.distanceToPoint( edge.from() );
-
-			if ( Math.abs( distance ) > epsilon ) {
-
-				return false;
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		return true;
-
-	}
-
-	/**
-	* Computes the signed distance from the given 3D vector to this polygon. The method
-	* uses the polygon's plane abstraction in order to compute this value.
-	*
-	* @param {Vector3} point - A point in 3D space.
-	* @return {Number} The signed distance from the given point to this polygon.
-	*/
-	distanceToPoint( point ) {
-
-		return this.plane.distanceToPoint( point );
-
-	}
-
-	/**
-	* Determines the contour (sequence of points) of this polygon and
-	* stores the result in the given array.
-	*
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
-	*/
-	getContour( result ) {
-
-		let edge = this.edge;
-
-		result.length = 0;
-
-		do {
-
-			result.push( edge.vertex );
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		return result;
-
-	}
-
-	/**
-	* Determines the portal edge that can be used to reach the
-	* given polygon over its twin reference. The result is stored
-	* in the given portal edge data structure. If the given polygon
-	* is no direct neighbor, the references of the portal edge data
-	* structure are set to null.
-	*
-	* @param {Polygon} polygon - The polygon to reach.
-	* @param {Object} portalEdge - The portal edge.
-	* @return {Object} The portal edge.
-	*/
-	getPortalEdgeTo( polygon, portalEdge ) {
-
-		let edge = this.edge;
-
-		do {
-
-			if ( edge.twin !== null ) {
-
-				if ( edge.twin.polygon === polygon ) {
-
-					portalEdge.left = edge.vertex;
-					portalEdge.right = edge.next.vertex;
-					return portalEdge;
-
-				}
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		portalEdge.left = null;
-		portalEdge.right = null;
-
-		return portalEdge;
-
-	}
-
-}
-
-// from the book "Computational Geometry in C, Joseph O'Rourke"
-
-function leftOn( a, b, c ) {
-
-	return MathUtils.area( a, b, c ) >= 0;
 
 }
 
@@ -15415,7 +16959,7 @@ class Parser {
 
 		} else {
 
-			// non-indexed geometry
+			// non-indexed geometry //todo test
 
 			for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
 
@@ -15441,7 +16985,7 @@ class Parser {
 
 		if ( ! dependencies ) {
 
-			const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || [];
+			const definitions = this.json[ type + ( type === 'mesh' ? 'es' : 's' ) ] || new Array();
 
 			dependencies = Promise.all( definitions.map( ( definition, index ) => {
 
@@ -17054,4 +18598,4 @@ function runTaskQueue( deadline ) {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Quaternion, Ray, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, HalfEdge, NavMesh, NavMeshLoader, Polygon, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, ConvexHull, Vertex as CHVertex, VertexList as CHVertexList, Face as CHFace, HalfEdge, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Polygon, Quaternion, Ray, SAT, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, NavMesh, NavMeshLoader, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
