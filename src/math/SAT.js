@@ -5,6 +5,11 @@ const axis = new Vector3();
 const directionA = new Vector3();
 const directionB = new Vector3();
 
+const c = new Vector3();
+const d = new Vector3();
+const bxa = new Vector3();
+const dxc = new Vector3();
+
 /**
 * Implementation of the separating axis theorem (SAT). Used to detect intersections
 * between convex polyhedra. The code is based on the presentation {@link http://twvideo01.ubm-us.net/o1/vault/gdc2013/slides/822403Gregorius_Dirk_TheSeparatingAxisTest.pdf The Separating Axis Test between convex polyhedra}
@@ -92,21 +97,27 @@ class SAT {
 
 					do {
 
-						// compute axis
+						// edge pruning: only consider edges if they build a face on the minkowski difference
 
-						edgeA.getDirection( directionA );
-						edgeB.getDirection( directionB );
+						if ( this._minkowskiFace( edgeA, edgeB ) ) {
 
-						axis.crossVectors( directionA, directionB );
+							// compute axis
 
-						this._projectOnAxis( polyhedronA, axis, intervalA );
-						this._projectOnAxis( polyhedronB, axis, intervalB );
+							edgeA.getDirection( directionA );
+							edgeB.getDirection( directionB );
 
-						// compare intervals
+							axis.crossVectors( directionA, directionB );
 
-						if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
+							this._projectOnAxis( polyhedronA, axis, intervalA );
+							this._projectOnAxis( polyhedronB, axis, intervalB );
 
-							return true; // intervals do not intersect, separating axis found
+							// compare intervals
+
+							if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
+
+								return true; // intervals do not intersect, separating axis found
+
+							}
 
 						}
 
@@ -197,6 +208,38 @@ class SAT {
 		}
 
 		return this;
+
+	}
+
+	// returns true if the given edges build a face on the minkowski difference
+
+	_minkowskiFace( edgeA, edgeB ) {
+
+		// get face normals which define the vertices of the arcs on the gauss map
+
+		const a = edgeA.polygon.plane.normal;
+		const b = edgeA.twin.polygon.plane.normal;
+		c.copy( edgeB.polygon.plane.normal );
+		d.copy( edgeB.twin.polygon.plane.normal );
+
+		// negate normals c and d to account for minkowski difference
+
+		c.multiplyScalar( - 1 );
+		d.multiplyScalar( - 1 );
+
+		// compute triple products
+
+		bxa.crossVectors( b, a );
+		dxc.crossVectors( d, c );
+
+		const cba = c.dot( bxa );
+		const dba = d.dot( bxa );
+		const adc = a.dot( dxc );
+		const bdc = b.dot( dxc );
+
+		// check signs of plane test
+
+		return ( ( cba * dba ) ) < 0 && ( ( adc * bdc ) < 0 ) && ( ( cba * bdc ) > 0 );
 
 	}
 
