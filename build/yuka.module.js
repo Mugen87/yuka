@@ -13665,8 +13665,8 @@ class SAT {
 	* Returns true if the given convex polyhedra intersect. A polyhedron is just
 	* an array of {@link Polygon} objects.
 	*
-	* @param {Array} polyhedronA - The first convex polyhedron.
-	* @param {Array} polyhedronB - The second convex polyhedron.
+	* @param {Polyhedron} polyhedronA - The first convex polyhedron.
+	* @param {Polyhedron} polyhedronB - The second convex polyhedron.
 	* @return {Boolean} Whether there is an intersection or not.
 	*/
 	intersects( polyhedronA, polyhedronB ) {
@@ -13694,10 +13694,12 @@ class SAT {
 
 	_checkFaceDirections( polyhedronA, polyhedronB ) {
 
-		for ( let i = 0, l = polyhedronA.length; i < l; i ++ ) {
+		const faces = polyhedronA.faces;
 
-			const polygon = polyhedronA[ i ];
-			const plane = polygon.plane;
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			const plane = face.plane;
 
 			oppositeNormal.copy( plane.normal ).multiplyScalar( - 1 );
 
@@ -13712,66 +13714,47 @@ class SAT {
 
 	}
 
-	// check with possible separating axes computed with the cross product between
+	// check with possible separating axes computed via the cross product between
 	// all edge combinations of both polyhedra
 
 	_checkEdgeDirections( polyhedronA, polyhedronB ) {
 
-		// iterate over all polygons of polyhedron A
+		const edgesA = polyhedronA.edges;
+		const edgesB = polyhedronB.edges;
 
-		for ( let i = 0, l = polyhedronA.length; i < l; i ++ ) {
+		for ( let i = 0, il = edgesA.length; i < il; i ++ ) {
 
-			const polygonA = polyhedronA[ i ];
-			let edgeA = polygonA.edge;
+			const edgeA = edgesA[ i ];
 
-			// iterate over all edges of A's current polygon
+			for ( let j = 0, jl = edgesB.length; j < jl; j ++ ) {
 
-			do {
+				const edgeB = edgesB[ j ];
 
-				// iterate over all polygons of polyhedron B
+				edgeA.getDirection( directionA );
+				edgeB.getDirection( directionB );
 
-				for ( let i = 0, l = polyhedronB.length; i < l; i ++ ) {
+				// edge pruning: only consider edges if they build a face on the minkowski difference
 
-					const polygonB = polyhedronB[ i ];
-					let edgeB = polygonB.edge;
+				if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
 
-					// iterate over all edges of B's current polygon
+					// compute axis
 
-					do {
+					axis.crossVectors( directionA, directionB );
 
-						edgeA.getDirection( directionA );
-						edgeB.getDirection( directionB );
+					this._projectOnAxis( polyhedronA, axis, intervalA );
+					this._projectOnAxis( polyhedronB, axis, intervalB );
 
-						// edge pruning: only consider edges if they build a face on the minkowski difference
+					// compare intervals
 
-						if ( this._minkowskiFace( edgeA, directionA, edgeB, directionB ) ) {
+					if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
 
-							// compute axis
+						return true; // intervals do not intersect, separating axis found
 
-							axis.crossVectors( directionA, directionB );
-
-							this._projectOnAxis( polyhedronA, axis, intervalA );
-							this._projectOnAxis( polyhedronB, axis, intervalB );
-
-							// compare intervals
-
-							if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
-
-								return true; // intervals do not intersect, separating axis found
-
-							}
-
-						}
-
-						edgeB = edgeB.next;
-
-					} while ( edgeB !== polygonB.edge );
+					}
 
 				}
 
-				edgeA = edgeA.next;
-
-			} while ( edgeA !== polygonA.edge );
+			}
 
 		}
 
@@ -13788,10 +13771,12 @@ class SAT {
 
 		// iterate over all polygons
 
-		for ( let i = 0, l = polyhedron.length; i < l; i ++ ) {
+		const faces = polyhedron.faces;
 
-			const polygon = polyhedron[ i ];
-			let edge = polygon.edge;
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			let edge = face.edge;
 
 			// iterate over all edges
 
@@ -13811,7 +13796,7 @@ class SAT {
 
 				edge = edge.next;
 
-			} while ( edge !== polygon.edge );
+			} while ( edge !== face.edge );
 
 		}
 
@@ -13824,14 +13809,16 @@ class SAT {
 
 	_projectOnAxis( polyhedron, axis, interval ) {
 
+		const faces = polyhedron.faces;
+
 		interval.reset();
 
 		// iterate over all polygons
 
-		for ( let i = 0, l = polyhedron.length; i < l; i ++ ) {
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-			const polygon = polyhedron[ i ];
-			let edge = polygon.edge;
+			const face = faces[ i ];
+			let edge = face.edge;
 
 			// iterate over all edges
 
@@ -13845,7 +13832,7 @@ class SAT {
 
 				edge = edge.next;
 
-			} while ( edge !== polygon.edge );
+			} while ( edge !== face.edge );
 
 		}
 
@@ -14376,6 +14363,111 @@ function leftOn( a, b, c ) {
 
 }
 
+/**
+* Base class for polyhedra.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class Polyhedron {
+
+	/**
+	* Constructs a new polyhedron.
+	*/
+	constructor() {
+
+		/**
+		* The faces of this polyhedron.
+		* @type Array
+		*/
+		this.faces = new Array();
+
+		/**
+		* A list of unique edges (no duplicate half edges).
+		* @type Array
+		*/
+		this.edges = new Array();
+
+		/**
+		* The centroid of this polyhedron.
+		* @type Vector3
+		*/
+		this.centroid = new Vector3();
+
+	}
+
+	/**
+	* Computes the centroid of this polyhedron. Assumes its faces
+	* have valid centroids.
+	*
+	* @return {Polyhedron} A reference to this polyhedron.
+	*/
+	computeCentroid() {
+
+		const centroid = this.centroid;
+		let faces = this.faces;
+
+		centroid.set( 0, 0, 0 );
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+
+			centroid.add( face.centroid );
+
+		}
+
+		centroid.divideScalar( faces.length );
+
+		return this;
+
+	}
+
+	/**
+	* Computes the edge list of this polyhedron. This list does not contain
+	* duplicate half edges.
+	*
+	* @return {Polyhedron} A reference to this polyhedron.
+	*/
+	computeEdgeList() {
+
+		const faces = this.faces;
+		const edges = this.edges;
+
+		edges.length = 0;
+
+		// iterate over all faces
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			const firstEdge = face.edge;
+
+			let edge = firstEdge;
+
+			// process all edges of a faces
+
+			do {
+
+				// only add the edge if the twin was not added before
+
+				if ( edges.includes( edge.twin ) === false ) {
+
+					edges.push( edge );
+
+				}
+
+				edge = edge.next;
+
+			} while ( edge !== firstEdge );
+
+		}
+
+		return this;
+
+	}
+
+}
+
 const line = new LineSegment();
 const plane$1 = new Plane();
 const closestPoint = new Vector3();
@@ -14389,21 +14481,16 @@ const sat = new SAT();
 * complexity of O(nlog(n)), whereas in the worst case it takes O(n²).
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
+* @augments Polyhedron
 */
-class ConvexHull {
+class ConvexHull extends Polyhedron {
 
 	/**
 	* Constructs a new convex hull.
 	*/
 	constructor() {
 
-		/**
-		* An array of faces representing the convex hull.
-		* @type Array
-		*/
-		this.faces = new Array();
-
-		// private members
+		super();
 
 		// tolerance value for various (float) compare operations
 
@@ -14421,46 +14508,6 @@ class ConvexHull {
 		// this array holds the new faces generated in a single iteration of the algorithm
 
 		this._newFaces = new Array();
-
-	}
-
-	/**
-	* Sets the given faces to this convex hull.
-	*
-	* @param {Array} faces - The new faces of the convex hull.
-	* @return {ConvexHull} A reference to this convex hull.
-	*/
-	set( faces ) {
-
-		this.faces = faces;
-
-		return this;
-
-	}
-
-	/**
-	* Copies the faces from the given convex hull to this convex hull.
-	*
-	* @param {ConvexHull} convexHull - The convex hull to copy.
-	* @return {ConvexHull} A reference to this convex hull.
-	*/
-	copy( convexHull ) {
-
-		this.faces.length = 0;
-		this.faces.push( ...convexHull.faces );
-
-		return this;
-
-	}
-
-	/**
-	* Creates a new convex hull and copies all values from this convex hull.
-	*
-	* @return {ConvexHull} A new convex hull.
-	*/
-	clone() {
-
-		return new this.constructor().copy( this );
 
 	}
 
@@ -14498,7 +14545,7 @@ class ConvexHull {
 	*/
 	intersectsConvexHull( convexHull ) {
 
-		return sat.intersects( this.faces, convexHull.faces );
+		return sat.intersects( this, convexHull );
 
 	}
 
@@ -14752,6 +14799,16 @@ class ConvexHull {
 			}
 
 		}
+
+		// handle case where all points lie in one plane
+
+		if ( plane$1.distanceToPoint( v3.point ) === 0 ) {
+
+			throw 'ERROR: YUKA.ConvexHull: All extreme points lie in a single plane. Unable to compute convex hull.';
+
+		}
+
+		// build initial tetrahedron
 
 		const faces = this.faces;
 
@@ -15020,6 +15077,7 @@ class ConvexHull {
 	_mergeFaces() {
 
 		const faces = this.faces;
+		const edges = this.edges;
 
 		const cache = {
 			leftPrev: null,
@@ -15028,7 +15086,11 @@ class ConvexHull {
 			rightNext: null
 		};
 
-		const edges = this._getSortedEdgeList();
+		// gather unique edges and temporarily sort them
+
+		this.computeEdgeList();
+
+		edges.sort( ( a, b ) => b.length() - a.length() );
 
 		// process edges from longest to shortest
 
@@ -15091,7 +15153,7 @@ class ConvexHull {
 
 		}
 
-		// recompute centroid
+		// recompute centroid of faces
 
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
@@ -15099,39 +15161,13 @@ class ConvexHull {
 
 		}
 
-	}
+		// compute centroid of convex hull and the final edge list
 
-	// return a array with all halfedges of the convex hull sorted by length in descending order
+		this.computeCentroid();
 
-	_getSortedEdgeList() {
+		this.computeEdgeList();
 
-		const faces = this.faces;
-		const result = new Array();
-
-		for ( let i = 0, l = faces.length; i < l; i ++ ) {
-
-			const face = faces[ i ];
-			const firstEdge = face.edge;
-
-			let edge = firstEdge;
-
-			do {
-
-				// only add the edge if the twin was not added before
-
-				if ( result.includes( edge.twin ) === false ) {
-
-					result.push( edge );
-
-				}
-
-				edge = edge.next;
-
-			} while ( edge !== firstEdge );
-
-		}
-
-		return result.sort( ( a, b ) => b.length() - a.length() );
+		return this;
 
 	}
 
@@ -18598,4 +18634,4 @@ function runTaskQueue( deadline ) {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, ConvexHull, Vertex as CHVertex, VertexList as CHVertexList, Face as CHFace, HalfEdge, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Polygon, Quaternion, Ray, SAT, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, NavMesh, NavMeshLoader, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, ConvexHull, Vertex as CHVertex, VertexList as CHVertexList, Face as CHFace, HalfEdge, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Polygon, Polyhedron, Quaternion, Ray, SAT, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, NavMesh, NavMeshLoader, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
