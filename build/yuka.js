@@ -7992,7 +7992,7 @@
 	class Plane {
 
 		/**
-		* Constructs a new plane with the given values. The sign of {@link Plane#constant} determines the side of the plane on which the origin is located.
+		* Constructs a new plane with the given values.
 		*
 		* @param {Vector3} normal - The normal vector of the plane.
 		* @param {Number} constant - The distance of the plane from the origin.
