@@ -1,4 +1,4 @@
-const lut = [];
+const lut = new Array();
 
 for ( let i = 0; i < 256; i ++ ) {
 

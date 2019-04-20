@@ -176,11 +176,11 @@ GLTFLoader.prototype = {
 						break;
 
 					case EXTENSIONS.KHR_MATERIALS_UNLIT:
-						extensions[ extensionName ] = new GLTFMaterialsUnlitExtension( json );
+						extensions[ extensionName ] = new GLTFMaterialsUnlitExtension();
 						break;
 
 					case EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS:
-						extensions[ extensionName ] = new GLTFMaterialsPbrSpecularGlossinessExtension( json );
+						extensions[ extensionName ] = new GLTFMaterialsPbrSpecularGlossinessExtension();
 						break;
 
 					case EXTENSIONS.KHR_DRACO_MESH_COMPRESSION:
@@ -192,7 +192,7 @@ GLTFLoader.prototype = {
 						break;
 
 					case EXTENSIONS.KHR_TEXTURE_TRANSFORM:
-						extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] = new GLTFTextureTransformExtension( json );
+						extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] = new GLTFTextureTransformExtension();
 						break;
 
 					default:

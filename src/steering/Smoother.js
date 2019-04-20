@@ -24,7 +24,7 @@ class Smoother {
 		*/
 		this.count = count;
 
-		this._history = []; // this holds the history
+		this._history = new Array(); // this holds the history
 		this._slot = 0; // the current sample slot
 
 		// initialize history with Vector3s

@@ -124,7 +124,7 @@ class CostTable {
 	toJSON() {
 
 		const json = {
-			nodes: []
+			nodes: new Array()
 		};
 
 		for ( let [ key, value ] of this._nodeMap.entries() ) {

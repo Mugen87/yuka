@@ -12,7 +12,7 @@ class Blaster extends GameEntity {
 
 	constructor( owner = null ) {
 
-		super( owner );
+		super();
 
 		this.owner = owner;
 

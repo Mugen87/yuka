@@ -14,7 +14,7 @@ class FuzzyCompositeTerm extends FuzzyTerm {
 	*
 	* @param {Array} terms - An arbitrary amount of fuzzy terms.
 	*/
-	constructor( terms = [] ) {
+	constructor( terms = new Array() ) {
 
 		super();
 
