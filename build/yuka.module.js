@@ -13652,7 +13652,8 @@ const directionB = new Vector3();
 const c = new Vector3();
 const d = new Vector3();
 
-const edgeCache = new Set();
+const edgesA = new Set();
+const edgesB = new Set();
 
 /**
 * Implementation of the separating axis theorem (SAT). Used to detect intersections
@@ -13683,7 +13684,8 @@ class SAT {
 
 		const resultEdges = this._checkEdgeDirections( polyhedronA, polyhedronB );
 
-		edgeCache.clear();
+		edgesA.clear();
+		edgesB.clear();
 
 		if ( resultEdges ) return false;
 
@@ -13734,9 +13736,9 @@ class SAT {
 
 				// only test unique edges
 
-				if ( edgeCache.has( edgeA.twin ) === false ) {
+				if ( edgesA.has( edgeA.twin ) === false ) {
 
-					edgeCache.add( edgeA );
+					edgesA.add( edgeA );
 
 					// iterate over all polygons of polyhedron B
 
@@ -13751,9 +13753,9 @@ class SAT {
 
 							// only test unique edges
 
-							if ( edgeCache.has( edgeB.twin ) === false ) {
+							if ( edgesB.has( edgeB.twin ) === false ) {
 
-								edgeCache.add( edgeB );
+								edgesB.add( edgeB );
 
 								edgeA.getDirection( directionA );
 								edgeB.getDirection( directionB );
@@ -13786,6 +13788,8 @@ class SAT {
 						} while ( edgeB !== polygonB.edge );
 
 					}
+
+					edgesB.clear();
 
 				}
 
