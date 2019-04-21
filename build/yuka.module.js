@@ -14860,7 +14860,7 @@ class ConvexHull extends Polyhedron {
 
 		let distance, maxDistance;
 
-		distance = maxDistance = max.x.point.x - min.x.point.x;
+		maxDistance = max.x.point.x - min.x.point.x;
 
 		v0 = min.x;
 		v1 = max.x;
