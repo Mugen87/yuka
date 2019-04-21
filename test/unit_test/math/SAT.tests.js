@@ -144,6 +144,7 @@ describe( 'SAT', function () {
 			const sat = new SAT();
 
 			expect( sat._distanceBetweenEdges( new Vector3(), new Vector3( 0, 1, 0 ), new Vector3(), new Vector3( 0, 1, 0 ) ) ).to.equal( - Infinity );
+			expect( sat._distanceBetweenEdges( new Vector3(), new Vector3( 0, 1, 0 ), new Vector3(), new Vector3( 0, - 1, 0 ) ) ).to.equal( - Infinity );
 
 		} );
 
