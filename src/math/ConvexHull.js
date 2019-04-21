@@ -626,7 +626,7 @@ class ConvexHull extends Polyhedron {
 
 		// gather unique edges and temporarily sort them
 
-		this.computeEdgeList();
+		this.computeUniqueVerticesAndEdges();
 
 		edges.sort( ( a, b ) => b.length() - a.length() );
 
@@ -703,7 +703,7 @@ class ConvexHull extends Polyhedron {
 
 		this.computeCentroid();
 
-		this.computeEdgeList();
+		this.computeUniqueVerticesAndEdges();
 
 		return this;
 

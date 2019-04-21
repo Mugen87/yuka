@@ -119,32 +119,21 @@ class SAT {
 
 		// iterate over all polygons
 
-		const faces = polyhedron.faces;
+		const vertices = polyhedron.vertices;
 
-		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
-			const face = faces[ i ];
-			let edge = face.edge;
+			const vertex = vertices[ i ];
+			const projection = vertex.dot( direction );
 
-			// iterate over all edges
+			// check vertex to find the best support point
 
-			do {
+			if ( projection > maxProjection ) {
 
-				const vertex = edge.vertex;
-				const projection = vertex.dot( direction );
+				maxProjection = projection;
+				supportVertex = vertex;
 
-				// check vertex to find the best support point
-
-				if ( projection > maxProjection ) {
-
-					maxProjection = projection;
-					supportVertex = vertex;
-
-				}
-
-				edge = edge.next;
-
-			} while ( edge !== face.edge );
+			}
 
 		}
 
@@ -190,7 +179,7 @@ class SAT {
 
 		// skip parallel edges
 
-		if ( directionA.dot( directionB ) === 0 ) return - Infinity;
+		if ( Math.abs( directionA.dot( directionB ) ) === 1 ) return - Infinity;
 
 		// build plane through one edge
 

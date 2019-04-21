@@ -85,20 +85,21 @@ describe( 'Polyhedron', function () {
 
 	} );
 
-	describe( '#computeEdgeList()', function () {
+	describe( '#computeUniqueVerticesAndEdges()', function () {
 
-		it( 'should compute the edge list of this polyhedron', function () {
+		it( 'should compute unique vertices and edges of this polyhedron', function () {
 
-			polyhedron.computeEdgeList();
+			polyhedron.computeUniqueVerticesAndEdges();
 
 			expect( polyhedron.edges ).to.have.lengthOf( 24 ); // because there are no twin references
+			expect( polyhedron.vertices ).to.have.lengthOf( 24 ); // because no vertices are shared
 
 			// set some twin references
 
 			sideFront.edge.linkOpponent( sideRight.edge );
 			sideBack.edge.linkOpponent( sideLeft.edge );
 
-			polyhedron.computeEdgeList();
+			polyhedron.computeUniqueVerticesAndEdges();
 
 			expect( polyhedron.edges ).to.have.lengthOf( 22 ); // because 2 twin edges are discared
 

@@ -137,4 +137,16 @@ describe( 'SAT', function () {
 
 	} );
 
+	describe( '#_distanceBetweenEdges()', function () {
+
+		it( 'should return - Infinity if the given edge directions are parallel', function () {
+
+			const sat = new SAT();
+
+			expect( sat._distanceBetweenEdges( new Vector3(), new Vector3( 0, 1, 0 ), new Vector3(), new Vector3( 0, 1, 0 ) ) ).to.equal( - Infinity );
+
+		} );
+
+	} );
+
 } );

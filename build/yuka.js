@@ -13769,32 +13769,21 @@
 
 			// iterate over all polygons
 
-			const faces = polyhedron.faces;
+			const vertices = polyhedron.vertices;
 
-			for ( let i = 0, l = faces.length; i < l; i ++ ) {
+			for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
-				const face = faces[ i ];
-				let edge = face.edge;
+				const vertex = vertices[ i ];
+				const projection = vertex.dot( direction );
 
-				// iterate over all edges
+				// check vertex to find the best support point
 
-				do {
+				if ( projection > maxProjection ) {
 
-					const vertex = edge.vertex;
-					const projection = vertex.dot( direction );
+					maxProjection = projection;
+					supportVertex = vertex;
 
-					// check vertex to find the best support point
-
-					if ( projection > maxProjection ) {
-
-						maxProjection = projection;
-						supportVertex = vertex;
-
-					}
-
-					edge = edge.next;
-
-				} while ( edge !== face.edge );
+				}
 
 			}
 
@@ -13840,7 +13829,7 @@
 
 			// skip parallel edges
 
-			if ( directionA.dot( directionB ) === 0 ) return - Infinity;
+			if ( Math.abs( directionA.dot( directionB ) ) === 1 ) return - Infinity;
 
 			// build plane through one edge
 
@@ -14348,10 +14337,16 @@
 			this.faces = new Array();
 
 			/**
-			* A list of unique edges (no duplicate half edges).
+			* A list of unique edges (no opponent half edges).
 			* @type Array
 			*/
 			this.edges = new Array();
+
+			/**
+			* A list of unique vertices.
+			* @type Array
+			*/
+			this.vertices = new Array();
 
 			/**
 			* The centroid of this polyhedron.
@@ -14389,26 +14384,29 @@
 		}
 
 		/**
-		* Computes the edge list of this polyhedron. This list does not contain
-		* duplicate half edges.
+		* Computes the unique vertices and edges of this polyhedron. Assumes {@link Polyhedron#faces}
+		* is properly set.
 		*
 		* @return {Polyhedron} A reference to this polyhedron.
 		*/
-		computeEdgeList() {
+		computeUniqueVerticesAndEdges() {
 
 			const faces = this.faces;
 			const edges = this.edges;
+			const vertices = this.vertices;
 
 			edges.length = 0;
+			vertices.length = 0;
+
+			const uniqueVertices = new Set();
 
 			// iterate over all faces
 
 			for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
 				const face = faces[ i ];
-				const firstEdge = face.edge;
 
-				let edge = firstEdge;
+				let edge = face.edge;
 
 				// process all edges of a faces
 
@@ -14422,11 +14420,17 @@
 
 					}
 
+					// add vertex to set (assuming half edges share unique vertices)
+
+					uniqueVertices.add( edge.vertex );
+
 					edge = edge.next;
 
-				} while ( edge !== firstEdge );
+				} while ( edge !== face.edge );
 
 			}
+
+			vertices.push( ...uniqueVertices );
 
 			return this;
 
@@ -15054,7 +15058,7 @@
 
 			// gather unique edges and temporarily sort them
 
-			this.computeEdgeList();
+			this.computeUniqueVerticesAndEdges();
 
 			edges.sort( ( a, b ) => b.length() - a.length() );
 
@@ -15131,7 +15135,7 @@
 
 			this.computeCentroid();
 
-			this.computeEdgeList();
+			this.computeUniqueVerticesAndEdges();
 
 			return this;
 

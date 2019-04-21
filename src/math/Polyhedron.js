@@ -19,10 +19,16 @@ class Polyhedron {
 		this.faces = new Array();
 
 		/**
-		* A list of unique edges (no duplicate half edges).
+		* A list of unique edges (no opponent half edges).
 		* @type Array
 		*/
 		this.edges = new Array();
+
+		/**
+		* A list of unique vertices.
+		* @type Array
+		*/
+		this.vertices = new Array();
 
 		/**
 		* The centroid of this polyhedron.
@@ -60,26 +66,29 @@ class Polyhedron {
 	}
 
 	/**
-	* Computes the edge list of this polyhedron. This list does not contain
-	* duplicate half edges.
+	* Computes the unique vertices and edges of this polyhedron. Assumes {@link Polyhedron#faces}
+	* is properly set.
 	*
 	* @return {Polyhedron} A reference to this polyhedron.
 	*/
-	computeEdgeList() {
+	computeUniqueVerticesAndEdges() {
 
 		const faces = this.faces;
 		const edges = this.edges;
+		const vertices = this.vertices;
 
 		edges.length = 0;
+		vertices.length = 0;
+
+		const uniqueVertices = new Set();
 
 		// iterate over all faces
 
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
 			const face = faces[ i ];
-			const firstEdge = face.edge;
 
-			let edge = firstEdge;
+			let edge = face.edge;
 
 			// process all edges of a faces
 
@@ -93,11 +102,17 @@ class Polyhedron {
 
 				}
 
+				// add vertex to set (assuming half edges share unique vertices)
+
+				uniqueVertices.add( edge.vertex );
+
 				edge = edge.next;
 
-			} while ( edge !== firstEdge );
+			} while ( edge !== face.edge );
 
 		}
+
+		vertices.push( ...uniqueVertices );
 
 		return this;
 
