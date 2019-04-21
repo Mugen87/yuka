@@ -13644,13 +13644,14 @@ class LineSegment {
 
 }
 
+const normal$1 = new Vector3();
 const oppositeNormal = new Vector3();
-const axis = new Vector3();
 const directionA = new Vector3();
 const directionB = new Vector3();
 
 const c = new Vector3();
 const d = new Vector3();
+const v = new Vector3();
 
 /**
 * Implementation of the separating axis theorem (SAT). Used to detect intersections
@@ -13739,18 +13740,9 @@ class SAT {
 
 					// compute axis
 
-					axis.crossVectors( directionA, directionB );
+					const distance = this._distanceBetweenEdges( edgeA, directionA, edgeB, directionB, polyhedronA );
 
-					this._projectOnAxis( polyhedronA, axis, intervalA );
-					this._projectOnAxis( polyhedronB, axis, intervalB );
-
-					// compare intervals
-
-					if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
-
-						return true; // intervals do not intersect, separating axis found
-
-					}
+					if ( distance > 0 ) return true; // separating axis found
 
 				}
 
@@ -13771,72 +13763,25 @@ class SAT {
 
 		// iterate over all polygons
 
-		const faces = polyhedron.faces;
+		const vertices = polyhedron.vertices;
 
-		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
-			const face = faces[ i ];
-			let edge = face.edge;
+			const vertex = vertices[ i ];
+			const projection = vertex.dot( direction );
 
-			// iterate over all edges
+			// check vertex to find the best support point
 
-			do {
+			if ( projection > maxProjection ) {
 
-				const vertex = edge.vertex;
-				const projection = vertex.dot( direction );
+				maxProjection = projection;
+				supportVertex = vertex;
 
-				// check vertex to find the best support point
-
-				if ( projection > maxProjection ) {
-
-					maxProjection = projection;
-					supportVertex = vertex;
-
-				}
-
-				edge = edge.next;
-
-			} while ( edge !== face.edge );
+			}
 
 		}
 
 		return supportVertex;
-
-	}
-
-	// projects all vertices of a polyhedron on the given axis and stores
-	// the minimum and maximum projections in the given interval object
-
-	_projectOnAxis( polyhedron, axis, interval ) {
-
-		const faces = polyhedron.faces;
-
-		interval.reset();
-
-		// iterate over all polygons
-
-		for ( let i = 0, l = faces.length; i < l; i ++ ) {
-
-			const face = faces[ i ];
-			let edge = face.edge;
-
-			// iterate over all edges
-
-			do {
-
-				const vertex = edge.vertex;
-				const projection = vertex.dot( axis );
-
-				interval.min = Math.min( interval.min, projection );
-				interval.max = Math.max( interval.max, projection );
-
-				edge = edge.next;
-
-			} while ( edge !== face.edge );
-
-		}
-
-		return this;
 
 	}
 
@@ -13872,30 +13817,34 @@ class SAT {
 
 	}
 
-}
+	// use gauss map to compute the distance between two edges
 
-// private helper class representing a scalar interval
+	_distanceBetweenEdges( edgeA, directionA, edgeB, directionB, polyhedronA ) {
 
-class Interval {
+		// skip parallel edges
 
-	constructor() {
+		if ( Math.abs( directionA.dot( directionB ) ) === 1 ) return - Infinity;
 
-		this.min = Infinity;
-		this.max = - Infinity;
+		// build plane through one edge
+
+		normal$1.crossVectors( directionA, directionB ).normalize();
+
+		// ensure normal points from polyhedron A to B
+
+		if ( normal$1.dot( v.subVectors( edgeA.vertex, polyhedronA.centroid ) ) < 0 ) {
+
+			normal$1.multiplyScalar( - 1 );
+
+		}
+
+		// compute the distance of any vertex on the other edge to that plane
+		// no need to compute support points => O(1)
+
+		return normal$1.dot( v.subVectors( edgeB.vertex, edgeA.vertex ) );
 
 	}
 
-	reset() {
-
-		this.min = Infinity;
-		this.max = - Infinity;
-
-	}
-
 }
-
-const intervalA = new Interval();
-const intervalB = new Interval();
 
 /**
 * Implementation of a half-edge data structure, also known as
@@ -14382,10 +14331,16 @@ class Polyhedron {
 		this.faces = new Array();
 
 		/**
-		* A list of unique edges (no duplicate half edges).
+		* A list of unique edges (no opponent half edges).
 		* @type Array
 		*/
 		this.edges = new Array();
+
+		/**
+		* A list of unique vertices.
+		* @type Array
+		*/
+		this.vertices = new Array();
 
 		/**
 		* The centroid of this polyhedron.
@@ -14423,12 +14378,54 @@ class Polyhedron {
 	}
 
 	/**
-	* Computes the edge list of this polyhedron. This list does not contain
-	* duplicate half edges.
+	* Computes unique vertices of this polyhedron. Assumes {@link Polyhedron#faces}
+	* is properly set.
 	*
 	* @return {Polyhedron} A reference to this polyhedron.
 	*/
-	computeEdgeList() {
+	computeUniqueVertices() {
+
+		const faces = this.faces;
+		const vertices = this.vertices;
+
+		vertices.length = 0;
+
+		const uniqueVertices = new Set();
+
+		// iterate over all faces
+
+		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+			const face = faces[ i ];
+			let edge = face.edge;
+
+			// process all edges of a faces
+
+			do {
+
+				// add vertex to set (assuming half edges share unique vertices)
+
+				uniqueVertices.add( edge.vertex );
+
+				edge = edge.next;
+
+			} while ( edge !== face.edge );
+
+		}
+
+		vertices.push( ...uniqueVertices );
+
+		return this;
+
+	}
+
+	/**
+	* Computes unique edges of this polyhedron. Assumes {@link Polyhedron#faces}
+	* is properly set.
+	*
+	* @return {Polyhedron} A reference to this polyhedron.
+	*/
+	computeUniqueEdges() {
 
 		const faces = this.faces;
 		const edges = this.edges;
@@ -14440,9 +14437,8 @@ class Polyhedron {
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
 			const face = faces[ i ];
-			const firstEdge = face.edge;
 
-			let edge = firstEdge;
+			let edge = face.edge;
 
 			// process all edges of a faces
 
@@ -14458,11 +14454,112 @@ class Polyhedron {
 
 				edge = edge.next;
 
-			} while ( edge !== firstEdge );
+			} while ( edge !== face.edge );
 
 		}
 
 		return this;
+
+	}
+
+	fromAABB( aabb ) {
+
+		const min = aabb.min;
+		const max = aabb.max;
+
+		const vertices = [
+			new Vector3( max.x, max.y, max.z ),
+			new Vector3( max.x, max.y, min.z ),
+			new Vector3( max.x, min.y, max.z ),
+			new Vector3( max.x, min.y, min.z ),
+			new Vector3( min.x, max.y, max.z ),
+			new Vector3( min.x, max.y, min.z ),
+			new Vector3( min.x, min.y, max.z ),
+			new Vector3( min.x, min.y, min.z )
+		];
+
+		const polyhedron = new Polyhedron();
+		polyhedron.vertices = vertices;
+
+		const sideTop = new Polygon().fromContour( [
+			vertices[ 4 ],
+			vertices[ 0 ],
+			vertices[ 1 ],
+			vertices[ 5 ]
+		] );
+
+		const sideRight = new Polygon().fromContour( [
+			vertices[ 2 ],
+			vertices[ 3 ],
+			vertices[ 1 ],
+			vertices[ 0 ]
+		] );
+
+		const sideFront = new Polygon().fromContour( [
+			vertices[ 6 ],
+			vertices[ 2 ],
+			vertices[ 0 ],
+			vertices[ 4 ]
+		] );
+
+		const sideBack = new Polygon().fromContour( [
+			vertices[ 3 ],
+			vertices[ 7 ],
+			vertices[ 5 ],
+			vertices[ 1 ]
+		] );
+
+		const sideBottom = new Polygon().fromContour( [
+			vertices[ 3 ],
+			vertices[ 2 ],
+			vertices[ 6 ],
+			vertices[ 7 ]
+		] );
+
+		const sideLeft = new Polygon().fromContour( [
+			vertices[ 7 ],
+			vertices[ 6 ],
+			vertices[ 4 ],
+			vertices[ 5 ]
+		] );
+
+		// link edges
+
+		sideTop.edge.linkOpponent( sideLeft.edge.prev );
+		sideTop.edge.next.linkOpponent( sideFront.edge.prev );
+		sideTop.edge.next.next.linkOpponent( sideRight.edge.prev );
+		sideTop.edge.prev.linkOpponent( sideBack.edge.prev );
+
+		sideBottom.edge.linkOpponent( sideBack.edge.next );
+		sideBottom.edge.next.linkOpponent( sideRight.edge.next );
+		sideBottom.edge.next.next.linkOpponent( sideFront.edge.next );
+		sideBottom.edge.prev.linkOpponent( sideLeft.edge.next );
+
+		sideLeft.edge.linkOpponent( sideBack.edge.next.next );
+		sideBack.edge.linkOpponent( sideRight.edge.next.next );
+		sideRight.edge.linkOpponent( sideFront.edge.next.next );
+		sideFront.edge.linkOpponent( sideLeft.edge.next.next );
+
+		//
+
+		polyhedron.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
+
+		// compute centroids
+
+		sideTop.computeCentroid();
+		sideRight.computeCentroid();
+		sideFront.computeCentroid();
+		sideBack.computeCentroid();
+		sideBottom.computeCentroid();
+		sideLeft.computeCentroid();
+
+		aabb.getCenter( polyhedron.centroid );
+
+		//
+
+		polyhedron.computeUniqueEdges();
+
+		return polyhedron;
 
 	}
 
@@ -14473,6 +14570,7 @@ const plane$1 = new Plane();
 const closestPoint = new Vector3();
 const up = new Vector3( 0, 1, 0 );
 const sat = new SAT();
+let polyhedronAABB;
 
 /**
 * Class representing a convex hull. This is an implementation of the Quickhull algorithm
@@ -14526,7 +14624,7 @@ class ConvexHull extends Polyhedron {
 
 		for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-			// if the signed distance is greater than the tolernce value, the point
+			// if the signed distance is greater than the tolerance value, the point
 			// is outside and we can stop processing
 
 			if ( faces[ i ].distanceToPoint( point ) > this._tolerance ) return false;
@@ -14534,6 +14632,47 @@ class ConvexHull extends Polyhedron {
 		}
 
 		return true;
+
+	}
+
+	/**
+	* Returns true if this convex hull intersects with the given AABB.
+	*
+	* @param {AABB} aabb - The AABB to test.
+	* @return {Boolean} Whether this convex hull intersects with the given AABB or not.
+	*/
+	intersectsAABB( aabb ) {
+
+		if ( polyhedronAABB === undefined ) {
+
+			// lazily create the (proxy) polyhedron if necessary
+
+			polyhedronAABB = new Polyhedron().fromAABB( aabb );
+
+		} else {
+
+			// otherwise just ensure up-to-date vertex data.
+			// the topology of the polyhedron is equal for all AABBs
+
+			const min = aabb.min;
+			const max = aabb.max;
+
+			const vertices = polyhedronAABB.vertices;
+
+			vertices[ 0 ].set( max.x, max.y, max.z );
+			vertices[ 1 ].set( max.x, max.y, min.z );
+			vertices[ 2 ].set( max.x, min.y, max.z );
+			vertices[ 3 ].set( max.x, min.y, min.z );
+			vertices[ 4 ].set( min.x, max.y, max.z );
+			vertices[ 5 ].set( min.x, max.y, min.z );
+			vertices[ 6 ].set( min.x, min.y, max.z );
+			vertices[ 7 ].set( min.x, min.y, min.z );
+
+			aabb.getCenter( polyhedronAABB.centroid );
+
+		}
+
+		return sat.intersects( this, polyhedronAABB );
 
 	}
 
@@ -14721,7 +14860,7 @@ class ConvexHull extends Polyhedron {
 
 		let distance, maxDistance;
 
-		distance = maxDistance = max.x.point.x - min.x.point.x;
+		maxDistance = max.x.point.x - min.x.point.x;
 
 		v0 = min.x;
 		v1 = max.x;
@@ -15088,7 +15227,7 @@ class ConvexHull extends Polyhedron {
 
 		// gather unique edges and temporarily sort them
 
-		this.computeEdgeList();
+		this.computeUniqueEdges();
 
 		edges.sort( ( a, b ) => b.length() - a.length() );
 
@@ -15161,11 +15300,11 @@ class ConvexHull extends Polyhedron {
 
 		}
 
-		// compute centroid of convex hull and the final edge list
+		// compute centroid of convex hull and the final edge and vertex list
 
 		this.computeCentroid();
-
-		this.computeEdgeList();
+		this.computeUniqueEdges();
+		this.computeUniqueVertices();
 
 		return this;
 
