@@ -11,6 +11,14 @@ const Vector3 = YUKA.Vector3;
 
 // use a simple cube with six faces as a polyhedron
 
+//    5-------1
+//   /|      /|
+//  / |     / |
+// 4--|----0  |
+// |  7----|--3
+// | /     | /
+// 6-------2
+
 const vertices = [
 	new Vector3( 1, 1, 1 ), // 0
 	new Vector3( 1, 1, - 1 ), // 1
@@ -32,10 +40,10 @@ const sideTop = new Polygon().fromContour( [
 ] );
 
 const sideRight = new Polygon().fromContour( [
+	vertices[ 2 ],
 	vertices[ 3 ],
 	vertices[ 1 ],
-	vertices[ 0 ],
-	vertices[ 2 ]
+	vertices[ 0 ]
 ] );
 
 const sideFront = new Polygon().fromContour( [
@@ -65,6 +73,23 @@ const sideLeft = new Polygon().fromContour( [
 	vertices[ 4 ],
 	vertices[ 5 ]
 ] );
+
+// link edges
+
+sideTop.edge.linkOpponent( sideLeft.edge.prev );
+sideTop.edge.next.linkOpponent( sideFront.edge.prev );
+sideTop.edge.next.next.linkOpponent( sideRight.edge.prev );
+sideTop.edge.prev.linkOpponent( sideBack.edge.prev );
+
+sideBottom.edge.linkOpponent( sideBack.edge.next );
+sideBottom.edge.next.linkOpponent( sideRight.edge.next );
+sideBottom.edge.next.next.linkOpponent( sideFront.edge.next );
+sideBottom.edge.prev.linkOpponent( sideLeft.edge.next );
+
+sideLeft.edge.linkOpponent( sideBack.edge.next.next );
+sideBack.edge.linkOpponent( sideRight.edge.next.next );
+sideRight.edge.linkOpponent( sideFront.edge.next.next );
+sideFront.edge.linkOpponent( sideLeft.edge.next.next );
 
 polyhedron.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
 
@@ -102,17 +127,7 @@ describe( 'Polyhedron', function () {
 
 			polyhedron.computeUniqueVerticesAndEdges();
 
-			expect( polyhedron.edges ).to.have.lengthOf( 24 ); // because there are no twin references
-			expect( polyhedron.vertices ).to.have.lengthOf( 8 );
-
-			// set some twin references
-
-			sideFront.edge.linkOpponent( sideRight.edge );
-			sideBack.edge.linkOpponent( sideLeft.edge );
-
-			polyhedron.computeUniqueVerticesAndEdges();
-
-			expect( polyhedron.edges ).to.have.lengthOf( 22 ); // because 2 twin edges are discared
+			expect( polyhedron.edges ).to.have.lengthOf( 12 );
 			expect( polyhedron.vertices ).to.have.lengthOf( 8 );
 
 		} );
