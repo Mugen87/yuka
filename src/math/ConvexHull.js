@@ -11,6 +11,7 @@ const plane = new Plane();
 const closestPoint = new Vector3();
 const up = new Vector3( 0, 1, 0 );
 const sat = new SAT();
+let polyhedronAABB;
 
 /**
 * Class representing a convex hull. This is an implementation of the Quickhull algorithm
@@ -72,6 +73,47 @@ class ConvexHull extends Polyhedron {
 		}
 
 		return true;
+
+	}
+
+	/**
+	* Returns true if this convex hull intersects with the given AABB.
+	*
+	* @param {AABB} aabb - The AABB to test.
+	* @return {Boolean} Whether this convex hull intersects with the given AABB or not.
+	*/
+	intersectsAABB( aabb ) {
+
+		if ( polyhedronAABB === undefined ) {
+
+			// lazily create the (proxy) polyhedron if necessary
+
+			polyhedronAABB = new Polyhedron().fromAABB( aabb );
+
+		} else {
+
+			// otherwise just ensure up-to-date vertex data.
+			// the topology of the polyhedron is equal for all AABBs
+
+			const min = aabb.min;
+			const max = aabb.max;
+
+			const vertices = polyhedronAABB.vertices;
+
+			vertices[ 0 ].set( max.x, max.y, max.z );
+			vertices[ 1 ].set( max.x, max.y, min.z );
+			vertices[ 2 ].set( max.x, min.y, max.z );
+			vertices[ 3 ].set( max.x, min.y, min.z );
+			vertices[ 4 ].set( min.x, max.y, max.z );
+			vertices[ 5 ].set( min.x, max.y, min.z );
+			vertices[ 6 ].set( min.x, min.y, max.z );
+			vertices[ 7 ].set( min.x, min.y, min.z );
+
+			aabb.getCenter( polyhedronAABB.centroid );
+
+		}
+
+		return sat.intersects( this, polyhedronAABB );
 
 	}
 
@@ -626,7 +668,7 @@ class ConvexHull extends Polyhedron {
 
 		// gather unique edges and temporarily sort them
 
-		this.computeUniqueVerticesAndEdges();
+		this.computeUniqueEdges();
 
 		edges.sort( ( a, b ) => b.length() - a.length() );
 
@@ -699,11 +741,11 @@ class ConvexHull extends Polyhedron {
 
 		}
 
-		// compute centroid of convex hull and the final edge list
+		// compute centroid of convex hull and the final edge and vertex list
 
 		this.computeCentroid();
-
-		this.computeUniqueVerticesAndEdges();
+		this.computeUniqueEdges();
+		this.computeUniqueVertices();
 
 		return this;
 

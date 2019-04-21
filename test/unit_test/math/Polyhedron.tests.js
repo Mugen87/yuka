@@ -5,6 +5,7 @@
 const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
+const AABB = YUKA.AABB;
 const Polyhedron = YUKA.Polyhedron;
 const Polygon = YUKA.Polygon;
 const Vector3 = YUKA.Vector3;
@@ -121,14 +122,42 @@ describe( 'Polyhedron', function () {
 
 	} );
 
-	describe( '#computeUniqueVerticesAndEdges()', function () {
+	describe( '#computeUniqueEdges()', function () {
 
-		it( 'should compute unique vertices and edges of this polyhedron', function () {
+		it( 'should compute unique edges of this polyhedron', function () {
 
-			polyhedron.computeUniqueVerticesAndEdges();
+			polyhedron.computeUniqueEdges();
 
 			expect( polyhedron.edges ).to.have.lengthOf( 12 );
+
+		} );
+
+	} );
+
+	describe( '#computeUniqueVertices()', function () {
+
+		it( 'should compute unique vertices of this polyhedron', function () {
+
+			polyhedron.computeUniqueVertices();
+
 			expect( polyhedron.vertices ).to.have.lengthOf( 8 );
+
+		} );
+
+	} );
+
+	describe( '#fromAABB()', function () {
+
+		it( 'should create a polyhedron from the given AABB', function () {
+
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 1, 0 ), new Vector3( 2, 2, 2 ) );
+			const polyAABB = new Polyhedron().fromAABB( aabb );
+
+			expect( polyAABB.faces ).to.have.lengthOf( 6 );
+			expect( polyAABB.edges ).to.have.lengthOf( 12 );
+			expect( polyAABB.vertices ).to.have.lengthOf( 8 );
+
+			expect( polyAABB.centroid ).to.deep.equal( new Vector3( 0, 1, 0 ) );
 
 		} );
 

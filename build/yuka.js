@@ -14384,21 +14384,59 @@
 		}
 
 		/**
-		* Computes the unique vertices and edges of this polyhedron. Assumes {@link Polyhedron#faces}
+		* Computes unique vertices of this polyhedron. Assumes {@link Polyhedron#faces}
 		* is properly set.
 		*
 		* @return {Polyhedron} A reference to this polyhedron.
 		*/
-		computeUniqueVerticesAndEdges() {
+		computeUniqueVertices() {
 
 			const faces = this.faces;
-			const edges = this.edges;
 			const vertices = this.vertices;
 
-			edges.length = 0;
 			vertices.length = 0;
 
 			const uniqueVertices = new Set();
+
+			// iterate over all faces
+
+			for ( let i = 0, l = faces.length; i < l; i ++ ) {
+
+				const face = faces[ i ];
+				let edge = face.edge;
+
+				// process all edges of a faces
+
+				do {
+
+					// add vertex to set (assuming half edges share unique vertices)
+
+					uniqueVertices.add( edge.vertex );
+
+					edge = edge.next;
+
+				} while ( edge !== face.edge );
+
+			}
+
+			vertices.push( ...uniqueVertices );
+
+			return this;
+
+		}
+
+		/**
+		* Computes unique edges of this polyhedron. Assumes {@link Polyhedron#faces}
+		* is properly set.
+		*
+		* @return {Polyhedron} A reference to this polyhedron.
+		*/
+		computeUniqueEdges() {
+
+			const faces = this.faces;
+			const edges = this.edges;
+
+			edges.length = 0;
 
 			// iterate over all faces
 
@@ -14420,19 +14458,114 @@
 
 					}
 
-					// add vertex to set (assuming half edges share unique vertices)
-
-					uniqueVertices.add( edge.vertex );
-
 					edge = edge.next;
 
 				} while ( edge !== face.edge );
 
 			}
 
-			vertices.push( ...uniqueVertices );
-
 			return this;
+
+		}
+
+		fromAABB( aabb ) {
+
+			const min = aabb.min;
+			const max = aabb.max;
+
+			const vertices = [
+				new Vector3( max.x, max.y, max.z ),
+				new Vector3( max.x, max.y, min.z ),
+				new Vector3( max.x, min.y, max.z ),
+				new Vector3( max.x, min.y, min.z ),
+				new Vector3( min.x, max.y, max.z ),
+				new Vector3( min.x, max.y, min.z ),
+				new Vector3( min.x, min.y, max.z ),
+				new Vector3( min.x, min.y, min.z )
+			];
+
+			const polyhedron = new Polyhedron();
+			polyhedron.vertices = vertices;
+
+			const sideTop = new Polygon().fromContour( [
+				vertices[ 4 ],
+				vertices[ 0 ],
+				vertices[ 1 ],
+				vertices[ 5 ]
+			] );
+
+			const sideRight = new Polygon().fromContour( [
+				vertices[ 2 ],
+				vertices[ 3 ],
+				vertices[ 1 ],
+				vertices[ 0 ]
+			] );
+
+			const sideFront = new Polygon().fromContour( [
+				vertices[ 6 ],
+				vertices[ 2 ],
+				vertices[ 0 ],
+				vertices[ 4 ]
+			] );
+
+			const sideBack = new Polygon().fromContour( [
+				vertices[ 3 ],
+				vertices[ 7 ],
+				vertices[ 5 ],
+				vertices[ 1 ]
+			] );
+
+			const sideBottom = new Polygon().fromContour( [
+				vertices[ 3 ],
+				vertices[ 2 ],
+				vertices[ 6 ],
+				vertices[ 7 ]
+			] );
+
+			const sideLeft = new Polygon().fromContour( [
+				vertices[ 7 ],
+				vertices[ 6 ],
+				vertices[ 4 ],
+				vertices[ 5 ]
+			] );
+
+			// link edges
+
+			sideTop.edge.linkOpponent( sideLeft.edge.prev );
+			sideTop.edge.next.linkOpponent( sideFront.edge.prev );
+			sideTop.edge.next.next.linkOpponent( sideRight.edge.prev );
+			sideTop.edge.prev.linkOpponent( sideBack.edge.prev );
+
+			sideBottom.edge.linkOpponent( sideBack.edge.next );
+			sideBottom.edge.next.linkOpponent( sideRight.edge.next );
+			sideBottom.edge.next.next.linkOpponent( sideFront.edge.next );
+			sideBottom.edge.prev.linkOpponent( sideLeft.edge.next );
+
+			sideLeft.edge.linkOpponent( sideBack.edge.next.next );
+			sideBack.edge.linkOpponent( sideRight.edge.next.next );
+			sideRight.edge.linkOpponent( sideFront.edge.next.next );
+			sideFront.edge.linkOpponent( sideLeft.edge.next.next );
+
+			//
+
+			polyhedron.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
+
+			// compute centroids
+
+			sideTop.computeCentroid();
+			sideRight.computeCentroid();
+			sideFront.computeCentroid();
+			sideBack.computeCentroid();
+			sideBottom.computeCentroid();
+			sideLeft.computeCentroid();
+
+			aabb.getCenter( polyhedron.centroid );
+
+			//
+
+			polyhedron.computeUniqueEdges();
+
+			return polyhedron;
 
 		}
 
@@ -14443,6 +14576,7 @@
 	const closestPoint = new Vector3();
 	const up = new Vector3( 0, 1, 0 );
 	const sat = new SAT();
+	let polyhedronAABB;
 
 	/**
 	* Class representing a convex hull. This is an implementation of the Quickhull algorithm
@@ -14504,6 +14638,47 @@
 			}
 
 			return true;
+
+		}
+
+		/**
+		* Returns true if this convex hull intersects with the given AABB.
+		*
+		* @param {AABB} aabb - The AABB to test.
+		* @return {Boolean} Whether this convex hull intersects with the given AABB or not.
+		*/
+		intersectsAABB( aabb ) {
+
+			if ( polyhedronAABB === undefined ) {
+
+				// lazily create the (proxy) polyhedron if necessary
+
+				polyhedronAABB = new Polyhedron().fromAABB( aabb );
+
+			} else {
+
+				// otherwise just ensure up-to-date vertex data.
+				// the topology of the polyhedron is equal for all AABBs
+
+				const min = aabb.min;
+				const max = aabb.max;
+
+				const vertices = polyhedronAABB.vertices;
+
+				vertices[ 0 ].set( max.x, max.y, max.z );
+				vertices[ 1 ].set( max.x, max.y, min.z );
+				vertices[ 2 ].set( max.x, min.y, max.z );
+				vertices[ 3 ].set( max.x, min.y, min.z );
+				vertices[ 4 ].set( min.x, max.y, max.z );
+				vertices[ 5 ].set( min.x, max.y, min.z );
+				vertices[ 6 ].set( min.x, min.y, max.z );
+				vertices[ 7 ].set( min.x, min.y, min.z );
+
+				aabb.getCenter( polyhedronAABB.centroid );
+
+			}
+
+			return sat.intersects( this, polyhedronAABB );
 
 		}
 
@@ -15058,7 +15233,7 @@
 
 			// gather unique edges and temporarily sort them
 
-			this.computeUniqueVerticesAndEdges();
+			this.computeUniqueEdges();
 
 			edges.sort( ( a, b ) => b.length() - a.length() );
 
@@ -15131,11 +15306,11 @@
 
 			}
 
-			// compute centroid of convex hull and the final edge list
+			// compute centroid of convex hull and the final edge and vertex list
 
 			this.computeCentroid();
-
-			this.computeUniqueVerticesAndEdges();
+			this.computeUniqueEdges();
+			this.computeUniqueVertices();
 
 			return this;
 

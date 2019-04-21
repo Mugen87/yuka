@@ -13,7 +13,9 @@ const Face = YUKA.CHFace;
 const Vertex = YUKA.CHVertex;
 const VertexList = YUKA.CHVertexList;
 const Plane = YUKA.Plane;
+const Matrix4 = YUKA.Matrix4;
 const Vector3 = YUKA.Vector3;
+const AABB = YUKA.AABB;
 
 const points = [
 	new Vector3( 1, 1, 1 ),
@@ -101,11 +103,38 @@ describe( 'ConvexHull', function () {
 
 	} );
 
+	describe( '#intersectsAABB()', function () {
+
+		const convexHull = new ConvexHull().fromPoints( points );
+
+		it( 'should return true if this convex hull does intersect with the AABB', function () {
+
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 0 ), new Vector3( 2, 2, 2 ) );
+
+			expect( convexHull.intersectsAABB( aabb ) ).to.be.true;
+
+		} );
+
+		it( 'should update the internal polyhedron if the AABB changes', function () {
+
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 0, 0 ), new Vector3( 2, 2, 2 ) );
+			const matrix = new Matrix4().setPosition( new Vector3( 0, 20, 0 ) );
+
+			expect( convexHull.intersectsAABB( aabb ) ).to.be.true;
+
+			aabb.applyMatrix4( matrix );
+
+			expect( convexHull.intersectsAABB( aabb ) ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#intersectsConvexHull()', function () {
 
 		const convexHull = new ConvexHull().fromPoints( points );
 
-		it( 'should return true if this convex hull does intersect with the given one.', function () {
+		it( 'should return true if this convex hull does intersect with the given one', function () {
 
 			const points2 = [
 				new Vector3( 7, 7, 7 ),
@@ -124,7 +153,7 @@ describe( 'ConvexHull', function () {
 
 		} );
 
-		it( 'should return false if this convex hull does not intersect with the given one.', function () {
+		it( 'should return false if this convex hull does not intersect with the given one', function () {
 
 			const points2 = [
 				new Vector3( 10, 10, 10 ),
