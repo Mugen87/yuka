@@ -11,48 +11,59 @@ const Vector3 = YUKA.Vector3;
 
 // use a simple cube with six faces as a polyhedron
 
+const vertices = [
+	new Vector3( 1, 1, 1 ), // 0
+	new Vector3( 1, 1, - 1 ), // 1
+	new Vector3( 1, - 1, 1 ), // 2
+	new Vector3( 1, - 1, - 1 ), // 3
+	new Vector3( - 1, 1, 1 ), // 4
+	new Vector3( - 1, 1, - 1 ), // 5
+	new Vector3( - 1, - 1, 1 ), // 6
+	new Vector3( - 1, - 1, - 1 ) // 7
+];
+
 const polyhedron = new Polyhedron();
 
 const sideTop = new Polygon().fromContour( [
-	new Vector3( - 1, 1, 1 ),
-	new Vector3( 1, 1, 1 ),
-	new Vector3( 1, 1, - 1 ),
-	new Vector3( - 1, 1, - 1 )
+	vertices[ 4 ],
+	vertices[ 0 ],
+	vertices[ 1 ],
+	vertices[ 5 ]
 ] );
 
 const sideRight = new Polygon().fromContour( [
-	new Vector3( 1, - 1, - 1 ),
-	new Vector3( 1, 1, - 1 ),
-	new Vector3( 1, 1, 1 ),
-	new Vector3( 1, - 1, 1 )
+	vertices[ 3 ],
+	vertices[ 1 ],
+	vertices[ 0 ],
+	vertices[ 2 ]
 ] );
 
 const sideFront = new Polygon().fromContour( [
-	new Vector3( - 1, - 1, 1 ),
-	new Vector3( 1, - 1, 1 ),
-	new Vector3( 1, 1, 1 ),
-	new Vector3( - 1, 1, 1 )
+	vertices[ 6 ],
+	vertices[ 2 ],
+	vertices[ 0 ],
+	vertices[ 4 ]
 ] );
 
 const sideBack = new Polygon().fromContour( [
-	new Vector3( 1, - 1, - 1 ),
-	new Vector3( - 1, - 1, - 1 ),
-	new Vector3( - 1, 1, - 1 ),
-	new Vector3( 1, 1, - 1 )
+	vertices[ 3 ],
+	vertices[ 7 ],
+	vertices[ 5 ],
+	vertices[ 1 ]
 ] );
 
 const sideBottom = new Polygon().fromContour( [
-	new Vector3( 1, - 1, - 1 ),
-	new Vector3( 1, - 1, 1 ),
-	new Vector3( - 1, - 1, 1 ),
-	new Vector3( - 1, - 1, - 1 )
+	vertices[ 3 ],
+	vertices[ 2 ],
+	vertices[ 6 ],
+	vertices[ 7 ]
 ] );
 
 const sideLeft = new Polygon().fromContour( [
-	new Vector3( - 1, - 1, - 1 ),
-	new Vector3( - 1, - 1, 1 ),
-	new Vector3( - 1, 1, 1 ),
-	new Vector3( - 1, 1, - 1 )
+	vertices[ 7 ],
+	vertices[ 6 ],
+	vertices[ 4 ],
+	vertices[ 5 ]
 ] );
 
 polyhedron.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
@@ -92,7 +103,7 @@ describe( 'Polyhedron', function () {
 			polyhedron.computeUniqueVerticesAndEdges();
 
 			expect( polyhedron.edges ).to.have.lengthOf( 24 ); // because there are no twin references
-			expect( polyhedron.vertices ).to.have.lengthOf( 24 ); // because no vertices are shared
+			expect( polyhedron.vertices ).to.have.lengthOf( 8 );
 
 			// set some twin references
 
@@ -102,6 +113,7 @@ describe( 'Polyhedron', function () {
 			polyhedron.computeUniqueVerticesAndEdges();
 
 			expect( polyhedron.edges ).to.have.lengthOf( 22 ); // because 2 twin edges are discared
+			expect( polyhedron.vertices ).to.have.lengthOf( 8 );
 
 		} );
 
