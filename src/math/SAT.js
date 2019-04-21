@@ -1,5 +1,6 @@
 import { Vector3 } from './Vector3.js';
 
+const normal = new Vector3();
 const oppositeNormal = new Vector3();
 const axis = new Vector3();
 const directionA = new Vector3();
@@ -7,6 +8,7 @@ const directionB = new Vector3();
 
 const c = new Vector3();
 const d = new Vector3();
+const v = new Vector3();
 
 /**
 * Implementation of the separating axis theorem (SAT). Used to detect intersections
@@ -95,18 +97,9 @@ class SAT {
 
 					// compute axis
 
-					axis.crossVectors( directionA, directionB );
+					const distance = this._distanceBetweenEdges( edgeA, directionA, edgeB, directionB, polyhedronA );
 
-					this._projectOnAxis( polyhedronA, axis, intervalA );
-					this._projectOnAxis( polyhedronB, axis, intervalB );
-
-					// compare intervals
-
-					if ( ( intervalA.min <= intervalB.max && intervalB.min <= intervalA.max ) === false ) {
-
-						return true; // intervals do not intersect, separating axis found
-
-					}
+					if ( distance > 0 ) return true; // separating axis found
 
 				}
 
@@ -160,42 +153,6 @@ class SAT {
 
 	}
 
-	// projects all vertices of a polyhedron on the given axis and stores
-	// the minimum and maximum projections in the given interval object
-
-	_projectOnAxis( polyhedron, axis, interval ) {
-
-		const faces = polyhedron.faces;
-
-		interval.reset();
-
-		// iterate over all polygons
-
-		for ( let i = 0, l = faces.length; i < l; i ++ ) {
-
-			const face = faces[ i ];
-			let edge = face.edge;
-
-			// iterate over all edges
-
-			do {
-
-				const vertex = edge.vertex;
-				const projection = vertex.dot( axis );
-
-				interval.min = Math.min( interval.min, projection );
-				interval.max = Math.max( interval.max, projection );
-
-				edge = edge.next;
-
-			} while ( edge !== face.edge );
-
-		}
-
-		return this;
-
-	}
-
 	// returns true if the given edges build a face on the minkowski difference
 
 	_minkowskiFace( edgeA, directionA, edgeB, directionB ) {
@@ -225,6 +182,33 @@ class SAT {
 		// check signs of plane test
 
 		return ( ( cba * dba ) ) < 0 && ( ( adc * bdc ) < 0 ) && ( ( cba * bdc ) > 0 );
+
+	}
+
+	// use gauss map to compute the distance between two edges
+
+	_distanceBetweenEdges( edgeA, directionA, edgeB, directionB, polyhedronA ) {
+
+		// skip parallel edges
+
+		if ( directionA.dot( directionB ) === 0 ) return - Infinity;
+
+		// build plane through one edge
+
+		normal.crossVectors( directionA, directionB ).normalize();
+
+		// ensure normal points from polyhedron A to B
+
+		if ( normal.dot( v.subVectors( edgeA.vertex, polyhedronA.centroid ) ) < 0 ) {
+
+			normal.multiplyScalar( - 1 );
+
+		}
+
+		// compute the distance of any vertex on the other edge to that plane
+		// no need to compute support points => O(1)
+
+		return normal.dot( v.subVectors( edgeB.vertex, edgeA.vertex ) );
 
 	}
 
