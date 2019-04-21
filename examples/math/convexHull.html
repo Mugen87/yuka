@@ -22,9 +22,7 @@
 
 	import { createConvexHullHelper } from './common/js/ConvexHullHelper.js';
 
-	let renderer, scene, camera, aabb1, aabb2, hull, box;
-
-	let t = 0;
+	let renderer, scene, camera;
 
 	init();
 	animate();
@@ -69,21 +67,10 @@
 			new YUKA.Vector3( 0, 12, 6 )
 		];
 
-		// const hull1 = createConvexHull( points1 );
-		//const hull2 = createConvexHull( points2 );
+		const hull1 = createConvexHull( points1 );
+		const hull2 = createConvexHull( points2 );
 
-		hull = createConvexHull( points1 );
-		aabb1 = new YUKA.AABB().fromCenterAndSize( new YUKA.Vector3( 0, 0, 0 ), new YUKA.Vector3( 2, 2, 2 ) );
-		aabb2 = new YUKA.AABB();
-		//
-
-		const boxGeometry = new THREE.BoxBufferGeometry( 2, 2, 2 );
-		const boxMaterial = new THREE.MeshBasicMaterial();
-
-		box = new THREE.Mesh( boxGeometry, boxMaterial );
-		scene.add( box );
-
-		// console.log( hull1.intersectsConvexHull( hull2 ) );
+		console.log( hull1.intersectsConvexHull( hull2 ) );
 
 		//
 
@@ -106,26 +93,6 @@
 	function animate() {
 
 		requestAnimationFrame( animate );
-
-		t += 0.01;
-
-		box.position.x = Math.sin( t ) * 10;
-		box.position.y = Math.cos( t ) * 10;
-
-		box.updateMatrix();
-
-		aabb2.copy( aabb1 ).applyMatrix4( box.matrix );
-
-		if ( hull.intersectsAABB( aabb2 ) ) {
-
-			box.material.color.set( 0xff0000 );
-
-		} else {
-
-			box.material.color.set( 0x00ff00 );
-
-		}
-
 		renderer.render( scene, camera );
 
 	}
