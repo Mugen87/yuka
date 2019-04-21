@@ -2,7 +2,6 @@ import { Vector3 } from './Vector3.js';
 
 const normal = new Vector3();
 const oppositeNormal = new Vector3();
-const axis = new Vector3();
 const directionA = new Vector3();
 const directionB = new Vector3();
 
@@ -213,28 +212,5 @@ class SAT {
 	}
 
 }
-
-// private helper class representing a scalar interval
-
-class Interval {
-
-	constructor() {
-
-		this.min = Infinity;
-		this.max = - Infinity;
-
-	}
-
-	reset() {
-
-		this.min = Infinity;
-		this.max = - Infinity;
-
-	}
-
-}
-
-const intervalA = new Interval();
-const intervalB = new Interval();
 
 export { SAT };
