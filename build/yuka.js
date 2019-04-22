@@ -14468,7 +14468,15 @@
 
 		}
 
+		/**
+		* Configures this polyhedron so it does represent the given AABB.
+		*
+		* @return {Polyhedron} A reference to this polyhedron.
+		*/
 		fromAABB( aabb ) {
+
+			this.faces.length = 0;
+			this.vertices.length = 0;
 
 			const min = aabb.min;
 			const max = aabb.max;
@@ -14484,8 +14492,7 @@
 				new Vector3( min.x, min.y, min.z )
 			];
 
-			const polyhedron = new Polyhedron();
-			polyhedron.vertices = vertices;
+			this.vertices.push( ... vertices );
 
 			const sideTop = new Polygon().fromContour( [
 				vertices[ 4 ],
@@ -14548,7 +14555,7 @@
 
 			//
 
-			polyhedron.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
+			this.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
 
 			// compute centroids
 
@@ -14559,13 +14566,13 @@
 			sideBottom.computeCentroid();
 			sideLeft.computeCentroid();
 
-			aabb.getCenter( polyhedron.centroid );
+			aabb.getCenter( this.centroid );
 
 			//
 
-			polyhedron.computeUniqueEdges();
+			this.computeUniqueEdges();
 
-			return polyhedron;
+			return this;
 
 		}
 
