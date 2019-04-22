@@ -104,6 +104,7 @@ describe( 'Polyhedron', function () {
 			const polyhedron = new Polyhedron();
 			expect( polyhedron ).to.have.a.property( 'faces' ).that.is.an( 'array' );
 			expect( polyhedron ).to.have.a.property( 'edges' ).that.is.an( 'array' );
+			expect( polyhedron ).to.have.a.property( 'vertices' ).that.is.an( 'array' );
 			expect( polyhedron ).to.have.a.property( 'centroid' ).that.is.an.instanceof( Vector3 );
 
 		} );

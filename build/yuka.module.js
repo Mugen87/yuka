@@ -14313,7 +14313,10 @@ function leftOn( a, b, c ) {
 }
 
 /**
-* Base class for polyhedra.
+* Base class for polyhedra. It is primarly designed for the internal usage in Yuka.
+* Objects of this class are always build up from faces. The edges, vertices and
+* the polyhedron's centroid have to be derived from a valid face definition with the
+* respective methods.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
