@@ -18,14 +18,14 @@ class OBB {
 	/**
 	* Constructs a new OBB with the given values.
 	*
-	* @param {Vector3} center - The center of this OBB
+	* @param {Vector3} center - The center of this OBB.
 	* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
 	* @param {Quaternion} rotation - The rotation of this OBB.
 	*/
 	constructor( center = new Vector3(), halfSizes = new Vector3(), rotation = new Quaternion() ) {
 
 		/**
-		* The center of this OBB
+		* The center of this OBB.
 		* @type Vector3
 		*/
 		this.center = center;

@@ -324,8 +324,7 @@ class Matrix3 {
 	}
 
 	/**
-	* Computes the  "off-diagonal" frobenius norm. It's the squareroot of the sum
-	* of all diagonal matrix elements.
+	* Computes the  "off-diagonal" frobenius norm.
 	*
 	* @return {Number} The "off-diagonal" frobenius norm.
 	*/
@@ -347,6 +346,11 @@ class Matrix3 {
 
 	/**
 	* Computes the eigenvectors and eigenvalues.
+	*
+	* Reference: https://github.com/AnalyticalGraphicsInc/cesium/blob/411a1afbd36b72df64d7362de6aa934730447234/Source/Core/Matrix3.js#L1141 (Apache License 2.0)
+	*
+	* The values along the diagonal of the diagonal matrix are the eigenvalues.
+	* The columns of the unitary matrix are the corresponding eigenvectors.
 	*
 	* @param {Object} result - An object with unitary and diagonal properties which are matrices onto which to store the result.
 	* @return {Object} An object with unitary and diagonal properties which are matrices onto which to store the result.
@@ -389,12 +393,13 @@ class Matrix3 {
 	}
 
 	/**
-	* Finds the largest off-diagonal term and then creates a matrix (result)
+	* Finds the largest off-diagonal term and then creates a matrix
 	* which can be used to help reduce it.
 	*
-	* @return {Matrix3} A 3x3 matrix.
+	* @param {Matrix3} result - The result matrix.
+	* @return {Matrix3} The result matrix.
 	*/
-	shurDecomposition( matrix ) {
+	shurDecomposition( result ) {
 
 		const tolerance = 0.000000000000001;
 
@@ -449,14 +454,14 @@ class Matrix3 {
 
 		}
 
-		matrix.identity();
+		result.identity();
 
-		matrix.elements[ this.getElementIndex( p, p ) ] = c;
-		matrix.elements[ this.getElementIndex( q, q ) ] = c;
-		matrix.elements[ this.getElementIndex( q, p ) ] = s;
-		matrix.elements[ this.getElementIndex( p, q ) ] = - s;
+		result.elements[ this.getElementIndex( p, p ) ] = c;
+		result.elements[ this.getElementIndex( q, q ) ] = c;
+		result.elements[ this.getElementIndex( q, p ) ] = s;
+		result.elements[ this.getElementIndex( p, q ) ] = - s;
 
-		return matrix;
+		return result;
 
 	}
 
