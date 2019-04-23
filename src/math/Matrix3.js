@@ -6,6 +6,9 @@ const worldRight = new Vector3();
 const perpWorldUp = new Vector3();
 const temp = new Vector3();
 
+const rowVal = [ 1, 0, 0 ];
+const colVal = [ 2, 2, 1 ];
+
 /**
 * Class representing a 3x3 matrix. The elements of the matrix
 * are stored in column-major order.
@@ -282,6 +285,178 @@ class Matrix3 {
 		t = e[ 5 ]; e[ 5 ] = e[ 7 ]; e[ 7 ] = t;
 
 		return this;
+
+	}
+
+	/**
+	* Computes the frobenius norm. It's the squareroot of the sum of all
+	* squared matrix elements.
+	*
+	* @param {Number} column - Index of the column.
+	* @param {Number} row - Index of the row.
+	* @return {Number} The index of the element at the provided row and column.
+	*/
+	getElementIndex( column, row ) {
+
+		return column * 3 + row;
+
+	}
+
+	/**
+	* Computes the frobenius norm. It's the squareroot of the sum of all
+	* squared matrix elements.
+	*
+	* @return {Number} The frobenius norm.
+	*/
+	frobeniusNorm() {
+
+		const e = this.elements;
+		let norm = 0;
+
+		for ( let i = 0; i < 9; i ++ ) {
+
+			norm += e[ i ] * e[ i ];
+
+		}
+
+		return Math.sqrt( norm );
+
+	}
+
+	/**
+	* Computes the  "off-diagonal" frobenius norm. It's the squareroot of the sum
+	* of all diagonal matrix elements.
+	*
+	* @return {Number} The "off-diagonal" frobenius norm.
+	*/
+	offDiagonalFrobeniusNorm() {
+
+		const e = this.elements;
+		let norm = 0;
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			const t = e[ this.getElementIndex( colVal[ i ], rowVal[ i ] ) ];
+			norm += 2 * t * t;
+
+		}
+
+		return Math.sqrt( norm );
+
+	}
+
+	/**
+	* Computes the eigenvectors and eigenvalues.
+	*
+	* @param {Object} result - An object with unitary and diagonal properties which are matrices onto which to store the result.
+	* @return {Object} An object with unitary and diagonal properties which are matrices onto which to store the result.
+	*/
+	eigenDecomposition( result ) {
+
+		let count = 0;
+		let sweep = 0;
+
+		const maxSweeps = 10;
+		const tolerance = 0.000000000000001;
+
+		result.unitary.identity();
+		result.diagonal.copy( this );
+
+		const unitaryMatrix = result.unitary;
+		const diagonalMatrix = result.diagonal;
+
+		const epsilon = tolerance * diagonalMatrix.frobeniusNorm();
+
+		while ( sweep < maxSweeps && diagonalMatrix.offDiagonalFrobeniusNorm() > epsilon ) {
+
+			this.shurDecomposition( m1 );
+			m2.copy( m1 ).transpose();
+			diagonalMatrix.multiply( m1 );
+			diagonalMatrix.premultiply( m2 );
+			unitaryMatrix.multiply( m1 );
+
+			if ( ++ count > 2 ) {
+
+				sweep ++;
+				count = 0;
+
+			}
+
+		}
+
+		return result;
+
+	}
+
+	/**
+	* Finds the largest off-diagonal term and then creates a matrix (result)
+	* which can be used to help reduce it.
+	*
+	* @return {Matrix3} A 3x3 matrix.
+	*/
+	shurDecomposition( matrix ) {
+
+		const tolerance = 0.000000000000001;
+
+		let maxDiagonal = 0;
+		let rotAxis = 1;
+
+		// find pivot (rotAxis) based on max diagonal of matrix
+
+		const e = this.elements;
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			const t = Math.abs( e[ this.getElementIndex( colVal[ i ], rowVal[ i ] ) ] );
+
+			if ( t > maxDiagonal ) {
+
+				maxDiagonal = t;
+				rotAxis = i;
+
+			}
+
+		}
+
+		let c = 1;
+		let s = 0;
+
+		const p = rowVal[ rotAxis ];
+		const q = colVal[ rotAxis ];
+
+		if ( Math.abs( e[ this.getElementIndex( q, p ) ] ) > tolerance ) {
+
+			const qq = e[ this.getElementIndex( q, q ) ];
+			const pp = e[ this.getElementIndex( p, p ) ];
+			const qp = e[ this.getElementIndex( q, p ) ];
+
+			const tau = ( qq - pp ) / 2 / qp;
+
+			let t;
+
+			if ( tau < 0 ) {
+
+				t = - 1 / ( - tau + Math.sqrt( 1 + tau * tau ) );
+
+			} else {
+
+				t = 1 / ( tau + Math.sqrt( 1.0 + tau * tau ) );
+
+			}
+
+			c = 1.0 / Math.sqrt( 1.0 + t * t );
+			s = t * c;
+
+		}
+
+		matrix.identity();
+
+		matrix.elements[ this.getElementIndex( p, p ) ] = c;
+		matrix.elements[ this.getElementIndex( q, q ) ] = c;
+		matrix.elements[ this.getElementIndex( q, p ) ] = s;
+		matrix.elements[ this.getElementIndex( p, q ) ] = - s;
+
+		return matrix;
 
 	}
 

@@ -70,6 +70,9 @@
 		const hull1 = createConvexHull( points1 );
 		const hull2 = createConvexHull( points2 );
 
+		const obb1 = createOBB( points1 );
+		const obb2 = createOBB( points2 );
+
 		console.log( hull1.intersectsConvexHull( hull2 ) );
 
 		//
@@ -120,6 +123,23 @@
 		scene.add( helper );
 
 		return hull;
+
+	}
+
+	function createOBB( points ) {
+
+		const obb = new YUKA.OBB().fromPoints( points );
+
+		const boxGeometry = new THREE.BoxBufferGeometry( obb.halfSizes.x * 2, obb.halfSizes.y * 2, obb.halfSizes.z * 2 );
+		const boxMaterial = new THREE.MeshBasicMaterial( { wireframe: true } );
+		const box = new THREE.Mesh( boxGeometry, boxMaterial );
+
+		box.position.copy( obb.center );
+		box.quaternion.copy( obb.rotation );
+
+		scene.add( box );
+
+		return obb;
 
 	}
 
