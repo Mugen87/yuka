@@ -361,7 +361,6 @@ class Matrix3 {
 		let sweep = 0;
 
 		const maxSweeps = 10;
-		const tolerance = 0.000000000000001;
 
 		result.unitary.identity();
 		result.diagonal.copy( this );
@@ -369,7 +368,7 @@ class Matrix3 {
 		const unitaryMatrix = result.unitary;
 		const diagonalMatrix = result.diagonal;
 
-		const epsilon = tolerance * diagonalMatrix.frobeniusNorm();
+		const epsilon = Number.EPSILON * diagonalMatrix.frobeniusNorm();
 
 		while ( sweep < maxSweeps && diagonalMatrix.offDiagonalFrobeniusNorm() > epsilon ) {
 
@@ -401,8 +400,6 @@ class Matrix3 {
 	*/
 	shurDecomposition( result ) {
 
-		const tolerance = 0.000000000000001;
-
 		let maxDiagonal = 0;
 		let rotAxis = 1;
 
@@ -429,7 +426,7 @@ class Matrix3 {
 		const p = rowVal[ rotAxis ];
 		const q = colVal[ rotAxis ];
 
-		if ( Math.abs( e[ this.getElementIndex( q, p ) ] ) > tolerance ) {
+		if ( Math.abs( e[ this.getElementIndex( q, p ) ] ) > Number.EPSILON ) {
 
 			const qq = e[ this.getElementIndex( q, q ) ];
 			const pp = e[ this.getElementIndex( p, p ) ];

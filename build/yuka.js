@@ -1526,7 +1526,6 @@
 			let sweep = 0;
 
 			const maxSweeps = 10;
-			const tolerance = 0.000000000000001;
 
 			result.unitary.identity();
 			result.diagonal.copy( this );
@@ -1534,7 +1533,7 @@
 			const unitaryMatrix = result.unitary;
 			const diagonalMatrix = result.diagonal;
 
-			const epsilon = tolerance * diagonalMatrix.frobeniusNorm();
+			const epsilon = Number.EPSILON * diagonalMatrix.frobeniusNorm();
 
 			while ( sweep < maxSweeps && diagonalMatrix.offDiagonalFrobeniusNorm() > epsilon ) {
 
@@ -1566,8 +1565,6 @@
 		*/
 		shurDecomposition( result ) {
 
-			const tolerance = 0.000000000000001;
-
 			let maxDiagonal = 0;
 			let rotAxis = 1;
 
@@ -1594,7 +1591,7 @@
 			const p = rowVal[ rotAxis ];
 			const q = colVal[ rotAxis ];
 
-			if ( Math.abs( e[ this.getElementIndex( q, p ) ] ) > tolerance ) {
+			if ( Math.abs( e[ this.getElementIndex( q, p ) ] ) > Number.EPSILON ) {
 
 				const qq = e[ this.getElementIndex( q, q ) ];
 				const pp = e[ this.getElementIndex( p, p ) ];
@@ -15916,6 +15913,12 @@
 		diagonal: new Matrix3()
 	};
 
+	const xAxis = new Vector3();
+	const yAxis = new Vector3();
+	const zAxis = new Vector3();
+	const v1$3 = new Vector3();
+	const closestPoint$1 = new Vector3();
+
 	/**
 	* Class representing an oriented bounding box (OBB).
 	*
@@ -15930,7 +15933,7 @@
 		* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
 		* @param {Quaternion} rotation - The rotation of this OBB.
 		*/
-		constructor( center = new Vector3(), halfSizes = new Vector3(), rotation = new Quaternion() ) {
+		constructor( center = new Vector3(), halfSizes = new Vector3(), rotation = new Matrix3() ) {
 
 			/**
 			* The center of this OBB.
@@ -15946,7 +15949,7 @@
 
 			/**
 			* The rotation of this OBB.
-			* @type Quaternion
+			* @type Matrix3
 			*/
 			this.rotation = rotation;
 
@@ -15994,6 +15997,77 @@
 		clone() {
 
 			return new this.constructor().copy( this );
+
+		}
+
+		/**
+		* Ensures the given point is inside this OBB and stores
+		* the result in the given vector.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		clampPoint( point, result ) {
+
+			const halfSizes = this.halfSizes;
+
+			v1$3.subVectors( point, this.center );
+			this.rotation.extractBasis( xAxis, yAxis, zAxis );
+
+			// start at the center position of the OBB
+
+			result.copy( this.center );
+
+			// project the target onto the OBB axes and walk towards that point
+
+			const x = MathUtils.clamp( v1$3.dot( xAxis ), - halfSizes.x, halfSizes.x );
+			result.add( xAxis.multiplyScalar( x ) );
+
+			const y = MathUtils.clamp( v1$3.dot( yAxis ), - halfSizes.y, halfSizes.y );
+			result.add( yAxis.multiplyScalar( y ) );
+
+			const z = MathUtils.clamp( v1$3.dot( zAxis ), - halfSizes.z, halfSizes.z );
+			result.add( zAxis.multiplyScalar( z ) );
+
+			return result;
+
+		}
+
+		/**
+		* Returns true if the given point is inside this OBB.
+		*
+		* @param {Vector3} point - A point in 3D space.
+		* @return {Boolean} Whether the given point is inside this OBB or not.
+		*/
+		containsPoint( point ) {
+
+			v1$3.subVectors( point, this.center );
+			this.rotation.extractBasis( xAxis, yAxis, zAxis );
+
+			// project v1 onto each axis and check if these points lie inside the OBB
+
+			return Math.abs( v1$3.dot( xAxis ) ) <= this.halfSizes.x &&
+					Math.abs( v1$3.dot( yAxis ) ) <= this.halfSizes.y &&
+					Math.abs( v1$3.dot( zAxis ) ) <= this.halfSizes.z;
+
+		}
+
+		/**
+		* Returns true if the given bounding sphere intersects this OBB.
+		*
+		* @param {BoundingSphere} sphere - The bounding sphere to test.
+		* @return {Boolean} The result of the intersection test.
+		*/
+		intersectsBoundingSphere( sphere ) {
+
+			// find the point on the OBB closest to the sphere center
+
+			this.clampPoint( sphere.center, closestPoint$1 );
+
+			// if that point is inside the sphere, the OBB and sphere intersect
+
+			return closestPoint$1.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
 
 		}
 
@@ -16173,9 +16247,23 @@
 
 			// rotation
 
-			this.rotation.fromMatrix3( unitary );
+			this.rotation.copy( unitary );
 
 			return this;
+
+		}
+
+		/**
+		* Returns true if the given OBB is deep equal with this OBB.
+		*
+		* @param {OBB} aabb - The OBB to test.
+		* @return {Boolean} The result of the equality test.
+		*/
+		equals( obb ) {
+
+			return obb.center.equals( this.center ) &&
+					obb.halfSizes.equals( this.halfSizes ) &&
+					obb.rotation.equals( this.rotation );
 
 		}
 
