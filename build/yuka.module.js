@@ -1165,8 +1165,8 @@ const worldRight = new Vector3();
 const perpWorldUp = new Vector3();
 const temp = new Vector3();
 
-const rowVal = [ 1, 0, 0 ];
 const colVal = [ 2, 2, 1 ];
+const rowVal = [ 1, 0, 0 ];
 
 /**
 * Class representing a 3x3 matrix. The elements of the matrix
@@ -1448,8 +1448,7 @@ class Matrix3 {
 	}
 
 	/**
-	* Computes the frobenius norm. It's the squareroot of the sum of all
-	* squared matrix elements.
+	* Computes the element index according to the given column and row.
 	*
 	* @param {Number} column - Index of the column.
 	* @param {Number} row - Index of the row.
@@ -1483,7 +1482,7 @@ class Matrix3 {
 	}
 
 	/**
-	* Computes the  "off-diagonal" frobenius norm.
+	* Computes the  "off-diagonal" frobenius norm. Assumes the matrix is symmetric.
 	*
 	* @return {Number} The "off-diagonal" frobenius norm.
 	*/
@@ -1495,7 +1494,7 @@ class Matrix3 {
 		for ( let i = 0; i < 3; i ++ ) {
 
 			const t = e[ this.getElementIndex( colVal[ i ], rowVal[ i ] ) ];
-			norm += 2 * t * t;
+			norm += 2 * t * t; // multiply the result by two since the matrix is symetric
 
 		}
 

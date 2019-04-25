@@ -209,6 +209,63 @@ describe( 'Matrix3', function () {
 
 	} );
 
+	describe( '#getElementIndex()', function () {
+
+		it( 'should compute the element index according to the given column and row', function () {
+
+			const m1 = new Matrix3();
+
+			expect( m1.getElementIndex( 0, 0 ) ).to.equal( 0 );
+			expect( m1.getElementIndex( 0, 1 ) ).to.equal( 1 );
+			expect( m1.getElementIndex( 0, 2 ) ).to.equal( 2 );
+
+			expect( m1.getElementIndex( 1, 0 ) ).to.equal( 3 );
+			expect( m1.getElementIndex( 1, 1 ) ).to.equal( 4 );
+			expect( m1.getElementIndex( 1, 2 ) ).to.equal( 5 );
+
+			expect( m1.getElementIndex( 2, 0 ) ).to.equal( 6 );
+			expect( m1.getElementIndex( 2, 1 ) ).to.equal( 7 );
+			expect( m1.getElementIndex( 2, 2 ) ).to.equal( 8 );
+
+		} );
+
+	} );
+
+	describe( '#frobeniusNorm()', function () {
+
+		it( 'should compute frobenius norm', function () {
+
+			const m1 = new Matrix3().set( 27, - 12, - 1, - 12, 41, 2, - 1, 2, - 19 );
+
+			// it's like computing the euclidean distance of a matrix
+
+			expect( m1.frobeniusNorm() ).to.closeTo( 55.39855593785816, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#offDiagonalFrobeniusNorm()', function () {
+
+		it( 'should compute the  "off-diagonal" frobenius norm', function () {
+
+			const m1 = new Matrix3().set( 27, - 12, - 1, - 12, 41, 2, - 1, 2, - 19 );
+
+			// it should compute the frobenius norm with all matrix elements not
+			// liying on the diagonal (0,4,8). Relevant are indices: 1, 2, 3, 4, 6, 7.
+			// since the method assumes the matrix is symmetric, we can compute
+			// just the bottom left part (3, 6, 7) and then multiply each element result by two
+
+			// n = √( ( - 12 * - 12 ) * 2 + ( - 1 * - 1 ) * 2 + ( 2 * 2 ) * 2 )
+			// n = √( 288 + 2 + 8 )
+			// n = √298
+
+			expect( m1.offDiagonalFrobeniusNorm() ).to.closeTo( 17.26267650163207, Number.EPSILON );
+
+		} );
+
+	} );
+
 	describe( '#fromQuaternion()', function () {
 
 		it( 'should create a matrix from a given quaternion', function () {
