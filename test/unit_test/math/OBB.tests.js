@@ -121,6 +121,25 @@ describe( 'OBB', function () {
 
 	} );
 
+	describe( '#getSize()', function () {
+
+		it( 'should return the size of the OBB', function () {
+
+			const center = new Vector3( 1, 1, 1 );
+			const halfSizes = new Vector3( 2, 2, 2 );
+			const rotation = new Matrix3().set( 2, 2, 2, 2, 2, 2, 2, 2, 2 );
+
+			const obb = new OBB( center, halfSizes, rotation );
+			const size = new Vector3();
+
+			obb.getSize( size );
+
+			expect( size ).to.deep.equal( new Vector3( 4, 4, 4 ) );
+
+		} );
+
+	} );
+
 	describe( '#fromPoints()', function () {
 
 		it( 'should compute an OBB that encloses the given set of points', function () {

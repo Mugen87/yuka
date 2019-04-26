@@ -6,6 +6,7 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 
 const Matrix4 = YUKA.Matrix4;
+const Matrix3 = YUKA.Matrix3;
 const Vector3 = YUKA.Vector3;
 const Quaternion = YUKA.Quaternion;
 
@@ -271,6 +272,21 @@ describe( 'Matrix4', function () {
 			const m1 = new Matrix4().fromQuaternion( q1 );
 
 			expect( m1.elements ).to.deep.equal( [ - 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, - 1, 0, 0, 0, 0, 1 ] );
+
+		} );
+
+	} );
+
+	describe( '#fromMatrix3()', function () {
+
+		it( 'should sets the upper-left 3x3 portion of this matrix by the given 3x3 matrix', function () {
+
+			const m1 = new Matrix4();
+			const m2 = new Matrix3().set( 2, 2, 2, 2, 2, 2, 2, 2, 2 );
+
+			m1.fromMatrix3( m2 );
+
+			expect( m1.elements ).to.deep.equal( [ 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 0, 0, 0, 1 ] );
 
 		} );
 
