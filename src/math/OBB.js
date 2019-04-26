@@ -96,8 +96,23 @@ class OBB {
 	}
 
 	/**
+	* Computes the size (width, height, depth) of this OBB and stores it into the given vector.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getSize( result ) {
+
+		return result.copy( this.halfSizes ).multiplyScalar( 2 );
+
+	}
+
+	/**
 	* Ensures the given point is inside this OBB and stores
 	* the result in the given vector.
+	*
+	* Reference: Closest Point on OBB to Point in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.1.4)
 	*
 	* @param {Vector3} point - A point in 3D space.
 	* @param {Vector3} result - The result vector.

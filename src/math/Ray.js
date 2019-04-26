@@ -1,9 +1,15 @@
+import { AABB } from './AABB.js';
+import { Matrix4 } from './Matrix4.js';
 import { Vector3 } from './Vector3.js';
 
 const v1 = new Vector3();
 const edge1 = new Vector3();
 const edge2 = new Vector3();
 const normal = new Vector3();
+const size = new Vector3();
+const matrix = new Matrix4();
+const inverse = new Matrix4();
+const aabb = new AABB();
 
 /**
 * Class representing a ray in 3D space.
@@ -334,6 +340,58 @@ class Ray {
 	}
 
 	/**
+	* Performs a ray/OBB intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	*
+	* @param {OBB} obb - An orientend bounding box.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectOBB( obb, result ) {
+
+		// the idea is to perform the intersection test in the local space
+		// of the OBB.
+
+		obb.getSize( size );
+		aabb.fromCenterAndSize( v1.set( 0, 0, 0 ), size );
+
+		matrix.fromMatrix3( obb.rotation );
+		matrix.setPosition( obb.center );
+
+		// transform ray to the local space of the OBB
+
+		localRay.copy( this ).applyMatrix4( matrix.getInverse( inverse ) );
+
+		// perform ray <-> AABB intersection test
+
+		if ( localRay.intersectAABB( aabb, result ) ) {
+
+			// transform the intersection point back to world space
+
+			return result.applyMatrix4( matrix );
+
+		} else {
+
+			return null;
+
+		}
+
+	}
+
+	/**
+	* Performs a ray/OBB intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {OBB} obb - An orientend bounding box.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
+	intersectsOBB( obb ) {
+
+		return this.intersectOBB( obb, v1 ) !== null;
+
+	}
+
+	/**
 	* Performs a ray/convex hull intersection test and stores the intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	* The implementation is based on "Fast Ray-Convex Polyhedron Intersection"
@@ -544,5 +602,7 @@ class Ray {
 	}
 
 }
+
+const localRay = new Ray();
 
 export { Ray };

@@ -13,6 +13,7 @@ const AABB = YUKA.AABB;
 const Plane = YUKA.Plane;
 const BoundingSphere = YUKA.BoundingSphere;
 const ConvexHull = YUKA.ConvexHull;
+const OBB = YUKA.OBB;
 
 const v1 = new Vector3( 2, 2, 2 );
 const v2 = new Vector3( 0, 0, 1 );
@@ -450,6 +451,92 @@ describe( 'Ray', function () {
 
 			const result = ray.intersectsPlane( plane );
 			expect( result ).to.be.true;
+
+		} );
+
+	} );
+
+	describe( '#intersectOBB()', function () {
+
+		const points = [
+			new Vector3( 1, 1, 1 ),
+			new Vector3( 4, - 1, 4 ),
+			new Vector3( 3, 6, - 3 ),
+			new Vector3( - 7, - 5, 0 ),
+			new Vector3( 2, 9, 19 ),
+			new Vector3( 7, 4, 8 ),
+			new Vector3( 14, - 14, 2 ),
+			new Vector3( - 9, 1, 11 ),
+			new Vector3( 0, 14, - 8 )
+		];
+
+		const obb = new OBB().fromPoints( points );
+
+		it( 'should fill the given result vector with the intersection point of a ray/OBB intersection test', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, - 1 ) );
+			const result = new Vector3();
+
+			ray.intersectOBB( obb, result );
+
+			expect( result.x ).to.closeTo( 0, Number.EPSILON );
+			expect( result.y ).to.closeTo( 8.881784197001252e-16, Number.EPSILON );
+			expect( result.z ).to.closeTo( 17.74227980370774, Number.EPSILON );
+
+		} );
+
+		it( 'should return null if the ray does not intersect the OBB', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, 1 ) );
+
+			expect( ray.intersectOBB( obb, new Vector3() ) ).to.be.null;
+
+		} );
+
+		it( 'should return an intersection if the ray starts inside the OBB', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, - 1 ) );
+			const result = new Vector3();
+
+			ray.intersectOBB( obb, result );
+
+			expect( result.x ).to.closeTo( 0, Number.EPSILON );
+			expect( result.y ).to.closeTo( - 8.881784197001252e-16, Number.EPSILON );
+			expect( result.z ).to.closeTo( - 10.114982096196615, Number.EPSILON );
+
+		} );
+
+	} );
+
+	describe( '#intersectsOBB()', function () {
+
+		const points = [
+			new Vector3( 1, 1, 1 ),
+			new Vector3( 4, - 1, 4 ),
+			new Vector3( 3, 6, - 3 ),
+			new Vector3( - 7, - 5, 0 ),
+			new Vector3( 2, 9, 19 ),
+			new Vector3( 7, 4, 8 ),
+			new Vector3( 14, - 14, 2 ),
+			new Vector3( - 9, 1, 11 ),
+			new Vector3( 0, 14, - 8 )
+		];
+
+		const convexHull = new OBB().fromPoints( points );
+
+		it( 'should return true if the ray intersects the OBB', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, - 1 ) );
+
+			expect( ray.intersectsOBB( convexHull ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if the ray does not intersect the OBB', function () {
+
+			const ray = new Ray( new Vector3( 0, 0, 20 ), new Vector3( 0, 0, 1 ) );
+
+			expect( ray.intersectsOBB( convexHull ) ).to.be.false;
 
 		} );
 

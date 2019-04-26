@@ -398,6 +398,7 @@ class Matrix4 {
 
 	/**
 	* Uses the given quaternion to transform the upper left 3x3 part to a rotation matrix.
+	* Other parts of the matrix are equal to the identiy matrix.
 	*
 	* @param {Quaternion} q - A quaternion representing a rotation.
 	* @return {Matrix4} A reference to this matrix.
@@ -426,6 +427,42 @@ class Matrix4 {
 
 		e[ 3 ] = 0;
 		e[ 7 ] = 0;
+		e[ 11 ] = 0;
+
+		e[ 12 ] = 0;
+		e[ 13 ] = 0;
+		e[ 14 ] = 0;
+		e[ 15 ] = 1;
+
+		return this;
+
+	}
+
+	/**
+	* Sets the upper-left 3x3 portion of this matrix by the given 3x3 matrix. Other
+	* parts of the matrix are equal to the identiy matrix.
+	*
+	* @param {Matrix3} m - A 3x3 matrix.
+	* @return {Matrix4} A reference to this matrix.
+	*/
+	fromMatrix3( m ) {
+
+		const e = this.elements;
+		const me = m.elements;
+
+		e[ 0 ] = me[ 0 ];
+		e[ 1 ] = me[ 1 ];
+		e[ 2 ] = me[ 2 ];
+		e[ 3 ] = 0;
+
+		e[ 4 ] = me[ 3 ];
+		e[ 5 ] = me[ 4 ];
+		e[ 6 ] = me[ 5 ];
+		e[ 7 ] = 0;
+
+		e[ 8 ] = me[ 6 ];
+		e[ 9 ] = me[ 7 ];
+		e[ 10 ] = me[ 8 ];
 		e[ 11 ] = 0;
 
 		e[ 12 ] = 0;

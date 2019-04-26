@@ -2713,6 +2713,7 @@
 
 		/**
 		* Uses the given quaternion to transform the upper left 3x3 part to a rotation matrix.
+		* Other parts of the matrix are equal to the identiy matrix.
 		*
 		* @param {Quaternion} q - A quaternion representing a rotation.
 		* @return {Matrix4} A reference to this matrix.
@@ -2741,6 +2742,42 @@
 
 			e[ 3 ] = 0;
 			e[ 7 ] = 0;
+			e[ 11 ] = 0;
+
+			e[ 12 ] = 0;
+			e[ 13 ] = 0;
+			e[ 14 ] = 0;
+			e[ 15 ] = 1;
+
+			return this;
+
+		}
+
+		/**
+		* Sets the upper-left 3x3 portion of this matrix by the given 3x3 matrix. Other
+		* parts of the matrix are equal to the identiy matrix.
+		*
+		* @param {Matrix3} m - A 3x3 matrix.
+		* @return {Matrix4} A reference to this matrix.
+		*/
+		fromMatrix3( m ) {
+
+			const e = this.elements;
+			const me = m.elements;
+
+			e[ 0 ] = me[ 0 ];
+			e[ 1 ] = me[ 1 ];
+			e[ 2 ] = me[ 2 ];
+			e[ 3 ] = 0;
+
+			e[ 4 ] = me[ 3 ];
+			e[ 5 ] = me[ 4 ];
+			e[ 6 ] = me[ 5 ];
+			e[ 7 ] = 0;
+
+			e[ 8 ] = me[ 6 ];
+			e[ 9 ] = me[ 7 ];
+			e[ 10 ] = me[ 8 ];
 			e[ 11 ] = 0;
 
 			e[ 12 ] = 0;
@@ -5212,6 +5249,10 @@
 	const edge1 = new Vector3();
 	const edge2 = new Vector3();
 	const normal = new Vector3();
+	const size$1 = new Vector3();
+	const matrix$1 = new Matrix4();
+	const inverse = new Matrix4();
+	const aabb$1 = new AABB();
 
 	/**
 	* Class representing a ray in 3D space.
@@ -5542,6 +5583,58 @@
 		}
 
 		/**
+		* Performs a ray/OBB intersection test and stores the intersection point
+		* to the given 3D vector. If no intersection is detected, *null* is returned.
+		*
+		* @param {OBB} obb - An orientend bounding box.
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		intersectOBB( obb, result ) {
+
+			// the idea is to perform the intersection test in the local space
+			// of the OBB.
+
+			obb.getSize( size$1 );
+			aabb$1.fromCenterAndSize( v1$1.set( 0, 0, 0 ), size$1 );
+
+			matrix$1.fromMatrix3( obb.rotation );
+			matrix$1.setPosition( obb.center );
+
+			// transform ray to the local space of the OBB
+
+			localRay.copy( this ).applyMatrix4( matrix$1.getInverse( inverse ) );
+
+			// perform ray <-> AABB intersection test
+
+			if ( localRay.intersectAABB( aabb$1, result ) ) {
+
+				// transform the intersection point back to world space
+
+				return result.applyMatrix4( matrix$1 );
+
+			} else {
+
+				return null;
+
+			}
+
+		}
+
+		/**
+		* Performs a ray/OBB intersection test. Returns either true or false if
+		* there is a intersection or not.
+		*
+		* @param {OBB} obb - An orientend bounding box.
+		* @return {boolean} Whether there is an intersection or not.
+		*/
+		intersectsOBB( obb ) {
+
+			return this.intersectOBB( obb, v1$1 ) !== null;
+
+		}
+
+		/**
 		* Performs a ray/convex hull intersection test and stores the intersection point
 		* to the given 3D vector. If no intersection is detected, *null* is returned.
 		* The implementation is based on "Fast Ray-Convex Polyhedron Intersection"
@@ -5753,7 +5846,9 @@
 
 	}
 
-	const inverse = new Matrix4();
+	const localRay = new Ray();
+
+	const inverse$1 = new Matrix4();
 	const localPositionOfObstacle = new Vector3();
 	const localPositionOfClosestObstacle = new Vector3();
 	const intersectionPoint = new Vector3();
@@ -5825,7 +5920,7 @@
 
 			const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-			vehicle.worldMatrix.getInverse( inverse );
+			vehicle.worldMatrix.getInverse( inverse$1 );
 
 			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 
@@ -5835,7 +5930,7 @@
 
 				// calculate this obstacle's position in local space of the vehicle
 
-				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
+				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse$1 );
 
 				// if the local position has a positive z value then it must lay behind the agent.
 				// besides the absolute z value must be smaller than the length of the detection box
@@ -16000,8 +16095,23 @@
 		}
 
 		/**
+		* Computes the size (width, height, depth) of this OBB and stores it into the given vector.
+		*
+		* @param {Vector3} result - The result vector.
+		* @return {Vector3} The result vector.
+		*/
+		getSize( result ) {
+
+			return result.copy( this.halfSizes ).multiplyScalar( 2 );
+
+		}
+
+		/**
 		* Ensures the given point is inside this OBB and stores
 		* the result in the given vector.
+		*
+		* Reference: Closest Point on OBB to Point in Real-Time Collision Detection
+		* by Christer Ericson (chapter 5.1.4)
 		*
 		* @param {Vector3} point - A point in 3D space.
 		* @param {Vector3} result - The result vector.
@@ -18149,7 +18259,7 @@
 	}
 
 	const clampedPosition = new Vector3();
-	const aabb$1 = new AABB();
+	const aabb$2 = new AABB();
 	const contour = new Array();
 
 	/**
@@ -18368,8 +18478,8 @@
 
 			// approximate range with an AABB which allows fast intersection test
 
-			aabb$1.min.copy( position ).subScalar( radius );
-			aabb$1.max.copy( position ).addScalar( radius );
+			aabb$2.min.copy( position ).subScalar( radius );
+			aabb$2.max.copy( position ).addScalar( radius );
 
 			// test all non-empty cells for an intersection
 
@@ -18377,7 +18487,7 @@
 
 				const cell = cells[ i ];
 
-				if ( cell.empty() === false && cell.intersects( aabb$1 ) === true ) {
+				if ( cell.empty() === false && cell.intersects( aabb$2 ) === true ) {
 
 					result.push( ...cell.entries );
 
@@ -18420,13 +18530,13 @@
 
 			polygon.getContour( contour );
 
-			aabb$1.fromPoints( contour );
+			aabb$2.fromPoints( contour );
 
 			for ( let i = 0, l = cells.length; i < l; i ++ ) {
 
 				const cell = cells[ i ];
 
-				if ( cell.intersects( aabb$1 ) === true ) {
+				if ( cell.intersects( aabb$2 ) === true ) {
 
 					cell.add( polygon );
 
