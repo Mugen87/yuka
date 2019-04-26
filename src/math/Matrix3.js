@@ -371,7 +371,7 @@ class Matrix3 {
 
 		while ( sweep < maxSweeps && diagonalMatrix.offDiagonalFrobeniusNorm() > epsilon ) {
 
-			this.shurDecomposition( m1 );
+			diagonalMatrix.shurDecomposition( m1 );
 			m2.copy( m1 ).transpose();
 			diagonalMatrix.multiply( m1 );
 			diagonalMatrix.premultiply( m2 );

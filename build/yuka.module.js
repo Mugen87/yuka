@@ -1530,7 +1530,7 @@ class Matrix3 {
 
 		while ( sweep < maxSweeps && diagonalMatrix.offDiagonalFrobeniusNorm() > epsilon ) {
 
-			this.shurDecomposition( m1 );
+			diagonalMatrix.shurDecomposition( m1 );
 			m2.copy( m1 ).transpose();
 			diagonalMatrix.multiply( m1 );
 			diagonalMatrix.premultiply( m2 );
@@ -16198,9 +16198,11 @@ class OBB {
 
 		const unitary = eigenDecomposition.unitary;
 
-		const v1 = new Vector3().fromMatrix3Column( unitary, 0 );
-		const v2 = new Vector3().fromMatrix3Column( unitary, 1 );
-		const v3 = new Vector3().fromMatrix3Column( unitary, 2 );
+		const v1 = new Vector3();
+		const v2 = new Vector3();
+		const v3 = new Vector3();
+
+		unitary.extractBasis( v1, v2, v3 );
 
 		let u1 = - Infinity;
 		let u2 = - Infinity;

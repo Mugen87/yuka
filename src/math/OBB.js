@@ -300,9 +300,11 @@ class OBB {
 
 		const unitary = eigenDecomposition.unitary;
 
-		const v1 = new Vector3().fromMatrix3Column( unitary, 0 );
-		const v2 = new Vector3().fromMatrix3Column( unitary, 1 );
-		const v3 = new Vector3().fromMatrix3Column( unitary, 2 );
+		const v1 = new Vector3();
+		const v2 = new Vector3();
+		const v3 = new Vector3();
+
+		unitary.extractBasis( v1, v2, v3 );
 
 		let u1 = - Infinity;
 		let u2 = - Infinity;

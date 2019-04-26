@@ -125,23 +125,23 @@ describe( 'OBB', function () {
 
 		it( 'should compute an OBB that encloses the given set of points', function () {
 
-			expect( obb.center.x ).to.closeTo( 1.4303259083418032, Number.EPSILON );
-			expect( obb.center.y ).to.closeTo( - 1.104128632659159, Number.EPSILON );
-			expect( obb.center.z ).to.closeTo( 5.5, Number.EPSILON );
+			expect( obb.center.x ).to.closeTo( 2.0778426352496924, Number.EPSILON );
+			expect( obb.center.y ).to.closeTo( - 4.007474094173611, Number.EPSILON );
+			expect( obb.center.z ).to.closeTo( 3.1023614747658463, Number.EPSILON );
 
-			expect( obb.halfSizes.x ).to.closeTo( 9.822066640735105, Number.EPSILON );
-			expect( obb.halfSizes.y ).to.closeTo( 15.09394620364288, Number.EPSILON );
-			expect( obb.halfSizes.z ).to.closeTo( 13.5, Number.EPSILON );
+			expect( obb.halfSizes.x ).to.closeTo( 8.43764728814747, Number.EPSILON );
+			expect( obb.halfSizes.y ).to.closeTo( 14.657724277890626, Number.EPSILON );
+			expect( obb.halfSizes.z ).to.closeTo( 13.754912222752461, Number.EPSILON );
 
-			expect( obb.rotation.elements[ 0 ] ).to.closeTo( - 0.9809113909027889, Number.EPSILON );
-			expect( obb.rotation.elements[ 1 ] ).to.closeTo( - 0.1944552472862623, Number.EPSILON );
-			expect( obb.rotation.elements[ 2 ] ).to.closeTo( 0, Number.EPSILON );
-			expect( obb.rotation.elements[ 3 ] ).to.closeTo( 0.1944552472862623, Number.EPSILON );
-			expect( obb.rotation.elements[ 4 ] ).to.closeTo( - 0.9809113909027889, Number.EPSILON );
-			expect( obb.rotation.elements[ 5 ] ).to.closeTo( 0, Number.EPSILON );
-			expect( obb.rotation.elements[ 6 ] ).to.closeTo( 0, Number.EPSILON );
-			expect( obb.rotation.elements[ 7 ] ).to.closeTo( 0, Number.EPSILON );
-			expect( obb.rotation.elements[ 8 ] ).to.closeTo( 1, Number.EPSILON );
+			expect( obb.rotation.elements[ 0 ] ).to.closeTo( 0.8634950831013628, Number.EPSILON );
+			expect( obb.rotation.elements[ 1 ] ).to.closeTo( 0.5033385631350236, Number.EPSILON );
+			expect( obb.rotation.elements[ 2 ] ).to.closeTo( 0.032039543082580876, Number.EPSILON );
+			expect( obb.rotation.elements[ 3 ] ).to.closeTo( - 0.50184074522067, Number.EPSILON );
+			expect( obb.rotation.elements[ 4 ] ).to.closeTo( 0.8511132886686104, Number.EPSILON );
+			expect( obb.rotation.elements[ 5 ] ).to.closeTo( 0.15414939600292202, Number.EPSILON );
+			expect( obb.rotation.elements[ 6 ] ).to.closeTo( 0.05032005461178748, Number.EPSILON );
+			expect( obb.rotation.elements[ 7 ] ).to.closeTo( - 0.1491859936886602, Number.EPSILON );
+			expect( obb.rotation.elements[ 8 ] ).to.closeTo( 0.9875279395495573, Number.EPSILON );
 
 		} );
 
@@ -158,19 +158,19 @@ describe( 'OBB', function () {
 			const point3 = new Vector3( 14, - 14, 2 );
 
 			obb.clampPoint( point1, closestPoint ); // point inside
-			expect( closestPoint.x ).to.closeTo( - 7.438494264988549e-15, Number.EPSILON );
-			expect( closestPoint.y ).to.closeTo( 5.995204332975845e-15, Number.EPSILON );
-			expect( closestPoint.z ).to.closeTo( 0, Number.EPSILON );
+			expect( closestPoint.x ).to.closeTo( - 7.771561172376096e-16, Number.EPSILON );
+			expect( closestPoint.y ).to.closeTo( 1.6653345369377348e-15, Number.EPSILON );
+			expect( closestPoint.z ).to.closeTo( - 1.3322676295501878e-15, Number.EPSILON );
 
 			obb.clampPoint( point2, closestPoint ); // point outside
-			expect( closestPoint.x ).to.closeTo( 1.144460202503474, Number.EPSILON );
-			expect( closestPoint.y ).to.closeTo( 14.22687705918304, Number.EPSILON );
-			expect( closestPoint.z ).to.closeTo( 0, Number.EPSILON );
+			expect( closestPoint.x ).to.closeTo( 1.6682157671156284, Number.EPSILON );
+			expect( closestPoint.y ).to.closeTo( 13.721879399308623, Number.EPSILON );
+			expect( closestPoint.z ).to.closeTo( - 1.0334415138496267, Number.EPSILON );
 
 			obb.clampPoint( point3, closestPoint ); // point on OBB
-			expect( closestPoint.x ).to.closeTo( 14.000000000000068, Number.EPSILON );
-			expect( closestPoint.y ).to.closeTo( - 14.00000000000007, Number.EPSILON );
-			expect( closestPoint.z ).to.closeTo( 2, Number.EPSILON );
+			expect( closestPoint.x ).to.closeTo( 14.000000000000005, Number.EPSILON );
+			expect( closestPoint.y ).to.closeTo( - 14.000000000000004, Number.EPSILON );
+			expect( closestPoint.z ).to.closeTo( 1.9999999999999996, Number.EPSILON );
 
 		} );
 
