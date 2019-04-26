@@ -1561,7 +1561,7 @@ class Matrix3 {
 		let maxDiagonal = 0;
 		let rotAxis = 1;
 
-		// find pivot (rotAxis) based on max diagonal of matrix
+		// find pivot (rotAxis) based on largest off-diagonal term
 
 		const e = this.elements;
 
