@@ -266,6 +266,58 @@ describe( 'Matrix3', function () {
 
 	} );
 
+	describe( '#eigenDecomposition()', function () {
+
+		it( 'should compute the eigen decomposition for the given symetric matrix', function () {
+
+			const m1 = new Matrix3().set(
+				27.58976878891358, - 12.137144362252968, - 1.4486805468272532,
+				- 12.137144362252968, 41.185400113061085, 1.531280207237831,
+				- 1.4486805468272532, 1.531280207237831, 35.448157422247334
+			);
+
+			const result = {
+				unitary: new Matrix3(),
+				diagonal: new Matrix3()
+			};
+
+			m1.eigenDecomposition( result );
+
+			// eigen vectors
+
+			expect( result.unitary.elements ).to.deep.equal( [
+				0.8634950831013628, 0.5033385631350236, 0.032039543082580876,
+				- 0.50184074522067, 0.8511132886686104, 0.15414939600292202,
+				0.05032005461178748, - 0.1491859936886602, 0.9875279395495573
+			] );
+
+			// eigen values (on diagonal)
+
+			expect( result.diagonal.elements ).to.deep.equal( [
+				20.461172474799838, 1.7831596885631723e-15, - 7.796260652971751e-16,
+				0, 48.61914550852782, - 3.877741470179202e-16,
+				- 1.6651877851156951e-26, 4.414244155615709e-16, 35.14300834089438
+			] );
+
+		} );
+
+	} );
+
+	describe( '#shurDecomposition()', function () {
+
+		it( 'should return the identity matrix if the off-diagonal elements are all zero', function () {
+
+			const m1 = new Matrix3().set( 2, 0, 0, 0, 2, 0, 0, 0, 2 );
+			const result = new Matrix3();
+
+			m1.shurDecomposition( result );
+
+			expect( result.elements ).to.deep.equal( [ 1, 0, - 0, 0, 1, 0, 0, 0, 1 ] );
+
+		} );
+
+	} );
+
 	describe( '#fromQuaternion()', function () {
 
 		it( 'should create a matrix from a given quaternion', function () {
