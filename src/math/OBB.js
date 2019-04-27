@@ -8,6 +8,22 @@ const eigenDecomposition = {
 	diagonal: new Matrix3()
 };
 
+const a = {
+	c: null, // center
+	u: [ new Vector3(), new Vector3(), new Vector3() ], // basis vectors
+	e: [] // half width
+};
+
+const b = {
+	c: null, // center
+	u: [ new Vector3(), new Vector3(), new Vector3() ], // basis vectors
+	e: [] // half width
+};
+
+const R = [[], [], []];
+const AbsR = [[], [], []];
+const t = [];
+
 const xAxis = new Vector3();
 const yAxis = new Vector3();
 const zAxis = new Vector3();
@@ -178,6 +194,153 @@ class OBB {
 		// if that point is inside the sphere, the OBB and sphere intersect
 
 		return closestPoint.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+	}
+
+	/* istanbul ignore next */
+
+	/**
+	* Returns true if the given OBB intersects this OBB.
+	*
+	* Reference: OBB-OBB Intersection in Real-Time Collision Detection
+	* by Christer Ericson (chapter 4.4.1)
+	*
+	* @param {OBB} obb - The OBB to test.
+	* @param {Number} epsilon - The epsilon (tolerance) value.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsOBB( obb, epsilon = Number.EPSILON ) {
+
+		// prepare data structures (the code uses the same nomenclature like the reference)
+
+		a.c = this.center;
+		a.e[ 0 ] = this.halfSizes.x;
+		a.e[ 1 ] = this.halfSizes.y;
+		a.e[ 2 ] = this.halfSizes.z;
+		this.rotation.extractBasis( a.u[ 0 ], a.u[ 1 ], a.u[ 2 ] );
+
+		b.c = obb.center;
+		b.e[ 0 ] = obb.halfSizes.x;
+		b.e[ 1 ] = obb.halfSizes.y;
+		b.e[ 2 ] = obb.halfSizes.z;
+		obb.rotation.extractBasis( b.u[ 0 ], b.u[ 1 ], b.u[ 2 ] );
+
+		// compute rotation matrix expressing b in a’s coordinate frame
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			for ( let j = 0; j < 3; j ++ ) {
+
+				R[ i ][ j ] = a.u[ i ].dot( b.u[ j ] );
+
+			}
+
+		}
+
+		// compute translation vector
+
+		v1.subVectors( b.c, a.c );
+
+		// bring translation into a’s coordinate frame
+
+		t[ 0 ] = v1.dot( a.u[ 0 ] );
+		t[ 1 ] = v1.dot( a.u[ 1 ] );
+		t[ 2 ] = v1.dot( a.u[ 2 ] );
+
+		// compute common subexpressions. Add in an epsilon term to
+		// counteract arithmetic errors when two edges are parallel and
+		// their cross product is (near) null
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			for ( let j = 0; j < 3; j ++ ) {
+
+				AbsR[ i ][ j ] = Math.abs( R[ i ][ j ] ) + epsilon;
+
+			}
+
+		}
+
+		let ra, rb;
+
+		// test axes L = A0, L = A1, L = A2
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			ra = a.e[ i ];
+			rb = b.e[ 0 ] * AbsR[ i ][ 0 ] + b.e[ 1 ] * AbsR[ i ][ 1 ] + b.e[ 2 ] * AbsR[ i ][ 2 ];
+			if ( Math.abs( t[ i ] ) > ra + rb ) return false;
+
+
+		}
+
+		// test axes L = B0, L = B1, L = B2
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			ra = a.e[ 0 ] * AbsR[ 0 ][ i ] + a.e[ 1 ] * AbsR[ 1 ][ i ] + a.e[ 2 ] * AbsR[ 2 ][ i ];
+			rb = b.e[ i ];
+			if ( Math.abs( t[ 0 ] * R[ 0 ][ i ] + t[ 1 ] * R[ 1 ][ i ] + t[ 2 ] * R[ 2 ][ i ] ) > ra + rb ) return false;
+
+		}
+
+		// test axis L = A0 x B0
+
+		ra = a.e[ 1 ] * AbsR[ 2 ][ 0 ] + a.e[ 2 ] * AbsR[ 1 ][ 0 ];
+		rb = b.e[ 1 ] * AbsR[ 0 ][ 2 ] + b.e[ 2 ] * AbsR[ 0 ][ 1 ];
+		if ( Math.abs( t[ 2 ] * R[ 1 ][ 0 ] - t[ 1 ] * R[ 2 ][ 0 ] ) > ra + rb ) return false;
+
+		// test axis L = A0 x B1
+
+		ra = a.e[ 1 ] * AbsR[ 2 ][ 1 ] + a.e[ 2 ] * AbsR[ 1 ][ 1 ];
+		rb = b.e[ 0 ] * AbsR[ 0 ][ 2 ] + b.e[ 2 ] * AbsR[ 0 ][ 0 ];
+		if ( Math.abs( t[ 2 ] * R[ 1 ][ 1 ] - t[ 1 ] * R[ 2 ][ 1 ] ) > ra + rb ) return false;
+
+		// test axis L = A0 x B2
+
+		ra = a.e[ 1 ] * AbsR[ 2 ][ 2 ] + a.e[ 2 ] * AbsR[ 1 ][ 2 ];
+		rb = b.e[ 0 ] * AbsR[ 0 ][ 1 ] + b.e[ 1 ] * AbsR[ 0 ][ 0 ];
+		if ( Math.abs( t[ 2 ] * R[ 1 ][ 2 ] - t[ 1 ] * R[ 2 ][ 2 ] ) > ra + rb ) return false;
+
+		// test axis L = A1 x B0
+
+		ra = a.e[ 0 ] * AbsR[ 2 ][ 0 ] + a.e[ 2 ] * AbsR[ 0 ][ 0 ];
+		rb = b.e[ 1 ] * AbsR[ 1 ][ 2 ] + b.e[ 2 ] * AbsR[ 1 ][ 1 ];
+		if ( Math.abs( t[ 0 ] * R[ 2 ][ 0 ] - t[ 2 ] * R[ 0 ][ 0 ] ) > ra + rb ) return false;
+
+		// test axis L = A1 x B1
+
+		ra = a.e[ 0 ] * AbsR[ 2 ][ 1 ] + a.e[ 2 ] * AbsR[ 0 ][ 1 ];
+		rb = b.e[ 0 ] * AbsR[ 1 ][ 2 ] + b.e[ 2 ] * AbsR[ 1 ][ 0 ];
+		if ( Math.abs( t[ 0 ] * R[ 2 ][ 1 ] - t[ 2 ] * R[ 0 ][ 1 ] ) > ra + rb ) return false;
+
+		// Tetestst axis L = A1 x B2
+
+		ra = a.e[ 0 ] * AbsR[ 2 ][ 2 ] + a.e[ 2 ] * AbsR[ 0 ][ 2 ];
+		rb = b.e[ 0 ] * AbsR[ 1 ][ 1 ] + b.e[ 1 ] * AbsR[ 1 ][ 0 ];
+		if ( Math.abs( t[ 0 ] * R[ 2 ][ 2 ] - t[ 2 ] * R[ 0 ][ 2 ] ) > ra + rb ) return false;
+
+		// Test axis L = A2 x B0
+
+		ra = a.e[ 0 ] * AbsR[ 1 ][ 0 ] + a.e[ 1 ] * AbsR[ 0 ][ 0 ];
+		rb = b.e[ 1 ] * AbsR[ 2 ][ 2 ] + b.e[ 2 ] * AbsR[ 2 ][ 1 ];
+		if ( Math.abs( t[ 1 ] * R[ 0 ][ 0 ] - t[ 0 ] * R[ 1 ][ 0 ] ) > ra + rb ) return false;
+
+		// Test axis L = A2 x B1
+
+		ra = a.e[ 0 ] * AbsR[ 1 ][ 1 ] + a.e[ 1 ] * AbsR[ 0 ][ 1 ];
+		rb = b.e[ 0 ] * AbsR[ 2 ][ 2 ] + b.e[ 2 ] * AbsR[ 2 ][ 0 ];
+		if ( Math.abs( t[ 1 ] * R[ 0 ][ 1 ] - t[ 0 ] * R[ 1 ][ 1 ] ) > ra + rb ) return false;
+
+		// Test axis L = A2 x B2
+
+		ra = a.e[ 0 ] * AbsR[ 1 ][ 2 ] + a.e[ 1 ] * AbsR[ 0 ][ 2 ];
+		rb = b.e[ 0 ] * AbsR[ 2 ][ 1 ] + b.e[ 1 ] * AbsR[ 2 ][ 0 ];
+		if ( Math.abs( t[ 1 ] * R[ 0 ][ 2 ] - t[ 0 ] * R[ 1 ][ 2 ] ) > ra + rb ) return false;
+
+		// since no separating axis is found, the OBBs must be intersecting
+
+		return true;
 
 	}
 

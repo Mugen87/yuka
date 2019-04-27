@@ -211,19 +211,163 @@ describe( 'OBB', function () {
 
 	} );
 
+	describe( '#intersectsOBB()', function () {
+
+		it( 'should return true if the given OBB intersects this OBB', function () {
+
+			const points2 = [
+				new Vector3( 2, 14, 5 ),
+				new Vector3( 2, 14, 6 ),
+				new Vector3( 2, 12, 5 ),
+				new Vector3( 2, 12, 6 ),
+				new Vector3( 0, 14, 5 ),
+				new Vector3( 0, 14, 6 ),
+				new Vector3( 0, 12, 5 ),
+				new Vector3( 0, 12, 6 )
+			];
+
+			const points3 = [
+				new Vector3( 2, 2, 5 ),
+				new Vector3( 2, 2, 6 ),
+				new Vector3( 2, 0, 5 ),
+				new Vector3( 2, 0, 6 ),
+				new Vector3( 0, 2, 5 ),
+				new Vector3( 0, 2, 6 ),
+				new Vector3( 0, 0, 5 ),
+				new Vector3( 0, 0, 6 )
+			];
+
+			const obb2 = new OBB().fromPoints( points2 );
+			const obb3 = new OBB().fromPoints( points3 );
+
+			expect( obb.intersectsOBB( obb2 ) ).to.be.true; // interesction
+			expect( obb.intersectsOBB( obb3 ) ).to.be.true; // fully contained
+
+		} );
+
+		it( 'should return false if there is no intersection (test A0,A1,A2)', function () {
+
+			const points2 = [
+				new Vector3( 2, 20, 5 ),
+				new Vector3( 2, 20, 6 ),
+				new Vector3( 2, 18, 5 ),
+				new Vector3( 2, 18, 6 ),
+				new Vector3( 0, 20, 5 ),
+				new Vector3( 0, 20, 6 ),
+				new Vector3( 0, 18, 5 ),
+				new Vector3( 0, 18, 6 )
+			];
+
+			const obb2 = new OBB().fromPoints( points2 );
+
+			expect( obb.intersectsOBB( obb2 ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if there is no intersection (test B0,B1,B2)', function () {
+
+			const points2 = [
+				new Vector3( 20, - 28, 30 ),
+				new Vector3( 20, - 28, 0 ),
+				new Vector3( 20, - 26, 30 ),
+				new Vector3( 20, - 26, 0 ),
+				new Vector3( 0, - 28, 30 ),
+				new Vector3( 0, - 28, 0 ),
+				new Vector3( 0, - 26, 30 ),
+				new Vector3( 0, - 26, 0 )
+			];
+
+			const obb2 = new OBB().fromPoints( points2 );
+
+			expect( obb.intersectsOBB( obb2 ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if there is no intersection (test A2 x B0 and A0 x B2)', function () {
+
+			const points1 = [
+				new Vector3( 10, 14, 30 ),
+				new Vector3( 10, 14, 0 ),
+				new Vector3( 10, 5, 30 ),
+				new Vector3( 10, 5, 0 ),
+				new Vector3( 0, 15, 30 ),
+				new Vector3( 0, 15, 0 ),
+				new Vector3( 0, 5, 30 ),
+				new Vector3( 0, 5, 0 )
+			];
+
+			const points2 = [
+				new Vector3( 20, - 1.1, 10 ),
+				new Vector3( 20, - 1, 9 ),
+				new Vector3( 20, - 2, 10 ),
+				new Vector3( 20, - 1.6, 9 ),
+				new Vector3( - 20, - 1.1, 10 ),
+				new Vector3( - 20, - 1, 9 ),
+				new Vector3( - 20, - 2, 10 ),
+				new Vector3( - 20, - 2, 9 )
+			];
+
+			const obb1 = new OBB().fromPoints( points1 );
+			const obb2 = new OBB().fromPoints( points2 );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
+			expect( obb2.intersectsOBB( obb1 ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if there is no intersection (test A2 x B1 abd A1 x B2)', function () {
+
+			const points1 = [
+				new Vector3( 10, 14, 30 ),
+				new Vector3( 10, 14, 0 ),
+				new Vector3( 10, 5, 30 ),
+				new Vector3( 10, 5, 0 ),
+				new Vector3( 0, 15, 30 ),
+				new Vector3( 0, 15, 0 ),
+				new Vector3( 0, 5, 30 ),
+				new Vector3( 0, 5, 0 )
+			];
+
+			const points2 = [
+				new Vector3( 20, 20, 10 ),
+				new Vector3( 20, 20, 9 ),
+				new Vector3( 20, - 20, 10 ),
+				new Vector3( 20, - 20, 9 ),
+				new Vector3( 18, 20, 10 ),
+				new Vector3( 18, 20, 11 ),
+				new Vector3( 18, - 20, 10 ),
+				new Vector3( 18, - 20, 9 )
+			];
+
+			const obb1 = new OBB().fromPoints( points1 );
+			const obb2 = new OBB().fromPoints( points2 );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
+			expect( obb2.intersectsOBB( obb1 ) ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#intersectsBoundingSphere()', function () {
 
 		it( 'should return true if the given bounding sphere intersects this OBB', function () {
 
 			const sphere1 = new BoundingSphere( new Vector3(), 5 );
 			const sphere2 = new BoundingSphere( new Vector3(), 50 );
-			const sphere3 = new BoundingSphere( new Vector3( 0, 20, 0 ), 1 );
 			const sphere4 = new BoundingSphere( new Vector3( 0, 20, 0 ), 10 );
 
 			expect( obb.intersectsBoundingSphere( sphere1 ) ).to.be.true; // sphere fully contained OBB
 			expect( obb.intersectsBoundingSphere( sphere2 ) ).to.be.true; // OBB fully contained in sphere
-			expect( obb.intersectsBoundingSphere( sphere3 ) ).to.be.false; // no intersection
 			expect( obb.intersectsBoundingSphere( sphere4 ) ).to.be.true; // intersection
+
+		} );
+
+		it( 'should return false if there is no intersection', function () {
+
+			const sphere = new BoundingSphere( new Vector3( 0, 20, 0 ), 1 );
+
+			expect( obb.intersectsBoundingSphere( sphere ) ).to.be.false;
 
 		} );
 
