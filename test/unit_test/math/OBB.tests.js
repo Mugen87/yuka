@@ -6,8 +6,10 @@ const expect = require( 'chai' ).expect;
 const YUKA = require( '../../../build/yuka.js' );
 const MathJSONs = require( '../../files/MathJSONs.js' );
 
+const AABB = YUKA.AABB;
 const BoundingSphere = YUKA.BoundingSphere;
 const OBB = YUKA.OBB;
+const Plane = YUKA.Plane;
 const Matrix3 = YUKA.Matrix3;
 const Vector3 = YUKA.Vector3;
 
@@ -140,6 +142,21 @@ describe( 'OBB', function () {
 
 	} );
 
+	describe( '#fromAABB()', function () {
+
+		it( 'should computes the OBB from an AABB', function () {
+
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 1, 1, 1 ), new Vector3( 2, 2, 2 ) );
+			const obb = new OBB().fromAABB( aabb );
+
+			expect( obb.center ).to.deep.equal( new Vector3( 1, 1, 1 ) );
+			expect( obb.halfSizes ).to.deep.equal( new Vector3( 1, 1, 1 ) );
+			expect( obb.rotation ).to.deep.equal( new Matrix3() );
+
+		} );
+
+	} );
+
 	describe( '#fromPoints()', function () {
 
 		it( 'should compute an OBB that encloses the given set of points', function () {
@@ -206,6 +223,54 @@ describe( 'OBB', function () {
 			expect( obb.containsPoint( point1 ) ).to.be.true; // point inside
 			expect( obb.containsPoint( point2 ) ).to.be.false; // point outside
 			expect( obb.containsPoint( point3 ) ).to.be.true; // point on OBB
+
+		} );
+
+	} );
+
+	describe( '#intersectsAABB()', function () {
+
+		it( 'should return true if the given AABB intersects this OBB', function () {
+
+			const aabb1 = new AABB().fromCenterAndSize( new Vector3(), new Vector3( 1, 1, 1 ) );
+			const aabb2 = new AABB().fromCenterAndSize( new Vector3(), new Vector3( 50, 50, 50 ) );
+			const aabb3 = new AABB().fromCenterAndSize( new Vector3( 0, 20, 0 ), new Vector3( 20, 20, 20 ) );
+
+			expect( obb.intersectsAABB( aabb1 ) ).to.be.true; // AABB fully contained in OBB
+			expect( obb.intersectsAABB( aabb2 ) ).to.be.true; // OBB fully contained in AABB
+			expect( obb.intersectsAABB( aabb3 ) ).to.be.true; // intersection
+
+		} );
+
+		it( 'should return false if there is no intersection', function () {
+
+			const aabb = new AABB().fromCenterAndSize( new Vector3( 0, 20, 0 ), new Vector3( 1, 1, 1 ) );
+
+			expect( obb.intersectsAABB( aabb ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#intersectsBoundingSphere()', function () {
+
+		it( 'should return true if the given bounding sphere intersects this OBB', function () {
+
+			const sphere1 = new BoundingSphere( new Vector3(), 5 );
+			const sphere2 = new BoundingSphere( new Vector3(), 50 );
+			const sphere4 = new BoundingSphere( new Vector3( 0, 20, 0 ), 10 );
+
+			expect( obb.intersectsBoundingSphere( sphere1 ) ).to.be.true; // sphere fully contained in OBB
+			expect( obb.intersectsBoundingSphere( sphere2 ) ).to.be.true; // OBB fully contained in sphere
+			expect( obb.intersectsBoundingSphere( sphere4 ) ).to.be.true; // intersection
+
+		} );
+
+		it( 'should return false if there is no intersection', function () {
+
+			const sphere = new BoundingSphere( new Vector3( 0, 20, 0 ), 1 );
+
+			expect( obb.intersectsBoundingSphere( sphere ) ).to.be.false;
 
 		} );
 
@@ -349,25 +414,21 @@ describe( 'OBB', function () {
 
 	} );
 
-	describe( '#intersectsBoundingSphere()', function () {
+	describe( '#intersectsPlane()', function () {
 
-		it( 'should return true if the given bounding sphere intersects this OBB', function () {
+		it( 'should return true if the given plane intersects this OBB', function () {
 
-			const sphere1 = new BoundingSphere( new Vector3(), 5 );
-			const sphere2 = new BoundingSphere( new Vector3(), 50 );
-			const sphere4 = new BoundingSphere( new Vector3( 0, 20, 0 ), 10 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), 0 );
 
-			expect( obb.intersectsBoundingSphere( sphere1 ) ).to.be.true; // sphere fully contained OBB
-			expect( obb.intersectsBoundingSphere( sphere2 ) ).to.be.true; // OBB fully contained in sphere
-			expect( obb.intersectsBoundingSphere( sphere4 ) ).to.be.true; // intersection
+			expect( obb.intersectsPlane( plane ) ).to.be.true;
 
 		} );
 
 		it( 'should return false if there is no intersection', function () {
 
-			const sphere = new BoundingSphere( new Vector3( 0, 20, 0 ), 1 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), 20 );
 
-			expect( obb.intersectsBoundingSphere( sphere ) ).to.be.false;
+			expect( obb.intersectsPlane( plane ) ).to.be.false;
 
 		} );
 

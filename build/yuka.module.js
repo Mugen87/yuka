@@ -16173,6 +16173,18 @@ class OBB {
 	}
 
 	/**
+	* Returns true if the given AABB intersects this OBB.
+	*
+	* @param {AABB} aabb - The AABB to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsAABB( aabb ) {
+
+		return this.intersectsOBB( obb.fromAABB( aabb ) );
+
+	}
+
+	/**
 	* Returns true if the given bounding sphere intersects this OBB.
 	*
 	* @param {BoundingSphere} sphere - The bounding sphere to test.
@@ -16334,6 +16346,53 @@ class OBB {
 		// since no separating axis is found, the OBBs must be intersecting
 
 		return true;
+
+	}
+
+	/**
+	* Returns true if the given plane intersects this OBB.
+	*
+	* Reference: Testing Box Against Plane in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.2.3)
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsPlane( plane ) {
+
+		this.rotation.extractBasis( xAxis, yAxis, zAxis );
+
+		// compute the projection interval radius of this OBB onto L(t) = this->center + t * p.normal;
+
+		const r = this.halfSizes.x * Math.abs( plane.normal.dot( xAxis ) ) +
+				this.halfSizes.y * Math.abs( plane.normal.dot( yAxis ) ) +
+				this.halfSizes.z * Math.abs( plane.normal.dot( zAxis ) );
+
+		// compute distance of the OBB's center from the plane
+
+		const d = plane.normal.dot( this.center ) - plane.constant;
+
+		// Intersection occurs when distance d falls within [-r,+r] interval
+
+		return Math.abs( d ) <= r;
+
+	}
+
+	/**
+	* Computes the OBB from an AABB.
+	*
+	* @param {AABB} aabb - The AABB.
+	* @return {OBB} A reference to this OBB.
+	*/
+	fromAABB( aabb ) {
+
+		aabb.getCenter( this.center );
+
+		aabb.getSize( this.halfSizes ).multiplyScalar( 0.5 );
+
+		this.rotation.identity();
+
+		return this;
 
 	}
 
@@ -16569,6 +16628,8 @@ class OBB {
 	}
 
 }
+
+const obb = new OBB();
 
 /**
 * Class for representing navigation edges.

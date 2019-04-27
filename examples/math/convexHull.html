@@ -73,15 +73,17 @@
 		const obb1 = createOBB( points1 );
 		const obb2 = createOBB( points2 );
 
-		const boxGeometry = new THREE.BoxBufferGeometry( 0.5, 0.5, 0.5 );
+		const aabb = new YUKA.AABB().fromCenterAndSize( new YUKA.Vector3( 0, 20, 0 ), new YUKA.Vector3( 20, 20, 20 ) );
+
+		const boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
 		const boxMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 		const box = new THREE.Mesh( boxGeometry, boxMaterial );
-		box.position.set( 0, 0, 0 );
+		aabb.getCenter( box.position );
 		scene.add( box );
 
 		const sphere = new YUKA.BoundingSphere( new YUKA.Vector3( 0, 0, 0 ), 5 );
 
-		console.log( obb1.intersectsBoundingSphere( sphere ) );
+		console.log( obb1.intersectsAABB( aabb ) );
 
 		// console.log( hull1.intersectsConvexHull( hull2 ) );
 
