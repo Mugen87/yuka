@@ -8460,9 +8460,9 @@
 		*/
 		intersectsPlane( plane ) {
 
-			d.crossVectors( this.normal, plane.normal );
+			const d = this.normal.dot( plane.normal );
 
-			return ( d.dot( d ) > 0 );
+			return ( Math.abs( d ) !== 1 );
 
 		}
 
