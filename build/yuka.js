@@ -8434,7 +8434,7 @@
 
 			d.crossVectors( this.normal, plane.normal );
 
-			// if v1 is (near) zero, the planes are parallel (and separated)
+			// if d is (near) zero, the planes are parallel (and separated)
 			// or coincident, so they’re not considered intersecting
 
 			const denom = d.dot( d );
