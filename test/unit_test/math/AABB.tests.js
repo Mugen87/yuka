@@ -8,6 +8,7 @@ const MathJSONs = require( '../../files/MathJSONs.js' );
 
 const AABB = YUKA.AABB;
 const BoundingSphere = YUKA.BoundingSphere;
+const Plane = YUKA.Plane;
 const Matrix4 = YUKA.Matrix4;
 const Vector3 = YUKA.Vector3;
 
@@ -246,6 +247,37 @@ describe( 'AABB', function () {
 			const sphere = new BoundingSphere( new Vector3( 0.5, 0.5, 1.5 ), 0.4 );
 
 			expect( aabb.intersectsBoundingSphere( sphere ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#intersectsPlane()', function () {
+
+		it( 'should return true if a plane intersects the AABB', function () {
+
+			const aabb = new AABB( zero3, one3 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), - 0.5 );
+
+			expect( aabb.intersectsPlane( plane ) ).to.be.true;
+
+		} );
+
+		it( 'should return true if a plane touches the AABB', function () {
+
+			const aabb = new AABB( zero3, one3 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), - 1 );
+
+			expect( aabb.intersectsPlane( plane ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if a plane does not intersect the AABB', function () {
+
+			const aabb = new AABB( zero3, one3 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), - 2 );
+
+			expect( aabb.intersectsPlane( plane ) ).to.be.false;
 
 		} );
 

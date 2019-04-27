@@ -4863,6 +4863,34 @@
 		}
 
 		/**
+		* Returns true if the given plane intersects this AABB.
+		*
+		* Reference: Testing Box Against Plane in Real-Time Collision Detection
+		* by Christer Ericson (chapter 5.2.3)
+		*
+		* @param {Plane} plane - The plane to test.
+		* @return {Boolean} The result of the intersection test.
+		*/
+		intersectsPlane( plane ) {
+
+			const normal = plane.normal;
+
+			this.getCenter( center );
+			size.subVectors( this.max, center ); // positive extends
+
+			// compute the projection interval radius of b onto L(t) = c + t * plane.normal
+
+			const r = size.x * Math.abs( normal.x ) + size.y * Math.abs( normal.y ) + size.z * Math.abs( normal.z );
+
+			// compute distance of box center from plane
+
+			const s = plane.distanceToPoint( center );
+
+			return Math.abs( s ) <= r;
+
+		}
+
+		/**
 		* Returns the normal for a given point on this AABB's surface.
 		*
 		* @param {Vector3} point - The point on the surface
