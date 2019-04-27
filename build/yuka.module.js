@@ -8290,6 +8290,7 @@ class EventDispatcher {
 
 const v1$2 = new Vector3();
 const v2 = new Vector3();
+const d = new Vector3();
 
 /**
 * Class representing a plane in 3D space. The plane is specified in Hessian normal form.
@@ -8407,6 +8408,55 @@ class Plane {
 		this.fromNormalAndCoplanarPoint( v1$2, a );
 
 		return this;
+
+	}
+
+	/**
+	* Performs a plane/plane intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	*
+	* Reference: Intersection of Two Planes in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.4.4)
+	*
+	* @param {Plane} plane - The plane to test.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectPlane( plane, result ) {
+
+		// compute direction of intersection line
+
+		d.crossVectors( this.normal, plane.normal );
+
+		// if v1 is (near) zero, the planes are parallel (and separated)
+		// or coincident, so they’re not considered intersecting
+
+		const denom = d.dot( d );
+
+		if ( denom <= 0 ) return null;
+
+		// compute point on intersection line
+
+		v1$2.copy( plane.normal ).multiplyScalar( this.constant );
+		v2.copy( this.normal ).multiplyScalar( plane.constant );
+
+		result.crossVectors( v1$2.sub( v2 ), d ).divideScalar( denom );
+
+		return result;
+
+	}
+
+	/**
+	* Returns true if the given plane intersects this plane.
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsPlane( plane ) {
+
+		d.crossVectors( this.normal, plane.normal );
+
+		return ( d.dot( d ) > 0 );
 
 	}
 
@@ -13964,7 +14014,7 @@ const directionA = new Vector3();
 const directionB = new Vector3();
 
 const c = new Vector3();
-const d = new Vector3();
+const d$1 = new Vector3();
 const v = new Vector3();
 
 /**
@@ -14108,12 +14158,12 @@ class SAT {
 		const a = edgeA.polygon.plane.normal;
 		const b = edgeA.twin.polygon.plane.normal;
 		c.copy( edgeB.polygon.plane.normal );
-		d.copy( edgeB.twin.polygon.plane.normal );
+		d$1.copy( edgeB.twin.polygon.plane.normal );
 
 		// negate normals c and d to account for minkowski difference
 
 		c.multiplyScalar( - 1 );
-		d.multiplyScalar( - 1 );
+		d$1.multiplyScalar( - 1 );
 
 		// compute triple products
 
@@ -14121,7 +14171,7 @@ class SAT {
 		// have same direction as the cross product between their adjacent face normals
 
 		const cba = c.dot( directionA );
-		const dba = d.dot( directionA );
+		const dba = d$1.dot( directionA );
 		const adc = a.dot( directionB );
 		const bdc = b.dot( directionB );
 

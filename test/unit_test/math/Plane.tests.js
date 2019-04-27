@@ -156,6 +156,56 @@ describe( 'Plane', function () {
 
 	} );
 
+	describe( '#intersectPlane()', function () {
+
+		it( 'should fill the given result vector with the intersection point of a plane/plane intersection test', function () {
+
+			const plane1 = new Plane( new Vector3( 0, 1, 0 ), 0 );
+			const plane2 = new Plane( new Vector3( 0, 0, 1 ), - 1 );
+			const intersection = new Vector3();
+
+			expect( plane1.intersectPlane( plane2, intersection ) ).to.deep.equal( { x: 0, y: 0, z: - 1 } );
+
+		} );
+
+		it( 'should return null if there is no intersection', function () {
+
+			// planes are parallel
+
+			const plane1 = new Plane( new Vector3( 0, 1, 0 ), 0 );
+			const plane2 = new Plane( new Vector3( 0, 1, 0 ), - 1 );
+			const intersection = new Vector3();
+
+			expect( plane1.intersectPlane( plane2, intersection ) ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#intersectsPlane()', function () {
+
+		it( 'should return true if the given plane intersects this plane', function () {
+
+			const plane1 = new Plane( new Vector3( 0, 1, 0 ), 0 );
+			const plane2 = new Plane( new Vector3( 0, 0, 1 ), - 1 );
+
+			expect( plane1.intersectsPlane( plane2 ) ).to.be.true;
+
+		} );
+
+		it( 'should return true if the given plane does not intersect this plane', function () {
+
+			// planes are parallel
+
+			const plane1 = new Plane( new Vector3( 0, 1, 0 ), 0 );
+			const plane2 = new Plane( new Vector3( 0, 1, 0 ), - 1 );
+
+			expect( plane1.intersectsPlane( plane2 ) ).to.be.false;
+
+		} );
+
+	} );
+
 	describe( '#projectPoint()', function () {
 
 		it( 'should project a point onto the given plane', function () {
