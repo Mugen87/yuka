@@ -7,6 +7,7 @@ const YUKA = require( '../../../build/yuka.js' );
 const MathJSONs = require( '../../files/MathJSONs.js' );
 
 const BoundingSphere = YUKA.BoundingSphere;
+const Plane = YUKA.Plane;
 const Matrix4 = YUKA.Matrix4;
 const Vector3 = YUKA.Vector3;
 
@@ -165,6 +166,37 @@ describe( 'BoundingSphere', function () {
 			const sphere2 = new BoundingSphere( two3, 1 );
 
 			expect( sphere1.intersectsBoundingSphere( sphere2 ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#intersectsPlane()', function () {
+
+		it( 'should return true if the given plane intersects this bounding sphere', function () {
+
+			const sphere = new BoundingSphere( zero3, 1 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), - 0.5 );
+
+			expect( sphere.intersectsPlane( plane ) ).to.be.true;
+
+		} );
+
+		it( 'should return true if the given plane and the bounding sphere touch each other', function () {
+
+			const sphere = new BoundingSphere( zero3, 1 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), - 1 );
+
+			expect( sphere.intersectsPlane( plane ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if the given plane does not intersect this bounding sphere', function () {
+
+			const sphere = new BoundingSphere( zero3, 1 );
+			const plane = new Plane( new Vector3( 0, 1, 0 ), - 2 );
+
+			expect( sphere.intersectsPlane( plane ) ).to.be.false;
 
 		} );
 

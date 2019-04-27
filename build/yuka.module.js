@@ -5175,6 +5175,21 @@ class BoundingSphere {
 	}
 
 	/**
+	* Returns true if the given plane intersects this bounding sphere.
+	*
+	* Reference: Testing Sphere Against Plane in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.2.2)
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsPlane( plane ) {
+
+		return Math.abs( plane.distanceToPoint( this.center ) ) <= this.radius;
+
+	}
+
+	/**
 	* Returns the normal for a given point on this bounding sphere's surface.
 	*
 	* @param {Vector3} point - The point on the surface
