@@ -18,11 +18,18 @@
 
 	import * as YUKA from '../../build/yuka.module.js';
 	import * as THREE from '../lib/three.module.js';
+	import * as DAT from '../lib/dat.gui.module.js';
 	import { OrbitControls } from '../lib/OrbitControls.module.js';
 
 	import { createConvexHullHelper } from './common/js/ConvexHullHelper.js';
 
 	let renderer, scene, camera;
+
+	const helpers = [];
+
+	const params = {
+		showConvexHulls: true
+	};
 
 	init();
 	animate();
@@ -70,22 +77,7 @@
 		const hull1 = createConvexHull( points1 );
 		const hull2 = createConvexHull( points2 );
 
-		const obb1 = createOBB( points1 );
-		const obb2 = createOBB( points2 );
-
-		const aabb = new YUKA.AABB().fromCenterAndSize( new YUKA.Vector3( 0, 20, 0 ), new YUKA.Vector3( 20, 20, 20 ) );
-
-		const boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
-		const boxMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-		const box = new THREE.Mesh( boxGeometry, boxMaterial );
-		aabb.getCenter( box.position );
-		scene.add( box );
-
-		const sphere = new YUKA.BoundingSphere( new YUKA.Vector3( 0, 0, 0 ), 5 );
-
-		console.log( obb1.intersectsAABB( aabb ) );
-
-		// console.log( hull1.intersectsConvexHull( hull2 ) );
+		console.log( hull1.intersectsConvexHull( hull2 ) );
 
 		//
 
@@ -93,6 +85,22 @@
 
 		const controls = new OrbitControls( camera, renderer.domElement );
 		controls.minDistance = 1;
+
+		// dat.gui
+
+		const gui = new DAT.GUI( { width: 300 } );
+
+		gui.add( params, 'showConvexHulls' ).onChange( ( value ) => {
+
+			for ( const helper of helpers ) {
+
+				helper.visible = value;
+
+			}
+
+		} );
+
+		gui.open();
 
 	}
 
@@ -124,7 +132,7 @@
 
 		const geometry = new THREE.BufferGeometry();
 		geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-		const material = new THREE.PointsMaterial( { size: 0.5 } );
+		const material = new THREE.PointsMaterial( { color: Math.random() * 0xffffff, size: 0.5 } );
 
 		const pointCloud = new THREE.Points( geometry, material );
 		scene.add( pointCloud );
@@ -132,29 +140,10 @@
 		const hull = new YUKA.ConvexHull().fromPoints( points );
 
 		const helper = createConvexHullHelper( hull );
+		helpers.push( helper );
 		scene.add( helper );
 
 		return hull;
-
-	}
-
-	function createOBB( points ) {
-
-		const obb = new YUKA.OBB().fromPoints( points );
-
-		const boxGeometry = new THREE.BoxBufferGeometry( obb.halfSizes.x * 2, obb.halfSizes.y * 2, obb.halfSizes.z * 2 );
-		const boxMaterial = new THREE.MeshBasicMaterial( { wireframe: true } );
-		const box = new THREE.Mesh( boxGeometry, boxMaterial );
-
-		box.position.copy( obb.center );
-
-		const quaternion = new YUKA.Quaternion().fromMatrix3( obb.rotation );
-
-		box.quaternion.copy( quaternion );
-
-		scene.add( box );
-
-		return obb;
 
 	}
 

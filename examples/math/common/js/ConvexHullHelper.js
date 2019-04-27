@@ -69,7 +69,7 @@ function createConvexHullHelper( convexHull ) {
 	const centroidGeometry = new THREE.BufferGeometry();
 	centroidGeometry.addAttribute( 'position', new THREE.Float32BufferAttribute( centroids, 3 ) );
 
-	const centroidMaterial = new THREE.PointsMaterial( { color: 0xffff00, size: 0.5 } );
+	const centroidMaterial = new THREE.PointsMaterial( { color: 0xffff00, size: 0.25 } );
 	const pointCloud = new THREE.Points( centroidGeometry, centroidMaterial );
 
 	mesh.add( pointCloud );
