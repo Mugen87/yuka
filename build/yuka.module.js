@@ -16024,7 +16024,12 @@ const v1$3 = new Vector3();
 const closestPoint$1 = new Vector3();
 
 /**
-* Class representing an oriented bounding box (OBB).
+* Class representing an oriented bounding box (OBB). Similar to an AABB, it's a
+* rectangular block but with an arbitrary orientation. When using {@link OBB#fromPoints},
+* the implementation tries to provide a tight-fitting oriented bounding box. In
+* many cases, the result is better than an AABB or bounding sphere but worse than a
+* convex hull. However, it's more efficient to work with OBBs compared to convex hulls.
+* In general, OBB's are a good compromise between performance and tightness.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -16401,6 +16406,11 @@ class OBB {
 	* According to the dissertation, the quality of the fitting process varies from
 	* the respective input. This method uses the best approach by computing the
 	* covariance matrix based on the triangles of the convex hull (chapter 3.4.3).
+	*
+	* However, the implementation is susceptible to {@link https://en.wikipedia.org/wiki/Regular_polygon regular polygons}
+	* like cubes or spheres. For such shapes, it's recommended to verify the quality
+	* of the produced OBB. Consider to use an AABB or bounding sphere if the result
+	* is not satisfying.
 	*
 	* @param {Array} points - An array of 3D vectors representing points in 3D space.
 	* @return {OBB} A reference to this OBB.
