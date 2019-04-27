@@ -10,6 +10,7 @@ const AABB = YUKA.AABB;
 const BoundingSphere = YUKA.BoundingSphere;
 const OBB = YUKA.OBB;
 const Plane = YUKA.Plane;
+const Quaternion = YUKA.Quaternion;
 const Matrix3 = YUKA.Matrix3;
 const Vector3 = YUKA.Vector3;
 
@@ -280,100 +281,77 @@ describe( 'OBB', function () {
 
 		it( 'should return true if the given OBB intersects this OBB', function () {
 
-			const points2 = [
-				new Vector3( 2, 14, 5 ),
-				new Vector3( 2, 14, 6 ),
-				new Vector3( 2, 12, 5 ),
-				new Vector3( 2, 12, 6 ),
-				new Vector3( 0, 14, 5 ),
-				new Vector3( 0, 14, 6 ),
-				new Vector3( 0, 12, 5 ),
-				new Vector3( 0, 12, 6 )
-			];
+			const obb1 = new OBB();
+			const obb2 = new OBB();
 
-			const points3 = [
-				new Vector3( 2, 2, 5 ),
-				new Vector3( 2, 2, 6 ),
-				new Vector3( 2, 0, 5 ),
-				new Vector3( 2, 0, 6 ),
-				new Vector3( 0, 2, 5 ),
-				new Vector3( 0, 2, 6 ),
-				new Vector3( 0, 0, 5 ),
-				new Vector3( 0, 0, 6 )
-			];
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
 
-			const obb2 = new OBB().fromPoints( points2 );
-			const obb3 = new OBB().fromPoints( points3 );
+			obb2.center.set( 4, 1, 15 );
+			obb2.halfSizes.set( 5, 5, 5 );
 
-			expect( obb.intersectsOBB( obb2 ) ).to.be.true; // interesction
-			expect( obb.intersectsOBB( obb3 ) ).to.be.true; // fully contained
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.true; // interesction
+
+		} );
+
+		it( 'should return true if the given OBB is fully contained in this OBB', function () {
+
+			const obb1 = new OBB();
+			const obb2 = new OBB();
+
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+
+			obb2.center.set( 4, 1, 10 );
+			obb2.halfSizes.set( 2, 2, 2 );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.true;
 
 		} );
 
 		it( 'should return false if there is no intersection (test A0,A1,A2)', function () {
 
-			const points2 = [
-				new Vector3( 2, 20, 5 ),
-				new Vector3( 2, 20, 6 ),
-				new Vector3( 2, 18, 5 ),
-				new Vector3( 2, 18, 6 ),
-				new Vector3( 0, 20, 5 ),
-				new Vector3( 0, 20, 6 ),
-				new Vector3( 0, 18, 5 ),
-				new Vector3( 0, 18, 6 )
-			];
+			const obb1 = new OBB();
+			const obb2 = new OBB();
 
-			const obb2 = new OBB().fromPoints( points2 );
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
 
-			expect( obb.intersectsOBB( obb2 ) ).to.be.false;
+			obb2.center.set( 4, 1, - 10 );
+			obb2.halfSizes.set( 5, 5, 5 );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
 
 		} );
 
 		it( 'should return false if there is no intersection (test B0,B1,B2)', function () {
 
-			const points2 = [
-				new Vector3( 20, - 28, 30 ),
-				new Vector3( 20, - 28, 0 ),
-				new Vector3( 20, - 26, 30 ),
-				new Vector3( 20, - 26, 0 ),
-				new Vector3( 0, - 28, 30 ),
-				new Vector3( 0, - 28, 0 ),
-				new Vector3( 0, - 26, 30 ),
-				new Vector3( 0, - 26, 0 )
-			];
+			const obb1 = new OBB();
+			const obb2 = new OBB();
 
-			const obb2 = new OBB().fromPoints( points2 );
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+			obb1.rotation.fromQuaternion( new Quaternion().fromEuler( Math.PI * 0.25, 0, 0 ) );
 
-			expect( obb.intersectsOBB( obb2 ) ).to.be.false;
+			obb2.center.set( 4, 1, - 10 );
+			obb2.halfSizes.set( 10, 10, 10 );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
 
 		} );
 
 		it( 'should return false if there is no intersection (test A2 x B0 and A0 x B2)', function () {
 
-			const points1 = [
-				new Vector3( 10, 14, 30 ),
-				new Vector3( 10, 14, 0 ),
-				new Vector3( 10, 5, 30 ),
-				new Vector3( 10, 5, 0 ),
-				new Vector3( 0, 15, 30 ),
-				new Vector3( 0, 15, 0 ),
-				new Vector3( 0, 5, 30 ),
-				new Vector3( 0, 5, 0 )
-			];
+			const obb1 = new OBB();
+			const obb2 = new OBB();
 
-			const points2 = [
-				new Vector3( 20, - 1.1, 10 ),
-				new Vector3( 20, - 1, 9 ),
-				new Vector3( 20, - 2, 10 ),
-				new Vector3( 20, - 1.6, 9 ),
-				new Vector3( - 20, - 1.1, 10 ),
-				new Vector3( - 20, - 1, 9 ),
-				new Vector3( - 20, - 2, 10 ),
-				new Vector3( - 20, - 2, 9 )
-			];
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+			obb1.rotation.fromQuaternion( new Quaternion().fromEuler( 0, 0, Math.PI * 0.25 ) );
 
-			const obb1 = new OBB().fromPoints( points1 );
-			const obb2 = new OBB().fromPoints( points2 );
+			obb2.center.set( 4, 20, 10 );
+			obb2.halfSizes.set( 8, 8, 8 );
+			obb2.rotation.fromQuaternion( new Quaternion().fromEuler( Math.PI * 0.25, 0, 0 ) );
 
 			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
 			expect( obb2.intersectsOBB( obb1 ) ).to.be.false;
@@ -382,33 +360,85 @@ describe( 'OBB', function () {
 
 		it( 'should return false if there is no intersection (test A2 x B1 abd A1 x B2)', function () {
 
-			const points1 = [
-				new Vector3( 10, 14, 30 ),
-				new Vector3( 10, 14, 0 ),
-				new Vector3( 10, 5, 30 ),
-				new Vector3( 10, 5, 0 ),
-				new Vector3( 0, 15, 30 ),
-				new Vector3( 0, 15, 0 ),
-				new Vector3( 0, 5, 30 ),
-				new Vector3( 0, 5, 0 )
-			];
+			const obb1 = new OBB();
+			const obb2 = new OBB();
 
-			const points2 = [
-				new Vector3( 20, 20, 10 ),
-				new Vector3( 20, 20, 9 ),
-				new Vector3( 20, - 20, 10 ),
-				new Vector3( 20, - 20, 9 ),
-				new Vector3( 18, 20, 10 ),
-				new Vector3( 18, 20, 11 ),
-				new Vector3( 18, - 20, 10 ),
-				new Vector3( 18, - 20, 9 )
-			];
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+			obb1.rotation.fromQuaternion( new Quaternion().fromEuler( 0, Math.PI * 0.25, 0 ) );
 
-			const obb1 = new OBB().fromPoints( points1 );
-			const obb2 = new OBB().fromPoints( points2 );
+			obb2.center.set( 20, 1, 8 );
+			obb2.halfSizes.set( 5, 5, 5 );
+			obb2.rotation.fromQuaternion( new Quaternion().fromEuler( 0, 0, Math.PI * 0.25 ) );
 
 			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
 			expect( obb2.intersectsOBB( obb1 ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if there is no intersection (test A0 x B1 and A1 x B0)', function () {
+
+			const obb1 = new OBB();
+			const obb2 = new OBB();
+
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+			obb1.rotation.fromQuaternion( new Quaternion().fromEuler( Math.PI * 0.25, 0, 0 ) );
+
+			obb2.center.set( 4, 1, - 8 );
+			obb2.halfSizes.set( 5, 5, 5 );
+			obb2.rotation.fromQuaternion( new Quaternion().fromEuler( 0, Math.PI * 0.25, 0 ) );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
+			expect( obb2.intersectsOBB( obb1 ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if there is no intersection (test A0 x B0)', function () {
+
+			const obb1 = new OBB();
+			const obb2 = new OBB();
+
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+
+			obb2.center.set( 4, - 10, 20 );
+			obb2.halfSizes.set( 5, 5, 5 );
+			obb2.rotation.fromQuaternion( new Quaternion().fromEuler( Math.PI * 0.2, - Math.PI * 0.2, Math.PI * 0.5 ) );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if there is no intersection (test A1 x B1)', function () {
+
+			const obb1 = new OBB();
+			const obb2 = new OBB();
+
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+
+			obb2.center.set( - 8, 1, 0 );
+			obb2.halfSizes.set( 5, 5, 5 );
+			obb2.rotation.fromQuaternion( new Quaternion().fromEuler( Math.PI * 0.2, Math.PI * 0.2, Math.PI * 0.5 ) );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if there is no intersection (test A2 x B2)', function () {
+
+			const obb1 = new OBB();
+			const obb2 = new OBB();
+
+			obb1.center.set( 4, 1, 10 );
+			obb1.halfSizes.set( 5, 5, 5 );
+
+			obb2.center.set( 14, 11, 10 );
+			obb2.halfSizes.set( 5, 5, 5 );
+			obb2.rotation.fromQuaternion( new Quaternion().fromEuler( - Math.PI * 0.1, - Math.PI * 0.2, 0 ) );
+
+			expect( obb1.intersectsOBB( obb2 ) ).to.be.false;
 
 		} );
 

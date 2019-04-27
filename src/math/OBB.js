@@ -209,8 +209,6 @@ class OBB {
 
 	}
 
-	/* istanbul ignore next */
-
 	/**
 	* Returns true if the given OBB intersects this OBB.
 	*
