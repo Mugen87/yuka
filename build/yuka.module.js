@@ -1165,6 +1165,9 @@ const worldRight = new Vector3();
 const perpWorldUp = new Vector3();
 const temp = new Vector3();
 
+const colVal = [ 2, 2, 1 ];
+const rowVal = [ 1, 0, 0 ];
+
 /**
 * Class representing a 3x3 matrix. The elements of the matrix
 * are stored in column-major order.
@@ -1441,6 +1444,179 @@ class Matrix3 {
 		t = e[ 5 ]; e[ 5 ] = e[ 7 ]; e[ 7 ] = t;
 
 		return this;
+
+	}
+
+	/**
+	* Computes the element index according to the given column and row.
+	*
+	* @param {Number} column - Index of the column.
+	* @param {Number} row - Index of the row.
+	* @return {Number} The index of the element at the provided row and column.
+	*/
+	getElementIndex( column, row ) {
+
+		return column * 3 + row;
+
+	}
+
+	/**
+	* Computes the frobenius norm. It's the squareroot of the sum of all
+	* squared matrix elements.
+	*
+	* @return {Number} The frobenius norm.
+	*/
+	frobeniusNorm() {
+
+		const e = this.elements;
+		let norm = 0;
+
+		for ( let i = 0; i < 9; i ++ ) {
+
+			norm += e[ i ] * e[ i ];
+
+		}
+
+		return Math.sqrt( norm );
+
+	}
+
+	/**
+	* Computes the  "off-diagonal" frobenius norm. Assumes the matrix is symmetric.
+	*
+	* @return {Number} The "off-diagonal" frobenius norm.
+	*/
+	offDiagonalFrobeniusNorm() {
+
+		const e = this.elements;
+		let norm = 0;
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			const t = e[ this.getElementIndex( colVal[ i ], rowVal[ i ] ) ];
+			norm += 2 * t * t; // multiply the result by two since the matrix is symetric
+
+		}
+
+		return Math.sqrt( norm );
+
+	}
+
+	/**
+	* Computes the eigenvectors and eigenvalues.
+	*
+	* Reference: https://github.com/AnalyticalGraphicsInc/cesium/blob/411a1afbd36b72df64d7362de6aa934730447234/Source/Core/Matrix3.js#L1141 (Apache License 2.0)
+	*
+	* The values along the diagonal of the diagonal matrix are the eigenvalues.
+	* The columns of the unitary matrix are the corresponding eigenvectors.
+	*
+	* @param {Object} result - An object with unitary and diagonal properties which are matrices onto which to store the result.
+	* @return {Object} An object with unitary and diagonal properties which are matrices onto which to store the result.
+	*/
+	eigenDecomposition( result ) {
+
+		let count = 0;
+		let sweep = 0;
+
+		const maxSweeps = 10;
+
+		result.unitary.identity();
+		result.diagonal.copy( this );
+
+		const unitaryMatrix = result.unitary;
+		const diagonalMatrix = result.diagonal;
+
+		const epsilon = Number.EPSILON * diagonalMatrix.frobeniusNorm();
+
+		while ( sweep < maxSweeps && diagonalMatrix.offDiagonalFrobeniusNorm() > epsilon ) {
+
+			diagonalMatrix.shurDecomposition( m1 );
+			m2.copy( m1 ).transpose();
+			diagonalMatrix.multiply( m1 );
+			diagonalMatrix.premultiply( m2 );
+			unitaryMatrix.multiply( m1 );
+
+			if ( ++ count > 2 ) {
+
+				sweep ++;
+				count = 0;
+
+			}
+
+		}
+
+		return result;
+
+	}
+
+	/**
+	* Finds the largest off-diagonal term and then creates a matrix
+	* which can be used to help reduce it.
+	*
+	* @param {Matrix3} result - The result matrix.
+	* @return {Matrix3} The result matrix.
+	*/
+	shurDecomposition( result ) {
+
+		let maxDiagonal = 0;
+		let rotAxis = 1;
+
+		// find pivot (rotAxis) based on largest off-diagonal term
+
+		const e = this.elements;
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			const t = Math.abs( e[ this.getElementIndex( colVal[ i ], rowVal[ i ] ) ] );
+
+			if ( t > maxDiagonal ) {
+
+				maxDiagonal = t;
+				rotAxis = i;
+
+			}
+
+		}
+
+		let c = 1;
+		let s = 0;
+
+		const p = rowVal[ rotAxis ];
+		const q = colVal[ rotAxis ];
+
+		if ( Math.abs( e[ this.getElementIndex( q, p ) ] ) > Number.EPSILON ) {
+
+			const qq = e[ this.getElementIndex( q, q ) ];
+			const pp = e[ this.getElementIndex( p, p ) ];
+			const qp = e[ this.getElementIndex( q, p ) ];
+
+			const tau = ( qq - pp ) / 2 / qp;
+
+			let t;
+
+			if ( tau < 0 ) {
+
+				t = - 1 / ( - tau + Math.sqrt( 1 + tau * tau ) );
+
+			} else {
+
+				t = 1 / ( tau + Math.sqrt( 1.0 + tau * tau ) );
+
+			}
+
+			c = 1.0 / Math.sqrt( 1.0 + t * t );
+			s = t * c;
+
+		}
+
+		result.identity();
+
+		result.elements[ this.getElementIndex( p, p ) ] = c;
+		result.elements[ this.getElementIndex( q, q ) ] = c;
+		result.elements[ this.getElementIndex( q, p ) ] = s;
+		result.elements[ this.getElementIndex( p, q ) ] = - s;
+
+		return result;
 
 	}
 
@@ -2531,6 +2707,7 @@ class Matrix4 {
 
 	/**
 	* Uses the given quaternion to transform the upper left 3x3 part to a rotation matrix.
+	* Other parts of the matrix are equal to the identiy matrix.
 	*
 	* @param {Quaternion} q - A quaternion representing a rotation.
 	* @return {Matrix4} A reference to this matrix.
@@ -2559,6 +2736,42 @@ class Matrix4 {
 
 		e[ 3 ] = 0;
 		e[ 7 ] = 0;
+		e[ 11 ] = 0;
+
+		e[ 12 ] = 0;
+		e[ 13 ] = 0;
+		e[ 14 ] = 0;
+		e[ 15 ] = 1;
+
+		return this;
+
+	}
+
+	/**
+	* Sets the upper-left 3x3 portion of this matrix by the given 3x3 matrix. Other
+	* parts of the matrix are equal to the identiy matrix.
+	*
+	* @param {Matrix3} m - A 3x3 matrix.
+	* @return {Matrix4} A reference to this matrix.
+	*/
+	fromMatrix3( m ) {
+
+		const e = this.elements;
+		const me = m.elements;
+
+		e[ 0 ] = me[ 0 ];
+		e[ 1 ] = me[ 1 ];
+		e[ 2 ] = me[ 2 ];
+		e[ 3 ] = 0;
+
+		e[ 4 ] = me[ 3 ];
+		e[ 5 ] = me[ 4 ];
+		e[ 6 ] = me[ 5 ];
+		e[ 7 ] = 0;
+
+		e[ 8 ] = me[ 6 ];
+		e[ 9 ] = me[ 7 ];
+		e[ 10 ] = me[ 8 ];
 		e[ 11 ] = 0;
 
 		e[ 12 ] = 0;
@@ -4644,6 +4857,34 @@ class AABB {
 	}
 
 	/**
+	* Returns true if the given plane intersects this AABB.
+	*
+	* Reference: Testing Box Against Plane in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.2.3)
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsPlane( plane ) {
+
+		const normal = plane.normal;
+
+		this.getCenter( center );
+		size.subVectors( this.max, center ); // positive extends
+
+		// compute the projection interval radius of b onto L(t) = c + t * plane.normal
+
+		const r = size.x * Math.abs( normal.x ) + size.y * Math.abs( normal.y ) + size.z * Math.abs( normal.z );
+
+		// compute distance of box center from plane
+
+		const s = plane.distanceToPoint( center );
+
+		return Math.abs( s ) <= r;
+
+	}
+
+	/**
 	* Returns the normal for a given point on this AABB's surface.
 	*
 	* @param {Vector3} point - The point on the surface
@@ -4934,6 +5175,21 @@ class BoundingSphere {
 	}
 
 	/**
+	* Returns true if the given plane intersects this bounding sphere.
+	*
+	* Reference: Testing Sphere Against Plane in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.2.2)
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsPlane( plane ) {
+
+		return Math.abs( plane.distanceToPoint( this.center ) ) <= this.radius;
+
+	}
+
+	/**
 	* Returns the normal for a given point on this bounding sphere's surface.
 	*
 	* @param {Vector3} point - The point on the surface
@@ -5030,6 +5286,10 @@ const v1$1 = new Vector3();
 const edge1 = new Vector3();
 const edge2 = new Vector3();
 const normal = new Vector3();
+const size$1 = new Vector3();
+const matrix$1 = new Matrix4();
+const inverse = new Matrix4();
+const aabb$1 = new AABB();
 
 /**
 * Class representing a ray in 3D space.
@@ -5360,6 +5620,58 @@ class Ray {
 	}
 
 	/**
+	* Performs a ray/OBB intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	*
+	* @param {OBB} obb - An orientend bounding box.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectOBB( obb, result ) {
+
+		// the idea is to perform the intersection test in the local space
+		// of the OBB.
+
+		obb.getSize( size$1 );
+		aabb$1.fromCenterAndSize( v1$1.set( 0, 0, 0 ), size$1 );
+
+		matrix$1.fromMatrix3( obb.rotation );
+		matrix$1.setPosition( obb.center );
+
+		// transform ray to the local space of the OBB
+
+		localRay.copy( this ).applyMatrix4( matrix$1.getInverse( inverse ) );
+
+		// perform ray <-> AABB intersection test
+
+		if ( localRay.intersectAABB( aabb$1, result ) ) {
+
+			// transform the intersection point back to world space
+
+			return result.applyMatrix4( matrix$1 );
+
+		} else {
+
+			return null;
+
+		}
+
+	}
+
+	/**
+	* Performs a ray/OBB intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {OBB} obb - An orientend bounding box.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
+	intersectsOBB( obb ) {
+
+		return this.intersectOBB( obb, v1$1 ) !== null;
+
+	}
+
+	/**
 	* Performs a ray/convex hull intersection test and stores the intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	* The implementation is based on "Fast Ray-Convex Polyhedron Intersection"
@@ -5571,7 +5883,9 @@ class Ray {
 
 }
 
-const inverse = new Matrix4();
+const localRay = new Ray();
+
+const inverse$1 = new Matrix4();
 const localPositionOfObstacle = new Vector3();
 const localPositionOfClosestObstacle = new Vector3();
 const intersectionPoint = new Vector3();
@@ -5643,7 +5957,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-		vehicle.worldMatrix.getInverse( inverse );
+		vehicle.worldMatrix.getInverse( inverse$1 );
 
 		for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 
@@ -5653,7 +5967,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 			// calculate this obstacle's position in local space of the vehicle
 
-			localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
+			localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse$1 );
 
 			// if the local position has a positive z value then it must lay behind the agent.
 			// besides the absolute z value must be smaller than the length of the detection box
@@ -7976,6 +8290,7 @@ class EventDispatcher {
 
 const v1$2 = new Vector3();
 const v2 = new Vector3();
+const d = new Vector3();
 
 /**
 * Class representing a plane in 3D space. The plane is specified in Hessian normal form.
@@ -8093,6 +8408,55 @@ class Plane {
 		this.fromNormalAndCoplanarPoint( v1$2, a );
 
 		return this;
+
+	}
+
+	/**
+	* Performs a plane/plane intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	*
+	* Reference: Intersection of Two Planes in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.4.4)
+	*
+	* @param {Plane} plane - The plane to test.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectPlane( plane, result ) {
+
+		// compute direction of intersection line
+
+		d.crossVectors( this.normal, plane.normal );
+
+		// if v1 is (near) zero, the planes are parallel (and separated)
+		// or coincident, so they’re not considered intersecting
+
+		const denom = d.dot( d );
+
+		if ( denom <= 0 ) return null;
+
+		// compute point on intersection line
+
+		v1$2.copy( plane.normal ).multiplyScalar( this.constant );
+		v2.copy( this.normal ).multiplyScalar( plane.constant );
+
+		result.crossVectors( v1$2.sub( v2 ), d ).divideScalar( denom );
+
+		return result;
+
+	}
+
+	/**
+	* Returns true if the given plane intersects this plane.
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsPlane( plane ) {
+
+		d.crossVectors( this.normal, plane.normal );
+
+		return ( d.dot( d ) > 0 );
 
 	}
 
@@ -13650,7 +14014,7 @@ const directionA = new Vector3();
 const directionB = new Vector3();
 
 const c = new Vector3();
-const d = new Vector3();
+const d$1 = new Vector3();
 const v = new Vector3();
 
 /**
@@ -13794,12 +14158,12 @@ class SAT {
 		const a = edgeA.polygon.plane.normal;
 		const b = edgeA.twin.polygon.plane.normal;
 		c.copy( edgeB.polygon.plane.normal );
-		d.copy( edgeB.twin.polygon.plane.normal );
+		d$1.copy( edgeB.twin.polygon.plane.normal );
 
 		// negate normals c and d to account for minkowski difference
 
 		c.multiplyScalar( - 1 );
-		d.multiplyScalar( - 1 );
+		d$1.multiplyScalar( - 1 );
 
 		// compute triple products
 
@@ -13807,7 +14171,7 @@ class SAT {
 		// have same direction as the cross product between their adjacent face normals
 
 		const cba = c.dot( directionA );
-		const dba = d.dot( directionA );
+		const dba = d$1.dot( directionA );
 		const adc = a.dot( directionB );
 		const bdc = b.dot( directionB );
 
@@ -14313,7 +14677,10 @@ function leftOn( a, b, c ) {
 }
 
 /**
-* Base class for polyhedra.
+* Base class for polyhedra. It is primarily designed for the internal usage in Yuka.
+* Objects of this class are always build up from faces. The edges, vertices and
+* the polyhedron's centroid have to be derived from a valid face definition with the
+* respective methods.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -14462,7 +14829,15 @@ class Polyhedron {
 
 	}
 
+	/**
+	* Configures this polyhedron so it does represent the given AABB.
+	*
+	* @return {Polyhedron} A reference to this polyhedron.
+	*/
 	fromAABB( aabb ) {
+
+		this.faces.length = 0;
+		this.vertices.length = 0;
 
 		const min = aabb.min;
 		const max = aabb.max;
@@ -14478,8 +14853,7 @@ class Polyhedron {
 			new Vector3( min.x, min.y, min.z )
 		];
 
-		const polyhedron = new Polyhedron();
-		polyhedron.vertices = vertices;
+		this.vertices.push( ... vertices );
 
 		const sideTop = new Polygon().fromContour( [
 			vertices[ 4 ],
@@ -14542,7 +14916,7 @@ class Polyhedron {
 
 		//
 
-		polyhedron.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
+		this.faces.push( sideTop, sideRight, sideFront, sideBack, sideBottom, sideLeft );
 
 		// compute centroids
 
@@ -14553,13 +14927,13 @@ class Polyhedron {
 		sideBottom.computeCentroid();
 		sideLeft.computeCentroid();
 
-		aabb.getCenter( polyhedron.centroid );
+		aabb.getCenter( this.centroid );
 
 		//
 
-		polyhedron.computeUniqueEdges();
+		this.computeUniqueEdges();
 
-		return polyhedron;
+		return this;
 
 	}
 
@@ -15714,6 +16088,649 @@ class VertexList {
 	}
 
 }
+
+const eigenDecomposition = {
+	unitary: new Matrix3(),
+	diagonal: new Matrix3()
+};
+
+const a = {
+	c: null, // center
+	u: [ new Vector3(), new Vector3(), new Vector3() ], // basis vectors
+	e: [] // half width
+};
+
+const b = {
+	c: null, // center
+	u: [ new Vector3(), new Vector3(), new Vector3() ], // basis vectors
+	e: [] // half width
+};
+
+const R = [[], [], []];
+const AbsR = [[], [], []];
+const t = [];
+
+const xAxis = new Vector3();
+const yAxis = new Vector3();
+const zAxis = new Vector3();
+const v1$3 = new Vector3();
+const closestPoint$1 = new Vector3();
+
+/**
+* Class representing an oriented bounding box (OBB). Similar to an AABB, it's a
+* rectangular block but with an arbitrary orientation. When using {@link OBB#fromPoints},
+* the implementation tries to provide a tight-fitting oriented bounding box. In
+* many cases, the result is better than an AABB or bounding sphere but worse than a
+* convex hull. However, it's more efficient to work with OBBs compared to convex hulls.
+* In general, OBB's are a good compromise between performance and tightness.
+*
+* @author {@link https://github.com/Mugen87|Mugen87}
+*/
+class OBB {
+
+	/**
+	* Constructs a new OBB with the given values.
+	*
+	* @param {Vector3} center - The center of this OBB.
+	* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
+	* @param {Quaternion} rotation - The rotation of this OBB.
+	*/
+	constructor( center = new Vector3(), halfSizes = new Vector3(), rotation = new Matrix3() ) {
+
+		/**
+		* The center of this OBB.
+		* @type Vector3
+		*/
+		this.center = center;
+
+		/**
+		* The half sizes of the OBB (defines its width, height and depth).
+		* @type Vector3
+		*/
+		this.halfSizes = halfSizes;
+
+		/**
+		* The rotation of this OBB.
+		* @type Matrix3
+		*/
+		this.rotation = rotation;
+
+	}
+
+	/**
+	* Sets the given values to this OBB.
+	*
+	* @param {Vector3} center - The center of this OBB
+	* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
+	* @param {Quaternion} rotation - The rotation of this OBB.
+	* @return {OBB} A reference to this OBB.
+	*/
+	set( center, halfSizes, rotation ) {
+
+		this.center = center;
+		this.halfSizes = halfSizes;
+		this.rotation = rotation;
+
+		return this;
+
+	}
+
+	/**
+	* Copies all values from the given OBB to this OBB.
+	*
+	* @param {OBB} obb - The OBB to copy.
+	* @return {OBB} A reference to this OBB.
+	*/
+	copy( obb ) {
+
+		this.center.copy( obb.center );
+		this.halfSizes.copy( obb.halfSizes );
+		this.rotation.copy( obb.rotation );
+
+		return this;
+
+	}
+
+	/**
+	* Creates a new OBB and copies all values from this OBB.
+	*
+	* @return {OBB} A new OBB.
+	*/
+	clone() {
+
+		return new this.constructor().copy( this );
+
+	}
+
+	/**
+	* Computes the size (width, height, depth) of this OBB and stores it into the given vector.
+	*
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	getSize( result ) {
+
+		return result.copy( this.halfSizes ).multiplyScalar( 2 );
+
+	}
+
+	/**
+	* Ensures the given point is inside this OBB and stores
+	* the result in the given vector.
+	*
+	* Reference: Closest Point on OBB to Point in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.1.4)
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	clampPoint( point, result ) {
+
+		const halfSizes = this.halfSizes;
+
+		v1$3.subVectors( point, this.center );
+		this.rotation.extractBasis( xAxis, yAxis, zAxis );
+
+		// start at the center position of the OBB
+
+		result.copy( this.center );
+
+		// project the target onto the OBB axes and walk towards that point
+
+		const x = MathUtils.clamp( v1$3.dot( xAxis ), - halfSizes.x, halfSizes.x );
+		result.add( xAxis.multiplyScalar( x ) );
+
+		const y = MathUtils.clamp( v1$3.dot( yAxis ), - halfSizes.y, halfSizes.y );
+		result.add( yAxis.multiplyScalar( y ) );
+
+		const z = MathUtils.clamp( v1$3.dot( zAxis ), - halfSizes.z, halfSizes.z );
+		result.add( zAxis.multiplyScalar( z ) );
+
+		return result;
+
+	}
+
+	/**
+	* Returns true if the given point is inside this OBB.
+	*
+	* @param {Vector3} point - A point in 3D space.
+	* @return {Boolean} Whether the given point is inside this OBB or not.
+	*/
+	containsPoint( point ) {
+
+		v1$3.subVectors( point, this.center );
+		this.rotation.extractBasis( xAxis, yAxis, zAxis );
+
+		// project v1 onto each axis and check if these points lie inside the OBB
+
+		return Math.abs( v1$3.dot( xAxis ) ) <= this.halfSizes.x &&
+				Math.abs( v1$3.dot( yAxis ) ) <= this.halfSizes.y &&
+				Math.abs( v1$3.dot( zAxis ) ) <= this.halfSizes.z;
+
+	}
+
+	/**
+	* Returns true if the given AABB intersects this OBB.
+	*
+	* @param {AABB} aabb - The AABB to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsAABB( aabb ) {
+
+		return this.intersectsOBB( obb.fromAABB( aabb ) );
+
+	}
+
+	/**
+	* Returns true if the given bounding sphere intersects this OBB.
+	*
+	* @param {BoundingSphere} sphere - The bounding sphere to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsBoundingSphere( sphere ) {
+
+		// find the point on the OBB closest to the sphere center
+
+		this.clampPoint( sphere.center, closestPoint$1 );
+
+		// if that point is inside the sphere, the OBB and sphere intersect
+
+		return closestPoint$1.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+	}
+
+	/**
+	* Returns true if the given OBB intersects this OBB.
+	*
+	* Reference: OBB-OBB Intersection in Real-Time Collision Detection
+	* by Christer Ericson (chapter 4.4.1)
+	*
+	* @param {OBB} obb - The OBB to test.
+	* @param {Number} epsilon - The epsilon (tolerance) value.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsOBB( obb, epsilon = Number.EPSILON ) {
+
+		// prepare data structures (the code uses the same nomenclature like the reference)
+
+		a.c = this.center;
+		a.e[ 0 ] = this.halfSizes.x;
+		a.e[ 1 ] = this.halfSizes.y;
+		a.e[ 2 ] = this.halfSizes.z;
+		this.rotation.extractBasis( a.u[ 0 ], a.u[ 1 ], a.u[ 2 ] );
+
+		b.c = obb.center;
+		b.e[ 0 ] = obb.halfSizes.x;
+		b.e[ 1 ] = obb.halfSizes.y;
+		b.e[ 2 ] = obb.halfSizes.z;
+		obb.rotation.extractBasis( b.u[ 0 ], b.u[ 1 ], b.u[ 2 ] );
+
+		// compute rotation matrix expressing b in a’s coordinate frame
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			for ( let j = 0; j < 3; j ++ ) {
+
+				R[ i ][ j ] = a.u[ i ].dot( b.u[ j ] );
+
+			}
+
+		}
+
+		// compute translation vector
+
+		v1$3.subVectors( b.c, a.c );
+
+		// bring translation into a’s coordinate frame
+
+		t[ 0 ] = v1$3.dot( a.u[ 0 ] );
+		t[ 1 ] = v1$3.dot( a.u[ 1 ] );
+		t[ 2 ] = v1$3.dot( a.u[ 2 ] );
+
+		// compute common subexpressions. Add in an epsilon term to
+		// counteract arithmetic errors when two edges are parallel and
+		// their cross product is (near) null
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			for ( let j = 0; j < 3; j ++ ) {
+
+				AbsR[ i ][ j ] = Math.abs( R[ i ][ j ] ) + epsilon;
+
+			}
+
+		}
+
+		let ra, rb;
+
+		// test axes L = A0, L = A1, L = A2
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			ra = a.e[ i ];
+			rb = b.e[ 0 ] * AbsR[ i ][ 0 ] + b.e[ 1 ] * AbsR[ i ][ 1 ] + b.e[ 2 ] * AbsR[ i ][ 2 ];
+			if ( Math.abs( t[ i ] ) > ra + rb ) return false;
+
+
+		}
+
+		// test axes L = B0, L = B1, L = B2
+
+		for ( let i = 0; i < 3; i ++ ) {
+
+			ra = a.e[ 0 ] * AbsR[ 0 ][ i ] + a.e[ 1 ] * AbsR[ 1 ][ i ] + a.e[ 2 ] * AbsR[ 2 ][ i ];
+			rb = b.e[ i ];
+			if ( Math.abs( t[ 0 ] * R[ 0 ][ i ] + t[ 1 ] * R[ 1 ][ i ] + t[ 2 ] * R[ 2 ][ i ] ) > ra + rb ) return false;
+
+		}
+
+		// test axis L = A0 x B0
+
+		ra = a.e[ 1 ] * AbsR[ 2 ][ 0 ] + a.e[ 2 ] * AbsR[ 1 ][ 0 ];
+		rb = b.e[ 1 ] * AbsR[ 0 ][ 2 ] + b.e[ 2 ] * AbsR[ 0 ][ 1 ];
+		if ( Math.abs( t[ 2 ] * R[ 1 ][ 0 ] - t[ 1 ] * R[ 2 ][ 0 ] ) > ra + rb ) return false;
+
+		// test axis L = A0 x B1
+
+		ra = a.e[ 1 ] * AbsR[ 2 ][ 1 ] + a.e[ 2 ] * AbsR[ 1 ][ 1 ];
+		rb = b.e[ 0 ] * AbsR[ 0 ][ 2 ] + b.e[ 2 ] * AbsR[ 0 ][ 0 ];
+		if ( Math.abs( t[ 2 ] * R[ 1 ][ 1 ] - t[ 1 ] * R[ 2 ][ 1 ] ) > ra + rb ) return false;
+
+		// test axis L = A0 x B2
+
+		ra = a.e[ 1 ] * AbsR[ 2 ][ 2 ] + a.e[ 2 ] * AbsR[ 1 ][ 2 ];
+		rb = b.e[ 0 ] * AbsR[ 0 ][ 1 ] + b.e[ 1 ] * AbsR[ 0 ][ 0 ];
+		if ( Math.abs( t[ 2 ] * R[ 1 ][ 2 ] - t[ 1 ] * R[ 2 ][ 2 ] ) > ra + rb ) return false;
+
+		// test axis L = A1 x B0
+
+		ra = a.e[ 0 ] * AbsR[ 2 ][ 0 ] + a.e[ 2 ] * AbsR[ 0 ][ 0 ];
+		rb = b.e[ 1 ] * AbsR[ 1 ][ 2 ] + b.e[ 2 ] * AbsR[ 1 ][ 1 ];
+		if ( Math.abs( t[ 0 ] * R[ 2 ][ 0 ] - t[ 2 ] * R[ 0 ][ 0 ] ) > ra + rb ) return false;
+
+		// test axis L = A1 x B1
+
+		ra = a.e[ 0 ] * AbsR[ 2 ][ 1 ] + a.e[ 2 ] * AbsR[ 0 ][ 1 ];
+		rb = b.e[ 0 ] * AbsR[ 1 ][ 2 ] + b.e[ 2 ] * AbsR[ 1 ][ 0 ];
+		if ( Math.abs( t[ 0 ] * R[ 2 ][ 1 ] - t[ 2 ] * R[ 0 ][ 1 ] ) > ra + rb ) return false;
+
+		// test axis L = A1 x B2
+
+		ra = a.e[ 0 ] * AbsR[ 2 ][ 2 ] + a.e[ 2 ] * AbsR[ 0 ][ 2 ];
+		rb = b.e[ 0 ] * AbsR[ 1 ][ 1 ] + b.e[ 1 ] * AbsR[ 1 ][ 0 ];
+		if ( Math.abs( t[ 0 ] * R[ 2 ][ 2 ] - t[ 2 ] * R[ 0 ][ 2 ] ) > ra + rb ) return false;
+
+		// test axis L = A2 x B0
+
+		ra = a.e[ 0 ] * AbsR[ 1 ][ 0 ] + a.e[ 1 ] * AbsR[ 0 ][ 0 ];
+		rb = b.e[ 1 ] * AbsR[ 2 ][ 2 ] + b.e[ 2 ] * AbsR[ 2 ][ 1 ];
+		if ( Math.abs( t[ 1 ] * R[ 0 ][ 0 ] - t[ 0 ] * R[ 1 ][ 0 ] ) > ra + rb ) return false;
+
+		// test axis L = A2 x B1
+
+		ra = a.e[ 0 ] * AbsR[ 1 ][ 1 ] + a.e[ 1 ] * AbsR[ 0 ][ 1 ];
+		rb = b.e[ 0 ] * AbsR[ 2 ][ 2 ] + b.e[ 2 ] * AbsR[ 2 ][ 0 ];
+		if ( Math.abs( t[ 1 ] * R[ 0 ][ 1 ] - t[ 0 ] * R[ 1 ][ 1 ] ) > ra + rb ) return false;
+
+		// test axis L = A2 x B2
+
+		ra = a.e[ 0 ] * AbsR[ 1 ][ 2 ] + a.e[ 1 ] * AbsR[ 0 ][ 2 ];
+		rb = b.e[ 0 ] * AbsR[ 2 ][ 1 ] + b.e[ 1 ] * AbsR[ 2 ][ 0 ];
+		if ( Math.abs( t[ 1 ] * R[ 0 ][ 2 ] - t[ 0 ] * R[ 1 ][ 2 ] ) > ra + rb ) return false;
+
+		// since no separating axis is found, the OBBs must be intersecting
+
+		return true;
+
+	}
+
+	/**
+	* Returns true if the given plane intersects this OBB.
+	*
+	* Reference: Testing Box Against Plane in Real-Time Collision Detection
+	* by Christer Ericson (chapter 5.2.3)
+	*
+	* @param {Plane} plane - The plane to test.
+	* @return {Boolean} The result of the intersection test.
+	*/
+	intersectsPlane( plane ) {
+
+		this.rotation.extractBasis( xAxis, yAxis, zAxis );
+
+		// compute the projection interval radius of this OBB onto L(t) = this->center + t * p.normal;
+
+		const r = this.halfSizes.x * Math.abs( plane.normal.dot( xAxis ) ) +
+				this.halfSizes.y * Math.abs( plane.normal.dot( yAxis ) ) +
+				this.halfSizes.z * Math.abs( plane.normal.dot( zAxis ) );
+
+		// compute distance of the OBB's center from the plane
+
+		const d = plane.normal.dot( this.center ) - plane.constant;
+
+		// Intersection occurs when distance d falls within [-r,+r] interval
+
+		return Math.abs( d ) <= r;
+
+	}
+
+	/**
+	* Computes the OBB from an AABB.
+	*
+	* @param {AABB} aabb - The AABB.
+	* @return {OBB} A reference to this OBB.
+	*/
+	fromAABB( aabb ) {
+
+		aabb.getCenter( this.center );
+
+		aabb.getSize( this.halfSizes ).multiplyScalar( 0.5 );
+
+		this.rotation.identity();
+
+		return this;
+
+	}
+
+	/**
+	* Computes the minimum enclosing OBB for the given set of points. The method is an
+	* implementation of {@link http://gamma.cs.unc.edu/users/gottschalk/main.pdf Collision Queries using Oriented Bounding Boxes}
+	* by Stefan Gottschalk.
+	* According to the dissertation, the quality of the fitting process varies from
+	* the respective input. This method uses the best approach by computing the
+	* covariance matrix based on the triangles of the convex hull (chapter 3.4.3).
+	*
+	* However, the implementation is susceptible to {@link https://en.wikipedia.org/wiki/Regular_polygon regular polygons}
+	* like cubes or spheres. For such shapes, it's recommended to verify the quality
+	* of the produced OBB. Consider to use an AABB or bounding sphere if the result
+	* is not satisfying.
+	*
+	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @return {OBB} A reference to this OBB.
+	*/
+	fromPoints( points ) {
+
+		const convexHull = new ConvexHull().fromPoints( points );
+
+		// 1. iterate over all faces of the convex hull and triangulate
+
+		const faces = convexHull.faces;
+		const edges = new Array();
+		const triangles = new Array();
+
+		for ( let i = 0, il = faces.length; i < il; i ++ ) {
+
+			const face = faces[ i ];
+			let edge = face.edge;
+
+			edges.length = 0;
+
+			// gather edges
+
+			do {
+
+				edges.push( edge );
+
+				edge = edge.next;
+
+			} while ( edge !== face.edge );
+
+			// triangulate
+
+			const triangleCount = ( edges.length - 2 );
+
+			for ( let j = 1, jl = triangleCount; j <= jl; j ++ ) {
+
+				const v1 = edges[ 0 ].vertex;
+				const v2 = edges[ j + 0 ].vertex;
+				const v3 = edges[ j + 1 ].vertex;
+
+				triangles.push( v1.x, v1.y, v1.z );
+				triangles.push( v2.x, v2.y, v2.z );
+				triangles.push( v3.x, v3.y, v3.z );
+
+			}
+
+		}
+
+		// 2. build covariance matrix
+
+		const p = new Vector3();
+		const q = new Vector3();
+		const r = new Vector3();
+
+		const qp = new Vector3();
+		const rp = new Vector3();
+
+		const v = new Vector3();
+
+		const mean = new Vector3();
+		const weightedMean = new Vector3();
+		let areaSum = 0;
+
+		let cxx, cxy, cxz, cyy, cyz, czz;
+		cxx = cxy = cxz = cyy = cyz = czz = 0;
+
+		for ( let i = 0, l = triangles.length; i < l; i += 9 ) {
+
+			p.fromArray( triangles, i );
+			q.fromArray( triangles, i + 3 );
+			r.fromArray( triangles, i + 6 );
+
+			mean.set( 0, 0, 0 );
+			mean.add( p ).add( q ).add( r ).divideScalar( 3 );
+
+			qp.subVectors( q, p );
+			rp.subVectors( r, p );
+
+			const area = v.crossVectors( qp, rp ).length() / 2; // .length() represents the frobenius norm here
+			weightedMean.add( v.copy( mean ).multiplyScalar( area ) );
+
+			areaSum += area;
+
+			cxx += ( 9.0 * mean.x * mean.x + p.x * p.x + q.x * q.x + r.x * r.x ) * ( area / 12 );
+			cxy += ( 9.0 * mean.x * mean.y + p.x * p.y + q.x * q.y + r.x * r.y ) * ( area / 12 );
+			cxz += ( 9.0 * mean.x * mean.z + p.x * p.z + q.x * q.z + r.x * r.z ) * ( area / 12 );
+			cyy += ( 9.0 * mean.y * mean.y + p.y * p.y + q.y * q.y + r.y * r.y ) * ( area / 12 );
+			cyz += ( 9.0 * mean.y * mean.z + p.y * p.z + q.y * q.z + r.y * r.z ) * ( area / 12 );
+			czz += ( 9.0 * mean.z * mean.z + p.z * p.z + q.z * q.z + r.z * r.z ) * ( area / 12 );
+
+		}
+
+		weightedMean.divideScalar( areaSum );
+
+		cxx /= areaSum;
+		cxy /= areaSum;
+		cxz /= areaSum;
+		cyy /= areaSum;
+		cyz /= areaSum;
+		czz /= areaSum;
+
+		cxx -= weightedMean.x * weightedMean.x;
+		cxy -= weightedMean.x * weightedMean.y;
+		cxz -= weightedMean.x * weightedMean.z;
+		cyy -= weightedMean.y * weightedMean.y;
+		cyz -= weightedMean.y * weightedMean.z;
+		czz -= weightedMean.z * weightedMean.z;
+
+		const covarianceMatrix = new Matrix3();
+
+		covarianceMatrix.elements[ 0 ] = cxx;
+		covarianceMatrix.elements[ 1 ] = cxy;
+		covarianceMatrix.elements[ 2 ] = cxz;
+		covarianceMatrix.elements[ 3 ] = cxy;
+		covarianceMatrix.elements[ 4 ] = cyy;
+		covarianceMatrix.elements[ 5 ] = cyz;
+		covarianceMatrix.elements[ 6 ] = cxz;
+		covarianceMatrix.elements[ 7 ] = cyz;
+		covarianceMatrix.elements[ 8 ] = czz;
+
+		// 3. compute rotation, center and half sizes
+
+		covarianceMatrix.eigenDecomposition( eigenDecomposition );
+
+		const unitary = eigenDecomposition.unitary;
+
+		const v1 = new Vector3();
+		const v2 = new Vector3();
+		const v3 = new Vector3();
+
+		unitary.extractBasis( v1, v2, v3 );
+
+		let u1 = - Infinity;
+		let u2 = - Infinity;
+		let u3 = - Infinity;
+		let l1 = Infinity;
+		let l2 = Infinity;
+		let l3 = Infinity;
+
+		for ( let i = 0, l = points.length; i < l; i ++ ) {
+
+			const p = points[ i ];
+
+			u1 = Math.max( v1.dot( p ), u1 );
+			u2 = Math.max( v2.dot( p ), u2 );
+			u3 = Math.max( v3.dot( p ), u3 );
+
+			l1 = Math.min( v1.dot( p ), l1 );
+			l2 = Math.min( v2.dot( p ), l2 );
+			l3 = Math.min( v3.dot( p ), l3 );
+
+		}
+
+		v1.multiplyScalar( 0.5 * ( l1 + u1 ) );
+		v2.multiplyScalar( 0.5 * ( l2 + u2 ) );
+		v3.multiplyScalar( 0.5 * ( l3 + u3 ) );
+
+		// center
+
+		this.center.add( v1 ).add( v2 ).add( v3 );
+
+		this.halfSizes.x = u1 - l1;
+		this.halfSizes.y = u2 - l2;
+		this.halfSizes.z = u3 - l3;
+
+		// halfSizes
+
+		this.halfSizes.multiplyScalar( 0.5 );
+
+		// rotation
+
+		this.rotation.copy( unitary );
+
+		return this;
+
+	}
+
+	/**
+	* Returns true if the given OBB is deep equal with this OBB.
+	*
+	* @param {OBB} aabb - The OBB to test.
+	* @return {Boolean} The result of the equality test.
+	*/
+	equals( obb ) {
+
+		return obb.center.equals( this.center ) &&
+				obb.halfSizes.equals( this.halfSizes ) &&
+				obb.rotation.equals( this.rotation );
+
+	}
+
+	/**
+	* Transforms this instance into a JSON object.
+	*
+	* @return {Object} The JSON object.
+	*/
+	toJSON() {
+
+		return {
+			type: this.constructor.name,
+			center: this.center.toArray( new Array() ),
+			halfSizes: this.halfSizes.toArray( new Array() ),
+			rotation: this.rotation.toArray( new Array() )
+		};
+
+	}
+
+	/**
+	* Restores this instance from the given JSON object.
+	*
+	* @param {Object} json - The JSON object.
+	* @return {OBB} A reference to this OBB.
+	*/
+	fromJSON( json ) {
+
+		this.center.fromArray( json.center );
+		this.halfSizes.fromArray( json.halfSizes );
+		this.rotation.fromArray( json.rotation );
+
+		return this;
+
+	}
+
+}
+
+const obb = new OBB();
 
 /**
 * Class for representing navigation edges.
@@ -17561,7 +18578,7 @@ class Cell {
 }
 
 const clampedPosition = new Vector3();
-const aabb$1 = new AABB();
+const aabb$2 = new AABB();
 const contour = new Array();
 
 /**
@@ -17780,8 +18797,8 @@ class CellSpacePartitioning {
 
 		// approximate range with an AABB which allows fast intersection test
 
-		aabb$1.min.copy( position ).subScalar( radius );
-		aabb$1.max.copy( position ).addScalar( radius );
+		aabb$2.min.copy( position ).subScalar( radius );
+		aabb$2.max.copy( position ).addScalar( radius );
 
 		// test all non-empty cells for an intersection
 
@@ -17789,7 +18806,7 @@ class CellSpacePartitioning {
 
 			const cell = cells[ i ];
 
-			if ( cell.empty() === false && cell.intersects( aabb$1 ) === true ) {
+			if ( cell.empty() === false && cell.intersects( aabb$2 ) === true ) {
 
 				result.push( ...cell.entries );
 
@@ -17832,13 +18849,13 @@ class CellSpacePartitioning {
 
 		polygon.getContour( contour );
 
-		aabb$1.fromPoints( contour );
+		aabb$2.fromPoints( contour );
 
 		for ( let i = 0, l = cells.length; i < l; i ++ ) {
 
 			const cell = cells[ i ];
 
-			if ( cell.intersects( aabb$1 ) === true ) {
+			if ( cell.intersects( aabb$2 ) === true ) {
 
 				cell.add( polygon );
 
@@ -18773,4 +19790,4 @@ function runTaskQueue( deadline ) {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, ConvexHull, Vertex as CHVertex, VertexList as CHVertexList, Face as CHFace, HalfEdge, LineSegment, MathUtils, Matrix3, Matrix4, Plane, Polygon, Polyhedron, Quaternion, Ray, SAT, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, NavMesh, NavMeshLoader, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
+export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, ConvexHull, Vertex as CHVertex, VertexList as CHVertexList, Face as CHFace, HalfEdge, LineSegment, MathUtils, Matrix3, Matrix4, OBB, Plane, Polygon, Polyhedron, Quaternion, Ray, SAT, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, NavMesh, NavMeshLoader, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,86 +48,2897 @@
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>import { SteeringBehavior } from '../SteeringBehavior.js';
-import { SeekBehavior } from './SeekBehavior.js';
-import { Vector3 } from '../../math/Vector3.js';
+        <h2><span class="attribs"><span class="type-signature"></span></span>OBB<span class="signature">(center, halfSizes, rotation)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>Class representing an oriented bounding box (OBB). Similar to an AABB, it's a
+rectangular block but with an arbitrary orientation. When using <a href="OBB.html#fromPoints">OBB#fromPoints</a>,
+the implementation tries to provide a tight-fitting oriented bounding box. In
+many cases, the result is better than an AABB or bounding sphere but worse than a
+convex hull. However, it's more efficient to work with OBBs compared to convex hulls.
+In general, OBB's are a good compromise between performance and tightness.</p></div>
+        
+    
+</header>
 
-const centerOfMass = new Vector3();
+<article>
+    
+        <div class="container-overview">
+        
+            
 
-/**
-* This steering produces a steering force that moves a vehicle toward the center of mass of its neighbors.
-*
-* @author {@link https://github.com/Mugen87|Mugen87}
-* @augments SteeringBehavior
-*/
-class CohesionBehavior extends SteeringBehavior {
+<dt>
+    
+        <h4 class="name" id="OBB">
+            
+                new <span class="type-signature"></span>OBB<span class="signature">(center, halfSizes, rotation)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line43">line 43</a></code>
+            </div>
+            
+        </h4>
 
-	/**
-	* Constructs a new cohesion behavior.
-	*/
-	constructor() {
+        
+    
+</dt>
+<dd>
 
-		super();
+    
+    <div class="description">
+        <p>Constructs a new OBB with the given values.</p>
+    </div>
+    
 
-		// internal behaviors
+    
 
-		this._seek = new SeekBehavior();
+    
 
-	}
+    
 
-	/**
-	* Calculates the steering force for a single simulation step.
-	*
-	* @param {Vehicle} vehicle - The game entity the force is produced for.
-	* @param {Vector3} force - The force/result vector.
-	* @param {Number} delta - The time delta.
-	* @return {Vector3} The force/result vector.
-	*/
-	calculate( vehicle, force /*, delta */ ) {
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-		centerOfMass.set( 0, 0, 0 );
+        <th>Type</th>
 
-		const neighbors = vehicle.neighbors;
+        
 
-		// iterate over all neighbors to calculate the center of mass
+        
 
-		for ( let i = 0, l = neighbors.length; i &lt; l; i ++ ) {
+        <th class="last">Description</th>
+    </tr>
+    </thead>
 
-			const neighbor = neighbors[ i ];
+    <tbody>
+    
 
-			centerOfMass.add( neighbor.position );
+        <tr>
+            
+                <td class="name"><code>center</code></td>
+            
 
-		}
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
 
-		if ( neighbors.length > 0 ) {
 
-			centerOfMass.divideScalar( neighbors.length );
+            
+            </td>
 
-			// seek to it
+            
 
-			this._seek.target = centerOfMass;
-			this._seek.calculate( vehicle, force );
+            
 
-			// the magnitude of cohesion is usually much larger than separation
-			// or alignment so it usually helps to normalize it
+            <td class="description last"><p>The center of this OBB.</p></td>
+        </tr>
 
-			force.normalize();
+    
 
-		}
+        <tr>
+            
+                <td class="name"><code>halfSizes</code></td>
+            
 
-		return force;
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
 
-	}
 
-}
+            
+            </td>
 
-export { CohesionBehavior };
-</code></pre>
-        </article>
-    </section>
+            
+
+            
+
+            <td class="description last"><p>The half sizes of the OBB (defines its width, height and depth).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rotation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Quaternion.html">Quaternion</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The rotation of this OBB.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="https://github.com/Mugen87">Mugen87</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="center">
+    <span class="type-signature"></span>center<span class="type-signature"> :<a href="Vector3.html">Vector3</a></span>
+    
+    <div class="container-source members">
+        <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+        <code><a href="math_OBB.js.html#line58">line 58</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The center of this OBB.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="halfSizes">
+    <span class="type-signature"></span>halfSizes<span class="type-signature"> :<a href="Vector3.html">Vector3</a></span>
+    
+    <div class="container-source members">
+        <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+        <code><a href="math_OBB.js.html#line64">line 64</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The half sizes of the OBB (defines its width, height and depth).</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="rotation">
+    <span class="type-signature"></span>rotation<span class="type-signature"> :<a href="Matrix3.html">Matrix3</a></span>
+    
+    <div class="container-source members">
+        <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+        <code><a href="math_OBB.js.html#line70">line 70</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The rotation of this OBB.</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Matrix3.html">Matrix3</a></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id="clampPoint">
+            
+                <span class="type-signature"></span>clampPoint<span class="signature">(point, result)</span><span class="type-signature"> &rarr; {<a href="Vector3.html">Vector3</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line142">line 142</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Ensures the given point is inside this OBB and stores
+the result in the given vector.</p>
+<p>Reference: Closest Point on OBB to Point in Real-Time Collision Detection
+by Christer Ericson (chapter 5.1.4)</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>point</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A point in 3D space.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>result</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The result vector.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+
+
+
+- <p>The result vector.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="clone">
+            
+                <span class="type-signature"></span>clone<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="OBB.html">OBB</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line113">line 113</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Creates a new OBB and copies all values from this OBB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+
+
+
+- <p>A new OBB.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="containsPoint">
+            
+                <span class="type-signature"></span>containsPoint<span class="signature">(point)</span><span class="type-signature"> &rarr; {Boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line174">line 174</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Returns true if the given point is inside this OBB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>point</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A point in 3D space.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Boolean</span>
+
+
+
+
+
+- <p>Whether the given point is inside this OBB or not.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="copy">
+            
+                <span class="type-signature"></span>copy<span class="signature">(obb)</span><span class="type-signature"> &rarr; {<a href="OBB.html">OBB</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line98">line 98</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Copies all values from the given OBB to this OBB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The OBB to copy.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+
+
+
+- <p>A reference to this OBB.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="equals">
+            
+                <span class="type-signature"></span>equals<span class="signature">(aabb)</span><span class="type-signature"> &rarr; {Boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line605">line 605</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Returns true if the given OBB is deep equal with this OBB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>aabb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The OBB to test.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Boolean</span>
+
+
+
+
+
+- <p>The result of the equality test.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="fromAABB">
+            
+                <span class="type-signature"></span>fromAABB<span class="signature">(aabb)</span><span class="type-signature"> &rarr; {<a href="OBB.html">OBB</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line397">line 397</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Computes the OBB from an AABB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>aabb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AABB.html">AABB</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The AABB.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+
+
+
+- <p>A reference to this OBB.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="fromJSON">
+            
+                <span class="type-signature"></span>fromJSON<span class="signature">(json)</span><span class="type-signature"> &rarr; {<a href="OBB.html">OBB</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line635">line 635</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Restores this instance from the given JSON object.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>json</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The JSON object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+
+
+
+- <p>A reference to this OBB.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="fromPoints">
+            
+                <span class="type-signature"></span>fromPoints<span class="signature">(points)</span><span class="type-signature"> &rarr; {<a href="OBB.html">OBB</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line425">line 425</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Computes the minimum enclosing OBB for the given set of points. The method is an
+implementation of <a href="http://gamma.cs.unc.edu/users/gottschalk/main.pdf">Collision Queries using Oriented Bounding Boxes</a>
+by Stefan Gottschalk.
+According to the dissertation, the quality of the fitting process varies from
+the respective input. This method uses the best approach by computing the
+covariance matrix based on the triangles of the convex hull (chapter 3.4.3).</p>
+<p>However, the implementation is susceptible to <a href="https://en.wikipedia.org/wiki/Regular_polygon">regular polygons</a>
+like cubes or spheres. For such shapes, it's recommended to verify the quality
+of the produced OBB. Consider to use an AABB or bounding sphere if the result
+is not satisfying.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>points</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An array of 3D vectors representing points in 3D space.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+
+
+
+- <p>A reference to this OBB.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="getSize">
+            
+                <span class="type-signature"></span>getSize<span class="signature">(result)</span><span class="type-signature"> &rarr; {<a href="Vector3.html">Vector3</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line125">line 125</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Computes the size (width, height, depth) of this OBB and stores it into the given vector.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>result</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The result vector.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+
+
+
+- <p>The result vector.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="intersectsAABB">
+            
+                <span class="type-signature"></span>intersectsAABB<span class="signature">(aabb)</span><span class="type-signature"> &rarr; {Boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line193">line 193</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Returns true if the given AABB intersects this OBB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>aabb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="AABB.html">AABB</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The AABB to test.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Boolean</span>
+
+
+
+
+
+- <p>The result of the intersection test.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="intersectsBoundingSphere">
+            
+                <span class="type-signature"></span>intersectsBoundingSphere<span class="signature">(sphere)</span><span class="type-signature"> &rarr; {Boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line205">line 205</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Returns true if the given bounding sphere intersects this OBB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sphere</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="BoundingSphere.html">BoundingSphere</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The bounding sphere to test.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Boolean</span>
+
+
+
+
+
+- <p>The result of the intersection test.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="intersectsOBB">
+            
+                <span class="type-signature"></span>intersectsOBB<span class="signature">(obb, epsilon)</span><span class="type-signature"> &rarr; {Boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line227">line 227</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Returns true if the given OBB intersects this OBB.</p>
+<p>Reference: OBB-OBB Intersection in Real-Time Collision Detection
+by Christer Ericson (chapter 4.4.1)</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The OBB to test.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>epsilon</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The epsilon (tolerance) value.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Boolean</span>
+
+
+
+
+
+- <p>The result of the intersection test.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="intersectsPlane">
+            
+                <span class="type-signature"></span>intersectsPlane<span class="signature">(plane)</span><span class="type-signature"> &rarr; {Boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line371">line 371</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Returns true if the given plane intersects this OBB.</p>
+<p>Reference: Testing Box Against Plane in Real-Time Collision Detection
+by Christer Ericson (chapter 5.2.3)</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>plane</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Plane.html">Plane</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The plane to test.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Boolean</span>
+
+
+
+
+
+- <p>The result of the intersection test.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="set">
+            
+                <span class="type-signature"></span>set<span class="signature">(center, halfSizes, rotation)</span><span class="type-signature"> &rarr; {<a href="OBB.html">OBB</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line82">line 82</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Sets the given values to this OBB.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>center</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The center of this OBB</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>halfSizes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Vector3.html">Vector3</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The half sizes of the OBB (defines its width, height and depth).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rotation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Quaternion.html">Quaternion</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The rotation of this OBB.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="OBB.html">OBB</a></span>
+
+
+
+
+
+- <p>A reference to this OBB.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="toJSON">
+            
+                <span class="type-signature"></span>toJSON<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="math_OBB.js.html">math/OBB.js</a></code>,
+                <code><a href="math_OBB.js.html#line618">line 618</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Transforms this instance into a JSON object.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Object</span>
+
+
+
+
+
+- <p>The JSON object.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
@@ -146,7 +2955,7 @@ export { CohesionBehavior };
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = '_sub'.replace(/"/g, '_');
+        var id = 'OBB_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 
