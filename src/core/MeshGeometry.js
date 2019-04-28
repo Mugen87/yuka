@@ -1,9 +1,9 @@
 import { AABB } from '../math/AABB.js';
 import { BoundingSphere } from '../math/BoundingSphere.js';
 import { Vector3 } from '../math/Vector3.js';
-import { Ray } from "../math/Ray";
-import { Plane } from "../math/Plane";
-import { Matrix4 } from "../math/Matrix4";
+import { Ray } from '../math/Ray';
+import { Plane } from '../math/Plane';
+import { Matrix4 } from '../math/Matrix4';
 
 const boundingSphere = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
@@ -41,7 +41,7 @@ class MeshGeometry {
 	}
 
 	/**
-	* Computes an AABB for this geometry.
+	* Computes the internal bounding volumes of this mesh geometry.
 	*
 	* @return {MeshGeometry} A reference to this mesh geometry.
 	*/

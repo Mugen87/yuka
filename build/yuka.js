@@ -8534,7 +8534,7 @@
 		}
 
 		/**
-		* Computes an AABB for this geometry.
+		* Computes the internal bounding volumes of this mesh geometry.
 		*
 		* @return {MeshGeometry} A reference to this mesh geometry.
 		*/
