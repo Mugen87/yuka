@@ -1,8 +1,9 @@
+
 /**
  * @license
  * The MIT License
  *
- * Copyright © 2018 Yuka authors
+ * Copyright © 2019 Yuka authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +28,8 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.YUKA = {})));
-}(this, (function (exports) { 'use strict';
+	(global = global || self, factory(global.YUKA = {}));
+}(this, function (exports) { 'use strict';
 
 	/**
 	* Class for representing a telegram, an envelope which contains a message
@@ -19796,109 +19797,109 @@
 
 	}
 
+	exports.AABB = AABB;
+	exports.AStar = AStar;
+	exports.AlignmentBehavior = AlignmentBehavior;
+	exports.ArriveBehavior = ArriveBehavior;
+	exports.BFS = BFS;
+	exports.BoundingSphere = BoundingSphere;
+	exports.CHFace = Face;
+	exports.CHVertex = Vertex;
+	exports.CHVertexList = VertexList;
+	exports.Cell = Cell;
+	exports.CellSpacePartitioning = CellSpacePartitioning;
+	exports.CohesionBehavior = CohesionBehavior;
+	exports.CompositeGoal = CompositeGoal;
+	exports.ConvexHull = ConvexHull;
+	exports.Corridor = Corridor;
+	exports.CostTable = CostTable;
+	exports.DFS = DFS;
+	exports.Dijkstra = Dijkstra;
+	exports.Edge = Edge;
 	exports.EntityManager = EntityManager;
+	exports.EvadeBehavior = EvadeBehavior;
 	exports.EventDispatcher = EventDispatcher;
-	exports.GameEntity = GameEntity;
-	exports.Logger = Logger;
-	exports.MeshGeometry = MeshGeometry;
-	exports.MessageDispatcher = MessageDispatcher;
-	exports.MovingEntity = MovingEntity;
-	exports.Regulator = Regulator;
-	exports.Time = Time;
-	exports.Telegram = Telegram;
-	exports.State = State;
-	exports.StateMachine = StateMachine;
+	exports.FleeBehavior = FleeBehavior;
+	exports.FollowPathBehavior = FollowPathBehavior;
 	exports.FuzzyAND = FuzzyAND;
-	exports.FuzzyFAIRLY = FuzzyFAIRLY;
-	exports.FuzzyOR = FuzzyOR;
-	exports.FuzzyVERY = FuzzyVERY;
-	exports.LeftSCurveFuzzySet = LeftSCurveFuzzySet;
-	exports.LeftShoulderFuzzySet = LeftShoulderFuzzySet;
-	exports.NormalDistFuzzySet = NormalDistFuzzySet;
-	exports.RightSCurveFuzzySet = RightSCurveFuzzySet;
-	exports.RightShoulderFuzzySet = RightShoulderFuzzySet;
-	exports.SingletonFuzzySet = SingletonFuzzySet;
-	exports.TriangularFuzzySet = TriangularFuzzySet;
 	exports.FuzzyCompositeTerm = FuzzyCompositeTerm;
+	exports.FuzzyFAIRLY = FuzzyFAIRLY;
 	exports.FuzzyModule = FuzzyModule;
+	exports.FuzzyOR = FuzzyOR;
 	exports.FuzzyRule = FuzzyRule;
 	exports.FuzzySet = FuzzySet;
 	exports.FuzzyTerm = FuzzyTerm;
+	exports.FuzzyVERY = FuzzyVERY;
 	exports.FuzzyVariable = FuzzyVariable;
-	exports.CompositeGoal = CompositeGoal;
+	exports.GameEntity = GameEntity;
 	exports.Goal = Goal;
 	exports.GoalEvaluator = GoalEvaluator;
-	exports.Think = Think;
-	exports.Edge = Edge;
 	exports.Graph = Graph;
-	exports.Node = Node;
-	exports.PriorityQueue = PriorityQueue;
-	exports.AStar = AStar;
-	exports.BFS = BFS;
-	exports.DFS = DFS;
-	exports.Dijkstra = Dijkstra;
-	exports.AABB = AABB;
-	exports.BoundingSphere = BoundingSphere;
-	exports.ConvexHull = ConvexHull;
-	exports.CHVertex = Vertex;
-	exports.CHVertexList = VertexList;
-	exports.CHFace = Face;
-	exports.HalfEdge = HalfEdge;
-	exports.LineSegment = LineSegment;
-	exports.MathUtils = MathUtils;
-	exports.Matrix3 = Matrix3;
-	exports.Matrix4 = Matrix4;
-	exports.OBB = OBB;
-	exports.Plane = Plane;
-	exports.Polygon = Polygon;
-	exports.Polyhedron = Polyhedron;
-	exports.Quaternion = Quaternion;
-	exports.Ray = Ray;
-	exports.SAT = SAT;
-	exports.Vector3 = Vector3;
-	exports.NavEdge = NavEdge;
-	exports.NavNode = NavNode;
 	exports.GraphUtils = GraphUtils;
-	exports.Corridor = Corridor;
-	exports.CostTable = CostTable;
-	exports.NavMesh = NavMesh;
-	exports.NavMeshLoader = NavMeshLoader;
-	exports.Cell = Cell;
-	exports.CellSpacePartitioning = CellSpacePartitioning;
-	exports.MemoryRecord = MemoryRecord;
-	exports.MemorySystem = MemorySystem;
-	exports.Vision = Vision;
-	exports.Path = Path;
-	exports.Smoother = Smoother;
-	exports.SteeringBehavior = SteeringBehavior;
-	exports.SteeringManager = SteeringManager;
-	exports.Vehicle = Vehicle;
-	exports.AlignmentBehavior = AlignmentBehavior;
-	exports.ArriveBehavior = ArriveBehavior;
-	exports.CohesionBehavior = CohesionBehavior;
-	exports.EvadeBehavior = EvadeBehavior;
-	exports.FleeBehavior = FleeBehavior;
-	exports.FollowPathBehavior = FollowPathBehavior;
-	exports.InterposeBehavior = InterposeBehavior;
-	exports.ObstacleAvoidanceBehavior = ObstacleAvoidanceBehavior;
-	exports.OffsetPursuitBehavior = OffsetPursuitBehavior;
-	exports.OnPathBehavior = OnPathBehavior;
-	exports.PursuitBehavior = PursuitBehavior;
-	exports.SeekBehavior = SeekBehavior;
-	exports.SeparationBehavior = SeparationBehavior;
-	exports.WanderBehavior = WanderBehavior;
-	exports.Task = Task;
-	exports.TaskQueue = TaskQueue;
-	exports.RectangularTriggerRegion = RectangularTriggerRegion;
-	exports.SphericalTriggerRegion = SphericalTriggerRegion;
-	exports.TriggerRegion = TriggerRegion;
-	exports.Trigger = Trigger;
+	exports.HalfEdge = HalfEdge;
+	exports.HeuristicPolicyDijkstra = HeuristicPolicyDijkstra;
 	exports.HeuristicPolicyEuclid = HeuristicPolicyEuclid;
 	exports.HeuristicPolicyEuclidSquared = HeuristicPolicyEuclidSquared;
 	exports.HeuristicPolicyManhattan = HeuristicPolicyManhattan;
-	exports.HeuristicPolicyDijkstra = HeuristicPolicyDijkstra;
+	exports.InterposeBehavior = InterposeBehavior;
+	exports.LeftSCurveFuzzySet = LeftSCurveFuzzySet;
+	exports.LeftShoulderFuzzySet = LeftShoulderFuzzySet;
+	exports.LineSegment = LineSegment;
+	exports.Logger = Logger;
+	exports.MathUtils = MathUtils;
+	exports.Matrix3 = Matrix3;
+	exports.Matrix4 = Matrix4;
+	exports.MemoryRecord = MemoryRecord;
+	exports.MemorySystem = MemorySystem;
+	exports.MeshGeometry = MeshGeometry;
+	exports.MessageDispatcher = MessageDispatcher;
+	exports.MovingEntity = MovingEntity;
+	exports.NavEdge = NavEdge;
+	exports.NavMesh = NavMesh;
+	exports.NavMeshLoader = NavMeshLoader;
+	exports.NavNode = NavNode;
+	exports.Node = Node;
+	exports.NormalDistFuzzySet = NormalDistFuzzySet;
+	exports.OBB = OBB;
+	exports.ObstacleAvoidanceBehavior = ObstacleAvoidanceBehavior;
+	exports.OffsetPursuitBehavior = OffsetPursuitBehavior;
+	exports.OnPathBehavior = OnPathBehavior;
+	exports.Path = Path;
+	exports.Plane = Plane;
+	exports.Polygon = Polygon;
+	exports.Polyhedron = Polyhedron;
+	exports.PriorityQueue = PriorityQueue;
+	exports.PursuitBehavior = PursuitBehavior;
+	exports.Quaternion = Quaternion;
+	exports.Ray = Ray;
+	exports.RectangularTriggerRegion = RectangularTriggerRegion;
+	exports.Regulator = Regulator;
+	exports.RightSCurveFuzzySet = RightSCurveFuzzySet;
+	exports.RightShoulderFuzzySet = RightShoulderFuzzySet;
+	exports.SAT = SAT;
+	exports.SeekBehavior = SeekBehavior;
+	exports.SeparationBehavior = SeparationBehavior;
+	exports.SingletonFuzzySet = SingletonFuzzySet;
+	exports.Smoother = Smoother;
+	exports.SphericalTriggerRegion = SphericalTriggerRegion;
+	exports.State = State;
+	exports.StateMachine = StateMachine;
+	exports.SteeringBehavior = SteeringBehavior;
+	exports.SteeringManager = SteeringManager;
+	exports.Task = Task;
+	exports.TaskQueue = TaskQueue;
+	exports.Telegram = Telegram;
+	exports.Think = Think;
+	exports.Time = Time;
+	exports.TriangularFuzzySet = TriangularFuzzySet;
+	exports.Trigger = Trigger;
+	exports.TriggerRegion = TriggerRegion;
+	exports.Vector3 = Vector3;
+	exports.Vehicle = Vehicle;
+	exports.Vision = Vision;
+	exports.WanderBehavior = WanderBehavior;
 	exports.WorldUp = WorldUp;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

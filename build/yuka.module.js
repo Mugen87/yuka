@@ -1,8 +1,9 @@
+
 /**
  * @license
  * The MIT License
  *
- * Copyright © 2018 Yuka authors
+ * Copyright © 2019 Yuka authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19790,4 +19791,4 @@ function runTaskQueue( deadline ) {
 
 }
 
-export { EntityManager, EventDispatcher, GameEntity, Logger, MeshGeometry, MessageDispatcher, MovingEntity, Regulator, Time, Telegram, State, StateMachine, FuzzyAND, FuzzyFAIRLY, FuzzyOR, FuzzyVERY, LeftSCurveFuzzySet, LeftShoulderFuzzySet, NormalDistFuzzySet, RightSCurveFuzzySet, RightShoulderFuzzySet, SingletonFuzzySet, TriangularFuzzySet, FuzzyCompositeTerm, FuzzyModule, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVariable, CompositeGoal, Goal, GoalEvaluator, Think, Edge, Graph, Node, PriorityQueue, AStar, BFS, DFS, Dijkstra, AABB, BoundingSphere, ConvexHull, Vertex as CHVertex, VertexList as CHVertexList, Face as CHFace, HalfEdge, LineSegment, MathUtils, Matrix3, Matrix4, OBB, Plane, Polygon, Polyhedron, Quaternion, Ray, SAT, Vector3, NavEdge, NavNode, GraphUtils, Corridor, CostTable, NavMesh, NavMeshLoader, Cell, CellSpacePartitioning, MemoryRecord, MemorySystem, Vision, Path, Smoother, SteeringBehavior, SteeringManager, Vehicle, AlignmentBehavior, ArriveBehavior, CohesionBehavior, EvadeBehavior, FleeBehavior, FollowPathBehavior, InterposeBehavior, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, PursuitBehavior, SeekBehavior, SeparationBehavior, WanderBehavior, Task, TaskQueue, RectangularTriggerRegion, SphericalTriggerRegion, TriggerRegion, Trigger, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, HeuristicPolicyDijkstra, WorldUp };
+export { AABB, AStar, AlignmentBehavior, ArriveBehavior, BFS, BoundingSphere, Face as CHFace, Vertex as CHVertex, VertexList as CHVertexList, Cell, CellSpacePartitioning, CohesionBehavior, CompositeGoal, ConvexHull, Corridor, CostTable, DFS, Dijkstra, Edge, EntityManager, EvadeBehavior, EventDispatcher, FleeBehavior, FollowPathBehavior, FuzzyAND, FuzzyCompositeTerm, FuzzyFAIRLY, FuzzyModule, FuzzyOR, FuzzyRule, FuzzySet, FuzzyTerm, FuzzyVERY, FuzzyVariable, GameEntity, Goal, GoalEvaluator, Graph, GraphUtils, HalfEdge, HeuristicPolicyDijkstra, HeuristicPolicyEuclid, HeuristicPolicyEuclidSquared, HeuristicPolicyManhattan, InterposeBehavior, LeftSCurveFuzzySet, LeftShoulderFuzzySet, LineSegment, Logger, MathUtils, Matrix3, Matrix4, MemoryRecord, MemorySystem, MeshGeometry, MessageDispatcher, MovingEntity, NavEdge, NavMesh, NavMeshLoader, NavNode, Node, NormalDistFuzzySet, OBB, ObstacleAvoidanceBehavior, OffsetPursuitBehavior, OnPathBehavior, Path, Plane, Polygon, Polyhedron, PriorityQueue, PursuitBehavior, Quaternion, Ray, RectangularTriggerRegion, Regulator, RightSCurveFuzzySet, RightShoulderFuzzySet, SAT, SeekBehavior, SeparationBehavior, SingletonFuzzySet, Smoother, SphericalTriggerRegion, State, StateMachine, SteeringBehavior, SteeringManager, Task, TaskQueue, Telegram, Think, Time, TriangularFuzzySet, Trigger, TriggerRegion, Vector3, Vehicle, Vision, WanderBehavior, WorldUp };
