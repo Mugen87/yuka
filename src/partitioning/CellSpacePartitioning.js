@@ -373,6 +373,8 @@ class CellSpacePartitioning {
 
 		}
 
+		return this;
+
 	}
 
 }

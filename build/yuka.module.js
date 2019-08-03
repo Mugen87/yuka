@@ -18949,6 +18949,8 @@ class CellSpacePartitioning {
 
 		}
 
+		return this;
+
 	}
 
 }
