@@ -575,6 +575,33 @@ class Ray {
 	}
 
 	/**
+	* Performs a ray/BVH intersection test and stores the intersection point
+	* to the given 3D vector. If no intersection is detected, *null* is returned.
+	*
+	* @param {BVH} bvh - A BVH.
+	* @param {Vector3} result - The result vector.
+	* @return {Vector3} The result vector.
+	*/
+	intersectBVH( bvh, result ) {
+
+		return bvh.root.intersectRay( this, result );
+
+	}
+
+	/**
+	* Performs a ray/BVH intersection test. Returns either true or false if
+	* there is a intersection or not.
+	*
+	* @param {BVH} bvh - A BVH.
+	* @return {boolean} Whether there is an intersection or not.
+	*/
+	intersectsBVH( bvh ) {
+
+		return bvh.root.intersectsRay( this );
+
+	}
+
+	/**
 	* Transforms this ray by the given 4x4 matrix.
 	*
 	* @param {Matrix4} m - The 4x4 matrix.

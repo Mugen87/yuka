@@ -242,6 +242,42 @@ class MeshGeometry {
 	}
 
 	/**
+	 * Returns a new geometry without containing indices.
+	 *
+	 * @return {MeshGeometry} The new geometry.
+	 */
+	toTriangleSoup() {
+
+		const indices = this.indices;
+		const vertices = this.vertices;
+		let newVertices;
+
+		if ( indices ) {
+
+			newVertices = new Float32Array( indices.length * 3 );
+
+			for ( let i = 0, l = indices.length; i < l; i ++ ) {
+
+				const a = indices[ i ];
+				const stride = 3;
+
+				newVertices[ i * stride ] = vertices[ a * stride ];
+				newVertices[ ( i * stride ) + 1 ] = vertices[ ( a * stride ) + 1 ];
+				newVertices[ ( i * stride ) + 2 ] = vertices[ ( a * stride ) + 2 ];
+
+			}
+
+		} else {
+
+			newVertices = new Float32Array( vertices );
+
+		}
+
+		return new MeshGeometry( newVertices );
+
+	}
+
+	/**
 	* Transforms this instance into a JSON object.
 	*
 	* @return {Object} The JSON object.

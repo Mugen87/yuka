@@ -14,6 +14,8 @@ const Plane = YUKA.Plane;
 const BoundingSphere = YUKA.BoundingSphere;
 const ConvexHull = YUKA.ConvexHull;
 const OBB = YUKA.OBB;
+const BVH = YUKA.BVH;
+const MeshGeometry = YUKA.MeshGeometry;
 
 const v1 = new Vector3( 2, 2, 2 );
 const v2 = new Vector3( 0, 0, 1 );
@@ -763,6 +765,73 @@ describe( 'Ray', function () {
 			ray.intersectTriangle( triangle, true, result );
 
 			expect( ray.intersectTriangle( triangle, true, result ) ).to.equal( null );
+
+		} );
+
+	} );
+
+	describe( '#intersectBVH()', function () {
+
+		const bvh = new BVH();
+		const vertices = new Float32Array( [
+			0, 0, 0, 	1, 0, 0, 	0.5, 0, - 1,
+			0, 0, 0, 	0.5, 0, 1, 	1, 0, 0
+		] );
+
+		const geometry = new MeshGeometry( vertices );
+		bvh.fromMeshGeometry( geometry );
+
+		it( 'should fill the given result vector with the intersection point of a ray/BVH intersection test', function () {
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.25 ), new Vector3( 0, - 1, 0 ) );
+			const result = new Vector3();
+
+			expect( ray.intersectBVH( bvh, result ) ).to.deep.equal( new Vector3( 0.5, 0, 0.25 ) );
+
+		} );
+
+		it( 'should return null if the ray does not intersect the BVH', function () {
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.25 ), new Vector3( 0, 1, 0 ) );
+
+			expect( ray.intersectBVH( bvh, new Vector3() ) ).to.be.null;
+
+		} );
+
+		it( 'should return null if the ray does intersect a bounding volume but not a primitive', function () {
+
+			const ray = new Ray( new Vector3( 0.9, 1, 0.9 ), new Vector3( 0, - 1, 0 ) );
+
+			expect( ray.intersectBVH( bvh, new Vector3() ) ).to.be.null;
+
+		} );
+
+	} );
+
+	describe( '#intersectsBVH()', function () {
+
+		const bvh = new BVH();
+		const vertices = new Float32Array( [
+			0, 0, 0, 	1, 0, 0, 	0.5, 0, - 1,
+			0, 0, 0, 	0.5, 0, 1, 	1, 0, 0
+		] );
+
+		const geometry = new MeshGeometry( vertices );
+		bvh.fromMeshGeometry( geometry );
+
+		it( 'should return true if the ray intersects the BVH', function () {
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.25 ), new Vector3( 0, - 1, 0 ) );
+
+			expect( ray.intersectsBVH( bvh ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if the ray does not intersect the BVH', function () {
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.25 ), new Vector3( 0, 1, 0 ) );
+
+			expect( ray.intersectsBVH( bvh ) ).to.be.false;
 
 		} );
 
