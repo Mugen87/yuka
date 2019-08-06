@@ -13932,9 +13932,13 @@
 
 	/**
 	* Class representing a bounding volume hierarchy. The current implementation
-	* represents single BVH nodes as AABBs. It can handle arbitrary branching factors
-	* and subdivide the given geometry until a defined hierarchy depth has reached.
-	* Right now, the algorithm only performs splits along the cardinal axes.
+	* represents single BVH nodes as AABBs. It accepts arbitrary branching factors
+	* and can subdivide the given geometry until a defined hierarchy depth has been reached.
+	* Besides, the hierarchy construction is performed top-down and the algorithm only
+	* performs splits along the cardinal axes.
+	*
+	* Reference: Bounding Volume Hierarchies in Real-Time Collision Detection
+	* by Christer Ericson (chapter 6).
 	*
 	* @author {@link https://github.com/robp94|robp94}
 	* @author {@link https://github.com/Mugen87|Mugen87}
@@ -14036,6 +14040,12 @@
 
 	}
 
+	/**
+	* A single node in a bounding volume hierarchy (BVH).
+	*
+	* @author {@link https://github.com/robp94|robp94}
+	* @author {@link https://github.com/Mugen87|Mugen87}
+	*/
 	class BVHNode {
 
 		/**
