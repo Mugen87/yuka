@@ -122,7 +122,8 @@
 			threeGeometry.applyMatrix( icoSphere.matrix ); // transform vertices to world space
 
 			const vertices = threeGeometry.attributes.position.array;
-			meshGeometry = new YUKA.MeshGeometry( vertices );
+			const indices = threeGeometry.index.array;
+			meshGeometry = new YUKA.MeshGeometry( vertices, indices );
 
 			createBVH();
 
