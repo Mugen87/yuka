@@ -806,6 +806,25 @@ describe( 'Ray', function () {
 
 		} );
 
+		it( 'should return the closest possible intersection', function () {
+
+			const bvh = new BVH();
+			const vertices = new Float32Array( [
+				0, 0, 0, 	0.5, 0, 1, 	1, 0, 0,
+				0, - 0.5, 0, 	0.5, - 0.5, 1, 	1, - 0.5, 0,
+				0, 0.5, 0, 	0.5, 0.5, 1, 	1, 0.5, 0,
+			] );
+
+			const geometry = new MeshGeometry( vertices );
+			bvh.fromMeshGeometry( geometry );
+
+			const ray = new Ray( new Vector3( 0.5, 1, 0.25 ), new Vector3( 0, - 1, 0 ) );
+			const result = new Vector3();
+
+			expect( ray.intersectBVH( bvh, result ) ).to.deep.equal( new Vector3( 0.5, 0.5, 0.25 ) );
+
+		} );
+
 	} );
 
 	describe( '#intersectsBVH()', function () {
@@ -830,6 +849,14 @@ describe( 'Ray', function () {
 		it( 'should return false if the ray does not intersect the BVH', function () {
 
 			const ray = new Ray( new Vector3( 0.5, 1, 0.25 ), new Vector3( 0, 1, 0 ) );
+
+			expect( ray.intersectsBVH( bvh ) ).to.be.false;
+
+		} );
+
+		it( 'should return false if the ray does intersect a bounding volume but not a primitive', function () {
+
+			const ray = new Ray( new Vector3( 0.9, 1, 0.9 ), new Vector3( 0, - 1, 0 ) );
 
 			expect( ray.intersectsBVH( bvh ) ).to.be.false;
 

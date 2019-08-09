@@ -13923,6 +13923,7 @@ const zAxis = new Vector3( 0, 0, 1 );
 
 const triangle$1 = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 const intersection = new Vector3();
+const intersections = new Array();
 
 /**
 * Class representing a bounding volume hierarchy. The current implementation
@@ -14400,7 +14401,7 @@ class BVHNode {
 	}
 
 	/**
-	* Performs a ray/BVH node intersection test and stores the intersection point
+	* Performs a ray/BVH node intersection test and stores the closest intersection point
 	* to the given 3D vector. If no intersection is detected, *null* is returned.
 	*
 	* @param {Ray} ray - The ray.
@@ -14409,29 +14410,85 @@ class BVHNode {
 	*/
 	intersectRay( ray, result ) {
 
+		// gather all intersection points along the hierarchy
+
 		if ( ray.intersectAABB( this.boundingVolume, result ) !== null ) {
 
-			if ( this.leaf() ) {
+			if ( this.leaf() === true ) {
 
-				return this._intersectRayPrimitives( ray, result );
+				const vertices = this.primitives;
 
-			} else {
+				for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
 
-				for ( let i = 0, l = this.children.length; i < l; i ++ ) {
+					// remember: we assume primitives are triangles
 
-					if ( this.children[ i ].intersectRay( ray, result ) !== null ) {
+					triangle$1.a.fromArray( vertices, i );
+					triangle$1.b.fromArray( vertices, i + 3 );
+					triangle$1.c.fromArray( vertices, i + 6 );
 
-						return result;
+					if ( ray.intersectTriangle( triangle$1, true, result ) !== null ) {
+
+						intersections.push( result.clone() );
 
 					}
 
 				}
 
+			} else {
+
+				// process childs
+
+				for ( let i = 0, l = this.children.length; i < l; i ++ ) {
+
+					this.children[ i ].intersectRay( ray, result );
+
+				}
+
+			}
+
+		}
+
+		// determine the closest intersection point in the root node (so after
+		// the hierarchy was processed)
+
+		if ( this.root() === true ) {
+
+			if ( intersections.length > 0 ) {
+
+				let minDistance = Infinity;
+
+				for ( let i = 0, l = intersections.length; i < l; i ++ ) {
+
+					const squaredDistance = ray.origin.squaredDistanceTo( intersections[ i ] );
+
+					if ( squaredDistance < minDistance ) {
+
+						minDistance = squaredDistance;
+						result.copy( intersections[ i ] );
+
+					}
+
+				}
+
+				// reset array
+
+				intersections.length = 0;
+
+				// return closest intersection point
+
+				return result;
+
+			} else {
+
+				// no intersection detected
+
 				return null;
 
 			}
 
-		} else {
+		} else {
+
+			// always return null for non-root nodes
 
 			return null;
 
@@ -14448,33 +14505,53 @@ class BVHNode {
 	*/
 	intersectsRay( ray ) {
 
-		return this.intersectRay( ray, intersection ) !== null;
+		if ( ray.intersectAABB( this.boundingVolume, intersection ) !== null ) {
 
-	}
+			if ( this.leaf() === true ) {
 
-	//
+				const vertices = this.primitives;
 
-	_intersectRayPrimitives( ray, result ) {
+				for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
 
-		const vertices = this.primitives;
+					// remember: we assume primitives are triangles
 
-		for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
+					triangle$1.a.fromArray( vertices, i );
+					triangle$1.b.fromArray( vertices, i + 3 );
+					triangle$1.c.fromArray( vertices, i + 6 );
 
-			// remember: we assume primitives are triangles
+					if ( ray.intersectTriangle( triangle$1, true, intersection ) !== null ) {
 
-			triangle$1.a.fromArray( vertices, i );
-			triangle$1.b.fromArray( vertices, i + 3 );
-			triangle$1.c.fromArray( vertices, i + 6 );
+						return true;
 
-			if ( ray.intersectTriangle( triangle$1, true, result ) !== null ) {
+					}
 
-				return result;
+				}
+
+				return false;
+
+			} else {
+
+				// process child BVH nodes
+
+				for ( let i = 0, l = this.children.length; i < l; i ++ ) {
+
+					if ( this.children[ i ].intersectsRay( ray ) === true ) {
+
+						return true;
+
+					}
+
+				}
+
+				return false;
 
 			}
 
-		}
+		} else {
 
-		return null;
+			return false;
+
+		}
 
 	}
 
