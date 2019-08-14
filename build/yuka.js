@@ -18177,7 +18177,7 @@
 		/**
 		* Returns the region that contains the given point. The computational overhead
 		* of this method for complex navigation meshes can be reduced by using a spatial index.
-		* If not convex region contains the point, *null* is returned.
+		* If no convex region contains the point, *null* is returned.
 		*
 		* @param {Vector3} point - A point in 3D space.
 		* @param {Number} epsilon - Tolerance value for the containment test.
@@ -18643,7 +18643,7 @@
 
 				}
 
-				// user only border edges from adjacent convex regions (fast)
+				// use only border edges from adjacent convex regions (fast)
 
 				borderEdges = edges;
 
