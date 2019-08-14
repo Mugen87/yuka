@@ -1,0 +1,165 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Bounding Volume Hierarchy (BVH)</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
+		<link rel="shortcut icon" type="image/x-icon" href="https://mugen87.github.io/yuka/favicon.ico">
+	</head>
+<body>
+
+	<section id="info">
+		<p>
+			Visualizes a bounding volume hierarchy (BVH) generated for the torus knot mesh. It can be used to speed up
+			various computational tasks like ray intersection tests.
+		</p>
+	</section>
+
+	<script type="module">
+
+		import * as YUKA from '../../../build/yuka.module.js';
+		import * as THREE from '../../lib/three.module.js';
+		import * as DAT from '../../lib/dat.gui.module.js';
+		import { OrbitControls } from '../../lib/OrbitControls.module.js';
+
+		import { createBVHHelper } from '../common/js/BVHHelper.js';
+
+		let camera, scene, renderer;
+
+		let helper, meshGeometry;
+
+		const params = {
+			branchingFactor: 2,
+			primitivesPerNode: 1,
+			depth: 5,
+			meshVisible: true
+		};
+
+		init();
+		animate();
+
+		function init() {
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0xa0a0a0 );
+			scene.fog = new THREE.Fog( 0xa0a0a0, 20, 40 );
+
+			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
+			camera.position.set( 0, 3, - 8 );
+
+			//
+
+			const geometry = new THREE.PlaneBufferGeometry( 150, 150 );
+			const material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
+
+			const ground = new THREE.Mesh( geometry, material );
+			ground.rotation.x = - Math.PI / 2;
+			ground.matrixAutoUpdate = false;
+			ground.receiveShadow = true;
+			ground.updateMatrix();
+			scene.add( ground );
+
+			//
+
+			const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.6 );
+			hemiLight.position.set( 0, 100, 0 );
+			hemiLight.matrixAutoUpdate = false;
+			hemiLight.updateMatrix();
+			scene.add( hemiLight );
+
+		 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+			dirLight.position.set( - 4, 5, - 5 );
+			dirLight.matrixAutoUpdate = false;
+			dirLight.updateMatrix();
+			dirLight.castShadow = true;
+			dirLight.shadow.camera.top = 4;
+			dirLight.shadow.camera.bottom = - 4;
+			dirLight.shadow.camera.left = - 4;
+			dirLight.shadow.camera.right = 4;
+			dirLight.shadow.camera.near = 0.1;
+			dirLight.shadow.camera.far = 20;
+			scene.add( dirLight );
+
+			var sphereGeometry = new THREE.TorusKnotBufferGeometry( 1, 0.2, 64, 16 );
+			var sphereMaterial = new THREE.MeshPhongMaterial( { color: 0xee0808 } );
+			var icoSphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+			icoSphere.position.set( 0, 1.5, 0 );
+			icoSphere.updateMatrix();
+			icoSphere.castShadow = true;
+			scene.add( icoSphere );
+
+			//
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.gammaOutput = true;
+			renderer.shadowMap.enabled = true;
+			document.body.appendChild( renderer.domElement );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+			controls.enableKeys = false;
+			controls.enablePan = false;
+			controls.target.copy( icoSphere.position );
+			controls.update();
+
+			// dat.gui
+
+			const gui = new DAT.GUI( { width: 300 } );
+
+			gui.add( params, 'branchingFactor', 2, 6 ).step( 1 ).onChange( createBVH );
+			gui.add( params, 'primitivesPerNode', 1, 10 ).step( 1 ).onChange( createBVH );
+			gui.add( params, 'depth', 1, 8 ).step( 1 ).onChange( createBVH );
+			gui.add( params, 'meshVisible' ).onChange( ( value ) => icoSphere.visible = value );
+
+			gui.open();
+
+			// bvh setup
+
+			const threeGeometry = sphereGeometry.clone();
+			threeGeometry.applyMatrix( icoSphere.matrix ); // transform vertices to world space
+
+			const vertices = threeGeometry.attributes.position.array;
+			const indices = threeGeometry.index.array;
+			meshGeometry = new YUKA.MeshGeometry( vertices, indices );
+
+			createBVH();
+
+		}
+
+		function createBVH() {
+
+			if ( helper ) scene.remove( helper );
+
+			const bvh = new YUKA.BVH( params.branchingFactor, params.primitivesPerNode, params.depth );
+			bvh.fromMeshGeometry( meshGeometry );
+
+			helper = createBVHHelper( bvh, params.depth );
+			scene.add( helper );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+
+	</script>
+
+</body>
+</html>
