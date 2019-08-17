@@ -97,7 +97,7 @@ class HeuristicPolicyDijkstra {
 	* @param {Graph} graph - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The manhattan distance between both nodes.
+	* @return {Number} The value 0.
 	*/
 	static calculate( /* graph, source, target */ ) {
 
