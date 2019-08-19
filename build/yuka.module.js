@@ -6953,7 +6953,7 @@ class SteeringManager {
 /**
 * This class can be used to smooth the result of a vector calculation. One use case
 * is the smoothing of the velocity vector of game entities in order to avoid a shaky
-* movements du to conflicting forces.
+* movements due to conflicting forces.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 * @author {@link https://github.com/robp94|robp94}
@@ -12919,7 +12919,7 @@ class HeuristicPolicyDijkstra {
 	* @param {Graph} graph - The graph.
 	* @param {Number} source - The index of the source node.
 	* @param {Number} target - The index of the target node.
-	* @return {Number} The manhattan distance between both nodes.
+	* @return {Number} The value 0.
 	*/
 	static calculate( /* graph, source, target */ ) {
 
@@ -14937,12 +14937,12 @@ class HalfEdge {
 	/**
 	* Constructs a new half-edge.
 	*
-	* @param {Vector3} vertex - The (origin) vertex of this half-edge.
+	* @param {Vector3} vertex - The vertex of this half-edge. It represents the head/destination of the respective full edge.
 	*/
 	constructor( vertex = new Vector3() ) {
 
 		/**
-		* The (origin) vertex of this half-edge.
+		* The vertex of this half-edge. It represents the head/destination of the respective full edge.
 		* @type Vector3
 		*/
 		this.vertex = vertex;
