@@ -14943,12 +14943,12 @@
 		/**
 		* Constructs a new half-edge.
 		*
-		* @param {Vector3} vertex - The vertex of this half-edge. It represents the head/destination of the full edge.
+		* @param {Vector3} vertex - The vertex of this half-edge. It represents the head/destination of the respective full edge.
 		*/
 		constructor( vertex = new Vector3() ) {
 
 			/**
-			* The vertex of this half-edge. It represents the head/destination of the full edge.
+			* The vertex of this half-edge. It represents the head/destination of the respective full edge.
 			* @type Vector3
 			*/
 			this.vertex = vertex;
