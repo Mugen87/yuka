@@ -11,12 +11,12 @@ class HalfEdge {
 	/**
 	* Constructs a new half-edge.
 	*
-	* @param {Vector3} vertex - The (origin) vertex of this half-edge.
+	* @param {Vector3} vertex - The vertex of this half-edge. It represents the head/destination of the full edge.
 	*/
 	constructor( vertex = new Vector3() ) {
 
 		/**
-		* The (origin) vertex of this half-edge.
+		* The vertex of this half-edge. It represents the head/destination of the full edge.
 		* @type Vector3
 		*/
 		this.vertex = vertex;
