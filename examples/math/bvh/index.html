@@ -131,13 +131,30 @@
 
 		function createBVH() {
 
-			if ( helper ) scene.remove( helper );
+			if ( helper ) removeHelper();
 
 			const bvh = new YUKA.BVH( params.branchingFactor, params.primitivesPerNode, params.depth );
 			bvh.fromMeshGeometry( meshGeometry );
 
 			helper = createBVHHelper( bvh, params.depth );
 			scene.add( helper );
+
+		}
+
+		function removeHelper() {
+
+			helper.traverse( ( child ) => {
+
+				if ( child.isLineSegments ) {
+
+					child.geometry.dispose();
+					child.material.dispose();
+
+				}
+
+			} );
+
+			scene.remove( helper );
 
 		}
 
