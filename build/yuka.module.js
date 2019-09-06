@@ -15342,46 +15342,6 @@ class Polygon {
 
 	}
 
-	/**
-	* Determines the portal edge that can be used to reach the
-	* given polygon over its twin reference. The result is stored
-	* in the given portal edge data structure. If the given polygon
-	* is no direct neighbor, the references of the portal edge data
-	* structure are set to null.
-	*
-	* @param {Polygon} polygon - The polygon to reach.
-	* @param {Object} portalEdge - The portal edge.
-	* @return {Object} The portal edge.
-	*/
-	getPortalEdgeTo( polygon, portalEdge ) {
-
-		let edge = this.edge;
-
-		do {
-
-			if ( edge.twin !== null ) {
-
-				if ( edge.twin.polygon === polygon ) {
-
-					portalEdge.left = edge.prev.vertex;
-					portalEdge.right = edge.vertex;
-					return portalEdge;
-
-				}
-
-			}
-
-			edge = edge.next;
-
-		} while ( edge !== this.edge );
-
-		portalEdge.left = null;
-		portalEdge.right = null;
-
-		return portalEdge;
-
-	}
-
 }
 
 // from the book "Computational Geometry in C, Joseph O'Rourke"
@@ -18285,7 +18245,7 @@ class NavMesh {
 					const region = this.regions[ polygonPath[ i ] ];
 					const nextRegion = this.regions[ polygonPath[ i + 1 ] ];
 
-					region.getPortalEdgeTo( nextRegion, portalEdge );
+					this._getPortalEdge( region, nextRegion, portalEdge );
 
 					corridor.push( portalEdge.left, portalEdge.right );
 
@@ -18673,6 +18633,37 @@ class NavMesh {
 		}
 
 		return this;
+
+	}
+
+	// Determines the portal edge that can be used to reach the given polygon over its twin reference.
+
+	_getPortalEdge( region1, region2, portalEdge ) {
+
+		let edge = region1.edge;
+
+		do {
+
+			if ( edge.twin !== null ) {
+
+				if ( edge.twin.polygon === region2 ) {
+
+					portalEdge.left = edge.prev.vertex;
+					portalEdge.right = edge.vertex;
+					return portalEdge;
+
+				}
+
+			}
+
+			edge = edge.next;
+
+		} while ( edge !== region1.edge );
+
+		portalEdge.left = null;
+		portalEdge.right = null;
+
+		return portalEdge;
 
 	}
 
