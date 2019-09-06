@@ -379,43 +379,4 @@ describe( 'Polygon', function () {
 
 	} );
 
-	describe( '#getPortalEdgeTo()', function () {
-
-		it( 'should return determine a portal edge that connects this polygon with the given one and store the result in the given object', function () {
-
-			const polygon1 = new Polygon();
-			const polygon2 = new Polygon();
-			const polygon3 = new Polygon();
-
-			const vertices1 = [
-				new Vector3( 0, 0, 0 ),
-				new Vector3( 0.5, 0, - 1 ),
-				new Vector3( 1, 0, 0 )
-			];
-
-			const vertices2 = [
-				new Vector3( 0, 0, 0 ),
-				new Vector3( 1, 0, 0 ),
-				new Vector3( 0.5, 0, 1 )
-			];
-
-			polygon1.fromContour( vertices1 );
-			polygon2.fromContour( vertices2 );
-
-			polygon1.edge.twin = polygon2.edge.next;
-
-			const portalEdge = { left: null, right: null };
-
-			polygon1.getPortalEdgeTo( polygon2, portalEdge );
-			expect( portalEdge.left ).to.equal( vertices1[ 2 ] );
-			expect( portalEdge.right ).to.equal( vertices1[ 0 ] );
-
-			polygon1.getPortalEdgeTo( polygon3, portalEdge );
-			expect( portalEdge.left ).to.be.null;
-			expect( portalEdge.right ).to.be.null;
-
-		} );
-
-	} );
-
 } );
