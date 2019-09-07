@@ -18654,6 +18654,9 @@
 
 					if ( edge.twin.polygon === region2 ) {
 
+						// the direction of portal edges are reversed. so "left" is the edge's origin vertex and "right"
+						// is the destintation vertex. More details in issue #5
+
 						portalEdge.left = edge.prev.vertex;
 						portalEdge.right = edge.vertex;
 						return portalEdge;
