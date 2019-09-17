@@ -82,6 +82,22 @@ describe( 'NavMeshLoader', function () {
 
 		} );
 
+		it( 'should be able to load a gltf file with no primitive mode definition', function ( done ) {
+
+			const loader = new NavMeshLoader();
+			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/no-primitive-mode/navmesh.gltf';
+
+			loader.load( url ).then( ( navMesh ) => {
+
+				expect( navMesh ).is.an.instanceof( NavMesh );
+				expect( navMesh.regions ).to.have.lengthOf( 2 );
+
+				done();
+
+			} );
+
+		} );
+
 		it( 'should use the options parameter to config the navmesh', function ( done ) {
 
 			const loader = new NavMeshLoader();

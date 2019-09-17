@@ -349,7 +349,7 @@ class Parser {
 
 			const primitive = definition.primitives[ 0 ];
 
-			if ( primitive.mode !== 4 ) {
+			if ( primitive.mode !== undefined && primitive.mode !== 4 ) {
 
 				throw new Error( 'YUKA.NavMeshLoader: Invalid geometry format. Please ensure to represent your geometry as triangles.' );
 
