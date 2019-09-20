@@ -392,6 +392,16 @@ describe( 'Vector3', function () {
 
 		} );
 
+		it( 'should note return a NaN value but 0 when one or both vectors are null vectors', function () {
+
+			const v1 = new Vector3( 1, 0, 0 );
+			const v2 = new Vector3( 0, 0, 0 );
+
+			expect( v1.angleTo( v2 ) ).to.be.equal( 0 );
+			expect( v2.angleTo( v2 ) ).to.be.equal( 0 );
+
+		} );
+
 	} );
 
 	describe( '#length()', function () {
