@@ -881,7 +881,11 @@ class Vector3 {
 	*/
 	angleTo( v ) {
 
-		const theta = this.dot( v ) / ( Math.sqrt( this.squaredLength() * v.squaredLength() ) );
+		const denominator = Math.sqrt( this.squaredLength() * v.squaredLength() );
+
+		if ( denominator === 0 ) return 0;
+
+		const theta = this.dot( v ) / denominator;
 
 		// clamp, to handle numerical problems
 
@@ -18648,6 +18652,9 @@ class NavMesh {
 
 				if ( edge.twin.polygon === region2 ) {
 
+					// the direction of portal edges are reversed. so "left" is the edge's origin vertex and "right"
+					// is the destintation vertex. More details in issue #5
+
 					portalEdge.left = edge.prev.vertex;
 					portalEdge.right = edge.vertex;
 					return portalEdge;
@@ -19023,7 +19030,7 @@ class Parser {
 
 			const primitive = definition.primitives[ 0 ];
 
-			if ( primitive.mode !== 4 ) {
+			if ( primitive.mode !== undefined && primitive.mode !== 4 ) {
 
 				throw new Error( 'YUKA.NavMeshLoader: Invalid geometry format. Please ensure to represent your geometry as triangles.' );
 
