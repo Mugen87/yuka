@@ -43,7 +43,7 @@
 
 		let renderer, scene, camera;
 
-		let entityManager, time, pathPlanner;
+		let entityManager, time, pathPlanner, vehicleMesh;
 
 		const vehicleCount = 100;
 		const vehicles = [];
@@ -163,13 +163,10 @@
 
 					// create vehicles
 
+					vehicleMesh = new THREE.InstancedMesh( vehicleGeometry, vehicleMaterial, vehicleCount );
+					scene.add( vehicleMesh );
+
 					for ( let i = 0; i < vehicleCount; i ++ ) {
-
-						// mesh
-
-						const vehicleMesh = new THREE.Mesh( vehicleGeometry, vehicleMaterial );
-						vehicleMesh.matrixAutoUpdate = false;
-						scene.add( vehicleMesh );
 
 						// path helper
 
@@ -184,7 +181,6 @@
 						vehicle.navMesh = navigationMesh;
 						vehicle.maxSpeed = 1.5;
 						vehicle.maxForce = 10;
-						vehicle.setRenderComponent( vehicleMesh, sync );
 
 						const toRegion = vehicle.navMesh.getRandomRegion();
 						vehicle.position.copy( toRegion.centroid );
@@ -275,7 +271,21 @@
 
 			requestAnimationFrame( animate );
 
-			//
+			updatePathfinding();
+
+			const delta = time.update().getDelta();
+
+			entityManager.update( delta );
+
+			pathPlanner.update();
+
+			updateInstancing();
+
+			renderer.render( scene, camera );
+
+		}
+
+		function updatePathfinding() {
 
 			for ( let i = 0, l = vehicles.length; i < l; i ++ ) {
 
@@ -295,21 +305,19 @@
 
 			}
 
-			//
-
-			const delta = time.update().getDelta();
-
-			entityManager.update( delta );
-
-			pathPlanner.update();
-
-			renderer.render( scene, camera );
-
 		}
 
-		function sync( entity, renderComponent ) {
+		function updateInstancing() {
 
-			renderComponent.matrix.copy( entity.worldMatrix );
+			for ( let i = 0, l = vehicles.length; i < l; i ++ ) {
+
+				const vehicle = vehicles[ i ];
+
+				vehicleMesh.setMatrixAt( i ++, vehicle.worldMatrix );
+
+			}
+
+			vehicleMesh.instanceMatrix.needsUpdate = true;
 
 		}
 
