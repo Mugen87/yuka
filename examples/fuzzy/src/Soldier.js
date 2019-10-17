@@ -3,14 +3,16 @@
  * @author robp94 / https://github.com/robp94
  */
 
-import { GameEntity,
-		 FuzzyModule,
-		 FuzzyVariable,
-		 LeftShoulderFuzzySet,
-		 TriangularFuzzySet,
-		 RightShoulderFuzzySet,
-		 FuzzyRule,
-		 FuzzyAND } from '../../../build/yuka.module.js';
+import {
+	GameEntity,
+	FuzzyModule,
+	FuzzyVariable,
+	LeftShoulderFuzzySet,
+	TriangularFuzzySet,
+	RightShoulderFuzzySet,
+	FuzzyRule,
+	FuzzyAND
+} from '../../../build/yuka.module.js';
 
 class Soldier extends GameEntity {
 
