@@ -164,6 +164,7 @@
 					// create vehicles
 
 					vehicleMesh = new THREE.InstancedMesh( vehicleGeometry, vehicleMaterial, vehicleCount );
+					vehicleMesh.frustumCulled = false;
 					scene.add( vehicleMesh );
 
 					for ( let i = 0; i < vehicleCount; i ++ ) {
