@@ -136,15 +136,7 @@
 				object.matrixAutoUpdate = false;
 				object.updateMatrix();
 
-				if ( object.isMesh ) {
-
-					for ( const material of object.material ) {
-
-						material.alphaTest = 0.5;
-
-					}
-
-				}
+				if ( object.isMesh ) object.material.alphaTest = 0.5;
 
 			} );
 

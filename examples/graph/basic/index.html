@@ -104,9 +104,11 @@
 		}
 
 		searchTreeHelper = createSearchTreeHelper( graph, searchTree );
+		searchTreeHelper.renderOrder = 1;
 		scene.add( searchTreeHelper );
 
 		pathHelper = createPathHelper( graph, path, 0.4 );
+		pathHelper.renderOrder = 2;
 		scene.add( pathHelper );
 
 		// clean up
