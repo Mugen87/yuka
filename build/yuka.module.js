@@ -8870,21 +8870,14 @@ class Time {
 	constructor() {
 
 		/**
-		* The start time of this timer.
-		* @type Number
-		* @default 0
-		*/
-		this.startTime = 0;
-
-		/**
-		* The time stamp of the last simulation step.
+		* The time stamp of the last simulation step in milliseconds.
 		* @type Number
 		* @default 0
 		*/
 		this.previousTime = 0;
 
 		/**
-		* The time stamp of the current simulation step.
+		* The time stamp of the current simulation step in milliseconds.
 		* @type Number
 		*/
 		this.currentTime = this.now();
@@ -8908,6 +8901,11 @@ class Time {
 
 		}
 
+		// private members
+
+		this._elapsedTime = 0;
+		this._deltaTime = 0;
+
 	}
 
 	/**
@@ -8917,18 +8915,19 @@ class Time {
 	*/
 	getDelta() {
 
-		return ( this.currentTime - this.previousTime ) / 1000;
+		return this._deltaTime / 1000;
 
 	}
 
 	/**
-	* Returns the elapsed time in seconds of this timer.
+	* Returns the elapsed time in seconds of this timer. It's the accumulated
+	* value of all previous time deltas.
 	*
 	* @return {Number} The elapsed time in seconds.
 	*/
 	getElapsed() {
 
-		return ( this.currentTime - this.startTime ) / 1000;
+		return this._elapsedTime / 1000;
 
 	}
 
@@ -8941,6 +8940,9 @@ class Time {
 
 		this.previousTime = this.currentTime;
 		this.currentTime = this.now();
+
+		this._deltaTime = this.currentTime - this.previousTime;
+		this._elapsedTime += this._deltaTime;
 
 		return this;
 

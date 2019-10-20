@@ -16,7 +16,6 @@ describe( 'Time', function () {
 
 			const time = new Time();
 
-			expect( time ).to.have.a.property( 'startTime' ).that.is.equal( 0 );
 			expect( time ).to.have.a.property( 'previousTime' ).that.is.equal( 0 );
 			expect( time ).to.have.a.property( 'currentTime' ).that.is.a( 'number' );
 			expect( time ).to.have.a.property( 'detectPageVisibility' ).that.is.true;
@@ -38,11 +37,10 @@ describe( 'Time', function () {
 
 	describe( '#getDelta()', function () {
 
-		it( 'should return the delta time in seconds between the previous and current time', function () {
+		it( 'should return the delta time in seconds', function () {
 
 			const time = new Time();
-			time.previousTime = 1000; // ms
-			time.currentTime = 2000; // ms
+			time._deltaTime = 1000; // ms
 
 			expect( time.getDelta() ).to.equal( 1 );
 
@@ -52,13 +50,12 @@ describe( 'Time', function () {
 
 	describe( '#getElapsed()', function () {
 
-		it( 'should return the elapsed time in seconds between the start and current time', function () {
+		it( 'should return the elapsed time in seconds', function () {
 
 			const time = new Time();
-			time.startTime = 1000; // ms
-			time.currentTime = 2000; // ms
+			time._elapsedTime = 2000; // ms
 
-			expect( time.getElapsed() ).to.equal( 1 );
+			expect( time.getElapsed() ).to.equal( 2 );
 
 		} );
 
