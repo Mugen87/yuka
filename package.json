@@ -4,7 +4,7 @@
   "description": "JavaScript Game AI library",
   "repository": "Mugen87/yuka",
   "main": "build/yuka.js",
-  "module": "build/yuka.modules.js",
+  "module": "build/yuka.module.js",
   "scripts": {
     "build": "rollup -c \"config/rollup/config.js\"",
     "build-prod": "rollup -c \"config/rollup/config.js\" && google-closure-compiler --charset UTF-8 build/yuka.js > build/yuka.min.js",
