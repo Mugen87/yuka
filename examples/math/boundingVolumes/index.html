@@ -1,0 +1,242 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Bounding Volumes</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
+		<link rel="shortcut icon" type="image/x-icon" href="https://mugen87.github.io/yuka/favicon.ico">
+	</head>
+<body>
+
+	<section id="loading-screen">
+		<div class="spinner">
+			<div class="rect1"></div>
+			<div class="rect2"></div>
+			<div class="rect3"></div>
+			<div class="rect4"></div>
+			<div class="rect5"></div>
+		</div>
+	</section>
+
+	<section id="info">
+		<p>
+			Demonstrates different types of auto-generated bounding volumes.
+		</p>
+	</section>
+
+	<script type="module">
+
+	import * as YUKA from '../../../build/yuka.module.js';
+	import * as THREE from '../../lib/three.module.js';
+	import * as DAT from '../../lib/dat.gui.module.js';
+
+	import { OrbitControls } from '../../lib/OrbitControls.module.js';
+	import { GLTFLoader } from '../../lib/GLTFLoader.module.js';
+
+	import { createSphereHelper, createAABBHelper, createOBBHelper, createConvexHullHelper } from '../common/js/BVHelper.js';
+
+	let renderer, scene, camera, helper;
+
+	const points = [];
+
+	const params = {
+		boundingVolume: 'None'
+	};
+
+	init();
+	animate();
+
+	function init() {
+
+		scene = new THREE.Scene();
+		scene.background = new THREE.Color( 0xa0a0a0 );
+		scene.fog = new THREE.Fog( 0xa0a0a0, 20, 200 );
+
+		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 250 );
+		camera.position.set( 10, 10, 30 );
+
+		//
+
+		const geometry = new THREE.PlaneBufferGeometry( 500, 500 );
+		const material = new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } );
+
+		const ground = new THREE.Mesh( geometry, material );
+		ground.rotation.x = - Math.PI / 2;
+		ground.matrixAutoUpdate = false;
+		ground.receiveShadow = true;
+		ground.updateMatrix();
+		scene.add( ground );
+
+		//
+
+		const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.6 );
+		hemiLight.position.set( 0, 100, 0 );
+		hemiLight.matrixAutoUpdate = false;
+		hemiLight.updateMatrix();
+		scene.add( hemiLight );
+
+		const dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+		dirLight.position.set( - 40, 50, 50 );
+		dirLight.matrixAutoUpdate = false;
+		dirLight.updateMatrix();
+		dirLight.castShadow = true;
+		dirLight.shadow.camera.top = 25;
+		dirLight.shadow.camera.bottom = - 25;
+		dirLight.shadow.camera.left = - 25;
+		dirLight.shadow.camera.right = 25;
+		dirLight.shadow.camera.near = 1;
+		dirLight.shadow.camera.far = 200;
+		dirLight.shadow.mapSize.x = 2048;
+		dirLight.shadow.mapSize.y = 2048;
+		scene.add( dirLight );
+
+		// scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
+
+		//
+
+		const loadingManager = new THREE.LoadingManager( () => {
+
+			const loadingScreen = document.getElementById( 'loading-screen' );
+
+			loadingScreen.classList.add( 'fade-out' );
+			loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
+
+			animate();
+
+		} );
+
+		const glTFLoader = new GLTFLoader( loadingManager );
+		glTFLoader.load( 'model/robot.glb', ( gltf ) => {
+
+			// add object to scene
+
+			let avatar;
+
+			gltf.scene.traverse( ( object ) => {
+
+				if ( object.isMesh ) avatar = object;
+
+			} );
+
+			avatar.castShadow = true;
+
+			//
+
+			const geometry = avatar.geometry.toNonIndexed();
+			geometry.applyMatrix( avatar.matrixWorld ); // bake model transformation
+			const position = geometry.getAttribute( 'position' );
+
+			for ( let i = 0; i < position.count; i ++ ) {
+
+				const x = position.getX( i );
+				const y = position.getY( i );
+				const z = position.getZ( i );
+
+				points.push( new YUKA.Vector3( x, y, z ) );
+
+			}
+
+			scene.add( avatar );
+
+		} );
+
+		renderer = new THREE.WebGLRenderer( { antialias: true } );
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.gammaOutput = true;
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		document.body.appendChild( renderer.domElement );
+
+		// points
+
+
+		//
+
+		window.addEventListener( 'resize', onWindowResize, false );
+
+		const controls = new OrbitControls( camera, renderer.domElement );
+		controls.enablePan = false;
+		controls.minDistance = 10;
+		controls.maxDistance = 50;
+		controls.target.set( 0.5, 8, 2.5 );
+		controls.update();
+
+		// dat.gui
+
+		const gui = new DAT.GUI( { width: 400 } );
+		const selection = [ 'None', 'BoundingSphere', 'AABB', 'OBB', 'ConvexHull' ];
+
+		gui.add( params, 'boundingVolume', selection ).name( 'Current Bounding Volume' ).onChange( ( value ) => {
+
+			if ( helper !== undefined ) {
+
+				helper.material.dispose();
+				helper.geometry.dispose();
+
+				scene.remove( helper );
+
+			}
+
+			switch ( value ) {
+
+				case 'BoundingSphere':
+					const boundingSphere = new YUKA.BoundingSphere().fromPoints( points );
+					helper = createSphereHelper( boundingSphere );
+					scene.add( helper );
+					break;
+
+				case 'AABB':
+					const aabb = new YUKA.AABB().fromPoints( points );
+					helper = createAABBHelper( aabb );
+					scene.add( helper );
+					break;
+
+				case 'OBB':
+					const obb = new YUKA.OBB().fromPoints( points );
+					helper = createOBBHelper( obb );
+					scene.add( helper );
+					break;
+
+				case 'ConvexHull':
+					const convexHull = new YUKA.ConvexHull().fromPoints( points );
+					helper = createConvexHullHelper( convexHull );
+					scene.add( helper );
+					break;
+
+				default:
+
+			}
+
+		} );
+
+		gui.open();
+
+	}
+
+	function onWindowResize() {
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+	}
+
+	function onTransitionEnd( event ) {
+
+		event.target.remove();
+
+	}
+
+	function animate() {
+
+		requestAnimationFrame( animate );
+		renderer.render( scene, camera );
+
+	}
+
+	</script>
+
+</body>
+</html>
