@@ -29,7 +29,7 @@
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
 	(global = global || self, factory(global.YUKA = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
 	/**
 	* Class for representing a telegram, an envelope which contains a message
@@ -20621,4 +20621,4 @@
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
