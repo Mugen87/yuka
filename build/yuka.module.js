@@ -15646,6 +15646,13 @@ class ConvexHull extends Polyhedron {
 
 		super();
 
+		/**
+		* Whether faces of the convex hull should be merged or not.
+		* @type Boolean
+		* @default true
+		*/
+		this.mergeFaces = true;
+
 		// tolerance value for various (float) compare operations
 
 		this._tolerance = - 1;
@@ -15658,10 +15665,6 @@ class ConvexHull extends Polyhedron {
 
 		this._assigned = new VertexList();
 		this._unassigned = new VertexList();
-
-		// this array holds the new faces generated in a single iteration of the algorithm
-
-		this._newFaces = new Array();
 
 	}
 
@@ -15800,7 +15803,7 @@ class ConvexHull extends Polyhedron {
 
 	_addNewFaces( vertex, horizon ) {
 
-		this._newFaces = [];
+		const newFaces = [];
 
 		let firstSideEdge = null;
 		let previousSideEdge = null;
@@ -15823,7 +15826,7 @@ class ConvexHull extends Polyhedron {
 
 			}
 
-			this._newFaces.push( sideEdge.polygon );
+			newFaces.push( sideEdge.polygon );
 			previousSideEdge = sideEdge;
 
 		}
@@ -15832,7 +15835,7 @@ class ConvexHull extends Polyhedron {
 
 		firstSideEdge.next.linkOpponent( previousSideEdge );
 
-		return this;
+		return newFaces;
 
 	}
 
@@ -15870,11 +15873,11 @@ class ConvexHull extends Polyhedron {
 
 		this._computeHorizon( vertex.point, null, vertex.face, horizon );
 
-		this._addNewFaces( vertex, horizon );
+		const newFaces = this._addNewFaces( vertex, horizon );
 
 		// reassign 'unassigned' vertices to the new faces
 
-		this._resolveUnassignedPoints( this._newFaces );
+		this._resolveUnassignedPoints( newFaces );
 
 		return this;
 
@@ -15888,8 +15891,6 @@ class ConvexHull extends Polyhedron {
 
 		this._assigned.clear();
 		this._unassigned.clear();
-
-		this._newFaces.length = 0;
 
 		return this;
 
@@ -16259,7 +16260,7 @@ class ConvexHull extends Polyhedron {
 
 		this._updateFaces();
 
-		this._mergeFaces();
+		this._postprocessHull();
 
 		this._reset();
 
@@ -16267,92 +16268,100 @@ class ConvexHull extends Polyhedron {
 
 	}
 
-	// merges faces if the result is still convex and coplanar
+	// final tasks after computing the hull
 
-	_mergeFaces() {
+	_postprocessHull() {
 
 		const faces = this.faces;
 		const edges = this.edges;
 
-		const cache = {
-			leftPrev: null,
-			leftNext: null,
-			rightPrev: null,
-			rightNext: null
-		};
+		if ( this.mergeFaces === true ) {
 
-		// gather unique edges and temporarily sort them
+			// merges faces if the result is still convex and coplanar
 
-		this.computeUniqueEdges();
+			const cache = {
+				leftPrev: null,
+				leftNext: null,
+				rightPrev: null,
+				rightNext: null
+			};
 
-		edges.sort( ( a, b ) => b.length() - a.length() );
+			// gather unique edges and temporarily sort them
 
-		// process edges from longest to shortest
+			this.computeUniqueEdges();
 
-		for ( let i = 0, l = edges.length; i < l; i ++ ) {
+			edges.sort( ( a, b ) => b.length() - a.length() );
 
-			const entry = edges[ i ];
+			// process edges from longest to shortest
 
-			let candidate = entry;
+			for ( let i = 0, l = edges.length; i < l; i ++ ) {
 
-			// cache current references for possible restore
+				const entry = edges[ i ];
 
-			cache.prev = candidate.prev;
-			cache.next = candidate.next;
-			cache.prevTwin = candidate.twin.prev;
-			cache.nextTwin = candidate.twin.next;
+				if ( this._mergePossible( entry ) === false ) continue;
 
-			// temporarily change the first polygon in order to represent both polygons
+				let candidate = entry;
 
-			candidate.prev.next = candidate.twin.next;
-			candidate.next.prev = candidate.twin.prev;
-			candidate.twin.prev.next = candidate.next;
-			candidate.twin.next.prev = candidate.prev;
+				// cache current references for possible restore
 
-			const polygon = candidate.polygon;
-			polygon.edge = candidate.prev;
+				cache.prev = candidate.prev;
+				cache.next = candidate.next;
+				cache.prevTwin = candidate.twin.prev;
+				cache.nextTwin = candidate.twin.next;
 
-			const ccw = polygon.plane.normal.dot( up ) >= 0;
+				// temporarily change the first polygon in order to represent both polygons
 
-			if ( polygon.convex( ccw ) === true && polygon.coplanar( this._tolerance ) === true ) {
+				candidate.prev.next = candidate.twin.next;
+				candidate.next.prev = candidate.twin.prev;
+				candidate.twin.prev.next = candidate.next;
+				candidate.twin.next.prev = candidate.prev;
 
-				// correct polygon reference of all edges
+				const polygon = candidate.polygon;
+				polygon.edge = candidate.prev;
 
-				let edge = polygon.edge;
+				const ccw = polygon.plane.normal.dot( up ) >= 0;
 
-				do {
+				if ( polygon.convex( ccw ) === true && polygon.coplanar( this._tolerance ) === true ) {
 
-					edge.polygon = polygon;
+					// correct polygon reference of all edges
 
-					edge = edge.next;
+					let edge = polygon.edge;
 
-				} while ( edge !== polygon.edge );
+					do {
 
-				// delete obsolete polygon
+						edge.polygon = polygon;
 
-				const index = faces.indexOf( entry.twin.polygon );
-				faces.splice( index, 1 );
+						edge = edge.next;
 
-			} else {
+					} while ( edge !== polygon.edge );
 
-				// restore
+					// delete obsolete polygon
 
-				cache.prev.next = candidate;
-				cache.next.prev = candidate;
-				cache.prevTwin.next = candidate.twin;
-				cache.nextTwin.prev = candidate.twin;
+					const index = faces.indexOf( entry.twin.polygon );
+					faces.splice( index, 1 );
 
-				polygon.edge = candidate;
+				} else {
+
+					// restore
+
+					cache.prev.next = candidate;
+					cache.next.prev = candidate;
+					cache.prevTwin.next = candidate.twin;
+					cache.nextTwin.prev = candidate.twin;
+
+					polygon.edge = candidate;
+
+				}
 
 			}
 
-		}
+			// recompute centroid of faces
 
-		// recompute centroid of faces
+			for ( let i = 0, l = faces.length; i < l; i ++ ) {
 
-		for ( let i = 0, l = faces.length; i < l; i ++ ) {
+				faces[ i ].computeCentroid();
 
-			faces[ i ].computeCentroid();
+			}
 
 		}
 
@@ -16363,6 +16372,28 @@ class ConvexHull extends Polyhedron {
 		this.computeUniqueVertices();
 
 		return this;
+
+	}
+
+	// checks if the given edge can be used to merge convex regions
+
+	_mergePossible( edge ) {
+
+		const polygon = edge.polygon;
+		let currentEdge = edge.twin;
+
+		do {
+
+			// we can only use an edge to merge two regions if the adjacent region does not have any edges
+			// apart from edge.twin already connected to the region.
+
+			if ( currentEdge !== edge.twin && currentEdge.twin.polygon === polygon ) return false;
+
+			currentEdge = currentEdge.next;
+
+		} while ( edge.twin !== currentEdge );
+
+		return true;
 
 	}
 

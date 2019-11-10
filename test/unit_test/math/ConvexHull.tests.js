@@ -36,11 +36,11 @@ describe( 'ConvexHull', function () {
 		it( 'should create an object with correct default values', function () {
 
 			const convexHull = new ConvexHull();
+			expect( convexHull.mergeFaces ).to.equal( true );
 			expect( convexHull._tolerance ).to.equal( - 1 );
 			expect( convexHull._vertices ).to.be.of.an( 'array' );
 			expect( convexHull._assigned ).to.be.an.instanceof( VertexList );
 			expect( convexHull._unassigned ).to.be.an.instanceof( VertexList );
-			expect( convexHull._newFaces ).to.be.of.an( 'array' );
 
 		} );
 
@@ -183,7 +183,6 @@ describe( 'ConvexHull', function () {
 			convexHull._vertices.push( new Vertex() );
 			convexHull._assigned.append( new Vertex() );
 			convexHull._unassigned.append( new Vertex() );
-			convexHull._newFaces.push( new Face() );
 
 			convexHull._reset();
 
@@ -192,7 +191,6 @@ describe( 'ConvexHull', function () {
 			expect( convexHull._assigned.tail ).to.be.null;
 			expect( convexHull._unassigned.head ).to.be.null;
 			expect( convexHull._unassigned.tail ).to.be.null;
-			expect( convexHull._newFaces ).to.have.lengthOf( 0 );
 
 		} );
 
@@ -841,7 +839,7 @@ describe( 'ConvexHull', function () {
 
 	} );
 
-	describe( '#_mergeFaces()', function () {
+	describe( '#_postprocessHull()', function () {
 
 		it( 'should merge faces if the resulting ones are still convex and coplanar, ', function () {
 
@@ -859,6 +857,91 @@ describe( 'ConvexHull', function () {
 			const convexHull = new ConvexHull().fromPoints( points );
 
 			expect( convexHull.faces ).to.have.lengthOf( 6 );
+
+		} );
+
+		it( 'should not merge faces if the respective flag is set to false, ', function () {
+
+			const points = [
+				new Vector3( 1, 1, 1 ),
+				new Vector3( 1, 1, - 1 ),
+				new Vector3( 1, - 1, 1 ),
+				new Vector3( 1, - 1, - 1 ),
+				new Vector3( - 1, 1, 1 ),
+				new Vector3( - 1, 1, - 1 ),
+				new Vector3( - 1, - 1, 1 ),
+				new Vector3( - 1, - 1, - 1 )
+			];
+
+			const convexHull = new ConvexHull();
+			convexHull.mergeFaces = false;
+			convexHull.fromPoints( points );
+
+			expect( convexHull.faces ).to.have.lengthOf( 12 );
+
+		} );
+
+	} );
+
+	describe( '#_mergePossible()', function () {
+
+		const convexHull = new ConvexHull();
+
+		const points3 = [
+			new Vector3( 0, 0, 0 ),
+			new Vector3( 1, 0, 0 ),
+			new Vector3( 1, 0, - 1 ),
+			new Vector3( 0, 0, - 1 ),
+		];
+
+		const points4 = [
+			new Vector3( 1, 0, 0 ),
+			new Vector3( 0, 0, 0 ),
+			new Vector3( 0.5, 0, 1 )
+		];
+
+		const p1 = new YUKA.Polygon().fromContour( points3 );
+		const p2 = new YUKA.Polygon().fromContour( points4 );
+
+		// in a convex hull, all half edges have twins (there are no border edges)
+
+		let e = p1.edge;
+
+		do {
+
+			e.twin = new HalfEdge();
+			e = e.next;
+
+		} while ( e !== p1.edge );
+
+		e = p2.edge;
+
+		do {
+
+			e.twin = new HalfEdge();
+			e = e.next;
+
+		} while ( e !== p2.edge );
+
+		// set real twins (a single connection between two convex regions)
+
+		p1.edge.next.linkOpponent( p2.edge.next );
+
+		it( 'should return true if two convex regions can be merged along the given half edge', function () {
+
+			// set real twins
+
+			expect( convexHull._mergePossible( p1.edge.next ) ).to.be.true;
+
+		} );
+
+		it( 'should return false if two convex regions share more than two twins', function () {
+
+			// add an additional connection
+
+			p1.edge.linkOpponent( p2.edge.prev );
+
+			expect( convexHull._mergePossible( p1.edge.next ) ).to.be.false;
 
 		} );
 
