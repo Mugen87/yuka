@@ -59,36 +59,38 @@
 
 		entityManager.add( entity );
 
-		const sphericalTriggerRegion = new YUKA.SphericalTriggerRegion();
-		sphericalTriggerRegion.position.set( 3, 0, 0 );
-		sphericalTriggerRegion.radius = 2;
-
-		const rectangularTriggerRegion = new YUKA.RectangularTriggerRegion();
-		const position = new YUKA.Vector3( - 3, 0, 0 );
+		const radius = 2;
 		const size = new YUKA.Vector3( 3, 3, 3 );
-		rectangularTriggerRegion.fromPositionAndSize( position, size );
+
+		const sphericalTriggerRegion = new YUKA.SphericalTriggerRegion( radius );
+		const rectangularTriggerRegion = new YUKA.RectangularTriggerRegion( size );
 
 		const trigger1 = new CustomTrigger( sphericalTriggerRegion );
-		entityManager.addTrigger( trigger1 );
+		trigger1.position.set( 3, 0, 0 );
 
 		const trigger2 = new CustomTrigger( rectangularTriggerRegion );
-		entityManager.addTrigger( trigger2 );
+		trigger2.position.set( - 3, 0, 0 );
+
+		entityManager.add( trigger1 );
+		entityManager.add( trigger2 );
 
 		// visualize triggers
 
-		const sphereGeometry = new THREE.SphereBufferGeometry( sphericalTriggerRegion.radius, 16, 16 );
+		const sphereGeometry = new THREE.SphereBufferGeometry( radius, 16, 16 );
 		const sphereMaterial = new THREE.MeshBasicMaterial( { color: 0x6083c2, wireframe: true } );
 		const triggerMesh1 = new THREE.Mesh( sphereGeometry, sphereMaterial );
-		triggerMesh1.position.copy( sphericalTriggerRegion.position );
-
+		triggerMesh1.matrixAutoUpdate = false;
 		scene.add( triggerMesh1 );
+
+		trigger1.setRenderComponent( triggerMesh1, sync );
 
 		const boxGeometry = new THREE.BoxBufferGeometry( size.x, size.y, size.z );
 		const boxMaterial = new THREE.MeshBasicMaterial( { color: 0x6083c2, wireframe: true } );
 		const triggerMesh2 = new THREE.Mesh( boxGeometry, boxMaterial );
-		triggerMesh2.position.copy( position );
-
+		triggerMesh2.matrixAutoUpdate = false;
 		scene.add( triggerMesh2 );
+
+		trigger2.setRenderComponent( triggerMesh2, sync );
 
 		// renderer
 
@@ -120,7 +122,7 @@
 		const elapsedTime = time.getElapsed();
 
 		entity.position.x = Math.sin( elapsedTime ) * 2;
-		entity._renderComponent.material.color.set( 0xff0000 );
+		entity._renderComponent.material.color.set( 0xff0000 ); // reset color
 
 		entityManager.update( delta );
 
