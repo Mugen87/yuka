@@ -7521,6 +7521,7 @@
 	* touches its trigger region, a predefine area in 3D space.
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
+	* @augments GameEntity
 	*/
 	class Trigger extends GameEntity {
 
