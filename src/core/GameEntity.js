@@ -118,7 +118,7 @@ class GameEntity {
 		* @type Boolean
 		* @default true
 		*/
-		this.canAcitivateTrigger = true;
+		this.canActivateTrigger = true;
 
 		/**
 		* A transformation matrix representing the world space of this game entity.
@@ -457,6 +457,7 @@ class GameEntity {
 			up: this.up.toArray( new Array() ),
 			boundingRadius: this.boundingRadius,
 			maxTurnRate: this.maxTurnRate,
+			canActivateTrigger: this.canActivateTrigger,
 			worldMatrix: this.worldMatrix.toArray( new Array() ),
 			_localMatrix: this._localMatrix.toArray( new Array() ),
 			_cache: {
@@ -489,6 +490,7 @@ class GameEntity {
 		this.up.fromArray( json.up );
 		this.boundingRadius = json.boundingRadius;
 		this.maxTurnRate = json.maxTurnRate;
+		this.canActivateTrigger = json.canActivateTrigger;
 		this.worldMatrix.fromArray( json.worldMatrix );
 
 		this.children = json.children.slice();

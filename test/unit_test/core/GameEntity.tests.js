@@ -40,6 +40,7 @@ describe( 'GameEntity', function () {
 
 			expect( entity ).to.have.a.property( 'boundingRadius' ).that.is.equal( 0 );
 			expect( entity ).to.have.a.property( 'maxTurnRate' ).that.is.equal( Math.PI );
+			expect( entity ).to.have.a.property( 'canActivateTrigger' ).that.is.true;
 
 			expect( entity ).to.have.a.property( 'worldMatrix' ).that.is.an.instanceof( Matrix4 );
 

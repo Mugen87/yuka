@@ -92,8 +92,8 @@
 
 			return {
 				type: this.constructor.name,
-				sender: this.sender ? this.sender.uuid : null,
-				receiver: this.receiver ? this.receiver.uuid : null,
+				sender: this.sender.uuid,
+				receiver: this.receiver.uuid,
 				message: this.message,
 				delay: this.delay,
 				data: this.data
@@ -2987,7 +2987,7 @@
 			* @type Boolean
 			* @default true
 			*/
-			this.canAcitivateTrigger = true;
+			this.canActivateTrigger = true;
 
 			/**
 			* A transformation matrix representing the world space of this game entity.
@@ -3326,6 +3326,7 @@
 				up: this.up.toArray( new Array() ),
 				boundingRadius: this.boundingRadius,
 				maxTurnRate: this.maxTurnRate,
+				canActivateTrigger: this.canActivateTrigger,
 				worldMatrix: this.worldMatrix.toArray( new Array() ),
 				_localMatrix: this._localMatrix.toArray( new Array() ),
 				_cache: {
@@ -3358,6 +3359,7 @@
 			this.up.fromArray( json.up );
 			this.boundingRadius = json.boundingRadius;
 			this.maxTurnRate = json.maxTurnRate;
+			this.canActivateTrigger = json.canActivateTrigger;
 			this.worldMatrix.fromArray( json.worldMatrix );
 
 			this.children = json.children.slice();
@@ -7295,6 +7297,18 @@
 		}
 
 		/**
+		* Updates this trigger region. Must be implemented by all concrete trigger regions.
+		*
+		* @param {Trigger} trigger - The trigger that owns this region.
+		* @return {TriggerRegion} A reference to this trigger region.
+		*/
+		update( /* trigger */ ) {
+
+			return this;
+
+		}
+
+		/**
 		* Transforms this instance into a JSON object.
 		*
 		* @return {Object} The JSON object.
@@ -7322,6 +7336,7 @@
 	}
 
 	const boundingSphereEntity = new BoundingSphere();
+	const center$1 = new Vector3();
 
 	/**
 	* Class for representing a rectangular trigger region as an AABB.
@@ -7334,53 +7349,15 @@
 		/**
 		* Constructs a new rectangular trigger region with the given values.
 		*
-		* @param {Vector3} min - The minimum bounds of the region.
-		* @param {Vector3} max - The maximum bounds of the region.
+		* @param {Vector3} size - The size of the region.
 		*/
-		constructor( min = new Vector3(), max = new Vector3() ) {
+		constructor( size = new Vector3() ) {
 
 			super();
 
-			this._aabb = new AABB( min, max );
+			this.size = size;
 
-		}
-
-		get min() {
-
-			return this._aabb.min;
-
-		}
-
-		set min( min ) {
-
-			this._aabb.min = min;
-
-		}
-
-		get max() {
-
-			return this._aabb.max;
-
-		}
-
-		set max( max ) {
-
-			this._aabb.max = max;
-
-		}
-
-		/**
-		* Creates the new rectangular trigger region from a given position and size.
-		*
-		* @param {Vector3} position - The center position of the trigger region.
-		* @param {Vector3} size - The size of the trigger region per axis.
-		* @return {RectangularTriggerRegion} A reference to this trigger region.
-		*/
-		fromPositionAndSize( position, size ) {
-
-			this._aabb.fromCenterAndSize( position, size );
-
-			return this;
+			this._aabb = new AABB();
 
 		}
 
@@ -7400,6 +7377,22 @@
 		}
 
 		/**
+		* Updates this trigger region.
+		*
+		* @param {Trigger} trigger - The trigger that owns this region.
+		* @return {RectangularTriggerRegion} A reference to this trigger region.
+		*/
+		update( trigger ) {
+
+			trigger.getWorldPosition( center$1 );
+
+			this._aabb.fromCenterAndSize( center$1, this.size );
+
+			return this;
+
+		}
+
+		/**
 		* Transforms this instance into a JSON object.
 		*
 		* @return {Object} The JSON object.
@@ -7408,7 +7401,7 @@
 
 			const json = super.toJSON();
 
-			json._aabb = this._aabb.toJSON();
+			json.size = this.size.toArray( new Array() );
 
 			return json;
 
@@ -7424,7 +7417,7 @@
 
 			super.fromJSON( json );
 
-			this._aabb.fromJSON( json._aabb );
+			this.size.fromArray( json.size );
 
 			return this;
 
@@ -7443,40 +7436,19 @@
 	class SphericalTriggerRegion extends TriggerRegion {
 
 		/**
-		* Constructs a new spherical trigger region with the given values.
+		* Constructs a new spherical trigger region.
 		*
-		* @param {Vector3} position - The center position of the region.
 		* @param {Number} radius - The radius of the region.
 		*/
-		constructor( position = new Vector3(), radius = 0 ) {
+		constructor( radius = 0 ) {
 
 			super();
 
-			this._boundingSphere = new BoundingSphere( position, radius );
+			this.radius = radius;
 
-		}
+			//
 
-		get position() {
-
-			return this._boundingSphere.center;
-
-		}
-
-		set position( position ) {
-
-			this._boundingSphere.center = position;
-
-		}
-
-		get radius() {
-
-			return this._boundingSphere.radius;
-
-		}
-
-		set radius( radius ) {
-
-			this._boundingSphere.radius = radius;
+			this._boundingSphere = new BoundingSphere();
 
 		}
 
@@ -7489,9 +7461,25 @@
 		*/
 		touching( entity ) {
 
-			boundingSphereEntity$1.set( entity.position, entity.boundingRadius );
+			entity.getWorldPosition( boundingSphereEntity$1.center );
+			boundingSphereEntity$1.radius = entity.boundingRadius;
 
 			return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity$1 );
+
+		}
+
+		/**
+		* Updates this trigger region.
+		*
+		* @param {Trigger} trigger - The trigger that owns this region.
+		* @return {SphericalTriggerRegion} A reference to this trigger region.
+		*/
+		update( trigger ) {
+
+			trigger.getWorldPosition( this._boundingSphere.center );
+			this._boundingSphere.radius = this.radius;
+
+			return this;
 
 		}
 
@@ -7504,7 +7492,7 @@
 
 			const json = super.toJSON();
 
-			json._boundingSphere = this._boundingSphere.toJSON();
+			json.radius = this.radius;
 
 			return json;
 
@@ -7520,7 +7508,7 @@
 
 			super.fromJSON( json );
 
-			this._boundingSphere.fromJSON( json._boundingSphere );
+			this.radius = json.radius;
 
 			return this;
 
@@ -7530,11 +7518,11 @@
 
 	/**
 	* Base class for representing triggers. A trigger generates an action if a game entity
-	* touches its trigger region, a predefine region in 3D space.
+	* touches its trigger region, a predefine area in 3D space.
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
 	*/
-	class Trigger {
+	class Trigger extends GameEntity {
 
 		/**
 		* Constructs a new trigger with the given values.
@@ -7543,12 +7531,7 @@
 		*/
 		constructor( region = new TriggerRegion() ) {
 
-			/**
-			* Whether this trigger is active or not.
-			* @type Boolean
-			* @default true
-			*/
-			this.active = true;
+			super();
 
 			/**
 			* The region of the trigger.
@@ -7558,7 +7541,9 @@
 
 			//
 
-			this._typesMap = new Map(); // used for deserialization of custom triggerRegions
+			this.canActivateTrigger = false; // triggers can't activate other triggers by default
+
+			this._typesMap = new Map(); // used for deserialization of custom trigger regions
 
 		}
 
@@ -7571,7 +7556,7 @@
 		*/
 		check( entity ) {
 
-			if ( ( this.active === true ) && ( this.region.touching( entity ) === true ) ) {
+			if ( this.region.touching( entity ) === true ) {
 
 				this.execute( entity );
 
@@ -7591,13 +7576,18 @@
 		execute( /* entity */ ) {}
 
 		/**
-		* Triggers can have internal states. This method is called per simulation step
-		* and can be used to update the trigger.
+		* Updates the region of this trigger. Called by the {@link EntityManager} per
+		* simulation step.
 		*
-		* @param {Number} delta - The time delta value.
 		* @return {Trigger} A reference to this trigger.
 		*/
-		update( /* delta */ ) {}
+		updateRegion() {
+
+			this.region.update( this );
+
+			return this;
+
+		}
 
 		/**
 		* Transforms this instance into a JSON object.
@@ -7606,11 +7596,11 @@
 		*/
 		toJSON() {
 
-			return {
-				type: this.constructor.name,
-				active: this.active,
-				region: this.region.toJSON()
-			};
+			const json = super.toJSON();
+
+			json.region = this.region.toJSON();
+
+			return json;
 
 		}
 
@@ -7622,7 +7612,7 @@
 		*/
 		fromJSON( json ) {
 
-			this.active = json.active;
+			super.fromJSON( json );
 
 			const regionJSON = json.region;
 			let type = regionJSON.type;
@@ -7685,7 +7675,7 @@
 
 	/**
 	* This class is used for managing all central objects of a game like
-	* game entities and triggers.
+	* game entities.
 	*
 	* @author {@link https://github.com/Mugen87|Mugen87}
 	*/
@@ -7703,18 +7693,13 @@
 			this.entities = new Array();
 
 			/**
-			* A list of {@link Trigger triggers }.
-			* @type Array
-			*/
-			this.triggers = new Array();
-
-			/**
 			* A reference to a spatial index.
 			* @type CellSpacePartitioning
 			* @default null
 			*/
 			this.spatialIndex = null;
 
+			this._triggers = new Array(); // used to manage triggers
 			this._indexMap = new Map(); // used by spatial indices
 			this._typesMap = new Map(); // used for deserialization of custom entities
 			this._messageDispatcher = new MessageDispatcher();
@@ -7755,35 +7740,6 @@
 		}
 
 		/**
-		* Adds a trigger to this entity manager.
-		*
-		* @param {Trigger} trigger - The trigger to add.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		addTrigger( trigger ) {
-
-			this.triggers.push( trigger );
-
-			return this;
-
-		}
-
-		/**
-		* Removes a trigger to this entity manager.
-		*
-		* @param {Trigger} trigger - The trigger to remove.
-		* @return {EntityManager} A reference to this entity manager.
-		*/
-		removeTrigger( trigger ) {
-
-			const index = this.triggers.indexOf( trigger );
-			this.triggers.splice( index, 1 );
-
-			return this;
-
-		}
-
-		/**
 		* Clears the internal state of this entity manager.
 		*
 		* @return {EntityManager} A reference to this entity manager.
@@ -7791,7 +7747,6 @@
 		clear() {
 
 			this.entities.length = 0;
-			this.triggers.length = 0;
 
 			this._messageDispatcher.clear();
 
@@ -7825,7 +7780,7 @@
 
 		/**
 		* The central update method of this entity manager. Updates all
-		* game entities, triggers and delayed messages.
+		* game entities and delayed messages.
 		*
 		* @param {Number} delta - The time delta.
 		* @return {EntityManager} A reference to this entity manager.
@@ -7833,7 +7788,7 @@
 		update( delta ) {
 
 			const entities = this.entities;
-			const triggers = this.triggers;
+			const triggers = this._triggers;
 
 			// update entities
 
@@ -7845,15 +7800,18 @@
 
 			}
 
-			// update triggers
+			// process triggers (this is done after the entity update to ensure
+			// up-to-date world matries)
 
 			for ( let i = ( triggers.length - 1 ); i >= 0; i -- ) {
 
 				const trigger = triggers[ i ];
 
-				this.updateTrigger( trigger, delta );
+				this.processTrigger( trigger );
 
 			}
+
+			this._triggers.length = 0; // reset
 
 			// handle messaging
 
@@ -7876,7 +7834,7 @@
 
 				this.updateNeighborhood( entity );
 
-				//
+				// check if start() should be executed
 
 				if ( entity._started === false ) {
 
@@ -7886,12 +7844,12 @@
 
 				}
 
-				//
+				// update entity
 
 				entity.update( delta );
 				entity.updateWorldMatrix();
 
-				//
+				// update children
 
 				const children = entity.children;
 
@@ -7903,7 +7861,15 @@
 
 				}
 
-				//
+				// if the entity is a trigger, save the reference for further processing
+
+				if ( entity instanceof Trigger ) {
+
+					this._triggers.push( entity );
+
+				}
+
+				// update spatial index
 
 				if ( this.spatialIndex !== null ) {
 
@@ -7913,7 +7879,7 @@
 
 				}
 
-				//
+				// update render component
 
 				const renderComponent = entity._renderComponent;
 				const renderComponentCallback = entity._renderComponentCallback;
@@ -7986,28 +7952,24 @@
 		}
 
 		/**
-		* Updates a single trigger.
+		* Processes a single trigger.
 		*
-		* @param {Trigger} trigger - The trigger to update.
+		* @param {Trigger} trigger - The trigger to process.
 		* @return {EntityManager} A reference to this entity manager.
 		*/
-		updateTrigger( trigger, delta ) {
+		processTrigger( trigger ) {
 
-			if ( trigger.active === true ) {
+			trigger.updateRegion(); // ensure its region is up-to-date
 
-				trigger.update( delta );
+			const entities = this.entities;
 
-				const entities = this.entities;
+			for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
 
-				for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
+				const entity = entities[ i ];
 
-					const entity = entities[ i ];
+				if ( trigger !== entity && entity.active === true && entity.canActivateTrigger === true ) {
 
-					if ( entity.active === true && entity.canAcitivateTrigger ) {
-
-						trigger.check( entity );
-
-					}
+					trigger.check( entity );
 
 				}
 
@@ -8045,7 +8007,6 @@
 			const data = {
 				type: this.constructor.name,
 				entities: new Array(),
-				triggers: new Array(),
 				_messageDispatcher: this._messageDispatcher.toJSON()
 			};
 
@@ -8071,15 +8032,6 @@
 
 			}
 
-			// triggers
-
-			for ( let i = 0, l = this.triggers.length; i < l; i ++ ) {
-
-				const trigger = this.triggers[ i ];
-				data.triggers.push( trigger.toJSON() );
-
-			}
-
 			return data;
 
 		}
@@ -8095,7 +8047,6 @@
 			this.clear();
 
 			const entitiesJSON = json.entities;
-			const triggersJSON = json.triggers;
 			const _messageDispatcherJSON = json._messageDispatcher;
 
 			// entities
@@ -8121,6 +8072,10 @@
 
 					case 'Vehicle':
 						entity = new Vehicle().fromJSON( entityJSON );
+						break;
+
+					case 'Trigger':
+						entity = new Trigger().fromJSON( entityJSON );
 						break;
 
 					default:
@@ -8156,42 +8111,6 @@
 
 			}
 
-			// triggers
-
-			for ( let i = 0, l = triggersJSON.length; i < l; i ++ ) {
-
-				const triggerJSON = triggersJSON[ i ];
-				const type = triggerJSON.type;
-
-				let trigger;
-
-				if ( type === 'Trigger' ) {
-
-					trigger = new Trigger().fromJSON( triggerJSON );
-
-				} else {
-
-					// handle custom type
-
-					const ctor = this._typesMap.get( type );
-
-					if ( ctor !== undefined ) {
-
-						trigger = new ctor().fromJSON( triggerJSON );
-
-					} else {
-
-						Logger.warn( 'YUKA.EntityManager: Unsupported trigger type:', type );
-						continue;
-
-					}
-
-				}
-
-				this.addTrigger( trigger );
-
-			}
-
 			// restore delayed messages
 
 			this._messageDispatcher.fromJSON( _messageDispatcherJSON );
@@ -8203,9 +8122,9 @@
 		/**
 		* Registers a custom type for deserialization. When calling {@link EntityManager#fromJSON}
 		* the entity manager is able to pick the correct constructor in order to create custom
-		* game entities or triggers.
+		* game entities.
 		*
-		* @param {String} type - The name of the entity or trigger type.
+		* @param {String} type - The name of the entity type.
 		* @param {Function} constructor - The constructor function.
 		* @return {EntityManager} A reference to this entity manager.
 		*/

@@ -9,7 +9,7 @@ const candidates = new Array();
 
 /**
 * This class is used for managing all central objects of a game like
-* game entities and triggers.
+* game entities.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -27,18 +27,13 @@ class EntityManager {
 		this.entities = new Array();
 
 		/**
-		* A list of {@link Trigger triggers }.
-		* @type Array
-		*/
-		this.triggers = new Array();
-
-		/**
 		* A reference to a spatial index.
 		* @type CellSpacePartitioning
 		* @default null
 		*/
 		this.spatialIndex = null;
 
+		this._triggers = new Array(); // used to manage triggers
 		this._indexMap = new Map(); // used by spatial indices
 		this._typesMap = new Map(); // used for deserialization of custom entities
 		this._messageDispatcher = new MessageDispatcher();
@@ -79,35 +74,6 @@ class EntityManager {
 	}
 
 	/**
-	* Adds a trigger to this entity manager.
-	*
-	* @param {Trigger} trigger - The trigger to add.
-	* @return {EntityManager} A reference to this entity manager.
-	*/
-	addTrigger( trigger ) {
-
-		this.triggers.push( trigger );
-
-		return this;
-
-	}
-
-	/**
-	* Removes a trigger to this entity manager.
-	*
-	* @param {Trigger} trigger - The trigger to remove.
-	* @return {EntityManager} A reference to this entity manager.
-	*/
-	removeTrigger( trigger ) {
-
-		const index = this.triggers.indexOf( trigger );
-		this.triggers.splice( index, 1 );
-
-		return this;
-
-	}
-
-	/**
 	* Clears the internal state of this entity manager.
 	*
 	* @return {EntityManager} A reference to this entity manager.
@@ -115,7 +81,6 @@ class EntityManager {
 	clear() {
 
 		this.entities.length = 0;
-		this.triggers.length = 0;
 
 		this._messageDispatcher.clear();
 
@@ -149,7 +114,7 @@ class EntityManager {
 
 	/**
 	* The central update method of this entity manager. Updates all
-	* game entities, triggers and delayed messages.
+	* game entities and delayed messages.
 	*
 	* @param {Number} delta - The time delta.
 	* @return {EntityManager} A reference to this entity manager.
@@ -157,7 +122,7 @@ class EntityManager {
 	update( delta ) {
 
 		const entities = this.entities;
-		const triggers = this.triggers;
+		const triggers = this._triggers;
 
 		// update entities
 
@@ -169,15 +134,18 @@ class EntityManager {
 
 		}
 
-		// update triggers
+		// process triggers (this is done after the entity update to ensure
+		// up-to-date world matries)
 
 		for ( let i = ( triggers.length - 1 ); i >= 0; i -- ) {
 
 			const trigger = triggers[ i ];
 
-			this.updateTrigger( trigger, delta );
+			this.processTrigger( trigger );
 
 		}
+
+		this._triggers.length = 0; // reset
 
 		// handle messaging
 
@@ -200,7 +168,7 @@ class EntityManager {
 
 			this.updateNeighborhood( entity );
 
-			//
+			// check if start() should be executed
 
 			if ( entity._started === false ) {
 
@@ -210,12 +178,12 @@ class EntityManager {
 
 			}
 
-			//
+			// update entity
 
 			entity.update( delta );
 			entity.updateWorldMatrix();
 
-			//
+			// update children
 
 			const children = entity.children;
 
@@ -227,7 +195,15 @@ class EntityManager {
 
 			}
 
-			//
+			// if the entity is a trigger, save the reference for further processing
+
+			if ( entity instanceof Trigger ) {
+
+				this._triggers.push( entity );
+
+			}
+
+			// update spatial index
 
 			if ( this.spatialIndex !== null ) {
 
@@ -237,7 +213,7 @@ class EntityManager {
 
 			}
 
-			//
+			// update render component
 
 			const renderComponent = entity._renderComponent;
 			const renderComponentCallback = entity._renderComponentCallback;
@@ -310,28 +286,24 @@ class EntityManager {
 	}
 
 	/**
-	* Updates a single trigger.
+	* Processes a single trigger.
 	*
-	* @param {Trigger} trigger - The trigger to update.
+	* @param {Trigger} trigger - The trigger to process.
 	* @return {EntityManager} A reference to this entity manager.
 	*/
-	updateTrigger( trigger, delta ) {
+	processTrigger( trigger ) {
 
-		if ( trigger.active === true ) {
+		trigger.updateRegion(); // ensure its region is up-to-date
 
-			trigger.update( delta );
+		const entities = this.entities;
 
-			const entities = this.entities;
+		for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
 
-			for ( let i = ( entities.length - 1 ); i >= 0; i -- ) {
+			const entity = entities[ i ];
 
-				const entity = entities[ i ];
+			if ( trigger !== entity && entity.active === true && entity.canActivateTrigger === true ) {
 
-				if ( entity.active === true && entity.canAcitivateTrigger ) {
-
-					trigger.check( entity );
-
-				}
+				trigger.check( entity );
 
 			}
 
@@ -369,7 +341,6 @@ class EntityManager {
 		const data = {
 			type: this.constructor.name,
 			entities: new Array(),
-			triggers: new Array(),
 			_messageDispatcher: this._messageDispatcher.toJSON()
 		};
 
@@ -395,15 +366,6 @@ class EntityManager {
 
 		}
 
-		// triggers
-
-		for ( let i = 0, l = this.triggers.length; i < l; i ++ ) {
-
-			const trigger = this.triggers[ i ];
-			data.triggers.push( trigger.toJSON() );
-
-		}
-
 		return data;
 
 	}
@@ -419,7 +381,6 @@ class EntityManager {
 		this.clear();
 
 		const entitiesJSON = json.entities;
-		const triggersJSON = json.triggers;
 		const _messageDispatcherJSON = json._messageDispatcher;
 
 		// entities
@@ -445,6 +406,10 @@ class EntityManager {
 
 				case 'Vehicle':
 					entity = new Vehicle().fromJSON( entityJSON );
+					break;
+
+				case 'Trigger':
+					entity = new Trigger().fromJSON( entityJSON );
 					break;
 
 				default:
@@ -480,42 +445,6 @@ class EntityManager {
 
 		}
 
-		// triggers
-
-		for ( let i = 0, l = triggersJSON.length; i < l; i ++ ) {
-
-			const triggerJSON = triggersJSON[ i ];
-			const type = triggerJSON.type;
-
-			let trigger;
-
-			if ( type === 'Trigger' ) {
-
-				trigger = new Trigger().fromJSON( triggerJSON );
-
-			} else {
-
-				// handle custom type
-
-				const ctor = this._typesMap.get( type );
-
-				if ( ctor !== undefined ) {
-
-					trigger = new ctor().fromJSON( triggerJSON );
-
-				} else {
-
-					Logger.warn( 'YUKA.EntityManager: Unsupported trigger type:', type );
-					continue;
-
-				}
-
-			}
-
-			this.addTrigger( trigger );
-
-		}
-
 		// restore delayed messages
 
 		this._messageDispatcher.fromJSON( _messageDispatcherJSON );
@@ -527,9 +456,9 @@ class EntityManager {
 	/**
 	* Registers a custom type for deserialization. When calling {@link EntityManager#fromJSON}
 	* the entity manager is able to pick the correct constructor in order to create custom
-	* game entities or triggers.
+	* game entities.
 	*
-	* @param {String} type - The name of the entity or trigger type.
+	* @param {String} type - The name of the entity type.
 	* @param {Function} constructor - The constructor function.
 	* @return {EntityManager} A reference to this entity manager.
 	*/

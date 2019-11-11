@@ -1,6 +1,5 @@
 import { TriggerRegion } from '../TriggerRegion.js';
 import { BoundingSphere } from '../../math/BoundingSphere.js';
-import { Vector3 } from '../../math/Vector3.js';
 
 const boundingSphereEntity = new BoundingSphere();
 
@@ -13,40 +12,19 @@ const boundingSphereEntity = new BoundingSphere();
 class SphericalTriggerRegion extends TriggerRegion {
 
 	/**
-	* Constructs a new spherical trigger region with the given values.
+	* Constructs a new spherical trigger region.
 	*
-	* @param {Vector3} position - The center position of the region.
 	* @param {Number} radius - The radius of the region.
 	*/
-	constructor( position = new Vector3(), radius = 0 ) {
+	constructor( radius = 0 ) {
 
 		super();
 
-		this._boundingSphere = new BoundingSphere( position, radius );
+		this.radius = radius;
 
-	}
+		//
 
-	get position() {
-
-		return this._boundingSphere.center;
-
-	}
-
-	set position( position ) {
-
-		this._boundingSphere.center = position;
-
-	}
-
-	get radius() {
-
-		return this._boundingSphere.radius;
-
-	}
-
-	set radius( radius ) {
-
-		this._boundingSphere.radius = radius;
+		this._boundingSphere = new BoundingSphere();
 
 	}
 
@@ -59,9 +37,25 @@ class SphericalTriggerRegion extends TriggerRegion {
 	*/
 	touching( entity ) {
 
-		boundingSphereEntity.set( entity.position, entity.boundingRadius );
+		entity.getWorldPosition( boundingSphereEntity.center );
+		boundingSphereEntity.radius = entity.boundingRadius;
 
 		return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity );
+
+	}
+
+	/**
+	* Updates this trigger region.
+	*
+	* @param {Trigger} trigger - The trigger that owns this region.
+	* @return {SphericalTriggerRegion} A reference to this trigger region.
+	*/
+	update( trigger ) {
+
+		trigger.getWorldPosition( this._boundingSphere.center );
+		this._boundingSphere.radius = this.radius;
+
+		return this;
 
 	}
 
@@ -74,7 +68,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 
 		const json = super.toJSON();
 
-		json._boundingSphere = this._boundingSphere.toJSON();
+		json.radius = this.radius;
 
 		return json;
 
@@ -90,7 +84,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 
 		super.fromJSON( json );
 
-		this._boundingSphere.fromJSON( json._boundingSphere );
+		this.radius = json.radius;
 
 		return this;
 

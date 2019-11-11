@@ -25,8 +25,8 @@ describe( 'EntityManager', function () {
 			const manager = new EntityManager();
 
 			expect( manager ).to.have.a.property( 'entities' ).that.is.an( 'array' );
-			expect( manager ).to.have.a.property( 'triggers' ).that.is.an( 'array' );
 			expect( manager ).to.have.a.property( 'spatialIndex' ).that.is.null;
+			expect( manager ).to.have.a.property( '_triggers' ).that.is.an( 'array' );
 			expect( manager ).to.have.a.property( '_indexMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_typesMap' ).that.is.a( 'map' );
 			expect( manager ).to.have.a.property( '_messageDispatcher' ).that.is.an.instanceof( MessageDispatcher );
@@ -87,37 +87,6 @@ describe( 'EntityManager', function () {
 
 	} );
 
-	describe( '#addTrigger()', function () {
-
-		it( 'should add a trigger to the entity manager', function () {
-
-			const manager = new EntityManager();
-			const trigger = new Trigger();
-
-			manager.addTrigger( trigger );
-
-			expect( manager.triggers ).to.include( trigger );
-
-		} );
-
-	} );
-
-	describe( '#removeTrigger()', function () {
-
-		it( 'should remove a trigger from the entity manager', function () {
-
-			const manager = new EntityManager();
-			const trigger = new Trigger();
-
-			manager.addTrigger( trigger );
-			manager.removeTrigger( trigger );
-
-			expect( manager.triggers ).to.not.include( trigger );
-
-		} );
-
-	} );
-
 	describe( '#clear()', function () {
 
 		it( 'should clear all internal data structures', function () {
@@ -125,16 +94,13 @@ describe( 'EntityManager', function () {
 			const manager = new EntityManager();
 			const entity = new GameEntity();
 			const telegram = new Telegram();
-			const trigger = new Trigger();
 
 			manager.entities.push( entity );
-			manager.triggers.push( trigger );
 			manager._messageDispatcher.delayedTelegrams.push( telegram );
 
 			manager.clear();
 
 			expect( manager.entities ).to.have.lengthOf( 0 );
-			expect( manager.triggers ).to.have.lengthOf( 0 );
 			expect( manager._messageDispatcher.delayedTelegrams ).to.have.lengthOf( 0 );
 
 		} );
@@ -171,7 +137,7 @@ describe( 'EntityManager', function () {
 
 	describe( '#update()', function () {
 
-		it( 'should call the update method of game entities and triggers', function () {
+		it( 'should call the update method of game entities', function () {
 
 			const manager = new EntityManager();
 			const delta = 1;
@@ -179,13 +145,9 @@ describe( 'EntityManager', function () {
 			const entity = new CustomEntity();
 			manager.add( entity );
 
-			const trigger = new CustomTrigger();
-			manager.addTrigger( trigger );
-
 			manager.update( delta );
 
 			expect( entity.updated ).to.be.true;
-			expect( trigger.updated ).to.be.true;
 
 		} );
 
@@ -222,6 +184,21 @@ describe( 'EntityManager', function () {
 			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
 			expect( entity2._localMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 ] );
 			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
+
+		} );
+
+		it( 'should process a trigger (update region and test with other entities)', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const trigger = new CustomTrigger();
+
+			manager.add( trigger );
+
+			manager.update( delta );
+
+			expect( trigger.regionUpdated ).to.be.true;
 
 		} );
 
@@ -423,52 +400,61 @@ describe( 'EntityManager', function () {
 
 		} );
 
+		it( 'should add a trigger to the internal trigger array', function () {
+
+			const manager = new EntityManager();
+			const delta = 1;
+
+			const trigger = new Trigger();
+
+			manager.updateEntity( trigger, delta );
+
+			expect( manager._triggers ).to.include( trigger );
+
+		} );
+
 	} );
 
-	describe( '#updateTrigger()', function () {
+	describe( '#processTrigger()', function () {
 
-		it( 'should update a single trigger', function () {
+		it( 'should process a single trigger', function () {
 
 			const manager = new EntityManager();
-			const delta = 1;
-
 			const trigger = new CustomTrigger();
 
-			manager.updateTrigger( trigger, delta );
-			expect( trigger.updated ).to.be.true;
+			manager.processTrigger( trigger );
+			expect( trigger.regionUpdated ).to.be.true;
 
 		} );
 
-		it( 'should only update the trigger if it is active', function () {
+		it( 'should only process an entity if it is not the trigger', function () {
 
 			const manager = new EntityManager();
-			const delta = 1;
 
-			const trigger = new CustomTrigger();
-			trigger.active = false;
-
-			manager.updateTrigger( trigger, delta );
-			expect( trigger.updated ).to.be.false;
-
-		} );
-
-		it( 'should only update an entity which can trigger a trigger', function () {
-
-			const manager = new EntityManager();
 			const entity1 = new CustomEntity();
-			entity1.canAcitivateTrigger = false;
+			entity1.canActivateTrigger = false;
 			const entity2 = new CustomEntity();
 			manager.add( entity1 );
 			manager.add( entity2 );
-			const delta = 1;
 
 			const customTriggerRegion = new CustomTriggerRegion();
 			const trigger = new CustomTrigger();
 			trigger.region = customTriggerRegion;
 
-			manager.updateTrigger( trigger, delta );
+			manager.processTrigger( trigger );
 			expect( entity1.updated ).to.be.false;
 			expect( entity2.updated ).to.be.true;
+
+		} );
+
+		it( 'should only process an entity which can trigger a trigger', function () {
+
+			const manager = new EntityManager();
+			const trigger = new CustomTrigger();
+
+			manager.add( trigger );
+
+			manager.processTrigger( trigger ); // nothing happens here
 
 		} );
 
@@ -519,13 +505,14 @@ describe( 'EntityManager', function () {
 			const entity1 = new MovingEntity();
 			const entity2 = new Vehicle();
 			const entity3 = new CustomEntity();
-
-			const trigger1 = new Trigger();
-			const trigger2 = new CustomTrigger();
+			const entity4 = new Trigger();
+			const entity5 = new CustomTrigger();
 
 			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 			entity3.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
+			entity4.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A483';
+			entity5.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A484';
 
 			entity1.neighbors.push( entity2, entity3 );
 			entity2.neighbors.push( entity1 );
@@ -537,9 +524,8 @@ describe( 'EntityManager', function () {
 			manager.add( entity1 );
 			manager.add( entity2 );
 			manager.add( entity3 );
-
-			manager.addTrigger( trigger1 );
-			manager.addTrigger( trigger2 );
+			manager.add( entity4 );
+			manager.add( entity5 );
 
 			expect( manager.toJSON() ).to.be.deep.equal( CoreJSONs.EntityManager2 );
 
@@ -579,13 +565,14 @@ describe( 'EntityManager', function () {
 			const entity1 = new MovingEntity();
 			const entity2 = new Vehicle();
 			const entity3 = new CustomEntity();
-
-			const trigger1 = new Trigger();
-			const trigger2 = new CustomTrigger();
+			const entity4 = new Trigger();
+			const entity5 = new CustomTrigger();
 
 			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 			entity3.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
+			entity4.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A483';
+			entity5.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A484';
 
 			entity1.neighbors.push( entity2, entity3 );
 			entity2.neighbors.push( entity1 );
@@ -597,9 +584,8 @@ describe( 'EntityManager', function () {
 			manager.add( entity1 );
 			manager.add( entity2 );
 			manager.add( entity3 );
-
-			manager.addTrigger( trigger1 );
-			manager.addTrigger( trigger2 );
+			manager.add( entity4 );
+			manager.add( entity5 );
 
 			const manager2 = new EntityManager();
 			manager2.registerType( 'CustomEntity', CustomEntity );
@@ -609,8 +595,7 @@ describe( 'EntityManager', function () {
 			const manager3 = new EntityManager().fromJSON( CoreJSONs.EntityManager2 );
 
 			expect( manager2 ).to.be.deep.equal( manager );
-			expect( manager3.entities.length + 1 ).to.be.equal( manager2.entities.length );
-			expect( manager3.triggers.length + 1 ).to.be.equal( manager2.triggers.length );
+			expect( manager3.entities.length + 2 ).to.be.equal( manager2.entities.length );
 
 		} );
 
@@ -674,13 +659,13 @@ class CustomTrigger extends Trigger {
 
 		super();
 
-		this.updated = false;
+		this.regionUpdated = false;
 
 	}
 
-	update() {
+	updateRegion() {
 
-		this.updated = true;
+		this.regionUpdated = true;
 
 	}
 

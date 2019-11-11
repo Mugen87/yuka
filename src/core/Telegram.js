@@ -59,8 +59,8 @@ class Telegram {
 
 		return {
 			type: this.constructor.name,
-			sender: this.sender ? this.sender.uuid : null,
-			receiver: this.receiver ? this.receiver.uuid : null,
+			sender: this.sender.uuid,
+			receiver: this.receiver.uuid,
 			message: this.message,
 			delay: this.delay,
 			data: this.data

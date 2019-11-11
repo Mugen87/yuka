@@ -4,6 +4,7 @@ import { BoundingSphere } from '../../math/BoundingSphere.js';
 import { Vector3 } from '../../math/Vector3.js';
 
 const boundingSphereEntity = new BoundingSphere();
+const center = new Vector3();
 
 /**
 * Class for representing a rectangular trigger region as an AABB.
@@ -16,53 +17,15 @@ class RectangularTriggerRegion extends TriggerRegion {
 	/**
 	* Constructs a new rectangular trigger region with the given values.
 	*
-	* @param {Vector3} min - The minimum bounds of the region.
-	* @param {Vector3} max - The maximum bounds of the region.
+	* @param {Vector3} size - The size of the region.
 	*/
-	constructor( min = new Vector3(), max = new Vector3() ) {
+	constructor( size = new Vector3() ) {
 
 		super();
 
-		this._aabb = new AABB( min, max );
+		this.size = size;
 
-	}
-
-	get min() {
-
-		return this._aabb.min;
-
-	}
-
-	set min( min ) {
-
-		this._aabb.min = min;
-
-	}
-
-	get max() {
-
-		return this._aabb.max;
-
-	}
-
-	set max( max ) {
-
-		this._aabb.max = max;
-
-	}
-
-	/**
-	* Creates the new rectangular trigger region from a given position and size.
-	*
-	* @param {Vector3} position - The center position of the trigger region.
-	* @param {Vector3} size - The size of the trigger region per axis.
-	* @return {RectangularTriggerRegion} A reference to this trigger region.
-	*/
-	fromPositionAndSize( position, size ) {
-
-		this._aabb.fromCenterAndSize( position, size );
-
-		return this;
+		this._aabb = new AABB();
 
 	}
 
@@ -82,6 +45,22 @@ class RectangularTriggerRegion extends TriggerRegion {
 	}
 
 	/**
+	* Updates this trigger region.
+	*
+	* @param {Trigger} trigger - The trigger that owns this region.
+	* @return {RectangularTriggerRegion} A reference to this trigger region.
+	*/
+	update( trigger ) {
+
+		trigger.getWorldPosition( center );
+
+		this._aabb.fromCenterAndSize( center, this.size );
+
+		return this;
+
+	}
+
+	/**
 	* Transforms this instance into a JSON object.
 	*
 	* @return {Object} The JSON object.
@@ -90,7 +69,7 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 		const json = super.toJSON();
 
-		json._aabb = this._aabb.toJSON();
+		json.size = this.size.toArray( new Array() );
 
 		return json;
 
@@ -106,7 +85,7 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 		super.fromJSON( json );
 
-		this._aabb.fromJSON( json._aabb );
+		this.size.fromArray( json.size );
 
 		return this;
 

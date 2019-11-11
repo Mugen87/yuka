@@ -1,15 +1,16 @@
 import { TriggerRegion } from './TriggerRegion.js';
 import { RectangularTriggerRegion } from './regions/RectangularTriggerRegion.js';
 import { SphericalTriggerRegion } from './regions/SphericalTriggerRegion.js';
+import { GameEntity } from '../core/GameEntity.js';
 import { Logger } from '../core/Logger.js';
 
 /**
 * Base class for representing triggers. A trigger generates an action if a game entity
-* touches its trigger region, a predefine region in 3D space.
+* touches its trigger region, a predefine area in 3D space.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
-class Trigger {
+class Trigger extends GameEntity {
 
 	/**
 	* Constructs a new trigger with the given values.
@@ -18,12 +19,7 @@ class Trigger {
 	*/
 	constructor( region = new TriggerRegion() ) {
 
-		/**
-		* Whether this trigger is active or not.
-		* @type Boolean
-		* @default true
-		*/
-		this.active = true;
+		super();
 
 		/**
 		* The region of the trigger.
@@ -33,7 +29,9 @@ class Trigger {
 
 		//
 
-		this._typesMap = new Map(); // used for deserialization of custom triggerRegions
+		this.canActivateTrigger = false; // triggers can't activate other triggers by default
+
+		this._typesMap = new Map(); // used for deserialization of custom trigger regions
 
 	}
 
@@ -46,7 +44,7 @@ class Trigger {
 	*/
 	check( entity ) {
 
-		if ( ( this.active === true ) && ( this.region.touching( entity ) === true ) ) {
+		if ( this.region.touching( entity ) === true ) {
 
 			this.execute( entity );
 
@@ -66,13 +64,18 @@ class Trigger {
 	execute( /* entity */ ) {}
 
 	/**
-	* Triggers can have internal states. This method is called per simulation step
-	* and can be used to update the trigger.
+	* Updates the region of this trigger. Called by the {@link EntityManager} per
+	* simulation step.
 	*
-	* @param {Number} delta - The time delta value.
 	* @return {Trigger} A reference to this trigger.
 	*/
-	update( /* delta */ ) {}
+	updateRegion() {
+
+		this.region.update( this );
+
+		return this;
+
+	}
 
 	/**
 	* Transforms this instance into a JSON object.
@@ -81,11 +84,11 @@ class Trigger {
 	*/
 	toJSON() {
 
-		return {
-			type: this.constructor.name,
-			active: this.active,
-			region: this.region.toJSON()
-		};
+		const json = super.toJSON();
+
+		json.region = this.region.toJSON();
+
+		return json;
 
 	}
 
@@ -97,7 +100,7 @@ class Trigger {
 	*/
 	fromJSON( json ) {
 
-		this.active = json.active;
+		super.fromJSON( json );
 
 		const regionJSON = json.region;
 		let type = regionJSON.type;

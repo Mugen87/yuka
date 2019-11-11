@@ -27,6 +27,19 @@ describe( 'TriggerRegion', function () {
 		} );
 
 	} );
+
+	describe( '#update()', function () {
+
+		it( 'should exist', function () {
+
+			const region = new TriggerRegion();
+			expect( region ).respondTo( 'update' );
+			region.update();
+
+		} );
+
+	} );
+
 	describe( '#toJSON()', function () {
 
 		it( 'should serialize this instance to a JSON object', function () {

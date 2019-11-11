@@ -20,6 +20,18 @@ class TriggerRegion {
 	}
 
 	/**
+	* Updates this trigger region. Must be implemented by all concrete trigger regions.
+	*
+	* @param {Trigger} trigger - The trigger that owns this region.
+	* @return {TriggerRegion} A reference to this trigger region.
+	*/
+	update( /* trigger */ ) {
+
+		return this;
+
+	}
+
+	/**
 	* Transforms this instance into a JSON object.
 	*
 	* @return {Object} The JSON object.

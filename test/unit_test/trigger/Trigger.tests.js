@@ -19,8 +19,8 @@ describe( 'Trigger', function () {
 
 			const trigger = new Trigger();
 
-			expect( trigger ).to.have.a.property( 'active' ).that.is.true;
 			expect( trigger ).to.have.a.property( 'region' ).that.is.an.instanceof( TriggerRegion );
+			expect( trigger ).to.have.a.property( 'canActivateTrigger' ).that.is.false;
 			expect( trigger ).to.have.a.property( '_typesMap' ).that.is.a( 'map' );
 
 		} );
@@ -29,7 +29,7 @@ describe( 'Trigger', function () {
 
 	describe( '#check()', function () {
 
-		it( 'should call execute() if the trigger is active and the trigger region reports touching', function () {
+		it( 'should call execute() if the trigger region reports touching', function () {
 
 			const region = new CustomTriggerRegion();
 			const trigger = new CustomTrigger( region );
@@ -38,19 +38,6 @@ describe( 'Trigger', function () {
 
 			expect( trigger.entityPassed ).to.be.true;
 			expect( trigger.executeCalled ).to.be.true;
-
-		} );
-
-		it( 'should not call execute() if the trigger is inactive', function () {
-
-			const region = new CustomTriggerRegion();
-			const trigger = new CustomTrigger( region );
-
-			trigger.active = false;
-			trigger.check( {} );
-
-			expect( trigger.entityPassed ).to.be.false;
-			expect( trigger.executeCalled ).to.be.false;
 
 		} );
 
@@ -79,13 +66,17 @@ describe( 'Trigger', function () {
 
 	} );
 
-	describe( '#update()', function () {
+	describe( '#updateRegion()', function () {
 
-		it( 'should exist', function () {
+		it( 'should update the region of this trigger and pass itself to the method', function () {
 
-			const trigger = new Trigger();
-			expect( trigger ).respondTo( 'update' );
-			trigger.update();
+			const region = new CustomTriggerRegion();
+			const trigger = new CustomTrigger( region );
+
+			trigger.updateRegion();
+
+			expect( region.triggerPassed ).to.be.true;
+			expect( region.updateCalled ).to.be.true;
 
 		} );
 
@@ -97,10 +88,9 @@ describe( 'Trigger', function () {
 
 			const region = new TriggerRegion();
 			const trigger = new Trigger( region );
-
+			trigger.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const json = trigger.toJSON();
-
 			expect( json ).to.be.deep.equal( TriggerJSONs.TriggerTR );
 
 		} );
@@ -111,8 +101,11 @@ describe( 'Trigger', function () {
 			const rectangularRegion = new RectangularTriggerRegion();
 			const customRegion = new CustomTriggerRegion();
 			const triggerSR = new Trigger( sphericalRegion );
+			triggerSR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerRR = new Trigger( rectangularRegion );
+			triggerRR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerCR = new Trigger( customRegion );
+			triggerCR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			expect( triggerSR.toJSON() ).to.be.deep.equal( TriggerJSONs.TriggerSR );
 			expect( triggerRR.toJSON() ).to.be.deep.equal( TriggerJSONs.TriggerRR );
@@ -128,9 +121,9 @@ describe( 'Trigger', function () {
 
 			const region = new TriggerRegion();
 			const trigger = new Trigger( region );
+			trigger.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const trigger2 = new Trigger().fromJSON( TriggerJSONs.TriggerTR );
-
 
 			expect( trigger2 ).to.be.deep.equal( trigger );
 
@@ -143,12 +136,15 @@ describe( 'Trigger', function () {
 			const rectangularRegion = new RectangularTriggerRegion();
 			const customRegion = new CustomTriggerRegion();
 			const triggerSR = new Trigger( sphericalRegion );
+			triggerSR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerRR = new Trigger( rectangularRegion );
+			triggerRR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerCR = new Trigger( customRegion );
+			triggerCR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
-			const triggerSR2 = new Trigger( ).fromJSON( TriggerJSONs.TriggerSR );
-			const triggerRR2 = new Trigger( ).fromJSON( TriggerJSONs.TriggerRR );
-			const triggerCR2 = new Trigger( );
+			const triggerSR2 = new Trigger().fromJSON( TriggerJSONs.TriggerSR );
+			const triggerRR2 = new Trigger().fromJSON( TriggerJSONs.TriggerRR );
+			const triggerCR2 = new Trigger();
 
 			triggerCR.registerType( 'CustomTriggerRegion', CustomTriggerRegion );
 			triggerCR2.registerType( 'CustomTriggerRegion', CustomTriggerRegion );
@@ -158,8 +154,10 @@ describe( 'Trigger', function () {
 			expect( triggerRR2 ).to.be.deep.equal( triggerRR );
 			expect( triggerCR2 ).to.be.deep.equal( triggerCR );
 
-			const triggerCR3 = new Trigger( ).fromJSON( TriggerJSONs.TriggerCR );
-			expect( triggerCR3 ).to.be.deep.equal( new Trigger() );
+			const triggerCR3 = new Trigger().fromJSON( TriggerJSONs.TriggerCR );
+			const triggerCR4 = new Trigger();
+			triggerCR4.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			expect( triggerCR3 ).to.be.deep.equal( triggerCR4 );
 
 		} );
 
@@ -185,9 +183,25 @@ describe( 'Trigger', function () {
 
 class CustomTriggerRegion extends TriggerRegion {
 
+	constructor() {
+
+		super();
+
+		this.updateCalled = false;
+		this.triggerPassed = false;
+
+	}
+
 	touching() {
 
 		return true;
+
+	}
+
+	update( trigger ) {
+
+		if ( trigger ) this.triggerPassed = true;
+		this.updateCalled = true;
 
 	}
 

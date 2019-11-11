@@ -10,83 +10,26 @@ const BoundingSphere = YUKA.BoundingSphere;
 const SphericalTriggerRegion = YUKA.SphericalTriggerRegion;
 const Vector3 = YUKA.Vector3;
 const GameEntity = YUKA.GameEntity;
+const Trigger = YUKA.Trigger;
 
 describe( 'SphericalTriggerRegion', function () {
 
 	describe( '#constructor()', function () {
 
-		it( 'should create an internal bounding sphere from the given parameter', function () {
+		it( 'should create an object with correct default values', function () {
 
-			const position = new Vector3( 1, 1, 1 );
-			const radius = 2;
-
-			const region = new SphericalTriggerRegion( position, radius );
-
+			const region = new SphericalTriggerRegion();
+			expect( region ).to.have.a.property( 'radius' ).that.is.equal( 0 );
 			expect( region ).to.have.a.property( '_boundingSphere' ).that.is.an.instanceof( BoundingSphere );
-			expect( region._boundingSphere.center ).to.deep.equal( position );
-			expect( region._boundingSphere.radius ).to.equal( radius );
 
 		} );
 
-	} );
-
-	describe( '#get position()', function () {
-
-		it( 'should return the center vector of the internal bounding sphere', function () {
-
-			const position = new Vector3( 1, 1, 1 );
-			const radius = 2;
-
-			const region = new SphericalTriggerRegion( position, radius );
-
-			expect( region.position ).to.equal( region._boundingSphere.center );
-
-		} );
-
-	} );
-
-	describe( '#set position()', function () {
-
-		it( 'should set the center vector of the internal bounding sphere', function () {
-
-			const position = new Vector3( 1, 1, 1 );
-
-			const region = new SphericalTriggerRegion();
-
-			region.position = position;
-
-			expect( position ).to.equal( region._boundingSphere.center );
-
-		} );
-
-	} );
-
-	describe( '#get radius()', function () {
-
-		it( 'should return the radius of the internal bounding sphere', function () {
-
-			const position = new Vector3( 1, 1, 1 );
-			const radius = 2;
-
-			const region = new SphericalTriggerRegion( position, radius );
-
-			expect( region.radius ).to.equal( region._boundingSphere.radius );
-
-		} );
-
-	} );
-
-	describe( '#set radius()', function () {
-
-		it( 'should set the radius of the internal bounding sphere', function () {
+		it( 'should create an object with properties according to the given values', function () {
 
 			const radius = 2;
+			const region = new SphericalTriggerRegion( radius );
 
-			const region = new SphericalTriggerRegion();
-
-			region.radius = radius;
-
-			expect( radius ).to.equal( region._boundingSphere.radius );
+			expect( region.radius ).to.equal( 2 );
 
 		} );
 
@@ -99,7 +42,9 @@ describe( 'SphericalTriggerRegion', function () {
 			const entity = new GameEntity();
 			entity.boundingRadius = 1;
 
-			const region = new SphericalTriggerRegion( new Vector3( 1, 0, 0 ), 1 );
+			const region = new SphericalTriggerRegion();
+			region._boundingSphere.radius = 1;
+			region._boundingSphere.center = new Vector3( 1, 0, 0 );
 
 			expect( region.touching( entity ) ).to.be.true;
 
@@ -110,9 +55,30 @@ describe( 'SphericalTriggerRegion', function () {
 			const entity = new GameEntity();
 			entity.boundingRadius = 1;
 
-			const region = new SphericalTriggerRegion( new Vector3( 3, 0, 0 ), 1 );
+			const region = new SphericalTriggerRegion();
+			region._boundingSphere.radius = 1;
+			region._boundingSphere.center = new Vector3( 3, 0, 0 );
 
 			expect( region.touching( entity ) ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#update()', function () {
+
+		it( 'should update the region based on the given trigger', function () {
+
+			const trigger = new Trigger();
+			trigger.position.set( 1, 0, 0 );
+			trigger.updateWorldMatrix();
+
+			const region = new SphericalTriggerRegion( 1 );
+
+			region.update( trigger );
+
+			expect( region._boundingSphere.center ).to.deep.equal( new Vector3( 1, 0, 0 ) );
+			expect( region._boundingSphere.radius ).to.equal( 1 );
 
 		} );
 
@@ -137,7 +103,7 @@ describe( 'SphericalTriggerRegion', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const region = new SphericalTriggerRegion();
-			const region2 = new SphericalTriggerRegion( new Vector3( 1, 1, 1 ), 1 ).fromJSON( TriggerJSONs.SphericalTriggerRegion );
+			const region2 = new SphericalTriggerRegion( 1 ).fromJSON( TriggerJSONs.SphericalTriggerRegion );
 
 			expect( region2 ).to.be.deep.equal( region );
 
