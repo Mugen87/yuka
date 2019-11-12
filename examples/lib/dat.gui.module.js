@@ -678,7 +678,7 @@ Object.defineProperty(Color.prototype, 'a', {
 });
 Object.defineProperty(Color.prototype, 'hex', {
   get: function get$$1() {
-    if (!this.__state.space !== 'HEX') {
+    if (!(this.__state.space !== 'HEX')) {
       this.__state.hex = ColorMath.rgb_to_hex(this.r, this.g, this.b);
     }
     return this.__state.hex;
