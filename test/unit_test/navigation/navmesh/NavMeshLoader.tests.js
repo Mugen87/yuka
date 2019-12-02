@@ -2,6 +2,8 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
+const fs = require( 'fs' );
+const path = require( 'path' );
 const expect = require( 'chai' ).expect;
 const fetch = require( 'node-fetch' );
 const TextDecoder = require( 'text-encoding' ).TextDecoder;
@@ -141,6 +143,28 @@ describe( 'NavMeshLoader', function () {
 
 				expect( err ).to.be.a( 'Error' );
 				expect( err.message ).to.be.equal( 'YUKA.NavMeshLoader: Unsupported asset version.' );
+				done();
+
+			} );
+
+		} );
+
+	} );
+
+	describe( '#parse()', function () {
+
+		it( 'should parse the given array buffer without using NavMeshLoader.load()', function ( done ) {
+
+			const data = fs.readFileSync( path.join( __dirname, '../../../assets/navmesh/glb-embedded/navmesh.glb' ) );
+
+			const loader = new NavMeshLoader();
+			loader.parse( data.buffer ).then( ( navMesh ) => {
+
+				expect( navMesh ).is.an.instanceof( NavMesh );
+				expect( navMesh.regions ).to.have.lengthOf( 5 );
+				expect( navMesh.graph.getNodeCount() ).is.equal( 5 );
+				expect( navMesh.graph.getEdgeCount() ).is.equal( 8 );
+
 				done();
 
 			} );

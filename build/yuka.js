@@ -18657,7 +18657,7 @@
 		* to influence the parsing of the navigation mesh.
 		*
 		* @param {String} url - The URL of the glTF asset.
-		* @param {Object} options - The configuration object.
+		* @param {Object} options - The (optional) configuration object.
 		* @return {Promise} A promise representing the loading and parsing process.
 		*/
 		load( url, options ) {
@@ -18684,37 +18684,7 @@
 
 					.then( ( arrayBuffer ) => {
 
-						const parser = new Parser();
-						const decoder = new TextDecoder();
-						let data;
-
-						const magic = decoder.decode( new Uint8Array( arrayBuffer, 0, 4 ) );
-
-						if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
-
-							parser.parseBinary( arrayBuffer );
-
-							data = parser.extensions.get( 'BINARY' ).content;
-
-						} else {
-
-							data = decoder.decode( new Uint8Array( arrayBuffer ) );
-
-						}
-
-						const json = JSON.parse( data );
-
-						if ( json.asset === undefined || json.asset.version[ 0 ] < 2 ) {
-
-							throw new Error( 'YUKA.NavMeshLoader: Unsupported asset version.' );
-
-						} else {
-
-							const path = extractUrlBase( url );
-
-							return parser.parse( json, path, options );
-
-						}
+						return this.parse( arrayBuffer, url, options );
 
 					} )
 
@@ -18733,6 +18703,54 @@
 					} );
 
 			} );
+
+		}
+
+		/**
+		* Use this method if you are loading the contents of a navmesh not via {@link NavMeshLoader#load}.
+		* This is for example useful in a node environment.
+		*
+		* It's mandatory to use glb files with embedded buffer data if you are going to load nav meshes
+		* in node.js.
+		*
+		* @param {ArrayBuffer} arrayBuffer - The array buffer.
+		* @param {String} url - The (optional) URL.
+		* @param {Object} options - The (optional) configuration object.
+		* @return {Promise} A promise representing the parsing process.
+		*/
+		parse( arrayBuffer, url, options ) {
+
+			const parser = new Parser();
+			const decoder = new TextDecoder();
+			let data;
+
+			const magic = decoder.decode( new Uint8Array( arrayBuffer, 0, 4 ) );
+
+			if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
+
+				parser.parseBinary( arrayBuffer );
+
+				data = parser.extensions.get( 'BINARY' ).content;
+
+			} else {
+
+				data = decoder.decode( new Uint8Array( arrayBuffer ) );
+
+			}
+
+			const json = JSON.parse( data );
+
+			if ( json.asset === undefined || json.asset.version[ 0 ] < 2 ) {
+
+				throw new Error( 'YUKA.NavMeshLoader: Unsupported asset version.' );
+
+			} else {
+
+				const path = extractUrlBase( url );
+
+				return parser.parse( json, path, options );
+
+			}
 
 		}
 
@@ -19046,7 +19064,7 @@
 
 	// helper functions
 
-	function extractUrlBase( url ) {
+	function extractUrlBase( url = '' ) {
 
 		const index = url.lastIndexOf( '/' );
 
