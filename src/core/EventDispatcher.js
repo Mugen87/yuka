@@ -67,7 +67,7 @@ class EventDispatcher {
 	* Returns true if the given event listener is set for the given event type.
 	*
 	* @param {String} type - The event type.
-	* @param {Function} listener - The event listener to add.
+	* @param {Function} listener - The event listener to test.
 	* @return {Boolean} Whether the given event listener is set for the given event type or not.
 	*/
 	hasEventListener( type, listener ) {

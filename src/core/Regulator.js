@@ -37,9 +37,11 @@ class Regulator {
 
 		this._time.update();
 
-		if ( this._time.currentTime >= this._nextUpdateTime ) {
+		const elapsedTime = this._time.getElapsed();
 
-			this._nextUpdateTime = this._time.currentTime + ( 1000 / this.updateFrequency );
+		if ( elapsedTime >= this._nextUpdateTime ) {
+
+			this._nextUpdateTime = elapsedTime + ( 1 / this.updateFrequency );
 
 			return true;
 
