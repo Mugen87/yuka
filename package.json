@@ -1,6 +1,6 @@
 {
   "name": "yuka",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "JavaScript Game AI library",
   "repository": "Mugen87/yuka",
   "main": "build/yuka.js",
