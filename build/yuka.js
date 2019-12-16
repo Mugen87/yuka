@@ -9439,7 +9439,11 @@
 
 			this.previousState = this.currentState;
 
-			this.currentState.exit( this.owner );
+			if ( this.currentState !== null ) {
+
+				this.currentState.exit( this.owner );
+
+			}
 
 			this.currentState = state;
 

@@ -60,7 +60,6 @@ class WalkState extends State {
 
 		}
 
-
 	}
 
 	exit( girl ) {

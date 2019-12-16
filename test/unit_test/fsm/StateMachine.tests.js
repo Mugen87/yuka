@@ -210,7 +210,7 @@ describe( 'StateMachine', function () {
 
 	describe( '#_change()', function () {
 
-		it( 'should return true if the current state corresponds to the given ID', function () {
+		it( 'should perform a state change', function () {
 
 			const stateMachine = new StateMachine();
 			const globalState = new CustomState();
@@ -226,6 +226,24 @@ describe( 'StateMachine', function () {
 			expect( currentState.enterCalled ).to.be.false;
 			expect( currentState.exitCalled ).to.be.true;
 			expect( stateMachine.previousState ).to.equal( currentState );
+			expect( stateMachine.currentState ).to.equal( newState );
+			expect( newState.enterCalled ).to.be.true;
+			expect( newState.exitCalled ).to.be.false;
+
+		} );
+
+		it( 'should allow to change the state with an empty current state', function () {
+
+			const stateMachine = new StateMachine();
+			const globalState = new CustomState();
+
+			stateMachine.globalState = globalState;
+
+			const newState = new CustomState();
+
+			stateMachine._change( newState );
+
+			expect( stateMachine.previousState ).to.be.null;
 			expect( stateMachine.currentState ).to.equal( newState );
 			expect( newState.enterCalled ).to.be.true;
 			expect( newState.exitCalled ).to.be.false;
