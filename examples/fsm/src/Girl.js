@@ -26,9 +26,7 @@ class Girl extends GameEntity {
 		this.stateMachine.add( 'IDLE', new IdleState() );
 		this.stateMachine.add( 'WALK', new WalkState() );
 
-		const initialState = this.stateMachine.get( 'IDLE' );
-		this.stateMachine.currentState = initialState;
-		initialState.enter( this );
+		this.stateMachine.changeTo( 'IDLE' );
 
 		//
 
