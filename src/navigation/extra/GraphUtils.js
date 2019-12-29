@@ -68,7 +68,7 @@ class GraphUtils {
 
 					const distanceSquared = neighbor.position.squaredDistanceTo( node.position );
 
-					if ( distanceSquared <= range ) {
+					if ( distanceSquared <= range ) {
 
 						const distance = Math.sqrt( distanceSquared );
 

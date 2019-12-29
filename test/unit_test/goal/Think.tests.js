@@ -287,7 +287,7 @@ class GoalEvaluator1 extends GoalEvaluator {
 
 	}
 
-	setGoal( entity ) {
+	setGoal( entity ) {
 
 		entity.evaluator = this;
 
@@ -310,7 +310,7 @@ class GoalEvaluator2 extends GoalEvaluator {
 
 	}
 
-	setGoal( entity ) {
+	setGoal( entity ) {
 
 		entity.evaluator = this;
 

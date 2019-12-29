@@ -574,7 +574,7 @@ class BVHNode {
 
 			}
 
-		} else {
+		} else {
 
 			// always return null for non-root nodes
 

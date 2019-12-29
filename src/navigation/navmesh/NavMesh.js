@@ -188,7 +188,7 @@ class NavMesh {
 	* @param {Vector3} point - A point in 3D space.
 	* @return {Polygon} The closest convex region.
 	*/
-	getClosestRegion( point ) {
+	getClosestRegion( point ) {
 
 		const regions = this.regions;
 		let closesRegion = null;

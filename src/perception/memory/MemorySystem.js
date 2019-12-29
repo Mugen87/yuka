@@ -209,7 +209,7 @@ class MemorySystem {
 	*/
 	resolveReferences( entities ) {
 
-		this.owner = entities.get( this.owner ) || null;
+		this.owner = entities.get( this.owner ) || null;
 
 		// records
 

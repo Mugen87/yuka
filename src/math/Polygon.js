@@ -69,7 +69,7 @@ class Polygon {
 
 			let current, prev, next;
 
-			if ( i === 0 ) {
+			if ( i === 0 ) {
 
 				current = edges[ i ];
 				prev = edges[ l - 1 ];

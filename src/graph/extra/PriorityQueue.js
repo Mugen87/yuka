@@ -55,7 +55,7 @@ class PriorityQueue {
 	*
 	* @return {Object} The item with the highest priority.
 	*/
-	pop() {
+	pop() {
 
 		if ( this.length === 0 ) return null;
 
@@ -82,7 +82,7 @@ class PriorityQueue {
 	*/
 	peek() {
 
-		return this.data[ 0 ] || null;
+		return this.data[ 0 ] || null;
 
 	}
 

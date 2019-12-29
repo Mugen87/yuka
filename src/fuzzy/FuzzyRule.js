@@ -103,7 +103,7 @@ class FuzzyRule {
 				// atomic term -> FuzzySet
 
 				const uuid = termJSON;
-				return fuzzySets.get( uuid ) || null;
+				return fuzzySets.get( uuid ) || null;
 
 			} else {
 

@@ -10,7 +10,7 @@ function createVisionHelper( vision, division = 8 ) {
 	const range = vision.range;
 
 	const geometry = new THREE.BufferGeometry();
-	const material = new THREE.MeshBasicMaterial( { wireframe: true } );
+	const material = new THREE.MeshBasicMaterial( { wireframe: true } );
 
 	const mesh = new THREE.Mesh( geometry, material );
 

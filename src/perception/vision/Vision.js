@@ -56,7 +56,7 @@ class Vision {
 	 * @param {GameEntity} obstacle - The obstacle to add.
 	 * @return {Vision} A reference to this vision instance.
 	 */
-	addObstacle( obstacle ) {
+	addObstacle( obstacle ) {
 
 		this.obstacles.push( obstacle );
 
@@ -70,7 +70,7 @@ class Vision {
 	 * @param {GameEntity} obstacle - The obstacle to remove.
 	 * @return {Vision} A reference to this vision instance.
 	 */
-	removeObstacle( obstacle ) {
+	removeObstacle( obstacle ) {
 
 		const index = this.obstacles.indexOf( obstacle );
 		this.obstacles.splice( index, 1 );

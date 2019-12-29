@@ -10918,7 +10918,7 @@
 					// atomic term -> FuzzySet
 
 					const uuid = termJSON;
-					return fuzzySets.get( uuid ) || null;
+					return fuzzySets.get( uuid ) || null;
 
 				} else {
 
@@ -13020,7 +13020,7 @@
 		*
 		* @return {Object} The item with the highest priority.
 		*/
-		pop() {
+		pop() {
 
 			if ( this.length === 0 ) return null;
 
@@ -13047,7 +13047,7 @@
 		*/
 		peek() {
 
-			return this.data[ 0 ] || null;
+			return this.data[ 0 ] || null;
 
 		}
 
@@ -14520,7 +14520,7 @@
 
 				}
 
-			} else {
+			} else {
 
 				// always return null for non-root nodes
 
@@ -15165,7 +15165,7 @@
 
 				let current, prev, next;
 
-				if ( i === 0 ) {
+				if ( i === 0 ) {
 
 					current = edges[ i ];
 					prev = edges[ l - 1 ];
@@ -17596,7 +17596,7 @@
 
 						const distanceSquared = neighbor.position.squaredDistanceTo( node.position );
 
-						if ( distanceSquared <= range ) {
+						if ( distanceSquared <= range ) {
 
 							const distance = Math.sqrt( distanceSquared );
 
@@ -18150,7 +18150,7 @@
 		* @param {Vector3} point - A point in 3D space.
 		* @return {Polygon} The closest convex region.
 		*/
-		getClosestRegion( point ) {
+		getClosestRegion( point ) {
 
 			const regions = this.regions;
 			let closesRegion = null;
@@ -19842,7 +19842,7 @@
 		*/
 		resolveReferences( entities ) {
 
-			this.entity = entities.get( this.entity ) || null;
+			this.entity = entities.get( this.entity ) || null;
 
 			return this;
 
@@ -20059,7 +20059,7 @@
 		*/
 		resolveReferences( entities ) {
 
-			this.owner = entities.get( this.owner ) || null;
+			this.owner = entities.get( this.owner ) || null;
 
 			// records
 
@@ -20135,7 +20135,7 @@
 		 * @param {GameEntity} obstacle - The obstacle to add.
 		 * @return {Vision} A reference to this vision instance.
 		 */
-		addObstacle( obstacle ) {
+		addObstacle( obstacle ) {
 
 			this.obstacles.push( obstacle );
 
@@ -20149,7 +20149,7 @@
 		 * @param {GameEntity} obstacle - The obstacle to remove.
 		 * @return {Vision} A reference to this vision instance.
 		 */
-		removeObstacle( obstacle ) {
+		removeObstacle( obstacle ) {
 
 			const index = this.obstacles.indexOf( obstacle );
 			this.obstacles.splice( index, 1 );

@@ -10912,7 +10912,7 @@ class FuzzyRule {
 				// atomic term -> FuzzySet
 
 				const uuid = termJSON;
-				return fuzzySets.get( uuid ) || null;
+				return fuzzySets.get( uuid ) || null;
 
 			} else {
 
@@ -13014,7 +13014,7 @@ class PriorityQueue {
 	*
 	* @return {Object} The item with the highest priority.
 	*/
-	pop() {
+	pop() {
 
 		if ( this.length === 0 ) return null;
 
@@ -13041,7 +13041,7 @@ class PriorityQueue {
 	*/
 	peek() {
 
-		return this.data[ 0 ] || null;
+		return this.data[ 0 ] || null;
 
 	}
 
@@ -14514,7 +14514,7 @@ class BVHNode {
 
 			}
 
-		} else {
+		} else {
 
 			// always return null for non-root nodes
 
@@ -15159,7 +15159,7 @@ class Polygon {
 
 			let current, prev, next;
 
-			if ( i === 0 ) {
+			if ( i === 0 ) {
 
 				current = edges[ i ];
 				prev = edges[ l - 1 ];
@@ -17590,7 +17590,7 @@ class GraphUtils {
 
 					const distanceSquared = neighbor.position.squaredDistanceTo( node.position );
 
-					if ( distanceSquared <= range ) {
+					if ( distanceSquared <= range ) {
 
 						const distance = Math.sqrt( distanceSquared );
 
@@ -18144,7 +18144,7 @@ class NavMesh {
 	* @param {Vector3} point - A point in 3D space.
 	* @return {Polygon} The closest convex region.
 	*/
-	getClosestRegion( point ) {
+	getClosestRegion( point ) {
 
 		const regions = this.regions;
 		let closesRegion = null;
@@ -19836,7 +19836,7 @@ class MemoryRecord {
 	*/
 	resolveReferences( entities ) {
 
-		this.entity = entities.get( this.entity ) || null;
+		this.entity = entities.get( this.entity ) || null;
 
 		return this;
 
@@ -20053,7 +20053,7 @@ class MemorySystem {
 	*/
 	resolveReferences( entities ) {
 
-		this.owner = entities.get( this.owner ) || null;
+		this.owner = entities.get( this.owner ) || null;
 
 		// records
 
@@ -20129,7 +20129,7 @@ class Vision {
 	 * @param {GameEntity} obstacle - The obstacle to add.
 	 * @return {Vision} A reference to this vision instance.
 	 */
-	addObstacle( obstacle ) {
+	addObstacle( obstacle ) {
 
 		this.obstacles.push( obstacle );
 
@@ -20143,7 +20143,7 @@ class Vision {
 	 * @param {GameEntity} obstacle - The obstacle to remove.
 	 * @return {Vision} A reference to this vision instance.
 	 */
-	removeObstacle( obstacle ) {
+	removeObstacle( obstacle ) {
 
 		const index = this.obstacles.indexOf( obstacle );
 		this.obstacles.splice( index, 1 );

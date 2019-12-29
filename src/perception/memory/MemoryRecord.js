@@ -95,7 +95,7 @@ class MemoryRecord {
 	*/
 	resolveReferences( entities ) {
 
-		this.entity = entities.get( this.entity ) || null;
+		this.entity = entities.get( this.entity ) || null;
 
 		return this;
 
