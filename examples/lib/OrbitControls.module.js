@@ -1133,7 +1133,7 @@ function OrbitControls( object, domElement ) {
 
 	this.update();
 
-};
+}
 
 OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
 OrbitControls.prototype.constructor = OrbitControls;

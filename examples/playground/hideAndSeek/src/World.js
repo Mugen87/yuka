@@ -401,7 +401,7 @@ class World {
 
 		}
 
-		if ( this.debug ) {
+		if ( this.debug ) {
 
 			const spawningPoints = this.spawningPoints;
 

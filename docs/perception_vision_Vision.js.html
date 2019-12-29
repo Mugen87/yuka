@@ -33,7 +33,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.3.1</span>
+            <span class="version">v0.3.2</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -111,7 +111,7 @@ class Vision {
 	 * @param {GameEntity} obstacle - The obstacle to add.
 	 * @return {Vision} A reference to this vision instance.
 	 */
-	addObstacle( obstacle ) {
+	addObstacle( obstacle ) {
 
 		this.obstacles.push( obstacle );
 
@@ -125,7 +125,7 @@ class Vision {
 	 * @param {GameEntity} obstacle - The obstacle to remove.
 	 * @return {Vision} A reference to this vision instance.
 	 */
-	removeObstacle( obstacle ) {
+	removeObstacle( obstacle ) {
 
 		const index = this.obstacles.indexOf( obstacle );
 		this.obstacles.splice( index, 1 );
