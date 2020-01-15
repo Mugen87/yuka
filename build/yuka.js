@@ -2919,6 +2919,7 @@
 			/**
 			* A list of neighbors of this game entity.
 			* @type Array
+			* @readonly
 			*/
 			this.neighbors = new Array();
 
@@ -2992,6 +2993,7 @@
 			/**
 			* A transformation matrix representing the world space of this game entity.
 			* @type Matrix4
+			* @readonly
 			*/
 			this.worldMatrix = new Matrix4();
 
@@ -3000,6 +3002,7 @@
 			* Automatically set when added to an {@link EntityManager}.
 			* @type EntityManager
 			* @default null
+			* @readonly
 			*/
 			this.manager = null;
 
