@@ -215,6 +215,7 @@ class MessageDispatcher {
 		/**
 		* A list of delayed telegrams.
 		* @type Array
+		* @readonly
 		*/
 		this.delayedTelegrams = new Array();
 
@@ -2907,12 +2908,14 @@ class GameEntity {
 		* Automatically set when added to a {@link GameEntity}.
 		* @type GameEntity
 		* @default null
+		* @readonly
 		*/
 		this.parent = null;
 
 		/**
 		* A list of neighbors of this game entity.
 		* @type Array
+		* @readonly
 		*/
 		this.neighbors = new Array();
 
@@ -2986,6 +2989,7 @@ class GameEntity {
 		/**
 		* A transformation matrix representing the world space of this game entity.
 		* @type Matrix4
+		* @readonly
 		*/
 		this.worldMatrix = new Matrix4();
 
@@ -2994,6 +2998,7 @@ class GameEntity {
 		* Automatically set when added to an {@link EntityManager}.
 		* @type EntityManager
 		* @default null
+		* @readonly
 		*/
 		this.manager = null;
 
@@ -6652,6 +6657,7 @@ class SteeringManager {
 		/**
 		* A list of all steering behaviors.
 		* @type Array
+		* @readonly
 		*/
 		this.behaviors = new Array();
 
@@ -7684,6 +7690,7 @@ class EntityManager {
 		/**
 		* A list of {@link GameEntity game entities }.
 		* @type Array
+		* @readonly
 		*/
 		this.entities = new Array();
 
@@ -8467,12 +8474,34 @@ class MeshGeometry {
 	*/
 	constructor( vertices = new Float32Array(), indices = null ) {
 
+		/**
+		* The vertex buffer.
+		* @type Float32Array
+		*/
 		this.vertices = vertices;
+
+		/**
+		* The index buffer.
+		* @type Uint16Array | Uint32Array
+		*/
 		this.indices = indices;
 
+		/**
+		*  Whether back face culling is active or not. Only relevant for raycasting.
+		* @type Boolean
+		*/
 		this.backfaceCulling = true;
 
+		/**
+		* An AABB enclosing the geometry.
+		* @type AABB
+		*/
 		this.aabb = new AABB();
+
+		/**
+		* A bounding sphere enclosing the geometry.
+		* @type BoundingSphere
+		*/
 		this.boundingSphere = new BoundingSphere();
 
 		this.computeBoundingVolume();
@@ -10989,6 +11018,7 @@ class FuzzyVariable {
 		/**
 		* An array of the fuzzy sets that comprise this FLV.
 		* @type Array
+		* @readonly
 		*/
 		this.fuzzySets = new Array();
 
@@ -10997,6 +11027,7 @@ class FuzzyVariable {
 		* automatically updated when adding/removing fuzzy sets.
 		* @type Number
 		* @default Infinity
+		* @readonly
 		*/
 		this.minRange = Infinity;
 
@@ -11005,6 +11036,7 @@ class FuzzyVariable {
 		* automatically updated when adding/removing fuzzy sets.
 		* @type Number
 		* @default - Infinity
+		* @readonly
 		*/
 		this.maxRange = - Infinity;
 
@@ -11245,12 +11277,14 @@ class FuzzyModule {
 		/**
 		* An array of the fuzzy rules.
 		* @type Array
+		* @readonly
 		*/
 		this.rules = new Array();
 
 		/**
 		* A map of FLVs.
 		* @type Map
+		* @readonly
 		*/
 		this.flvs = new Map();
 
@@ -19232,6 +19266,7 @@ class Cell {
 		/**
 		* The list of entries which belong to this cell.
 		* @type Array
+		* @readonly
 		*/
 		this.entries = new Array();
 
@@ -20480,6 +20515,7 @@ class TaskQueue {
 		/**
 		* A list of pending tasks.
 		* @type Array
+		* @readonly
 		*/
 		this.tasks = new Array();
 
