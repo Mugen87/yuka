@@ -23,6 +23,7 @@ class EntityManager {
 		/**
 		* A list of {@link GameEntity game entities }.
 		* @type Array
+		* @readonly
 		*/
 		this.entities = new Array();
 

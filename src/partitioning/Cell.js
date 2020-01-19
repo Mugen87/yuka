@@ -23,6 +23,7 @@ class Cell {
 		/**
 		* The list of entries which belong to this cell.
 		* @type Array
+		* @readonly
 		*/
 		this.entries = new Array();
 

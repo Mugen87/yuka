@@ -16,6 +16,7 @@ class TaskQueue {
 		/**
 		* A list of pending tasks.
 		* @type Array
+		* @readonly
 		*/
 		this.tasks = new Array();
 

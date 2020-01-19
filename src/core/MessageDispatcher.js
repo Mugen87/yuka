@@ -19,6 +19,7 @@ class MessageDispatcher {
 		/**
 		* A list of delayed telegrams.
 		* @type Array
+		* @readonly
 		*/
 		this.delayedTelegrams = new Array();
 

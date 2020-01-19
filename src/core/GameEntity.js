@@ -44,6 +44,7 @@ class GameEntity {
 		* Automatically set when added to a {@link GameEntity}.
 		* @type GameEntity
 		* @default null
+		* @readonly
 		*/
 		this.parent = null;
 

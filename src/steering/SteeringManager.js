@@ -42,6 +42,7 @@ class SteeringManager {
 		/**
 		* A list of all steering behaviors.
 		* @type Array
+		* @readonly
 		*/
 		this.behaviors = new Array();
 

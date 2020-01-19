@@ -221,6 +221,7 @@
 			/**
 			* A list of delayed telegrams.
 			* @type Array
+			* @readonly
 			*/
 			this.delayedTelegrams = new Array();
 
@@ -2913,6 +2914,7 @@
 			* Automatically set when added to a {@link GameEntity}.
 			* @type GameEntity
 			* @default null
+			* @readonly
 			*/
 			this.parent = null;
 
@@ -6661,6 +6663,7 @@
 			/**
 			* A list of all steering behaviors.
 			* @type Array
+			* @readonly
 			*/
 			this.behaviors = new Array();
 
@@ -7693,6 +7696,7 @@
 			/**
 			* A list of {@link GameEntity game entities }.
 			* @type Array
+			* @readonly
 			*/
 			this.entities = new Array();
 
@@ -8476,12 +8480,34 @@
 		*/
 		constructor( vertices = new Float32Array(), indices = null ) {
 
+			/**
+			* The vertex buffer.
+			* @type Float32Array
+			*/
 			this.vertices = vertices;
+
+			/**
+			* The index buffer.
+			* @type Uint16Array | Uint32Array
+			*/
 			this.indices = indices;
 
+			/**
+			*  Whether back face culling is active or not. Only relevant for raycasting.
+			* @type Boolean
+			*/
 			this.backfaceCulling = true;
 
+			/**
+			* An AABB enclosing the geometry.
+			* @type AABB
+			*/
 			this.aabb = new AABB();
+
+			/**
+			* A bounding sphere enclosing the geometry.
+			* @type BoundingSphere
+			*/
 			this.boundingSphere = new BoundingSphere();
 
 			this.computeBoundingVolume();
@@ -10998,6 +11024,7 @@
 			/**
 			* An array of the fuzzy sets that comprise this FLV.
 			* @type Array
+			* @readonly
 			*/
 			this.fuzzySets = new Array();
 
@@ -11006,6 +11033,7 @@
 			* automatically updated when adding/removing fuzzy sets.
 			* @type Number
 			* @default Infinity
+			* @readonly
 			*/
 			this.minRange = Infinity;
 
@@ -11014,6 +11042,7 @@
 			* automatically updated when adding/removing fuzzy sets.
 			* @type Number
 			* @default - Infinity
+			* @readonly
 			*/
 			this.maxRange = - Infinity;
 
@@ -11254,12 +11283,14 @@
 			/**
 			* An array of the fuzzy rules.
 			* @type Array
+			* @readonly
 			*/
 			this.rules = new Array();
 
 			/**
 			* A map of FLVs.
 			* @type Map
+			* @readonly
 			*/
 			this.flvs = new Map();
 
@@ -19241,6 +19272,7 @@
 			/**
 			* The list of entries which belong to this cell.
 			* @type Array
+			* @readonly
 			*/
 			this.entries = new Array();
 
@@ -20489,6 +20521,7 @@
 			/**
 			* A list of pending tasks.
 			* @type Array
+			* @readonly
 			*/
 			this.tasks = new Array();
 
