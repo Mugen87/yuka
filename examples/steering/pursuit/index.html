@@ -18,6 +18,7 @@
 
 		import * as YUKA from '../../../build/yuka.module.js';
 		import * as THREE from '../../lib/three.module.js';
+		import * as DAT from '../../lib/dat.gui.module.js';
 
 		let renderer, scene, camera;
 
@@ -89,6 +90,14 @@
 
 			entityManager.add( evader );
 			entityManager.add( pursuer );
+
+			// dat.gui
+
+			const gui = new DAT.GUI( { width: 300 } );
+
+			gui.add( pursuitBehavior, 'predictionFactor', 0, 5 ).name( 'prediction factor' );
+
+			gui.open();
 
 		}
 
