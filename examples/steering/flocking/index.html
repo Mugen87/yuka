@@ -40,7 +40,7 @@
 			scene = new THREE.Scene();
 
 			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 500 );
-			camera.position.set( 0, 50, 0 );
+			camera.position.set( 0, 75, 0 );
 			camera.lookAt( scene.position );
 
 			//
@@ -75,7 +75,7 @@
 				vehicle.maxSpeed = 1.5;
 				vehicle.updateNeighborhood = true;
 				vehicle.neighborhoodRadius = 10;
-				vehicle.rotation.fromEuler( 0, 2 * Math.PI * Math.random(), 0 );
+				vehicle.rotation.fromEuler( 0, Math.PI * Math.random(), 0 );
 				vehicle.position.x = 10 - Math.random() * 20;
 				vehicle.position.z = 10 - Math.random() * 20;
 				vehicle.updateWorldMatrix();
@@ -114,7 +114,7 @@
 			//
 
 			const controls = new OrbitControls( camera, renderer.domElement );
-			controls.enableRotate = false;
+			controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
 
 			//
 
