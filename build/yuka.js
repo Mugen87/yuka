@@ -14061,7 +14061,12 @@
 
 			const nonIndexedGeometry = geometry.toTriangleSoup();
 			const vertices = nonIndexedGeometry.vertices;
-			this.root.primitives.push( ...vertices );
+
+			for ( let i = 0, l = vertices.length; i < l; i ++ ) {
+
+				this.root.primitives.push( vertices[ i ] );
+
+			}
 
 			// centroids
 
