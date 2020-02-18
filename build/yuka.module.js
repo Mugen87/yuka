@@ -14006,8 +14006,8 @@ class BVH {
 	* Constructs a new BVH.
 	*
 	* @param {Number} branchingFactor - The branching factor.
-	* @param {Number} depth - The maximum hierarchical depth.
 	* @param {Number} primitivesPerNode - The minimum amount of primitives per BVH node.
+	* @param {Number} depth - The maximum hierarchical depth.
 	*/
 	constructor( branchingFactor = 2, primitivesPerNode = 1, depth = 10 ) {
 
@@ -14055,7 +14055,12 @@ class BVH {
 
 		const nonIndexedGeometry = geometry.toTriangleSoup();
 		const vertices = nonIndexedGeometry.vertices;
-		this.root.primitives.push( ...vertices );
+
+		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
+
+			this.root.primitives.push( vertices[ i ] );
+
+		}
 
 		// centroids
 
@@ -18012,7 +18017,7 @@ const closestBorderEdge = {
 * which define the walkable areas of a game environment. A convex polygon allows unobstructed travel
 * from any point in the polygon to any other. This is useful because it enables the navigation mesh
 * to be represented using a graph where each node represents a convex polygon and their respective edges
-* represent the neighborly relations to other polygons. More compact navigation graphs leads
+* represent the neighborly relations to other polygons. More compact navigation graphs lead
 * to faster graph search execution.
 *
 * This particular implementation is able to merge convex polygons into bigger ones as long

@@ -33,7 +33,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.3.2</span>
+            <span class="version">v0.3.4</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -87,8 +87,8 @@ class BVH {
 	* Constructs a new BVH.
 	*
 	* @param {Number} branchingFactor - The branching factor.
-	* @param {Number} depth - The maximum hierarchical depth.
 	* @param {Number} primitivesPerNode - The minimum amount of primitives per BVH node.
+	* @param {Number} depth - The maximum hierarchical depth.
 	*/
 	constructor( branchingFactor = 2, primitivesPerNode = 1, depth = 10 ) {
 
@@ -136,7 +136,12 @@ class BVH {
 
 		const nonIndexedGeometry = geometry.toTriangleSoup();
 		const vertices = nonIndexedGeometry.vertices;
-		this.root.primitives.push( ...vertices );
+
+		for ( let i = 0, l = vertices.length; i &lt; l; i ++ ) {
+
+			this.root.primitives.push( vertices[ i ] );
+
+		}
 
 		// centroids
 

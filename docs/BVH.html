@@ -31,7 +31,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.3.2</span>
+            <span class="version">v0.3.4</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -53,7 +53,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>BVH<span class="signature">(branchingFactor, depth, primitivesPerNode)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>BVH<span class="signature">(branchingFactor, primitivesPerNode, depth)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><p>Class representing a bounding volume hierarchy. The current implementation
 represents single BVH nodes as AABBs. It accepts arbitrary branching factors
@@ -76,7 +76,7 @@ by Christer Ericson (chapter 6).</p></div>
     
         <h4 class="name" id="BVH">
             
-                new <span class="type-signature"></span>BVH<span class="signature">(branchingFactor, depth, primitivesPerNode)</span><span class="type-signature"></span>
+                new <span class="type-signature"></span>BVH<span class="signature">(branchingFactor, primitivesPerNode, depth)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
@@ -160,6 +160,35 @@ by Christer Ericson (chapter 6).</p></div>
 
         <tr>
             
+                <td class="name"><code>primitivesPerNode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"><p>The minimum amount of primitives per BVH node.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>depth</code></td>
             
 
@@ -183,33 +212,6 @@ by Christer Ericson (chapter 6).</p></div>
             
 
             <td class="description last"><p>The maximum hierarchical depth.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>primitivesPerNode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>The minimum amount of primitives per BVH node.</p></td>
         </tr>
 
     
@@ -814,7 +816,7 @@ by Christer Ericson (chapter 6).</p></div>
             
             <div class="container-source members">
                 <code><a href="math_BVH.js.html">math/BVH.js</a></code>,
-                <code><a href="math_BVH.js.html#line116">line 116</a></code>
+                <code><a href="math_BVH.js.html#line121">line 121</a></code>
             </div>
             
         </h4>
