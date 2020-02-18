@@ -32,8 +32,8 @@ class BVH {
 	* Constructs a new BVH.
 	*
 	* @param {Number} branchingFactor - The branching factor.
-	* @param {Number} depth - The maximum hierarchical depth.
 	* @param {Number} primitivesPerNode - The minimum amount of primitives per BVH node.
+	* @param {Number} depth - The maximum hierarchical depth.
 	*/
 	constructor( branchingFactor = 2, primitivesPerNode = 1, depth = 10 ) {
 
