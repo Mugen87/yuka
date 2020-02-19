@@ -79,8 +79,9 @@ class BVH {
 
 		// primitives
 
-		const nonIndexedGeometry = geometry.toTriangleSoup();
-		const vertices = nonIndexedGeometry.vertices;
+		if ( geometry.indices !== null ) geometry = geometry.toTriangleSoup();
+
+		const vertices = geometry.vertices;
 
 		for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 

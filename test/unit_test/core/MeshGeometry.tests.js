@@ -235,6 +235,35 @@ describe( 'MeshGeometry', function () {
 
 	} );
 
+	describe( '#toTriangleSoup()', function () {
+
+		it( 'should convert an indexed to a non-indexed geometry.', function () {
+
+			const vertices = new Float32Array( [ 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+			const indices = new Uint16Array( [ 0, 1, 2, 2, 1, 0 ] );
+
+			const geometry = new MeshGeometry( vertices, indices ).toTriangleSoup();
+
+			expect( geometry.vertices ).to.deep.equal( new Float32Array( [
+				0, 0, 0, 0.5, 0, 1, 1, 0, 0, // 0, 1, 2
+				1, 0, 0, 0.5, 0, 1, 0, 0, 0, // 2, 1, 0
+			] ) );
+			expect( geometry.indices ).to.be.null;
+
+		} );
+
+		it( 'should perform no changes if the geometry is already non-indexed', function () {
+
+			const vertices = new Float32Array( [ 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
+
+			const geometry = new MeshGeometry( vertices );
+
+			expect( geometry ).to.be.equal( geometry.toTriangleSoup() );
+
+		} );
+
+	} );
+
 	describe( '#toJSON()', function () {
 
 		it( 'should serialize this instance to a JSON object', function () {

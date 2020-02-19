@@ -8716,19 +8716,19 @@
 		}
 
 		/**
-		 * Returns a new geometry without containing indices.
+		 * Returns a new geometry without containing indices. If the geometry is already
+		 * non-indexed, the method performs no changes.
 		 *
-		 * @return {MeshGeometry} The new geometry.
+		 * @return {MeshGeometry} The new non-indexed geometry.
 		 */
 		toTriangleSoup() {
 
 			const indices = this.indices;
-			const vertices = this.vertices;
-			let newVertices;
 
 			if ( indices ) {
 
-				newVertices = new Float32Array( indices.length * 3 );
+				const vertices = this.vertices;
+				const newVertices = new Float32Array( indices.length * 3 );
 
 				for ( let i = 0, l = indices.length; i < l; i ++ ) {
 
@@ -8741,13 +8741,13 @@
 
 				}
 
+				return new MeshGeometry( newVertices );
+
 			} else {
 
-				newVertices = new Float32Array( vertices );
+				return this;
 
 			}
-
-			return new MeshGeometry( newVertices );
 
 		}
 
@@ -14059,8 +14059,9 @@
 
 			// primitives
 
-			const nonIndexedGeometry = geometry.toTriangleSoup();
-			const vertices = nonIndexedGeometry.vertices;
+			if ( geometry.indices !== null ) geometry = geometry.toTriangleSoup();
+
+			const vertices = geometry.vertices;
 
 			for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
