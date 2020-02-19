@@ -80,9 +80,9 @@
 			dirLight.shadow.camera.far = 20;
 			scene.add( dirLight );
 
-			var sphereGeometry = new THREE.TorusKnotBufferGeometry( 1, 0.2, 64, 16 );
-			var sphereMaterial = new THREE.MeshPhongMaterial( { color: 0xee0808 } );
-			var icoSphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+			const sphereGeometry = new THREE.TorusKnotBufferGeometry( 1, 0.2, 64, 16 ).toNonIndexed();
+			const sphereMaterial = new THREE.MeshPhongMaterial( { color: 0xee0808 } );
+			const icoSphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
 			icoSphere.position.set( 0, 1.5, 0 );
 			icoSphere.updateMatrix();
 			icoSphere.castShadow = true;
@@ -122,8 +122,7 @@
 			threeGeometry.applyMatrix( icoSphere.matrix ); // transform vertices to world space
 
 			const vertices = threeGeometry.attributes.position.array;
-			const indices = threeGeometry.index.array;
-			meshGeometry = new YUKA.MeshGeometry( vertices, indices );
+			meshGeometry = new YUKA.MeshGeometry( vertices );
 
 			createBVH();
 

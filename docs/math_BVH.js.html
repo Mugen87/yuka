@@ -33,7 +33,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.3.4</span>
+            <span class="version">v0.3.5</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -134,8 +134,9 @@ class BVH {
 
 		// primitives
 
-		const nonIndexedGeometry = geometry.toTriangleSoup();
-		const vertices = nonIndexedGeometry.vertices;
+		if ( geometry.indices !== null ) geometry = geometry.toTriangleSoup();
+
+		const vertices = geometry.vertices;
 
 		for ( let i = 0, l = vertices.length; i &lt; l; i ++ ) {
 

@@ -31,7 +31,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.3.4</span>
+            <span class="version">v0.3.5</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -1337,7 +1337,7 @@ the intersection point in the given result vector. If no intersection is detecte
             
             <div class="container-source members">
                 <code><a href="core_MeshGeometry.js.html">core/MeshGeometry.js</a></code>,
-                <code><a href="core_MeshGeometry.js.html#line271">line 271</a></code>
+                <code><a href="core_MeshGeometry.js.html#line272">line 272</a></code>
             </div>
             
         </h4>
@@ -1349,7 +1349,8 @@ the intersection point in the given result vector. If no intersection is detecte
 
     
     <div class="description">
-        <p>Returns a new geometry without containing indices.</p>
+        <p>Returns a new geometry without containing indices. If the geometry is already
+non-indexed, the method performs no changes.</p>
     </div>
     
 
@@ -1385,7 +1386,7 @@ the intersection point in the given result vector. If no intersection is detecte
 
 
 
-- <p>The new geometry.</p>
+- <p>The new non-indexed geometry.</p>
 
 
 
