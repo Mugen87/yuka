@@ -234,7 +234,7 @@ describe( 'Matrix4', function () {
 
 	describe( '#getInverse()', function () {
 
-		it( 'should return the inverse of the matrix or the identity matrix if its determinant is zero', function () {
+		it( 'should return the inverse of the matrix or the zero matrix if its determinant is zero', function () {
 
 			const m1 = new Matrix4().set( 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, - 1, 1, 1, 1 );
 			const m2 = new Matrix4();
@@ -246,7 +246,7 @@ describe( 'Matrix4', function () {
 			const m3 = new Matrix4().set( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 			m3.getInverse( m2 );
 
-			expect( m2 ).to.deep.equal( new Matrix4() );
+			expect( m2 ).to.deep.equal( new Matrix4().set( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ) );
 
 		} );
 
