@@ -2641,6 +2641,8 @@ class Matrix4 {
 	/**
 	* Computes the inverse of this matrix and stored the result in the given matrix.
 	*
+	* You can not invert a matrix with a determinant of zero. If you attempt this, the method returns a zero matrix instead.
+	*
 	* @param {Matrix4} m - The result matrix.
 	* @return {Matrix4} The result matrix.
 	*/
@@ -2661,12 +2663,7 @@ class Matrix4 {
 
 		const det = n11 * t11 + n21 * t12 + n31 * t13 + n41 * t14;
 
-		if ( det === 0 ) {
-
-			Logger.warn( 'YUKA.Matrix4: .getInverse() can not invert matrix, determinant is 0.' );
-			return this.identity();
-
-		}
+		if ( det === 0 ) return m.set( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
 		const detInv = 1 / det;
 
