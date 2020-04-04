@@ -6,7 +6,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const expect = require( 'chai' ).expect;
 const fetch = require( 'node-fetch' );
-require( 'fast-text-encoding' );
+const TextDecoder = require( 'text-encoding' ).TextDecoder;
 
 // provide implementation of browser APIs used in NavMeshLoader
 

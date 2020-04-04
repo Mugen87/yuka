@@ -57,7 +57,7 @@
     "nyc": "15.0.1",
     "rollup": "2.3.2",
     "serve": "11.3.0",
-    "fast-text-encoding": "1.0.1",
+    "text-encoding": "0.7.0",
     "tui-jsdoc-template": "1.2.2"
   },
   "dependencies": {}
