@@ -115,7 +115,7 @@ describe( 'NavMeshLoader', function () {
 
 		} );
 
-		it( 'should reject the promise with an error if the url das not exist', function ( done ) {
+		it( 'should reject the promise with an error if the URL das not exist', function ( done ) {
 
 			const loader = new NavMeshLoader();
 			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb-embedded/error';
