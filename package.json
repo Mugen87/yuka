@@ -1,6 +1,6 @@
 {
   "name": "yuka",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "JavaScript Game AI library",
   "repository": "Mugen87/yuka",
   "main": "build/yuka.js",
@@ -38,6 +38,7 @@
   "bugs": {
     "url": "https://github.com/Mugen87/yuka/issues"
   },
+  "homepage": "https://mugen87.github.io/yuka",
   "devDependencies": {
     "benchmark": "2.1.4",
     "chai": "4.2.0",
