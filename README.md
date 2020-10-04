@@ -20,6 +20,10 @@ You can find the Yuka documentation [on the website](https://mugen87.github.io/y
 
 We have several examples [on the website](https://mugen87.github.io/yuka/examples/). If you download the repository and execute `npm install && npm start` in the main directory, you can start a local server and check out the examples on your computer.
 
+## Chat
+
+There is a [Discord server](https://discord.gg/MhnFwYM) if you want to chat about Yuka and game AI related topics.
+
 ## Resources
 
 We recommend the following books in order to get familiar with most of Yuka's concepts:
