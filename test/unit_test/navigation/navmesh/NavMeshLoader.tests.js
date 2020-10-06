@@ -105,9 +105,10 @@ describe( 'NavMeshLoader', function () {
 			const loader = new NavMeshLoader();
 			const url = 'https://raw.githubusercontent.com/Mugen87/yuka/master/test/assets/navmesh/glb-embedded/navmesh.glb';
 
-			loader.load( url, { epsilonCoplanarTest: 0.5 } ).then( ( navMesh ) => {
+			loader.load( url, { epsilonCoplanarTest: 0.5, mergeConvexRegions: false } ).then( ( navMesh ) => {
 
 				expect( navMesh.epsilonCoplanarTest ).is.equal( 0.5 );
+				expect( navMesh.mergeConvexRegions ).to.be.false;
 
 				done();
 

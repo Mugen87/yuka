@@ -66,6 +66,7 @@ describe( 'NavMesh', function () {
 			expect( navMesh ).to.have.a.property( 'spatialIndex' ).that.is.null;
 			expect( navMesh ).to.have.a.property( 'epsilonCoplanarTest' ).that.is.equal( 1e-3 );
 			expect( navMesh ).to.have.a.property( 'epsilonContainsTest' ).that.is.equal( 1 );
+			expect( navMesh ).to.have.a.property( 'mergeConvexRegions' ).to.be.true;
 			expect( navMesh ).to.have.a.property( '_borderEdges' ).that.is.an( 'array' );
 			expect( navMesh.graph.digraph ).to.be.true;
 
@@ -106,6 +107,27 @@ describe( 'NavMesh', function () {
 			expect( edge2.to ).to.equal( 0 );
 
 			expect( navMesh._borderEdges ).to.have.lengthOf( 6 );
+
+		} );
+
+		it( 'should not merge convex regions if .mergeConvexRegions is set to false', function () {
+
+			const p1 = new Polygon();
+			const p2 = new Polygon();
+			const p3 = new Polygon();
+			const p4 = new Polygon();
+
+			p1.fromContour( v1 );
+			p2.fromContour( v2 );
+			p3.fromContour( v3 );
+			p4.fromContour( v4 );
+
+			const navMesh = new NavMesh();
+			navMesh.mergeConvexRegions = false;
+			navMesh.fromPolygons( [ p1, p2, p3, p4 ] );
+
+			expect( navMesh.regions ).to.have.lengthOf( 4 );
+			expect( navMesh.regions ).to.include( p1, p2, p3, p4 );
 
 		} );
 

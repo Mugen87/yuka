@@ -18066,6 +18066,13 @@ class NavMesh {
 		*/
 		this.epsilonContainsTest = 1;
 
+		/**
+		* Whether convex regions should be merged or not.
+		* @type Boolean
+		* @default true
+		*/
+		this.mergeConvexRegions = true;
+
 		//
 
 		this._borderEdges = new Array();
@@ -18497,60 +18504,64 @@ class NavMesh {
 			rightNext: null
 		};
 
-		// process edges from longest to shortest
+		if ( this.mergeConvexRegions === true ) {
 
-		for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
+			// process edges from longest to shortest
 
-			const entry = edgeList[ i ];
+			for ( let i = 0, l = edgeList.length; i < l; i ++ ) {
 
-			let candidate = entry.edge;
+				const entry = edgeList[ i ];
 
-			// cache current references for possible restore
+				let candidate = entry.edge;
 
-			cache.prev = candidate.prev;
-			cache.next = candidate.next;
-			cache.prevTwin = candidate.twin.prev;
-			cache.nextTwin = candidate.twin.next;
+				// cache current references for possible restore
 
-			// temporarily change the first polygon in order to represent both polygons
+				cache.prev = candidate.prev;
+				cache.next = candidate.next;
+				cache.prevTwin = candidate.twin.prev;
+				cache.nextTwin = candidate.twin.next;
 
-			candidate.prev.next = candidate.twin.next;
-			candidate.next.prev = candidate.twin.prev;
-			candidate.twin.prev.next = candidate.next;
-			candidate.twin.next.prev = candidate.prev;
+				// temporarily change the first polygon in order to represent both polygons
 
-			const polygon = candidate.polygon;
-			polygon.edge = candidate.prev;
+				candidate.prev.next = candidate.twin.next;
+				candidate.next.prev = candidate.twin.prev;
+				candidate.twin.prev.next = candidate.next;
+				candidate.twin.next.prev = candidate.prev;
 
-			if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
+				const polygon = candidate.polygon;
+				polygon.edge = candidate.prev;
 
-				// correct polygon reference of all edges
+				if ( polygon.convex() === true && polygon.coplanar( this.epsilonCoplanarTest ) === true ) {
 
-				let edge = polygon.edge;
+					// correct polygon reference of all edges
 
-				do {
+					let edge = polygon.edge;
 
-					edge.polygon = polygon;
+					do {
 
-					edge = edge.next;
+						edge.polygon = polygon;
 
-				} while ( edge !== polygon.edge );
+						edge = edge.next;
 
-				// delete obsolete polygon
+					} while ( edge !== polygon.edge );
 
-				const index = regions.indexOf( entry.edge.twin.polygon );
-				regions.splice( index, 1 );
+					// delete obsolete polygon
 
-			} else {
+					const index = regions.indexOf( entry.edge.twin.polygon );
+					regions.splice( index, 1 );
 
-				// restore
+				} else {
 
-				cache.prev.next = candidate;
-				cache.next.prev = candidate;
-				cache.prevTwin.next = candidate.twin;
-				cache.nextTwin.prev = candidate.twin;
+					// restore
 
-				polygon.edge = candidate;
+					cache.prev.next = candidate;
+					cache.next.prev = candidate;
+					cache.prevTwin.next = candidate.twin;
+					cache.nextTwin.prev = candidate.twin;
+
+					polygon.edge = candidate;
+
+				}
 
 			}
 
@@ -18919,7 +18930,8 @@ class Parser {
 
 			if ( options ) {
 
-				if ( options.epsilonCoplanarTest ) navMesh.epsilonCoplanarTest = options.epsilonCoplanarTest;
+				if ( options.epsilonCoplanarTest !== undefined ) navMesh.epsilonCoplanarTest = options.epsilonCoplanarTest;
+				if ( options.mergeConvexRegions !== undefined ) navMesh.mergeConvexRegions = options.mergeConvexRegions;
 
 			}
 
