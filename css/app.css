@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Jura');
 
+:root {
+	color-scheme: light dark;
+}
+
 body {
 	padding-top: 3.5rem;
 }
@@ -52,5 +56,27 @@ hr.divider {
 	.showcase-images {
 		width: 300px;
 		height: 150px;
+	}
+}
+
+/* dark mode */
+
+@media (prefers-color-scheme: dark) {
+	body {
+		color: #ccc;
+		background-color: #181818;
+	}
+	.navbar {
+		background-color: #212121 !important;
+		border-bottom: 1px solid #212121;
+	}
+	hr {
+		border-top: 1px solid #666;
+	}
+	a.nav-link {
+		color: #ccc;
+	}
+	a.nav-link:hover {
+		color: #ee0808;
 	}
 }
