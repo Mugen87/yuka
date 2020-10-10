@@ -20,9 +20,9 @@ body {
 
 .vertical-center {
 	min-height: 50%;
-  min-height: 50vh;
-  display: flex;
-  align-items: center;
+	min-height: 50vh;
+	display: flex;
+	align-items: center;
 }
 
 .lead {
@@ -78,5 +78,8 @@ hr.divider {
 	}
 	a.nav-link:hover {
 		color: #ee0808;
+	}
+	.jumbotron {
+		background-color: #181818;
 	}
 }
