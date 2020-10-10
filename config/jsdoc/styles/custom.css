@@ -26,6 +26,9 @@ a:hover {
 .main section article h3.subsection-title {
 	color: #ee0808;
 }
+.main section article table td {
+	font-family: 'Jura', sans-serif;
+}
 .lnb h3 {
 	color: #000000;
 }
