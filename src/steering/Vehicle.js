@@ -28,7 +28,7 @@ class Vehicle extends MovingEntity {
 		super();
 
 		/**
-		* The mass if the vehicle in kilogram.
+		* The mass of the vehicle in kilogram.
 		* @type Number
 		* @default 1
 		*/
