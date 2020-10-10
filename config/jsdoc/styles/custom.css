@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Jura');
 
+:root {
+	color-scheme: light dark;
+}
 body {
 	font-family: 'Jura', sans-serif;
 }
@@ -100,4 +103,42 @@ code {
 }
 .main section article dl h4 .type-signature {
 	color: #a40606;
+}
+
+/* dark mode */
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		background-color: #181818;
+	}
+	.lnb {
+		background-color: #212121;
+	}
+	.lnb h3 {
+		color: #aaa;
+	}
+	.lnb .member-type {
+		color: #aaa;
+	}
+	.lnb .lnb-api a {
+		color: #ccc;
+	}
+	.lnb .lnb-api a:hover {
+		color: #ee0808;
+	}
+	body {
+		color: #ccc;
+	}
+	.main section article dl dt .name {
+		background-color: #333;
+	}
+	code {
+		background-color: #333;
+	}
+	#resizer {
+		background-color: #181818;
+	}
+	.search-container ul li:hover, .search-container ul li.highlight {
+		background-color: #212121;
+	}
 }
