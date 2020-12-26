@@ -16,14 +16,14 @@ class MemoryRecord {
 
 		/**
 		* The game entity that is represented by this memory record.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.entity = entity;
 
 		/**
 		* Records the time the entity became visible. Useful in combination with a reaction time
 		* in order to prevent immediate actions.
-		* @type Number
+		* @type {Number}
 		* @default - Infinity
 		*/
 		this.timeBecameVisible = - Infinity;
@@ -31,20 +31,20 @@ class MemoryRecord {
 		/**
 		* Records the time the entity was last sensed (e.g. seen or heard). Used to determine
 		* if a game entity can "remember" this record or not.
-		* @type Number
+		* @type {Number}
 		* @default - Infinity
 		*/
 		this.timeLastSensed = - Infinity;
 
 		/**
 		* Marks the position where the opponent was last sensed.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.lastSensedPosition = new Vector3();
 
 		/**
 		* Whether this game entity is visible or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.visible = false;

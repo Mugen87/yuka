@@ -21,13 +21,13 @@ class LineSegment {
 
 		/**
 		* The start point of the line segment.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.from = from;
 
 		/**
 		* The end point of the line segment.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.to = to;
 

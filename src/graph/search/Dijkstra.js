@@ -18,25 +18,25 @@ class Dijkstra {
 
 		/**
 		* The graph.
-		* @type Graph
+		* @type {Graph}
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.target = target;
 
 		/**
 		* Whether the search was successful or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.found = false;
@@ -136,7 +136,7 @@ class Dijkstra {
 	/**
 	* Returns the shortest path from the source to the target node as an array of node indices.
 	*
-	* @return {Array} The shortest path.
+	* @return {Array<Number>} The shortest path.
 	*/
 	getPath() {
 
@@ -175,7 +175,7 @@ class Dijkstra {
 	/**
 	* Returns the search tree of the algorithm as an array of edges.
 	*
-	* @return {Array} The search tree.
+	* @return {Array<Edge>} The search tree.
 	*/
 	getSearchTree() {
 

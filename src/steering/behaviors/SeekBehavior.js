@@ -22,7 +22,7 @@ class SeekBehavior extends SteeringBehavior {
 
 		/**
 		* The target vector.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.target = target;
 

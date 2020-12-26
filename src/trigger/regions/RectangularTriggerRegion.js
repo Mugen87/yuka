@@ -23,6 +23,10 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 		super();
 
+		/**
+		* The size of the region.
+		* @type {Vector3}
+		*/
 		this.size = size;
 
 		this._aabb = new AABB();

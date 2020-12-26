@@ -32,20 +32,20 @@ class OnPathBehavior extends SteeringBehavior {
 
 		/**
 		* The path to stay close to.
-		* @type Path
+		* @type {Path}
 		*/
 		this.path = path;
 
 		/**
 		* Defines the width of the path. With a smaller radius, the vehicle will have to follow the path more closely.
-		* @type Number
+		* @type {Number}
 		* @default 0.1
 		*/
 		this.radius = radius;
 
 		/**
 		* Determines how far the behavior predicts the movement of the vehicle.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.predictionFactor = predictionFactor;

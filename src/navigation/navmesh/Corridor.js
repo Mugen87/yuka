@@ -19,7 +19,7 @@ class Corridor {
 
 		/**
 		* The portal edges of the corridor.
-		* @type Array
+		* @type {Array<Object>}
 		*/
 		this.portalEdges = new Array();
 
@@ -46,7 +46,7 @@ class Corridor {
 	/**
 	* Generates the shortest path through the corridor as an array of 3D vectors.
 	*
-	* @return {Array} An array of 3D waypoints.
+	* @return {Array<Vector3>} An array of 3D waypoints.
 	*/
 	generate() {
 

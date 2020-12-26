@@ -23,13 +23,13 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		/**
 		* The path to follow.
-		* @type Path
+		* @type {Path}
 		*/
 		this.path = path;
 
 		/**
 		* The distance the agent seeks for the next waypoint.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.nextWaypointDistance = nextWaypointDistance;

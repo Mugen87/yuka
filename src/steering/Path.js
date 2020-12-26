@@ -14,7 +14,7 @@ class Path {
 
 		/**
 		* Whether this path is looped or not.
-		* @type Boolean
+		* @type {Boolean}
 		*/
 		this.loop = false;
 

@@ -15,7 +15,7 @@ class GoalEvaluator {
 		/**
 		* Can be used to adjust the preferences of agents. When the desirability score
 		* for a goal has been evaluated, it is multiplied by this value.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.characterBias = characterBias;

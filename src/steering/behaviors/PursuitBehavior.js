@@ -28,14 +28,14 @@ class PursuitBehavior extends SteeringBehavior {
 
 		/**
 		* The agent to pursue.
-		* @type MovingEntity
+		* @type {MovingEntity}
 		* @default null
 		*/
 		this.evader = evader;
 
 		/**
 		* This factor determines how far the vehicle predicts the movement of the evader.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.predictionFactor = predictionFactor;

@@ -16,20 +16,20 @@ class PriorityQueue {
 
 		/**
 		* The data items of the priority queue.
-		* @type Array
+		* @type {Array<Object>}
 		*/
 		this.data = new Array();
 
 		/**
 		* The length of the priority queue.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.length = 0;
 
 		/**
 		* The compare function used for sorting.
-		* @type Function
+		* @type {Function}
 		* @default defaultCompare
 		*/
 		this.compare = compare;

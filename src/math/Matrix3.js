@@ -24,7 +24,7 @@ class Matrix3 {
 
 		/**
 		* The elements of the matrix in column-major order.
-		* @type Array
+		* @type {Array<Number>}
 		*/
 		this.elements = [
 
@@ -516,7 +516,7 @@ class Matrix3 {
 	/**
 	* Sets the elements of this matrix from an array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
 	* @return {Matrix3} A reference to this matrix.
 	*/
@@ -537,9 +537,9 @@ class Matrix3 {
 	/**
 	* Copies all elements of this matrix to the given array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
-	* @return {Array} The array with the elements of the matrix.
+	* @return {Array<Number>} The array with the elements of the matrix.
 	*/
 	toArray( array, offset = 0 ) {
 

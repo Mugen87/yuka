@@ -22,14 +22,14 @@ class EntityManager {
 
 		/**
 		* A list of {@link GameEntity game entities }.
-		* @type Array
+		* @type {Array<GameEntity>}
 		* @readonly
 		*/
 		this.entities = new Array();
 
 		/**
 		* A reference to a spatial index.
-		* @type CellSpacePartitioning
+		* @type {CellSpacePartitioning}
 		* @default null
 		*/
 		this.spatialIndex = null;

@@ -41,41 +41,41 @@ class NavMesh {
 
 		/**
 		* The internal navigation graph of this navigation mesh representing neighboring polygons.
-		* @type Graph
+		* @type {Graph}
 		*/
 		this.graph = new Graph();
 		this.graph.digraph = true;
 
 		/**
 		* The list of convex regions.
-		* @type Array
+		* @type {Array<Polygon>}
 		*/
 		this.regions = new Array();
 
 		/**
 		* A reference to a spatial index.
-		* @type CellSpacePartitioning
+		* @type {CellSpacePartitioning}
 		* @default null
 		*/
 		this.spatialIndex = null;
 
 		/**
 		* The tolerance value for the coplanar test.
-		* @type Number
+		* @type {Number}
 		* @default 1e-3
 		*/
 		this.epsilonCoplanarTest = 1e-3;
 
 		/**
 		* The tolerance value for the containment test.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.epsilonContainsTest = 1;
 
 		/**
 		* Whether convex regions should be merged or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.mergeConvexRegions = true;
@@ -89,7 +89,7 @@ class NavMesh {
 	/**
 	* Creates the navigation mesh from an array of convex polygons.
 	*
-	* @param {Array} polygons - An array of convex polygons.
+	* @param {Array<Polygon>} polygons - An array of convex polygons.
 	* @return {NavMesh} A reference to this navigation mesh.
 	*/
 	fromPolygons( polygons ) {
@@ -300,7 +300,7 @@ class NavMesh {
 	*
 	* @param {Vector3} from - The start/source position.
 	* @param {Vector3} to - The end/destination position.
-	* @return {Array} The shortest path as an array of points.
+	* @return {Array<Vector3>} The shortest path as an array of points.
 	*/
 	findPath( from, to ) {
 

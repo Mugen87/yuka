@@ -28,21 +28,21 @@ class EvadeBehavior extends SteeringBehavior {
 
 		/**
 		* The agent to evade from.
-		* @type MovingEntity
+		* @type {MovingEntity}
 		* @default null
 		*/
 		this.pursuer = pursuer;
 
 		/**
 		* The agent only flees from the pursuer if it is inside this radius.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.panicDistance = panicDistance;
 
 		/**
 		* This factor determines how far the vehicle predicts the movement of the pursuer.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.predictionFactor = predictionFactor;

@@ -35,13 +35,13 @@ class SteeringManager {
 
 		/**
 		* The vehicle that owns this steering manager.
-		* @type Vehicle
+		* @type {Vehicle}
 		*/
 		this.vehicle = vehicle;
 
 		/**
 		* A list of all steering behaviors.
-		* @type Array
+		* @type {Array<SteeringBehavior>}
 		* @readonly
 		*/
 		this.behaviors = new Array();

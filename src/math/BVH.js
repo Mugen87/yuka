@@ -39,28 +39,28 @@ class BVH {
 
 		/**
 		* The branching factor (how many nodes per level).
-		* @type Number
+		* @type {Number}
 		* @default 2
 		*/
 		this.branchingFactor = branchingFactor;
 
 		/**
 		* The minimum amount of primitives per BVH node.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.primitivesPerNode = primitivesPerNode;
 
 		/**
 		* The maximum hierarchical depth.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.depth = depth;
 
 		/**
 		* The root BVH node.
-		* @type BVHNode
+		* @type {BVHNode}
 		* @default null
 		*/
 		this.root = null;
@@ -144,34 +144,34 @@ class BVHNode {
 
 		/**
 		* The parent BVH node.
-		* @type BVHNode
+		* @type {BVHNode}
 		* @default null
 		*/
 		this.parent = null;
 
 		/**
 		* The child BVH nodes.
-		* @type Array
+		* @type {Array<BVHNode>}
 		*/
 		this.children = new Array();
 
 		/**
 		* The bounding volume of this BVH node.
-		* @type AABB
+		* @type {AABB}
 		*/
 		this.boundingVolume = new AABB();
 
 		/**
 		* The primitives (triangles) of this BVH node.
 		* Only filled for leaf nodes.
-		* @type Array
+		* @type {Array<Number>}
 		*/
 		this.primitives = new Array();
 
 		/**
 		* The centroids of the node's triangles.
 		* Only filled for leaf nodes.
-		* @type Array
+		* @type {Array<Number>}
 		*/
 		this.centroids = new Array();
 

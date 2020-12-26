@@ -21,19 +21,19 @@ class MovingEntity extends GameEntity {
 
 		/**
 		* The velocity of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.velocity = new Vector3();
 
 		/**
 		* The maximum speed at which this game entity may travel.
-		* @type Number
+		* @type {Number}
 		*/
 		this.maxSpeed = 1;
 
 		/**
 		* Whether the orientation of this game entity will be updated based on the velocity or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.updateOrientation = true;

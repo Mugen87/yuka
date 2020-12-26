@@ -24,7 +24,7 @@ class Trigger extends GameEntity {
 
 		/**
 		* The region of the trigger.
-		* @type TriggerRegion
+		* @type {TriggerRegion}
 		*/
 		this.region = region;
 

@@ -16,13 +16,13 @@ class Cell {
 
 		/**
 		* The bounding volume of the cell.
-		* @type AABB
+		* @type {AABB}
 		*/
 		this.aabb = aabb;
 
 		/**
 		* The list of entries which belong to this cell.
-		* @type Array
+		* @type {Array<Any>}
 		* @readonly
 		*/
 		this.entries = new Array();

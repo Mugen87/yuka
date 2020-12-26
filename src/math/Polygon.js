@@ -19,19 +19,19 @@ class Polygon {
 
 		/**
 		* The centroid of this polygon.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.centroid = new Vector3();
 
 		/**
 		* A reference to the first half-edge of this polygon.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.edge = null;
 
 		/**
 		* A plane abstraction of this polygon.
-		* @type Plane
+		* @type {Plane}
 		*/
 		this.plane = new Plane();
 
@@ -42,7 +42,7 @@ class Polygon {
 	* The method assumes the contour (the sequence of points) is defined
 	* in CCW order.
 	*
-	* @param {Array} points - The array of points.
+	* @param {Array<Vector3>} points - The array of points.
 	* @return {Polygon} A reference to this polygon.
 	*/
 	fromContour( points ) {
@@ -259,8 +259,8 @@ class Polygon {
 	* Determines the contour (sequence of points) of this polygon and
 	* stores the result in the given array.
 	*
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Vector3>} result - The result array.
+	* @return {Array<Vector3>} The result array.
 	*/
 	getContour( result ) {
 

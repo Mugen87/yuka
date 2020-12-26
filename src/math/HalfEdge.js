@@ -17,31 +17,31 @@ class HalfEdge {
 
 		/**
 		* The vertex of this half-edge. It represents the head/destination of the respective full edge.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.vertex = vertex;
 
 		/**
 		* A reference to the next half-edge.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.next = null;
 
 		/**
 		* A reference to the previous half-edge.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.prev = null;
 
 		/**
 		* A reference to the opponent half-edge.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.twin = null;
 
 		/**
 		* A reference to its polygon/face.
-		* @type Polygon
+		* @type {Polygon}
 		*/
 		this.polygon = null;
 

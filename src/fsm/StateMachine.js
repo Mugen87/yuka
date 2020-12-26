@@ -17,31 +17,31 @@ class StateMachine {
 
 		/**
 		* The game entity that owns this state machine.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.owner = owner;
 
 		/**
 		* The current state of the game entity.
-		* @type State
+		* @type {State}
 		*/
 		this.currentState = null;
 
 		/**
 		* The previous state of the game entity.
-		* @type State
+		* @type {State}
 		*/
 		this.previousState = null; // a reference to the last state the agent was in
 
 		/**
 		* This state logic is called every time the state machine is updated.
-		* @type State
+		* @type {State}
 		*/
 		this.globalState = null;
 
 		/**
 		* A map with all states of the state machine.
-		* @type Map
+		* @type {Map<String,State>}
 		*/
 		this.states = new Map();
 

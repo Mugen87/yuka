@@ -26,22 +26,22 @@ class ArriveBehavior extends SteeringBehavior {
 
 		/**
 		* The target vector.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.target = target;
 
 		/**
 		* The amount of deceleration.
-		* @type Number
+		* @type {Number}
 		* @default 3
 		*/
 		this.deceleration = deceleration;
 
 		/**
-		 * A tolerance value in world units to prevent the vehicle from overshooting its target.
-		 * @type {Number}
-		 * @default 0
-		 */
+		* A tolerance value in world units to prevent the vehicle from overshooting its target.
+		* @type {Number}
+		* @default 0
+		*/
 		this.tolerance = tolerance;
 
 	}

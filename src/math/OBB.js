@@ -53,19 +53,19 @@ class OBB {
 
 		/**
 		* The center of this OBB.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.center = center;
 
 		/**
 		* The half sizes of the OBB (defines its width, height and depth).
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.halfSizes = halfSizes;
 
 		/**
 		* The rotation of this OBB.
-		* @type Matrix3
+		* @type {Matrix3}
 		*/
 		this.rotation = rotation;
 
@@ -419,7 +419,7 @@ class OBB {
 	* of the produced OBB. Consider to use an AABB or bounding sphere if the result
 	* is not satisfying.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {OBB} A reference to this OBB.
 	*/
 	fromPoints( points ) {

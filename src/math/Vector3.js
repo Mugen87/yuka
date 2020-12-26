@@ -18,19 +18,19 @@ class Vector3 {
 
 		/**
 		* The x component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.x = x;
 
 		/**
 		* The y component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.y = y;
 
 		/**
 		* The z component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.z = z;
 
@@ -637,7 +637,7 @@ class Vector3 {
 	/**
 	* Sets the components of this 3D vector from an array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
 	* @return {Vector3} A reference to this vector.
 	*/
@@ -654,9 +654,9 @@ class Vector3 {
 	/**
 	* Copies all values of this 3D vector to the given array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
-	* @return {Array} The array with the 3D vector components.
+	* @return {Array<Number>} The array with the 3D vector components.
 	*/
 	toArray( array, offset = 0 ) {
 

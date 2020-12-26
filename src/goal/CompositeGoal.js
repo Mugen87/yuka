@@ -19,7 +19,7 @@ class CompositeGoal extends Goal {
 
 		/**
 		* A list of subgoals.
-		* @type Array
+		* @type {Array<Goal>}
 		*/
 		this.subgoals = new Array();
 

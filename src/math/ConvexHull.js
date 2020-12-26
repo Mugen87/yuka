@@ -33,7 +33,7 @@ class ConvexHull extends Polyhedron {
 
 		/**
 		* Whether faces of the convex hull should be merged or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.mergeFaces = true;
@@ -136,7 +136,7 @@ class ConvexHull extends Polyhedron {
 	* Computes a convex hull that encloses the given set of points. The computation requires
 	* at least four points.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {ConvexHull} A reference to this convex hull.
 	*/
 	fromPoints( points ) {

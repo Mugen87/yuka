@@ -22,27 +22,27 @@ class GameEntity {
 
 		/**
 		* The name of this game entity.
-		* @type String
+		* @type {String}
 		*/
 		this.name = '';
 
 		/**
 		* Whether this game entity is active or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.active = true;
 
 		/**
 		* The child entities of this game entity.
-		* @type Array
+		* @type {Array<GameEntity>}
 		*/
 		this.children = new Array();
 
 		/**
 		* A reference to the parent entity of this game entity.
 		* Automatically set when added to a {@link GameEntity}.
-		* @type GameEntity
+		* @type {GameEntity}
 		* @default null
 		* @readonly
 		*/
@@ -50,81 +50,81 @@ class GameEntity {
 
 		/**
 		* A list of neighbors of this game entity.
-		* @type Array
+		* @type {Array<GameEntity>}
 		* @readonly
 		*/
 		this.neighbors = new Array();
 
 		/**
 		* Game entities within this radius are considered as neighbors of this entity.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.neighborhoodRadius = 1;
 
 		/**
 		* Whether the neighborhood of this game entity is updated or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.updateNeighborhood = false;
 
 		/**
 		* The position of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.position = new Vector3();
 
 		/**
 		* The rotation of this game entity.
-		* @type Quaternion
+		* @type {Quaternion}
 		*/
 		this.rotation = new Quaternion();
 
 		/**
 		* The scaling of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.scale = new Vector3( 1, 1, 1 );
 
 		/**
 		* The default forward vector of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		* @default (0,0,1)
 		*/
 		this.forward = new Vector3( 0, 0, 1 );
 
 		/**
 		* The default up vector of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		* @default (0,1,0)
 		*/
 		this.up = new Vector3( 0, 1, 0 );
 
 		/**
 		* The bounding radius of this game entity in world units.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.boundingRadius = 0;
 
 		/**
 		* The maximum turn rate of this game entity in radians per seconds.
-		* @type Number
+		* @type {Number}
 		* @default π
 		*/
 		this.maxTurnRate = Math.PI;
 
 		/**
 		* Whether the entity can activate a trigger or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.canActivateTrigger = true;
 
 		/**
 		* A transformation matrix representing the world space of this game entity.
-		* @type Matrix4
+		* @type {Matrix4}
 		* @readonly
 		*/
 		this.worldMatrix = new Matrix4();
@@ -132,7 +132,7 @@ class GameEntity {
 		/**
 		* A reference to the entity manager of this game entity.
 		* Automatically set when added to an {@link EntityManager}.
-		* @type EntityManager
+		* @type {EntityManager}
 		* @default null
 		* @readonly
 		*/

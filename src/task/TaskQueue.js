@@ -15,7 +15,7 @@ class TaskQueue {
 
 		/**
 		* A list of pending tasks.
-		* @type Array
+		* @type {Array<Task>}
 		* @readonly
 		*/
 		this.tasks = new Array();
@@ -24,7 +24,7 @@ class TaskQueue {
 		* Used to control the asynchronous processing.
 		* - timeout: After this amount of time (in ms), a scheduled task is executed even if
 		* doing so risks causing a negative performance impact (e.g. bad frame time).
-		* @type Object
+		* @type {Object}
 		*/
 		this.options = {
 			timeout: 1000 // ms

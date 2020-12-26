@@ -21,13 +21,13 @@ class Plane {
 
 		/**
 		* The normal vector of the plane.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.normal = normal;
 
 		/**
 		* The distance of the plane from the origin.
-		* @type Number
+		* @type {Number}
 		*/
 		this.constant = constant;
 

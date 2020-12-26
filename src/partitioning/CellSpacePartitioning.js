@@ -31,43 +31,43 @@ class CellSpacePartitioning {
 
 		/**
 		* The list of partitions.
-		* @type Array
+		* @type {Array<Cell>}
 		*/
 		this.cells = new Array();
 
 		/**
 		* The width of the entire spatial index.
-		* @type Number
+		* @type {Number}
 		*/
 		this.width = width;
 
 		/**
 		* The height of the entire spatial index.
-		* @type Number
+		* @type {Number}
 		*/
 		this.height = height;
 
 		/**
 		* The depth of the entire spatial index.
-		* @type Number
+		* @type {Number}
 		*/
 		this.depth = depth;
 
 		/**
 		* The amount of cells along the x-axis.
-		* @type Number
+		* @type {Number}
 		*/
 		this.cellsX = cellsX;
 
 		/**
 		* The amount of cells along the y-axis.
-		* @type Number
+		* @type {Number}
 		*/
 		this.cellsY = cellsY;
 
 		/**
 		* The amount of cells along the z-axis.
-		* @type Number
+		* @type {Number}
 		*/
 		this.cellsZ = cellsZ;
 
@@ -211,8 +211,8 @@ class CellSpacePartitioning {
 	*
 	* @param {Vector3} position - The given query position.
 	* @param {Number} radius - The given query radius.
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Any>} result - The result array.
+	* @return {Array<Any>} The result array.
 	*/
 	query( position, radius, result ) {
 

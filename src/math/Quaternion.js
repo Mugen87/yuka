@@ -24,25 +24,25 @@ class Quaternion {
 
 		/**
 		* The x component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.x = x;
 
 		/**
 		* The y component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.y = y;
 
 		/**
 		* The z component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.z = z;
 
 		/**
 		* The w component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.w = w;
 
@@ -518,7 +518,7 @@ class Quaternion {
 	/**
 	* Sets the components of this quaternion from an array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
@@ -536,9 +536,9 @@ class Quaternion {
 	/**
 	* Copies all values of this quaternion to the given array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
-	* @return {Array} The array with the quaternion components.
+	* @return {Array<Number>} The array with the quaternion components.
 	*/
 	toArray( array, offset = 0 ) {
 

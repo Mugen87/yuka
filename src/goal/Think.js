@@ -21,7 +21,7 @@ class Think extends CompositeGoal {
 
 		/**
 		* A list of goal evaluators.
-		* @type Array
+		* @type {Array<GoalEvaluator>}
 		*/
 		this.evaluators = new Array();
 

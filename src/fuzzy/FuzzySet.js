@@ -26,7 +26,7 @@ class FuzzySet extends FuzzyTerm {
 
 		/**
 		* Represents the degree of membership to this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.degreeOfMembership = 0;
@@ -36,21 +36,21 @@ class FuzzySet extends FuzzyTerm {
 		* the set is triangular then this will be the peak point of the triangular.
 		* If the set has a plateau then this value will be the mid point of the
 		* plateau. Used to avoid runtime calculations.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.representativeValue = representativeValue;
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = 0;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = 0;

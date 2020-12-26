@@ -20,13 +20,13 @@ class BoundingSphere {
 
 		/**
 		* The center position of the bounding sphere.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.center = center;
 
 		/**
 		* The radius of the bounding sphere.
-		* @type Number
+		* @type {Number}
 		*/
 		this.radius = radius;
 
@@ -156,7 +156,7 @@ class BoundingSphere {
 	/**
 	* Computes a bounding sphere that encloses the given set of points.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {BoundingSphere} A reference to this bounding sphere.
 	*/
 	fromPoints( points ) {

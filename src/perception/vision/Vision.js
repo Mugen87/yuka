@@ -23,20 +23,20 @@ class Vision {
 
 		/**
 		 * The game entity that owns this vision instance.
-		 * @type GameEntity
+		 * @type {GameEntity}
 		 */
 		this.owner = owner;
 
 		/**
 		 * The field of view in radians.
-		 * @type Number
+		 * @type {Number}
 		 * @default π
 		 */
 		this.fieldOfView = Math.PI;
 
 		/**
 		 * The visual range in world units.
-		 * @type Number
+		 * @type {Number}
 		 * @default Infinity
 		 */
 		this.range = Infinity;
@@ -44,7 +44,7 @@ class Vision {
 		/**
 		 * An array of obstacles. An obstacle is a game entity that
 		 * implements the {@link GameEntity#lineOfSightTest} method.
-		 * @type Array
+		 * @type {Array<GameEntity>}
 		 */
 		this.obstacles = new Array();
 

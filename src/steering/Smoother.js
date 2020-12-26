@@ -19,7 +19,7 @@ class Smoother {
 
 		/**
 		* The amount of samples the smoother will use to average a vector.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.count = count;

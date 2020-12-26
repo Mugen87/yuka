@@ -24,7 +24,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 	/**
 	* Constructs a new obstacle avoidance behavior.
 	*
-	* @param {Array} obstacles - An Array with obstacle of type {@link GameEntity}.
+	* @param {Array<GameEntity>} obstacles - An Array with obstacle of type {@link GameEntity}.
 	*/
 	constructor( obstacles = new Array() ) {
 
@@ -32,20 +32,20 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		/**
 		* An Array with obstacle of type {@link GameEntity}.
-		* @type Array
+		* @type {Array<GameEntity>}
 		*/
 		this.obstacles = obstacles;
 
 		/**
 		* This factor determines how much the vehicle decelerates if an intersection occurs.
-		* @type Number
+		* @type {Number}
 		* @default 0.2
 		*/
 		this.brakingWeight = 0.2;
 
 		/**
 		* Minimum length of the detection box used for intersection tests.
-		* @type Number
+		* @type {Number}
 		* @default 4
 		*/
 		this.dBoxMinLength = 4; //

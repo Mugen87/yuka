@@ -28,13 +28,13 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 		/**
 		* The leader vehicle.
-		* @type Vehicle
+		* @type {Vehicle}
 		*/
 		this.leader = leader;
 
 		/**
 		* The offset from the leader.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.offset = offset;
 

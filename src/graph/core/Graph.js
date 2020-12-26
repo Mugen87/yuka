@@ -18,7 +18,7 @@ class Graph {
 
 		/**
 		* Whether this graph is directed or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.digraph = false;
@@ -123,8 +123,8 @@ class Graph {
 	/**
 	* Gathers all nodes of the graph and stores them into the given array.
 	*
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Node>} result - The result array.
+	* @return {Array<Node>} The result array.
 	*/
 	getNodes( result ) {
 
@@ -140,8 +140,8 @@ class Graph {
 	* into the given array.
 	*
 	* @param {Number} index - The node index.
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Edge>} result - The result array.
+	* @return {Array<Edge>} The result array.
 	*/
 	getEdgesOfNode( index, result ) {
 

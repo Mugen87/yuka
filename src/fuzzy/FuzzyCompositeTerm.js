@@ -12,7 +12,7 @@ class FuzzyCompositeTerm extends FuzzyTerm {
 	/**
 	* Constructs a new fuzzy composite term with the given values.
 	*
-	* @param {Array} terms - An arbitrary amount of fuzzy terms.
+	* @param {Array<FuzzyTerm>} terms - An arbitrary amount of fuzzy terms.
 	*/
 	constructor( terms = new Array() ) {
 
@@ -20,7 +20,7 @@ class FuzzyCompositeTerm extends FuzzyTerm {
 
 		/**
 		* List of fuzzy terms.
-		* @type Array
+		* @type {Array<FuzzyTerm>}
 		*/
 		this.terms = terms;
 

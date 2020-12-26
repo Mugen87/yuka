@@ -14,7 +14,7 @@ class Node {
 
 		/**
 		* The unique index of this node. The default value *-1* means invalid index.
-		* @type Number
+		* @type {Number}
 		* @default -1
 		*/
 		this.index = index;

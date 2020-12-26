@@ -28,21 +28,21 @@ class WanderBehavior extends SteeringBehavior {
 
 		/**
 		* The radius of the constraining circle for the wander behavior.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.radius = radius;
 
 		/**
 		* The distance the wander sphere is projected in front of the agent.
-		* @type Number
+		* @type {Number}
 		* @default 5
 		*/
 		this.distance = distance;
 
 		/**
 		* The maximum amount of displacement along the sphere each frame.
-		* @type Number
+		* @type {Number}
 		* @default 5
 		*/
 		this.jitter = jitter;

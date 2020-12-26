@@ -16,21 +16,21 @@ class Edge {
 
 		/**
 		* The index of the *from* node.
-		* @type Number
+		* @type {Number}
 		* @default -1
 		*/
 		this.from = from;
 
 		/**
 		* The index of the *to* node.
-		* @type Number
+		* @type {Number}
 		* @default -1
 		*/
 		this.to = to;
 
 		/**
 		* The cost of this edge. This could be for example a distance or time value.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.cost = cost;

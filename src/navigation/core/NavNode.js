@@ -22,13 +22,13 @@ class NavNode extends Node {
 
 		/**
 		* The position of the node in 3D space.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.position = position;
 
 		/**
 		* Custom user data connected to this node.
-		* @type Object
+		* @type {Object}
 		*/
 		this.userData = userData;
 

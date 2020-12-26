@@ -14,13 +14,13 @@ class Goal {
 
 		/**
 		* The owner of this goal.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.owner = owner;
 
 		/**
 		* The status of this goal.
-		* @type Status
+		* @type {Status}
 		* @default INACTIVE
 		*/
 		this.status = Goal.STATUS.INACTIVE;

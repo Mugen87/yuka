@@ -21,7 +21,7 @@ class FuzzyVariable {
 
 		/**
 		* An array of the fuzzy sets that comprise this FLV.
-		* @type Array
+		* @type {Array<FuzzySet>}
 		* @readonly
 		*/
 		this.fuzzySets = new Array();
@@ -29,7 +29,7 @@ class FuzzyVariable {
 		/**
 		* The minimum value range of this FLV. This value is
 		* automatically updated when adding/removing fuzzy sets.
-		* @type Number
+		* @type {Number}
 		* @default Infinity
 		* @readonly
 		*/
@@ -38,7 +38,7 @@ class FuzzyVariable {
 		/**
 		* The maximum value range of this FLV. This value is
 		* automatically updated when adding/removing fuzzy sets.
-		* @type Number
+		* @type {Number}
 		* @default - Infinity
 		* @readonly
 		*/

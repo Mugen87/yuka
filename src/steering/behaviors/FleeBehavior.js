@@ -24,13 +24,13 @@ class FleeBehavior extends SteeringBehavior {
 
 		/**
 		* The target vector.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.target = target;
 
 		/**
 		* The agent only flees from the target if it is inside this radius.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.panicDistance = panicDistance;

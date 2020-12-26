@@ -20,31 +20,31 @@ class Telegram {
 
 		/**
 		* The sender.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.sender = sender;
 
 		/**
 		* The receiver.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.receiver = receiver;
 
 		/**
 		* The actual message.
-		* @type String
+		* @type {String}
 		*/
 		this.message = message;
 
 		/**
 		* A time value in millisecond used to delay the message dispatching.
-		* @type Number
+		* @type {Number}
 		*/
 		this.delay = delay;
 
 		/**
 		* An object for custom data.
-		* @type Object
+		* @type {Object}
 		*/
 		this.data = data;
 

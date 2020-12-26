@@ -30,31 +30,31 @@ class MeshGeometry {
 
 		/**
 		* The vertex buffer.
-		* @type Float32Array
+		* @type {Float32Array}
 		*/
 		this.vertices = vertices;
 
 		/**
 		* The index buffer.
-		* @type Uint16Array | Uint32Array
+		* @type {Uint16Array | Uint32Array}
 		*/
 		this.indices = indices;
 
 		/**
 		*  Whether back face culling is active or not. Only relevant for raycasting.
-		* @type Boolean
+		* @type {Boolean}
 		*/
 		this.backfaceCulling = true;
 
 		/**
 		* An AABB enclosing the geometry.
-		* @type AABB
+		* @type {AABB}
 		*/
 		this.aabb = new AABB();
 
 		/**
 		* A bounding sphere enclosing the geometry.
-		* @type BoundingSphere
+		* @type {BoundingSphere}
 		*/
 		this.boundingSphere = new BoundingSphere();
 

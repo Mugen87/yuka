@@ -29,27 +29,27 @@ class Vehicle extends MovingEntity {
 
 		/**
 		* The mass of the vehicle in kilogram.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.mass = 1;
 
 		/**
 		* The maximum force this entity can produce to power itself.
-		* @type Number
+		* @type {Number}
 		* @default 100
 		*/
 		this.maxForce = 100;
 
 		/**
 		* The steering manager of this vehicle.
-		* @type SteeringManager
+		* @type {SteeringManager}
 		*/
 		this.steering = new SteeringManager( this );
 
 		/**
 		* An optional smoother to avoid shakiness due to conflicting steering behaviors.
-		* @type Smoother
+		* @type {Smoother}
 		* @default null
 		*/
 		this.smoother = null;

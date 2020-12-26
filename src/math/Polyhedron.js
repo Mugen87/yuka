@@ -18,25 +18,25 @@ class Polyhedron {
 
 		/**
 		* The faces of this polyhedron.
-		* @type Array
+		* @type {Array<Polygon>}
 		*/
 		this.faces = new Array();
 
 		/**
 		* A list of unique edges (no opponent half edges).
-		* @type Array
+		* @type {Array<HalfEdge>}
 		*/
 		this.edges = new Array();
 
 		/**
 		* A list of unique vertices.
-		* @type Array
+		* @type {Array<Vector3>}
 		*/
 		this.vertices = new Array();
 
 		/**
 		* The centroid of this polyhedron.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.centroid = new Vector3();
 

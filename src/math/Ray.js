@@ -28,13 +28,13 @@ class Ray {
 
 		/**
 		* The origin of the ray.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.origin = origin;
 
 		/**
 		* The direction of the ray.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.direction = direction;
 

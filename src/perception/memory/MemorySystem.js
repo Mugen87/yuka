@@ -17,7 +17,7 @@ class MemorySystem {
 
 		/**
 		* The game entity that owns this memory system.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.owner = owner;
 
@@ -25,13 +25,13 @@ class MemorySystem {
 		* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory records}
 		* of all relevant game entities in the environment. The records are usually update by
 		* the owner of the memory system.
-		* @type Array
+		* @type {Array<MemoryRecord>}
 		*/
 		this.records = new Array();
 
 		/**
 		* Same as {@link MemorySystem#records} but used for fast access via the game entity.
-		* @type Map
+		* @type {Map<GameEntity,MemoryRecord>}
 		*/
 		this.recordsMap = new Map();
 
@@ -39,7 +39,7 @@ class MemorySystem {
 		* Represents the duration of the game entities short term memory in seconds.
 		* When a bot requests a list of all recently sensed game entities, this value
 		* is used to determine if the bot is able to remember a game entity or not.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.memorySpan = 1;
@@ -123,8 +123,8 @@ class MemorySystem {
 	* Determines all valid memory record and stores the result in the given array.
 	*
 	* @param {Number} currentTime - The current elapsed time.
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<MemoryRecord>} result - The result array.
+	* @return {Array<MemoryRecord>} The result array.
 	*/
 	getValidMemoryRecords( currentTime, result ) {
 

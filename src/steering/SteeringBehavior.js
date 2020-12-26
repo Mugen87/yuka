@@ -15,14 +15,14 @@ class SteeringBehavior {
 
 		/**
 		* Whether this steering behavior is active or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.active = true;
 
 		/**
 		* Can be used to tweak the amount that a steering force contributes to the total steering force.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.weight = 1;

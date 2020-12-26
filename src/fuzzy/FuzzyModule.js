@@ -18,14 +18,14 @@ class FuzzyModule {
 
 		/**
 		* An array of the fuzzy rules.
-		* @type Array
+		* @type {Array<FuzzyRule>}
 		* @readonly
 		*/
 		this.rules = new Array();
 
 		/**
 		* A map of FLVs.
-		* @type Map
+		* @type {Map<String,FuzzyVariable>}
 		* @readonly
 		*/
 		this.flvs = new Map();

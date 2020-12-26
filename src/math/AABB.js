@@ -32,13 +32,13 @@ class AABB {
 
 		/**
 		* The minimum bounds of the AABB.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.min = min;
 
 		/**
 		* The maximum bounds of the AABB.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.max = max;
 
@@ -296,7 +296,7 @@ class AABB {
 	/**
 	* Computes an AABB that encloses the given set of points.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {AABB} A reference to this AABB.
 	*/
 	fromPoints( points ) {

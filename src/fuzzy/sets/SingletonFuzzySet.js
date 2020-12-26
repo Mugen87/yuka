@@ -22,21 +22,21 @@ class SingletonFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;

@@ -18,7 +18,7 @@ class Regulator {
 
 		/**
 		* The amount of updates per second.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.updateFrequency = updateFrequency;
