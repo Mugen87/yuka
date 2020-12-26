@@ -47,31 +47,31 @@ class Telegram {
 
 		/**
 		* The sender.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.sender = sender;
 
 		/**
 		* The receiver.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.receiver = receiver;
 
 		/**
 		* The actual message.
-		* @type String
+		* @type {String}
 		*/
 		this.message = message;
 
 		/**
 		* A time value in millisecond used to delay the message dispatching.
-		* @type Number
+		* @type {Number}
 		*/
 		this.delay = delay;
 
 		/**
 		* An object for custom data.
-		* @type Object
+		* @type {Object}
 		*/
 		this.data = data;
 
@@ -214,7 +214,7 @@ class MessageDispatcher {
 
 		/**
 		* A list of delayed telegrams.
-		* @type Array
+		* @type {Array<Telegram>}
 		* @readonly
 		*/
 		this.delayedTelegrams = new Array();
@@ -498,19 +498,19 @@ class Vector3 {
 
 		/**
 		* The x component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.x = x;
 
 		/**
 		* The y component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.y = y;
 
 		/**
 		* The z component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.z = z;
 
@@ -1117,7 +1117,7 @@ class Vector3 {
 	/**
 	* Sets the components of this 3D vector from an array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
 	* @return {Vector3} A reference to this vector.
 	*/
@@ -1134,9 +1134,9 @@ class Vector3 {
 	/**
 	* Copies all values of this 3D vector to the given array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
-	* @return {Array} The array with the 3D vector components.
+	* @return {Array<Number>} The array with the 3D vector components.
 	*/
 	toArray( array, offset = 0 ) {
 
@@ -1189,7 +1189,7 @@ class Matrix3 {
 
 		/**
 		* The elements of the matrix in column-major order.
-		* @type Array
+		* @type {Array<Number>}
 		*/
 		this.elements = [
 
@@ -1681,7 +1681,7 @@ class Matrix3 {
 	/**
 	* Sets the elements of this matrix from an array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
 	* @return {Matrix3} A reference to this matrix.
 	*/
@@ -1702,9 +1702,9 @@ class Matrix3 {
 	/**
 	* Copies all elements of this matrix to the given array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
-	* @return {Array} The array with the elements of the matrix.
+	* @return {Array<Number>} The array with the elements of the matrix.
 	*/
 	toArray( array, offset = 0 ) {
 
@@ -1774,25 +1774,25 @@ class Quaternion {
 
 		/**
 		* The x component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.x = x;
 
 		/**
 		* The y component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.y = y;
 
 		/**
 		* The z component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.z = z;
 
 		/**
 		* The w component.
-		* @type Number
+		* @type {Number}
 		*/
 		this.w = w;
 
@@ -2268,7 +2268,7 @@ class Quaternion {
 	/**
 	* Sets the components of this quaternion from an array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
 	* @return {Quaternion} A reference to this quaternion.
 	*/
@@ -2286,9 +2286,9 @@ class Quaternion {
 	/**
 	* Copies all values of this quaternion to the given array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
-	* @return {Array} The array with the quaternion components.
+	* @return {Array<Number>} The array with the quaternion components.
 	*/
 	toArray( array, offset = 0 ) {
 
@@ -2330,7 +2330,7 @@ class Matrix4 {
 
 		/**
 		* The elements of the matrix in column-major order.
-		* @type Array
+		* @type {Array<Number>}
 		*/
 		this.elements = [
 
@@ -2789,7 +2789,7 @@ class Matrix4 {
 	/**
 	* Sets the elements of this matrix from an array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
 	* @return {Matrix4} A reference to this matrix.
 	*/
@@ -2810,9 +2810,9 @@ class Matrix4 {
 	/**
 	* Copies all elements of this matrix to the given array.
 	*
-	* @param {Array} array - An array.
+	* @param {Array<Number>} array - An array.
 	* @param {Number} offset - An optional offset.
-	* @return {Array} The array with the elements of the matrix.
+	* @return {Array<Number>} The array with the elements of the matrix.
 	*/
 	toArray( array, offset = 0 ) {
 
@@ -2883,27 +2883,27 @@ class GameEntity {
 
 		/**
 		* The name of this game entity.
-		* @type String
+		* @type {String}
 		*/
 		this.name = '';
 
 		/**
 		* Whether this game entity is active or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.active = true;
 
 		/**
 		* The child entities of this game entity.
-		* @type Array
+		* @type {Array<GameEntity>}
 		*/
 		this.children = new Array();
 
 		/**
 		* A reference to the parent entity of this game entity.
 		* Automatically set when added to a {@link GameEntity}.
-		* @type GameEntity
+		* @type {GameEntity}
 		* @default null
 		* @readonly
 		*/
@@ -2911,81 +2911,81 @@ class GameEntity {
 
 		/**
 		* A list of neighbors of this game entity.
-		* @type Array
+		* @type {Array<GameEntity>}
 		* @readonly
 		*/
 		this.neighbors = new Array();
 
 		/**
 		* Game entities within this radius are considered as neighbors of this entity.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.neighborhoodRadius = 1;
 
 		/**
 		* Whether the neighborhood of this game entity is updated or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.updateNeighborhood = false;
 
 		/**
 		* The position of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.position = new Vector3();
 
 		/**
 		* The rotation of this game entity.
-		* @type Quaternion
+		* @type {Quaternion}
 		*/
 		this.rotation = new Quaternion();
 
 		/**
 		* The scaling of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.scale = new Vector3( 1, 1, 1 );
 
 		/**
 		* The default forward vector of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		* @default (0,0,1)
 		*/
 		this.forward = new Vector3( 0, 0, 1 );
 
 		/**
 		* The default up vector of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		* @default (0,1,0)
 		*/
 		this.up = new Vector3( 0, 1, 0 );
 
 		/**
 		* The bounding radius of this game entity in world units.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.boundingRadius = 0;
 
 		/**
 		* The maximum turn rate of this game entity in radians per seconds.
-		* @type Number
+		* @type {Number}
 		* @default π
 		*/
 		this.maxTurnRate = Math.PI;
 
 		/**
 		* Whether the entity can activate a trigger or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.canActivateTrigger = true;
 
 		/**
 		* A transformation matrix representing the world space of this game entity.
-		* @type Matrix4
+		* @type {Matrix4}
 		* @readonly
 		*/
 		this.worldMatrix = new Matrix4();
@@ -2993,7 +2993,7 @@ class GameEntity {
 		/**
 		* A reference to the entity manager of this game entity.
 		* Automatically set when added to an {@link EntityManager}.
-		* @type EntityManager
+		* @type {EntityManager}
 		* @default null
 		* @readonly
 		*/
@@ -3470,19 +3470,19 @@ class MovingEntity extends GameEntity {
 
 		/**
 		* The velocity of this game entity.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.velocity = new Vector3();
 
 		/**
 		* The maximum speed at which this game entity may travel.
-		* @type Number
+		* @type {Number}
 		*/
 		this.maxSpeed = 1;
 
 		/**
 		* Whether the orientation of this game entity will be updated based on the velocity or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.updateOrientation = true;
@@ -3606,14 +3606,14 @@ class SteeringBehavior {
 
 		/**
 		* Whether this steering behavior is active or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.active = true;
 
 		/**
 		* Can be used to tweak the amount that a steering force contributes to the total steering force.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.weight = 1;
@@ -3758,22 +3758,22 @@ class ArriveBehavior extends SteeringBehavior {
 
 		/**
 		* The target vector.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.target = target;
 
 		/**
 		* The amount of deceleration.
-		* @type Number
+		* @type {Number}
 		* @default 3
 		*/
 		this.deceleration = deceleration;
 
 		/**
-		 * A tolerance value in world units to prevent the vehicle from overshooting its target.
-		 * @type {Number}
-		 * @default 0
-		 */
+		* A tolerance value in world units to prevent the vehicle from overshooting its target.
+		* @type {Number}
+		* @default 0
+		*/
 		this.tolerance = tolerance;
 
 	}
@@ -3877,7 +3877,7 @@ class SeekBehavior extends SteeringBehavior {
 
 		/**
 		* The target vector.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.target = target;
 
@@ -4036,13 +4036,13 @@ class FleeBehavior extends SteeringBehavior {
 
 		/**
 		* The target vector.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.target = target;
 
 		/**
 		* The agent only flees from the target if it is inside this radius.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.panicDistance = panicDistance;
@@ -4151,21 +4151,21 @@ class EvadeBehavior extends SteeringBehavior {
 
 		/**
 		* The agent to evade from.
-		* @type MovingEntity
+		* @type {MovingEntity}
 		* @default null
 		*/
 		this.pursuer = pursuer;
 
 		/**
 		* The agent only flees from the pursuer if it is inside this radius.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.panicDistance = panicDistance;
 
 		/**
 		* This factor determines how far the vehicle predicts the movement of the pursuer.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.predictionFactor = predictionFactor;
@@ -4271,7 +4271,7 @@ class Path {
 
 		/**
 		* Whether this path is looped or not.
-		* @type Boolean
+		* @type {Boolean}
 		*/
 		this.loop = false;
 
@@ -4437,13 +4437,13 @@ class FollowPathBehavior extends SteeringBehavior {
 
 		/**
 		* The path to follow.
-		* @type Path
+		* @type {Path}
 		*/
 		this.path = path;
 
 		/**
 		* The distance the agent seeks for the next waypoint.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.nextWaypointDistance = nextWaypointDistance;
@@ -4559,21 +4559,21 @@ class InterposeBehavior extends SteeringBehavior {
 
 		/**
 		* The first agent.
-		* @type MovingEntity
+		* @type {MovingEntity}
 		* @default null
 		*/
 		this.entity1 = entity1;
 
 		/**
 		* The second agent.
-		* @type MovingEntity
+		* @type {MovingEntity}
 		* @default null
 		*/
 		this.entity2 = entity2;
 
 		/**
 		* The amount of deceleration.
-		* @type Number
+		* @type {Number}
 		* @default 3
 		*/
 		this.deceleration = deceleration;
@@ -4709,13 +4709,13 @@ class AABB {
 
 		/**
 		* The minimum bounds of the AABB.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.min = min;
 
 		/**
 		* The maximum bounds of the AABB.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.max = max;
 
@@ -4973,7 +4973,7 @@ class AABB {
 	/**
 	* Computes an AABB that encloses the given set of points.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {AABB} A reference to this AABB.
 	*/
 	fromPoints( points ) {
@@ -5078,13 +5078,13 @@ class BoundingSphere {
 
 		/**
 		* The center position of the bounding sphere.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.center = center;
 
 		/**
 		* The radius of the bounding sphere.
-		* @type Number
+		* @type {Number}
 		*/
 		this.radius = radius;
 
@@ -5214,7 +5214,7 @@ class BoundingSphere {
 	/**
 	* Computes a bounding sphere that encloses the given set of points.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {BoundingSphere} A reference to this bounding sphere.
 	*/
 	fromPoints( points ) {
@@ -5317,13 +5317,13 @@ class Ray {
 
 		/**
 		* The origin of the ray.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.origin = origin;
 
 		/**
 		* The direction of the ray.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.direction = direction;
 
@@ -5941,7 +5941,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 	/**
 	* Constructs a new obstacle avoidance behavior.
 	*
-	* @param {Array} obstacles - An Array with obstacle of type {@link GameEntity}.
+	* @param {Array<GameEntity>} obstacles - An Array with obstacle of type {@link GameEntity}.
 	*/
 	constructor( obstacles = new Array() ) {
 
@@ -5949,20 +5949,20 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 
 		/**
 		* An Array with obstacle of type {@link GameEntity}.
-		* @type Array
+		* @type {Array<GameEntity>}
 		*/
 		this.obstacles = obstacles;
 
 		/**
 		* This factor determines how much the vehicle decelerates if an intersection occurs.
-		* @type Number
+		* @type {Number}
 		* @default 0.2
 		*/
 		this.brakingWeight = 0.2;
 
 		/**
 		* Minimum length of the detection box used for intersection tests.
-		* @type Number
+		* @type {Number}
 		* @default 4
 		*/
 		this.dBoxMinLength = 4; //
@@ -6164,13 +6164,13 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 		/**
 		* The leader vehicle.
-		* @type Vehicle
+		* @type {Vehicle}
 		*/
 		this.leader = leader;
 
 		/**
 		* The offset from the leader.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.offset = offset;
 
@@ -6297,14 +6297,14 @@ class PursuitBehavior extends SteeringBehavior {
 
 		/**
 		* The agent to pursue.
-		* @type MovingEntity
+		* @type {MovingEntity}
 		* @default null
 		*/
 		this.evader = evader;
 
 		/**
 		* This factor determines how far the vehicle predicts the movement of the evader.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.predictionFactor = predictionFactor;
@@ -6503,21 +6503,21 @@ class WanderBehavior extends SteeringBehavior {
 
 		/**
 		* The radius of the constraining circle for the wander behavior.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.radius = radius;
 
 		/**
 		* The distance the wander sphere is projected in front of the agent.
-		* @type Number
+		* @type {Number}
 		* @default 5
 		*/
 		this.distance = distance;
 
 		/**
 		* The maximum amount of displacement along the sphere each frame.
-		* @type Number
+		* @type {Number}
 		* @default 5
 		*/
 		this.jitter = jitter;
@@ -6647,13 +6647,13 @@ class SteeringManager {
 
 		/**
 		* The vehicle that owns this steering manager.
-		* @type Vehicle
+		* @type {Vehicle}
 		*/
 		this.vehicle = vehicle;
 
 		/**
 		* A list of all steering behaviors.
-		* @type Array
+		* @type {Array<SteeringBehavior>}
 		* @readonly
 		*/
 		this.behaviors = new Array();
@@ -6978,7 +6978,7 @@ class Smoother {
 
 		/**
 		* The amount of samples the smoother will use to average a vector.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.count = count;
@@ -7123,28 +7123,28 @@ class Vehicle extends MovingEntity {
 		super();
 
 		/**
-		* The mass if the vehicle in kilogram.
-		* @type Number
+		* The mass of the vehicle in kilogram.
+		* @type {Number}
 		* @default 1
 		*/
 		this.mass = 1;
 
 		/**
 		* The maximum force this entity can produce to power itself.
-		* @type Number
+		* @type {Number}
 		* @default 100
 		*/
 		this.maxForce = 100;
 
 		/**
 		* The steering manager of this vehicle.
-		* @type SteeringManager
+		* @type {SteeringManager}
 		*/
 		this.steering = new SteeringManager( this );
 
 		/**
 		* An optional smoother to avoid shakiness due to conflicting steering behaviors.
-		* @type Smoother
+		* @type {Smoother}
 		* @default null
 		*/
 		this.smoother = null;
@@ -7352,6 +7352,10 @@ class RectangularTriggerRegion extends TriggerRegion {
 
 		super();
 
+		/**
+		* The size of the region.
+		* @type {Vector3}
+		*/
 		this.size = size;
 
 		this._aabb = new AABB();
@@ -7441,6 +7445,10 @@ class SphericalTriggerRegion extends TriggerRegion {
 
 		super();
 
+		/**
+		* The radius of the region.
+		* @type {Number}
+		*/
 		this.radius = radius;
 
 		//
@@ -7533,7 +7541,7 @@ class Trigger extends GameEntity {
 
 		/**
 		* The region of the trigger.
-		* @type TriggerRegion
+		* @type {TriggerRegion}
 		*/
 		this.region = region;
 
@@ -7686,14 +7694,14 @@ class EntityManager {
 
 		/**
 		* A list of {@link GameEntity game entities }.
-		* @type Array
+		* @type {Array<GameEntity>}
 		* @readonly
 		*/
 		this.entities = new Array();
 
 		/**
 		* A reference to a spatial index.
-		* @type CellSpacePartitioning
+		* @type {CellSpacePartitioning}
 		* @default null
 		*/
 		this.spatialIndex = null;
@@ -8265,13 +8273,13 @@ class Plane {
 
 		/**
 		* The normal vector of the plane.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.normal = normal;
 
 		/**
 		* The distance of the plane from the origin.
-		* @type Number
+		* @type {Number}
 		*/
 		this.constant = constant;
 
@@ -8473,31 +8481,31 @@ class MeshGeometry {
 
 		/**
 		* The vertex buffer.
-		* @type Float32Array
+		* @type {Float32Array}
 		*/
 		this.vertices = vertices;
 
 		/**
 		* The index buffer.
-		* @type Uint16Array | Uint32Array
+		* @type {Uint16Array | Uint32Array}
 		*/
 		this.indices = indices;
 
 		/**
 		*  Whether back face culling is active or not. Only relevant for raycasting.
-		* @type Boolean
+		* @type {Boolean}
 		*/
 		this.backfaceCulling = true;
 
 		/**
 		* An AABB enclosing the geometry.
-		* @type AABB
+		* @type {AABB}
 		*/
 		this.aabb = new AABB();
 
 		/**
 		* A bounding sphere enclosing the geometry.
-		* @type BoundingSphere
+		* @type {BoundingSphere}
 		*/
 		this.boundingSphere = new BoundingSphere();
 
@@ -9035,7 +9043,7 @@ class Regulator {
 
 		/**
 		* The amount of updates per second.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.updateFrequency = updateFrequency;
@@ -9154,31 +9162,31 @@ class StateMachine {
 
 		/**
 		* The game entity that owns this state machine.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.owner = owner;
 
 		/**
 		* The current state of the game entity.
-		* @type State
+		* @type {State}
 		*/
 		this.currentState = null;
 
 		/**
 		* The previous state of the game entity.
-		* @type State
+		* @type {State}
 		*/
 		this.previousState = null; // a reference to the last state the agent was in
 
 		/**
 		* This state logic is called every time the state machine is updated.
-		* @type State
+		* @type {State}
 		*/
 		this.globalState = null;
 
 		/**
 		* A map with all states of the state machine.
-		* @type Map
+		* @type {Map<String,State>}
 		*/
 		this.states = new Map();
 
@@ -9530,7 +9538,7 @@ class FuzzyCompositeTerm extends FuzzyTerm {
 	/**
 	* Constructs a new fuzzy composite term with the given values.
 	*
-	* @param {Array} terms - An arbitrary amount of fuzzy terms.
+	* @param {Array<FuzzyTerm>} terms - An arbitrary amount of fuzzy terms.
 	*/
 	constructor( terms = new Array() ) {
 
@@ -9538,7 +9546,7 @@ class FuzzyCompositeTerm extends FuzzyTerm {
 
 		/**
 		* List of fuzzy terms.
-		* @type Array
+		* @type {Array<FuzzyTerm>}
 		*/
 		this.terms = terms;
 
@@ -9872,7 +9880,7 @@ class FuzzySet extends FuzzyTerm {
 
 		/**
 		* Represents the degree of membership to this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.degreeOfMembership = 0;
@@ -9882,21 +9890,21 @@ class FuzzySet extends FuzzyTerm {
 		* the set is triangular then this will be the peak point of the triangular.
 		* If the set has a plateau then this value will be the mid point of the
 		* plateau. Used to avoid runtime calculations.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.representativeValue = representativeValue;
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = 0;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = 0;
@@ -10044,21 +10052,21 @@ class LeftSCurveFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;
@@ -10166,21 +10174,21 @@ class LeftShoulderFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;
@@ -10279,28 +10287,28 @@ class NormalDistFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;
 
 		/**
 		* Represents the standard deviation of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.standardDeviation = standardDeviation;
@@ -10422,21 +10430,21 @@ class RightSCurveFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;
@@ -10545,21 +10553,21 @@ class RightShoulderFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;
@@ -10657,21 +10665,21 @@ class SingletonFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;
@@ -10748,21 +10756,21 @@ class TriangularFuzzySet extends FuzzySet {
 
 		/**
 		* Represents the left border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.left = left;
 
 		/**
 		* Represents the peak value of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.midpoint = midpoint;
 
 		/**
 		* Represents the right border of this fuzzy set.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.right = right;
@@ -10861,14 +10869,14 @@ class FuzzyRule {
 
 		/**
 		* Represents the condition of the rule.
-		* @type FuzzyTerm
+		* @type {FuzzyTerm}
 		* @default null
 		*/
 		this.antecedent = antecedent;
 
 		/**
 		* Describes the consequence if the condition is satisfied.
-		* @type FuzzyTerm
+		* @type {FuzzyTerm}
 		* @default null
 		*/
 		this.consequence = consequence;
@@ -11014,7 +11022,7 @@ class FuzzyVariable {
 
 		/**
 		* An array of the fuzzy sets that comprise this FLV.
-		* @type Array
+		* @type {Array<FuzzySet>}
 		* @readonly
 		*/
 		this.fuzzySets = new Array();
@@ -11022,7 +11030,7 @@ class FuzzyVariable {
 		/**
 		* The minimum value range of this FLV. This value is
 		* automatically updated when adding/removing fuzzy sets.
-		* @type Number
+		* @type {Number}
 		* @default Infinity
 		* @readonly
 		*/
@@ -11031,7 +11039,7 @@ class FuzzyVariable {
 		/**
 		* The maximum value range of this FLV. This value is
 		* automatically updated when adding/removing fuzzy sets.
-		* @type Number
+		* @type {Number}
 		* @default - Infinity
 		* @readonly
 		*/
@@ -11273,14 +11281,14 @@ class FuzzyModule {
 
 		/**
 		* An array of the fuzzy rules.
-		* @type Array
+		* @type {Array<FuzzyRule>}
 		* @readonly
 		*/
 		this.rules = new Array();
 
 		/**
 		* A map of FLVs.
-		* @type Map
+		* @type {Map<String,FuzzyVariable>}
 		* @readonly
 		*/
 		this.flvs = new Map();
@@ -11534,13 +11542,13 @@ class Goal {
 
 		/**
 		* The owner of this goal.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.owner = owner;
 
 		/**
 		* The status of this goal.
-		* @type Status
+		* @type {Status}
 		* @default INACTIVE
 		*/
 		this.status = Goal.STATUS.INACTIVE;
@@ -11726,7 +11734,7 @@ class CompositeGoal extends Goal {
 
 		/**
 		* A list of subgoals.
-		* @type Array
+		* @type {Array<Goal>}
 		*/
 		this.subgoals = new Array();
 
@@ -11967,7 +11975,7 @@ class GoalEvaluator {
 		/**
 		* Can be used to adjust the preferences of agents. When the desirability score
 		* for a goal has been evaluated, it is multiplied by this value.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.characterBias = characterBias;
@@ -12045,7 +12053,7 @@ class Think extends CompositeGoal {
 
 		/**
 		* A list of goal evaluators.
-		* @type Array
+		* @type {Array<GoalEvaluator>}
 		*/
 		this.evaluators = new Array();
 
@@ -12315,21 +12323,21 @@ class Edge {
 
 		/**
 		* The index of the *from* node.
-		* @type Number
+		* @type {Number}
 		* @default -1
 		*/
 		this.from = from;
 
 		/**
 		* The index of the *to* node.
-		* @type Number
+		* @type {Number}
 		* @default -1
 		*/
 		this.to = to;
 
 		/**
 		* The cost of this edge. This could be for example a distance or time value.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.cost = cost;
@@ -12413,7 +12421,7 @@ class Node {
 
 		/**
 		* The unique index of this node. The default value *-1* means invalid index.
-		* @type Number
+		* @type {Number}
 		* @default -1
 		*/
 		this.index = index;
@@ -12466,7 +12474,7 @@ class Graph {
 
 		/**
 		* Whether this graph is directed or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.digraph = false;
@@ -12571,8 +12579,8 @@ class Graph {
 	/**
 	* Gathers all nodes of the graph and stores them into the given array.
 	*
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Node>} result - The result array.
+	* @return {Array<Node>} The result array.
 	*/
 	getNodes( result ) {
 
@@ -12588,8 +12596,8 @@ class Graph {
 	* into the given array.
 	*
 	* @param {Number} index - The node index.
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Edge>} result - The result array.
+	* @return {Array<Edge>} The result array.
 	*/
 	getEdgesOfNode( index, result ) {
 
@@ -13006,20 +13014,20 @@ class PriorityQueue {
 
 		/**
 		* The data items of the priority queue.
-		* @type Array
+		* @type {Array<Object>}
 		*/
 		this.data = new Array();
 
 		/**
 		* The length of the priority queue.
-		* @type Number
+		* @type {Number}
 		* @default 0
 		*/
 		this.length = 0;
 
 		/**
 		* The compare function used for sorting.
-		* @type Function
+		* @type {Function}
 		* @default defaultCompare
 		*/
 		this.compare = compare;
@@ -13156,32 +13164,32 @@ class AStar {
 
 		/**
 		* The graph.
-		* @type Graph
+		* @type {Graph}
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.target = target;
 
 		/**
 		* Whether the search was successful or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.found = false;
 
 		/**
 		* The heuristic of the search.
-		* @type Object
+		* @type {Object}
 		* @default HeuristicPolicyEuclid
 		*/
 		this.heuristic = HeuristicPolicyEuclid;
@@ -13290,7 +13298,7 @@ class AStar {
 	/**
 	* Returns the shortest path from the source to the target node as an array of node indices.
 	*
-	* @return {Array} The shortest path.
+	* @return {Array<Number>} The shortest path.
 	*/
 	getPath() {
 
@@ -13329,7 +13337,7 @@ class AStar {
 	/**
 	* Returns the search tree of the algorithm as an array of edges.
 	*
-	* @return {Array} The search tree.
+	* @return {Array<Edge>} The search tree.
 	*/
 	getSearchTree() {
 
@@ -13381,25 +13389,25 @@ class BFS {
 
 		/**
 		* The graph.
-		* @type Graph
+		* @type {Graph}
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.target = target;
 
 		/**
 		* Whether the search was successful or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.found = false;
@@ -13500,7 +13508,7 @@ class BFS {
 	/**
 	* Returns the shortest path from the source to the target node as an array of node indices.
 	*
-	* @return {Array} The shortest path.
+	* @return {Array<Number>} The shortest path.
 	*/
 	getPath() {
 
@@ -13539,7 +13547,7 @@ class BFS {
 	/**
 	* Returns the search tree of the algorithm as an array of edges.
 	*
-	* @return {Array} The search tree.
+	* @return {Array<Edge>} The search tree.
 	*/
 	getSearchTree() {
 
@@ -13584,25 +13592,25 @@ class DFS {
 
 		/**
 		* The graph.
-		* @type Graph
+		* @type {Graph}
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.target = target;
 
 		/**
 		* Whether the search was successful or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.found = false;
@@ -13697,7 +13705,7 @@ class DFS {
 	/**
 	* Returns the shortest path from the source to the target node as an array of node indices.
 	*
-	* @return {Array} The shortest path.
+	* @return {Array<Number>} The shortest path.
 	*/
 	getPath() {
 
@@ -13736,7 +13744,7 @@ class DFS {
 	/**
 	* Returns the search tree of the algorithm as an array of edges.
 	*
-	* @return {Array} The search tree.
+	* @return {Array<Edge>} The search tree.
 	*/
 	getSearchTree() {
 
@@ -13781,25 +13789,25 @@ class Dijkstra {
 
 		/**
 		* The graph.
-		* @type Graph
+		* @type {Graph}
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
-		* @type Number
+		* @type {Number}
 		*/
 		this.target = target;
 
 		/**
 		* Whether the search was successful or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.found = false;
@@ -13899,7 +13907,7 @@ class Dijkstra {
 	/**
 	* Returns the shortest path from the source to the target node as an array of node indices.
 	*
-	* @return {Array} The shortest path.
+	* @return {Array<Number>} The shortest path.
 	*/
 	getPath() {
 
@@ -13938,7 +13946,7 @@ class Dijkstra {
 	/**
 	* Returns the search tree of the algorithm as an array of edges.
 	*
-	* @return {Array} The search tree.
+	* @return {Array<Edge>} The search tree.
 	*/
 	getSearchTree() {
 
@@ -14010,28 +14018,28 @@ class BVH {
 
 		/**
 		* The branching factor (how many nodes per level).
-		* @type Number
+		* @type {Number}
 		* @default 2
 		*/
 		this.branchingFactor = branchingFactor;
 
 		/**
 		* The minimum amount of primitives per BVH node.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.primitivesPerNode = primitivesPerNode;
 
 		/**
 		* The maximum hierarchical depth.
-		* @type Number
+		* @type {Number}
 		* @default 10
 		*/
 		this.depth = depth;
 
 		/**
 		* The root BVH node.
-		* @type BVHNode
+		* @type {BVHNode}
 		* @default null
 		*/
 		this.root = null;
@@ -14115,34 +14123,34 @@ class BVHNode {
 
 		/**
 		* The parent BVH node.
-		* @type BVHNode
+		* @type {BVHNode}
 		* @default null
 		*/
 		this.parent = null;
 
 		/**
 		* The child BVH nodes.
-		* @type Array
+		* @type {Array<BVHNode>}
 		*/
 		this.children = new Array();
 
 		/**
 		* The bounding volume of this BVH node.
-		* @type AABB
+		* @type {AABB}
 		*/
 		this.boundingVolume = new AABB();
 
 		/**
 		* The primitives (triangles) of this BVH node.
 		* Only filled for leaf nodes.
-		* @type Array
+		* @type {Array<Number>}
 		*/
 		this.primitives = new Array();
 
 		/**
 		* The centroids of the node's triangles.
 		* Only filled for leaf nodes.
-		* @type Array
+		* @type {Array<Number>}
 		*/
 		this.centroids = new Array();
 
@@ -14650,13 +14658,13 @@ class LineSegment {
 
 		/**
 		* The start point of the line segment.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.from = from;
 
 		/**
 		* The end point of the line segment.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.to = to;
 
@@ -15008,31 +15016,31 @@ class HalfEdge {
 
 		/**
 		* The vertex of this half-edge. It represents the head/destination of the respective full edge.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.vertex = vertex;
 
 		/**
 		* A reference to the next half-edge.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.next = null;
 
 		/**
 		* A reference to the previous half-edge.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.prev = null;
 
 		/**
 		* A reference to the opponent half-edge.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.twin = null;
 
 		/**
 		* A reference to its polygon/face.
-		* @type Polygon
+		* @type {Polygon}
 		*/
 		this.polygon = null;
 
@@ -15146,19 +15154,19 @@ class Polygon {
 
 		/**
 		* The centroid of this polygon.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.centroid = new Vector3();
 
 		/**
 		* A reference to the first half-edge of this polygon.
-		* @type HalfEdge
+		* @type {HalfEdge}
 		*/
 		this.edge = null;
 
 		/**
 		* A plane abstraction of this polygon.
-		* @type Plane
+		* @type {Plane}
 		*/
 		this.plane = new Plane();
 
@@ -15169,7 +15177,7 @@ class Polygon {
 	* The method assumes the contour (the sequence of points) is defined
 	* in CCW order.
 	*
-	* @param {Array} points - The array of points.
+	* @param {Array<Vector3>} points - The array of points.
 	* @return {Polygon} A reference to this polygon.
 	*/
 	fromContour( points ) {
@@ -15386,8 +15394,8 @@ class Polygon {
 	* Determines the contour (sequence of points) of this polygon and
 	* stores the result in the given array.
 	*
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Vector3>} result - The result array.
+	* @return {Array<Vector3>} The result array.
 	*/
 	getContour( result ) {
 
@@ -15434,25 +15442,25 @@ class Polyhedron {
 
 		/**
 		* The faces of this polyhedron.
-		* @type Array
+		* @type {Array<Polygon>}
 		*/
 		this.faces = new Array();
 
 		/**
 		* A list of unique edges (no opponent half edges).
-		* @type Array
+		* @type {Array<HalfEdge>}
 		*/
 		this.edges = new Array();
 
 		/**
 		* A list of unique vertices.
-		* @type Array
+		* @type {Array<Vector3>}
 		*/
 		this.vertices = new Array();
 
 		/**
 		* The centroid of this polyhedron.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.centroid = new Vector3();
 
@@ -15707,7 +15715,7 @@ class ConvexHull extends Polyhedron {
 
 		/**
 		* Whether faces of the convex hull should be merged or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.mergeFaces = true;
@@ -15810,7 +15818,7 @@ class ConvexHull extends Polyhedron {
 	* Computes a convex hull that encloses the given set of points. The computation requires
 	* at least four points.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {ConvexHull} A reference to this convex hull.
 	*/
 	fromPoints( points ) {
@@ -16911,19 +16919,19 @@ class OBB {
 
 		/**
 		* The center of this OBB.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.center = center;
 
 		/**
 		* The half sizes of the OBB (defines its width, height and depth).
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.halfSizes = halfSizes;
 
 		/**
 		* The rotation of this OBB.
-		* @type Matrix3
+		* @type {Matrix3}
 		*/
 		this.rotation = rotation;
 
@@ -17277,7 +17285,7 @@ class OBB {
 	* of the produced OBB. Consider to use an AABB or bounding sphere if the result
 	* is not satisfying.
 	*
-	* @param {Array} points - An array of 3D vectors representing points in 3D space.
+	* @param {Array<Vector3>} points - An array of 3D vectors representing points in 3D space.
 	* @return {OBB} A reference to this OBB.
 	*/
 	fromPoints( points ) {
@@ -17548,13 +17556,13 @@ class NavNode extends Node {
 
 		/**
 		* The position of the node in 3D space.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.position = position;
 
 		/**
 		* Custom user data connected to this node.
-		* @type Object
+		* @type {Object}
 		*/
 		this.userData = userData;
 
@@ -17668,7 +17676,7 @@ class Corridor {
 
 		/**
 		* The portal edges of the corridor.
-		* @type Array
+		* @type {Array<Object>}
 		*/
 		this.portalEdges = new Array();
 
@@ -17695,7 +17703,7 @@ class Corridor {
 	/**
 	* Generates the shortest path through the corridor as an array of 3D vectors.
 	*
-	* @return {Array} An array of 3D waypoints.
+	* @return {Array<Vector3>} An array of 3D waypoints.
 	*/
 	generate() {
 
@@ -18034,41 +18042,41 @@ class NavMesh {
 
 		/**
 		* The internal navigation graph of this navigation mesh representing neighboring polygons.
-		* @type Graph
+		* @type {Graph}
 		*/
 		this.graph = new Graph();
 		this.graph.digraph = true;
 
 		/**
 		* The list of convex regions.
-		* @type Array
+		* @type {Array<Polygon>}
 		*/
 		this.regions = new Array();
 
 		/**
 		* A reference to a spatial index.
-		* @type CellSpacePartitioning
+		* @type {CellSpacePartitioning}
 		* @default null
 		*/
 		this.spatialIndex = null;
 
 		/**
 		* The tolerance value for the coplanar test.
-		* @type Number
+		* @type {Number}
 		* @default 1e-3
 		*/
 		this.epsilonCoplanarTest = 1e-3;
 
 		/**
 		* The tolerance value for the containment test.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.epsilonContainsTest = 1;
 
 		/**
 		* Whether convex regions should be merged or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default true
 		*/
 		this.mergeConvexRegions = true;
@@ -18082,7 +18090,7 @@ class NavMesh {
 	/**
 	* Creates the navigation mesh from an array of convex polygons.
 	*
-	* @param {Array} polygons - An array of convex polygons.
+	* @param {Array<Polygon>} polygons - An array of convex polygons.
 	* @return {NavMesh} A reference to this navigation mesh.
 	*/
 	fromPolygons( polygons ) {
@@ -18293,7 +18301,7 @@ class NavMesh {
 	*
 	* @param {Vector3} from - The start/source position.
 	* @param {Vector3} to - The end/destination position.
-	* @return {Array} The shortest path as an array of points.
+	* @return {Array<Vector3>} The shortest path as an array of points.
 	*/
 	findPath( from, to ) {
 
@@ -19274,13 +19282,13 @@ class Cell {
 
 		/**
 		* The bounding volume of the cell.
-		* @type AABB
+		* @type {AABB}
 		*/
 		this.aabb = aabb;
 
 		/**
 		* The list of entries which belong to this cell.
-		* @type Array
+		* @type {Array<Any>}
 		* @readonly
 		*/
 		this.entries = new Array();
@@ -19443,43 +19451,43 @@ class CellSpacePartitioning {
 
 		/**
 		* The list of partitions.
-		* @type Array
+		* @type {Array<Cell>}
 		*/
 		this.cells = new Array();
 
 		/**
 		* The width of the entire spatial index.
-		* @type Number
+		* @type {Number}
 		*/
 		this.width = width;
 
 		/**
 		* The height of the entire spatial index.
-		* @type Number
+		* @type {Number}
 		*/
 		this.height = height;
 
 		/**
 		* The depth of the entire spatial index.
-		* @type Number
+		* @type {Number}
 		*/
 		this.depth = depth;
 
 		/**
 		* The amount of cells along the x-axis.
-		* @type Number
+		* @type {Number}
 		*/
 		this.cellsX = cellsX;
 
 		/**
 		* The amount of cells along the y-axis.
-		* @type Number
+		* @type {Number}
 		*/
 		this.cellsY = cellsY;
 
 		/**
 		* The amount of cells along the z-axis.
-		* @type Number
+		* @type {Number}
 		*/
 		this.cellsZ = cellsZ;
 
@@ -19623,8 +19631,8 @@ class CellSpacePartitioning {
 	*
 	* @param {Vector3} position - The given query position.
 	* @param {Number} radius - The given query radius.
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<Any>} result - The result array.
+	* @return {Array<Any>} The result array.
 	*/
 	query( position, radius, result ) {
 
@@ -19807,14 +19815,14 @@ class MemoryRecord {
 
 		/**
 		* The game entity that is represented by this memory record.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.entity = entity;
 
 		/**
 		* Records the time the entity became visible. Useful in combination with a reaction time
 		* in order to prevent immediate actions.
-		* @type Number
+		* @type {Number}
 		* @default - Infinity
 		*/
 		this.timeBecameVisible = - Infinity;
@@ -19822,20 +19830,20 @@ class MemoryRecord {
 		/**
 		* Records the time the entity was last sensed (e.g. seen or heard). Used to determine
 		* if a game entity can "remember" this record or not.
-		* @type Number
+		* @type {Number}
 		* @default - Infinity
 		*/
 		this.timeLastSensed = - Infinity;
 
 		/**
 		* Marks the position where the opponent was last sensed.
-		* @type Vector3
+		* @type {Vector3}
 		*/
 		this.lastSensedPosition = new Vector3();
 
 		/**
 		* Whether this game entity is visible or not.
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		*/
 		this.visible = false;
@@ -19911,7 +19919,7 @@ class MemorySystem {
 
 		/**
 		* The game entity that owns this memory system.
-		* @type GameEntity
+		* @type {GameEntity}
 		*/
 		this.owner = owner;
 
@@ -19919,13 +19927,13 @@ class MemorySystem {
 		* Used to simulate memory of sensory events. It contains {@link MemoryRecord memory records}
 		* of all relevant game entities in the environment. The records are usually update by
 		* the owner of the memory system.
-		* @type Array
+		* @type {Array<MemoryRecord>}
 		*/
 		this.records = new Array();
 
 		/**
 		* Same as {@link MemorySystem#records} but used for fast access via the game entity.
-		* @type Map
+		* @type {Map<GameEntity,MemoryRecord>}
 		*/
 		this.recordsMap = new Map();
 
@@ -19933,7 +19941,7 @@ class MemorySystem {
 		* Represents the duration of the game entities short term memory in seconds.
 		* When a bot requests a list of all recently sensed game entities, this value
 		* is used to determine if the bot is able to remember a game entity or not.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.memorySpan = 1;
@@ -20017,8 +20025,8 @@ class MemorySystem {
 	* Determines all valid memory record and stores the result in the given array.
 	*
 	* @param {Number} currentTime - The current elapsed time.
-	* @param {Array} result - The result array.
-	* @return {Array} The result array.
+	* @param {Array<MemoryRecord>} result - The result array.
+	* @return {Array<MemoryRecord>} The result array.
 	*/
 	getValidMemoryRecords( currentTime, result ) {
 
@@ -20146,20 +20154,20 @@ class Vision {
 
 		/**
 		 * The game entity that owns this vision instance.
-		 * @type GameEntity
+		 * @type {GameEntity}
 		 */
 		this.owner = owner;
 
 		/**
 		 * The field of view in radians.
-		 * @type Number
+		 * @type {Number}
 		 * @default π
 		 */
 		this.fieldOfView = Math.PI;
 
 		/**
 		 * The visual range in world units.
-		 * @type Number
+		 * @type {Number}
 		 * @default Infinity
 		 */
 		this.range = Infinity;
@@ -20167,7 +20175,7 @@ class Vision {
 		/**
 		 * An array of obstacles. An obstacle is a game entity that
 		 * implements the {@link GameEntity#lineOfSightTest} method.
-		 * @type Array
+		 * @type {Array<GameEntity>}
 		 */
 		this.obstacles = new Array();
 
@@ -20362,20 +20370,20 @@ class OnPathBehavior extends SteeringBehavior {
 
 		/**
 		* The path to stay close to.
-		* @type Path
+		* @type {Path}
 		*/
 		this.path = path;
 
 		/**
 		* Defines the width of the path. With a smaller radius, the vehicle will have to follow the path more closely.
-		* @type Number
+		* @type {Number}
 		* @default 0.1
 		*/
 		this.radius = radius;
 
 		/**
 		* Determines how far the behavior predicts the movement of the vehicle.
-		* @type Number
+		* @type {Number}
 		* @default 1
 		*/
 		this.predictionFactor = predictionFactor;
@@ -20529,7 +20537,7 @@ class TaskQueue {
 
 		/**
 		* A list of pending tasks.
-		* @type Array
+		* @type {Array<Task>}
 		* @readonly
 		*/
 		this.tasks = new Array();
@@ -20538,7 +20546,7 @@ class TaskQueue {
 		* Used to control the asynchronous processing.
 		* - timeout: After this amount of time (in ms), a scheduled task is executed even if
 		* doing so risks causing a negative performance impact (e.g. bad frame time).
-		* @type Object
+		* @type {Object}
 		*/
 		this.options = {
 			timeout: 1000 // ms

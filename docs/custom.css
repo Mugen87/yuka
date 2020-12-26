@@ -105,6 +105,10 @@ code {
 	color: #a40606;
 }
 
+.main section article table td.type {
+	max-width: 200px;
+}
+
 /* dark mode */
 
 @media (prefers-color-scheme: dark) {
