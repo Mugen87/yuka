@@ -184,12 +184,6 @@ class GameEntity {
 
 	}
 
-	set uuid( uuid ) {
-
-		this._uuid = uuid;
-
-	}
-
 	/**
 	* Executed when this game entity is updated for the first time by its {@link EntityManager}.
 	*
@@ -487,7 +481,6 @@ class GameEntity {
 	*/
 	fromJSON( json ) {
 
-		this.uuid = json.uuid;
 		this.name = json.name;
 		this.active = json.active;
 		this.neighborhoodRadius = json.neighborhoodRadius;
@@ -513,6 +506,8 @@ class GameEntity {
 		this._cache.scale.fromArray( json._cache.scale );
 
 		this._started = json._started;
+
+		this._uuid = json.uuid;
 
 		return this;
 

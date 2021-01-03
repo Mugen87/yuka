@@ -101,7 +101,7 @@ describe( 'PursuitBehavior', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const evader = new Vehicle();
-			evader.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			evader._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const pursuitBehavior = new PursuitBehavior( evader, 2 );
 			const json = pursuitBehavior.toJSON();
 
@@ -116,7 +116,7 @@ describe( 'PursuitBehavior', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const evader = new Vehicle();
-			evader.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			evader._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const pursuitBehavior1 = new PursuitBehavior( evader, 2 );
 			const pursuitBehavior2 = new PursuitBehavior().fromJSON( SteeringJSONs.PursuitBehavior );
 
@@ -140,7 +140,7 @@ describe( 'PursuitBehavior', function () {
 			const behavior2 = new PursuitBehavior( );
 
 			//set ids
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			//set references
 			behavior2.evader = entity1.uuid;

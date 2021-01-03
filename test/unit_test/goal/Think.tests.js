@@ -167,7 +167,7 @@ describe( 'Think', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const brain = new Think( entity );
 			const evaluator = new GoalEvaluator1( 0.5 );
@@ -191,7 +191,7 @@ describe( 'Think', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const entities = new Map();
 			entities.set( '4C06581E-448A-4557-835E-7A9D2CE20D30', entity );

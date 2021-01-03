@@ -269,16 +269,16 @@ describe( 'FuzzyVariable', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const fuzzySet1 = new LeftShoulderFuzzySet( 0, 50, 100 );
-			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			fuzzySet1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const fuzzySet2 = new RightShoulderFuzzySet( 0, 50, 100 );
-			fuzzySet2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			fuzzySet2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const fuzzySet3 = new TriangularFuzzySet( 0, 50, 100 );
-			fuzzySet3.uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
+			fuzzySet3._uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
 
 			const fuzzySet4 = new SingletonFuzzySet( 0, 50, 100 );
-			fuzzySet4.uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
+			fuzzySet4._uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
 
 			const flv = new FuzzyVariable();
 
@@ -298,16 +298,16 @@ describe( 'FuzzyVariable', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const fuzzySet1 = new LeftShoulderFuzzySet( 0, 50, 100 );
-			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			fuzzySet1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const fuzzySet2 = new RightShoulderFuzzySet( 0, 50, 100 );
-			fuzzySet2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			fuzzySet2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const fuzzySet3 = new TriangularFuzzySet( 0, 50, 100 );
-			fuzzySet3.uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
+			fuzzySet3._uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
 
 			const fuzzySet4 = new SingletonFuzzySet( 0, 50, 100 );
-			fuzzySet4.uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
+			fuzzySet4._uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
 
 			const flv1 = new FuzzyVariable();
 

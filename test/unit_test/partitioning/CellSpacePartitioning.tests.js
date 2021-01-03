@@ -200,7 +200,7 @@ describe( 'CellSpacePartitioning', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const cellSpacePartitioning = new CellSpacePartitioning( 1, 1, 1, 1, 1, 1 );
 			cellSpacePartitioning.addEntityToPartition( entity, 0 );
@@ -217,7 +217,7 @@ describe( 'CellSpacePartitioning', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const cellSpacePartitioning = new CellSpacePartitioning( 1, 1, 1, 1, 1, 1 );
 			cellSpacePartitioning.addEntityToPartition( entity, 0 );
@@ -239,7 +239,7 @@ describe( 'CellSpacePartitioning', function () {
 		it( 'should restore the references to other entities', function () {
 
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const cellSpacePartitioning = new CellSpacePartitioning( 1, 1, 1, 1, 1, 1 );
 			cellSpacePartitioning.addEntityToPartition( entity.uuid, 0 );

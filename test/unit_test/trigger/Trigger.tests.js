@@ -88,7 +88,7 @@ describe( 'Trigger', function () {
 
 			const region = new TriggerRegion();
 			const trigger = new Trigger( region );
-			trigger.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			trigger._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const json = trigger.toJSON();
 			expect( json ).to.be.deep.equal( TriggerJSONs.TriggerTR );
@@ -101,11 +101,11 @@ describe( 'Trigger', function () {
 			const rectangularRegion = new RectangularTriggerRegion();
 			const customRegion = new CustomTriggerRegion();
 			const triggerSR = new Trigger( sphericalRegion );
-			triggerSR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			triggerSR._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerRR = new Trigger( rectangularRegion );
-			triggerRR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			triggerRR._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerCR = new Trigger( customRegion );
-			triggerCR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			triggerCR._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			expect( triggerSR.toJSON() ).to.be.deep.equal( TriggerJSONs.TriggerSR );
 			expect( triggerRR.toJSON() ).to.be.deep.equal( TriggerJSONs.TriggerRR );
@@ -121,7 +121,7 @@ describe( 'Trigger', function () {
 
 			const region = new TriggerRegion();
 			const trigger = new Trigger( region );
-			trigger.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			trigger._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const trigger2 = new Trigger().fromJSON( TriggerJSONs.TriggerTR );
 
@@ -136,11 +136,11 @@ describe( 'Trigger', function () {
 			const rectangularRegion = new RectangularTriggerRegion();
 			const customRegion = new CustomTriggerRegion();
 			const triggerSR = new Trigger( sphericalRegion );
-			triggerSR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			triggerSR._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerRR = new Trigger( rectangularRegion );
-			triggerRR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			triggerRR._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			const triggerCR = new Trigger( customRegion );
-			triggerCR.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			triggerCR._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const triggerSR2 = new Trigger().fromJSON( TriggerJSONs.TriggerSR );
 			const triggerRR2 = new Trigger().fromJSON( TriggerJSONs.TriggerRR );
@@ -156,7 +156,7 @@ describe( 'Trigger', function () {
 
 			const triggerCR3 = new Trigger().fromJSON( TriggerJSONs.TriggerCR );
 			const triggerCR4 = new Trigger();
-			triggerCR4.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			triggerCR4._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			expect( triggerCR3 ).to.be.deep.equal( triggerCR4 );
 
 		} );

@@ -257,7 +257,7 @@ describe( 'StateMachine', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const owner = new GameEntity();
-			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			owner._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const stateMachine = new StateMachine( owner );
 
@@ -277,7 +277,7 @@ describe( 'StateMachine', function () {
 		it( 'should set current, previous and global state to null if no states are defined', function () {
 
 			const owner = new GameEntity();
-			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			owner._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const stateMachine = new StateMachine( owner );
 
@@ -294,7 +294,7 @@ describe( 'StateMachine', function () {
 			YUKA.Logger.setLevel( YUKA.Logger.LEVEL.SILENT );
 
 			const owner = new GameEntity();
-			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			owner._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const entities = new Map();
 			entities.set( owner.uuid, owner );
@@ -342,7 +342,7 @@ describe( 'StateMachine', function () {
 
 			const entities = new Map();
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			entities.set( entity.uuid, entity );
 
 			stateMachine.resolveReferences( entities );

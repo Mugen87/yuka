@@ -78,12 +78,6 @@ class FuzzySet extends FuzzyTerm {
 
 	}
 
-	set uuid( uuid ) {
-
-		this._uuid = uuid;
-
-	}
-
 	/**
 	* Computes the degree of membership for the given value. Notice that this method
 	* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
@@ -169,7 +163,8 @@ class FuzzySet extends FuzzyTerm {
 		this.representativeValue = json.representativeValue;
 		this.left = json.left;
 		this.right = json.right;
-		this.uuid = json.uuid;
+
+		this._uuid = json.uuid;
 
 		return this;
 

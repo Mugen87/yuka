@@ -484,8 +484,8 @@ describe( 'EntityManager', function () {
 			const entity1 = new GameEntity();
 			const entity2 = new GameEntity();
 
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			entity1.add( entity2 );
 
@@ -508,11 +508,11 @@ describe( 'EntityManager', function () {
 			const entity4 = new Trigger();
 			const entity5 = new CustomTrigger();
 
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
-			entity3.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
-			entity4.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A483';
-			entity5.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A484';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			entity3._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
+			entity4._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A483';
+			entity5._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A484';
 
 			entity1.neighbors.push( entity2, entity3 );
 			entity2.neighbors.push( entity1 );
@@ -540,8 +540,8 @@ describe( 'EntityManager', function () {
 			const entity1 = new GameEntity();
 			const entity2 = new GameEntity();
 
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			entity1.add( entity2 );
 
@@ -568,11 +568,11 @@ describe( 'EntityManager', function () {
 			const entity4 = new Trigger();
 			const entity5 = new CustomTrigger();
 
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			entity2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
-			entity3.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
-			entity4.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A483';
-			entity5.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A484';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			entity3._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A482';
+			entity4._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A483';
+			entity5._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A484';
 
 			entity1.neighbors.push( entity2, entity3 );
 			entity2.neighbors.push( entity1 );

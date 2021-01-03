@@ -123,7 +123,7 @@ describe( 'Vehicle', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const vehicle = new Vehicle();
-			vehicle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			vehicle._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			expect( vehicle.toJSON() ).to.be.deep.equal( CoreJSONs.Vehicle );
 
@@ -136,7 +136,7 @@ describe( 'Vehicle', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const vehicle = new Vehicle();
-			vehicle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			vehicle._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const vehicle2 = new Vehicle();
 			vehicle2.mass = 0;
@@ -160,9 +160,9 @@ describe( 'Vehicle', function () {
 			const vehiclea = new Vehicle();
 
 			//set ids
-			vehicle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			vehicle2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
-			vehiclea.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			vehicle._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			vehicle2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			vehiclea._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			//set references
 			vehicle.neighbors.push( vehicle2 );

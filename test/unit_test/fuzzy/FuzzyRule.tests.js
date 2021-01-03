@@ -84,10 +84,10 @@ describe( 'FuzzyRule', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const fuzzySet1 = new FuzzySet();
-			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			fuzzySet1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const fuzzySet2 = new FuzzySet();
-			fuzzySet2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			fuzzySet2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const rule = new FuzzyRule( fuzzySet1, fuzzySet2 );
 
@@ -110,16 +110,16 @@ describe( 'FuzzyRule', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const fuzzySet1 = new FuzzySet();
-			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			fuzzySet1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const fuzzySet2 = new FuzzySet();
-			fuzzySet2.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			fuzzySet2._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const fuzzySet3 = new FuzzySet();
-			fuzzySet3.uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
+			fuzzySet3._uuid = '89876371-0D9B-44F0-BDC9-5D7C6B47A4CF';
 
 			const fuzzySet4 = new FuzzySet();
-			fuzzySet4.uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
+			fuzzySet4._uuid = 'C52406C9-A359-4AA5-B1E0-9430B9DCEDE9';
 
 			const antecedent = new FuzzyAND( new FuzzyVERY( fuzzySet1 ), new FuzzyFAIRLY( fuzzySet2 ) );
 			const consequence = new FuzzyOR( fuzzySet3, fuzzySet4 );

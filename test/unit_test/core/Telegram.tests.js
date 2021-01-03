@@ -34,8 +34,8 @@ describe( 'Telegram', function () {
 			const receiver = new GameEntity();
 			const telegram = new Telegram( sender, receiver, 'Test', 1, null );
 
-			sender.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			receiver.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			sender._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			receiver._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const json = telegram.toJSON();
 
@@ -54,8 +54,8 @@ describe( 'Telegram', function () {
 			const telegram = new Telegram( sender, receiver, 'Test', 1, null );
 			const telegram2 = new Telegram().fromJSON( CoreJSONs.Telegram );
 
-			sender.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			receiver.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			sender._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			receiver._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const map = new Map();
 			map.set( sender.uuid, sender );
@@ -78,8 +78,8 @@ describe( 'Telegram', function () {
 			const receiver = new GameEntity();
 			const telegram = new Telegram( sender, receiver, 'Test', 1, null );
 
-			sender.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			receiver.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			sender._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			receiver._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const telegram2 = new Telegram( sender.uuid, receiver.uuid, 'Test', 1, null );
 

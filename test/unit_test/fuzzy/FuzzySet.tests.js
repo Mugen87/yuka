@@ -109,7 +109,7 @@ describe( 'FuzzySet', function () {
 			fuzzySet.left = 1;
 			fuzzySet.right = 20;
 
-			fuzzySet.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+			fuzzySet._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
 
 			expect( fuzzySet.toJSON() ).to.be.deep.equal( FuzzyJSONs.FuzzySet );
 
@@ -127,7 +127,7 @@ describe( 'FuzzySet', function () {
 			fuzzySet1.left = 1;
 			fuzzySet1.right = 20;
 
-			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+			fuzzySet1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
 
 			const fuzzySet2 = new FuzzySet().fromJSON( FuzzyJSONs.FuzzySet );
 

@@ -134,8 +134,8 @@ describe( 'MessageDispatcher', function () {
 			const messageDispatcher = new MessageDispatcher();
 			messageDispatcher.dispatch( telegram.sender, telegram.receiver, telegram.message, telegram.delay, telegram.data );
 
-			sender.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			receiver.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			sender._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			receiver._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const json = messageDispatcher.toJSON();
 
@@ -156,8 +156,8 @@ describe( 'MessageDispatcher', function () {
 			messageDispatcher.dispatch( telegram.sender, telegram.receiver, telegram.message, telegram.delay, telegram.data );
 			const messageDispatcher2 = new MessageDispatcher().fromJSON( CoreJSONs.MessageDispatcher );
 
-			sender.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			receiver.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			sender._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			receiver._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const map = new Map();
 			map.set( sender.uuid, sender );
@@ -182,8 +182,8 @@ describe( 'MessageDispatcher', function () {
 			const messageDispatcher = new MessageDispatcher();
 			messageDispatcher.dispatch( telegram.sender, telegram.receiver, telegram.message, telegram.delay, telegram.data );
 
-			sender.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			receiver.uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
+			sender._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			receiver._uuid = '52A33A16-6843-4C98-9A8E-9FCEA255A481';
 
 			const messageDispatcher2 = new MessageDispatcher();
 			messageDispatcher2.dispatch( telegram.sender.uuid, telegram.receiver.uuid, telegram.message, telegram.delay, telegram.data );

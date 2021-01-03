@@ -71,7 +71,7 @@ describe( 'LeftShoulderFuzzySet', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const fuzzySet = new LeftShoulderFuzzySet( 0, 50, 100 );
-			fuzzySet.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+			fuzzySet._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
 
 			expect( fuzzySet.toJSON() ).to.be.deep.equal( FuzzyJSONs.LeftShoulderFuzzySet );
 
@@ -84,7 +84,7 @@ describe( 'LeftShoulderFuzzySet', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const fuzzySet1 = new LeftShoulderFuzzySet( 0, 50, 100 );
-			fuzzySet1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
+			fuzzySet1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30'; // overwrite random UUID
 
 			const fuzzySet2 = new LeftShoulderFuzzySet().fromJSON( FuzzyJSONs.LeftShoulderFuzzySet );
 

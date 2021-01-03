@@ -215,11 +215,11 @@ describe( 'FuzzyModule', function () {
 			const distanceToTarget = new FuzzyVariable();
 
 			const targetClose = new LeftShoulderFuzzySet( 0, 25, 150 );
-			targetClose.uuid = 'AEBDC6F3-6685-4D2B-B794-0D72BDD79724';
+			targetClose._uuid = 'AEBDC6F3-6685-4D2B-B794-0D72BDD79724';
 			const targetMedium = new TriangularFuzzySet( 25, 150, 300 );
-			targetMedium.uuid = '3D5040DA-CA14-498C-9683-75FDA90DCC94';
+			targetMedium._uuid = '3D5040DA-CA14-498C-9683-75FDA90DCC94';
 			const targetFar = new RightShoulderFuzzySet( 150, 300, 500 );
-			targetFar.uuid = '1B9D3587-148A-4970-971D-18F74215A9E5';
+			targetFar._uuid = '1B9D3587-148A-4970-971D-18F74215A9E5';
 
 			distanceToTarget.add( targetClose );
 			distanceToTarget.add( targetMedium );
@@ -232,11 +232,11 @@ describe( 'FuzzyModule', function () {
 			const ammoStatus = new FuzzyVariable();
 
 			const ammoLow = new LeftShoulderFuzzySet( 0, 0, 10 );
-			ammoLow.uuid = 'A8AA410F-2308-43FE-828E-E5ACD2DF7A9A';
+			ammoLow._uuid = 'A8AA410F-2308-43FE-828E-E5ACD2DF7A9A';
 			const ammoOkay = new TriangularFuzzySet( 0, 10, 30 );
-			ammoOkay.uuid = '2ADCF93F-EC88-4ADB-AE88-BE357FC84F1A';
+			ammoOkay._uuid = '2ADCF93F-EC88-4ADB-AE88-BE357FC84F1A';
 			const ammoFull = new RightShoulderFuzzySet( 10, 30, 40 );
-			ammoFull.uuid = '1D583EFA-F942-4D5F-83FC-D9224399FD22';
+			ammoFull._uuid = '1D583EFA-F942-4D5F-83FC-D9224399FD22';
 
 			ammoStatus.add( ammoLow );
 			ammoStatus.add( ammoOkay );
@@ -249,11 +249,11 @@ describe( 'FuzzyModule', function () {
 			const desirability = new FuzzyVariable();
 
 			const undesirable = new LeftShoulderFuzzySet( 0, 25, 50 );
-			undesirable.uuid = '7FD5572F-CF00-4031-941D-B8BB4F93A7EF';
+			undesirable._uuid = '7FD5572F-CF00-4031-941D-B8BB4F93A7EF';
 			const desirable = new TriangularFuzzySet( 25, 50, 75 );
-			desirable.uuid = '043B0816-E790-44EE-8C4A-21AC7C27DE7F';
+			desirable._uuid = '043B0816-E790-44EE-8C4A-21AC7C27DE7F';
 			const veryDesirable = new RightShoulderFuzzySet( 50, 75, 100 );
-			veryDesirable.uuid = '208D9144-14EC-44BD-95DD-B6035ACEE31B';
+			veryDesirable._uuid = '208D9144-14EC-44BD-95DD-B6035ACEE31B';
 
 			desirability.add( undesirable );
 			desirability.add( desirable );
@@ -292,11 +292,11 @@ describe( 'FuzzyModule', function () {
 			const distanceToTarget = new FuzzyVariable();
 
 			const targetClose = new LeftShoulderFuzzySet( 0, 25, 150 );
-			targetClose.uuid = 'AEBDC6F3-6685-4D2B-B794-0D72BDD79724';
+			targetClose._uuid = 'AEBDC6F3-6685-4D2B-B794-0D72BDD79724';
 			const targetMedium = new TriangularFuzzySet( 25, 150, 300 );
-			targetMedium.uuid = '3D5040DA-CA14-498C-9683-75FDA90DCC94';
+			targetMedium._uuid = '3D5040DA-CA14-498C-9683-75FDA90DCC94';
 			const targetFar = new RightShoulderFuzzySet( 150, 300, 500 );
-			targetFar.uuid = '1B9D3587-148A-4970-971D-18F74215A9E5';
+			targetFar._uuid = '1B9D3587-148A-4970-971D-18F74215A9E5';
 
 			distanceToTarget.add( targetClose );
 			distanceToTarget.add( targetMedium );
@@ -309,11 +309,11 @@ describe( 'FuzzyModule', function () {
 			const ammoStatus = new FuzzyVariable();
 
 			const ammoLow = new LeftShoulderFuzzySet( 0, 0, 10 );
-			ammoLow.uuid = 'A8AA410F-2308-43FE-828E-E5ACD2DF7A9A';
+			ammoLow._uuid = 'A8AA410F-2308-43FE-828E-E5ACD2DF7A9A';
 			const ammoOkay = new TriangularFuzzySet( 0, 10, 30 );
-			ammoOkay.uuid = '2ADCF93F-EC88-4ADB-AE88-BE357FC84F1A';
+			ammoOkay._uuid = '2ADCF93F-EC88-4ADB-AE88-BE357FC84F1A';
 			const ammoFull = new RightShoulderFuzzySet( 10, 30, 40 );
-			ammoFull.uuid = '1D583EFA-F942-4D5F-83FC-D9224399FD22';
+			ammoFull._uuid = '1D583EFA-F942-4D5F-83FC-D9224399FD22';
 
 			ammoStatus.add( ammoLow );
 			ammoStatus.add( ammoOkay );
@@ -326,11 +326,11 @@ describe( 'FuzzyModule', function () {
 			const desirability = new FuzzyVariable();
 
 			const undesirable = new LeftShoulderFuzzySet( 0, 25, 50 );
-			undesirable.uuid = '7FD5572F-CF00-4031-941D-B8BB4F93A7EF';
+			undesirable._uuid = '7FD5572F-CF00-4031-941D-B8BB4F93A7EF';
 			const desirable = new TriangularFuzzySet( 25, 50, 75 );
-			desirable.uuid = '043B0816-E790-44EE-8C4A-21AC7C27DE7F';
+			desirable._uuid = '043B0816-E790-44EE-8C4A-21AC7C27DE7F';
 			const veryDesirable = new RightShoulderFuzzySet( 50, 75, 100 );
-			veryDesirable.uuid = '208D9144-14EC-44BD-95DD-B6035ACEE31B';
+			veryDesirable._uuid = '208D9144-14EC-44BD-95DD-B6035ACEE31B';
 
 			desirability.add( undesirable );
 			desirability.add( desirable );

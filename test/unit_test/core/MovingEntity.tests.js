@@ -114,7 +114,7 @@ describe( 'MovingEntity', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const entity = new MovingEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			expect( entity.toJSON() ).to.be.deep.equal( CoreJSONs.MovingEntity );
 
@@ -127,7 +127,7 @@ describe( 'MovingEntity', function () {
 		it( 'should deserialize this instance from the given JSON object', function () {
 
 			const entity1 = new MovingEntity();
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 
 			const entity2 = new MovingEntity();

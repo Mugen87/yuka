@@ -134,7 +134,7 @@ describe( 'ObstacleAvoidanceBehavior', function () {
 			const behavior2 = new ObstacleAvoidanceBehavior( );
 
 			//set ids
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			//set references
 			behavior1.obstacles.push( entity1 );

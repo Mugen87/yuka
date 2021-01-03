@@ -145,8 +145,8 @@ describe( 'Vision', function () {
 			const geometry = new MeshGeometry( vertices );
 			const obstacle = new Obstacle( geometry );
 			vision.addObstacle( obstacle );
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			obstacle._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
 
 			const json = vision.toJSON();
 
@@ -171,8 +171,8 @@ describe( 'Vision', function () {
 			const obstacle = new Obstacle( geometry );
 
 			vision.addObstacle( obstacle );
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
-			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			obstacle._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
 
 			const map = new Map();
 			map.set( entity.uuid, entity );
@@ -193,7 +193,7 @@ describe( 'Vision', function () {
 
 			const entity = new GameEntity();
 			entity.position.set( 0.5, 2, 0.5 );
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const vertices = new Float32Array( [ 1, 0, 0, 0.5, 0, 1, 1, 0, 1, 0, 0, 0, 0.5, 0, 1, 1, 0, 0 ] );
 			const geometry = new MeshGeometry( vertices );
@@ -203,7 +203,7 @@ describe( 'Vision', function () {
 			vision.fieldOfView = Math.PI * 0.25;
 			const obstacle = new Obstacle( geometry );
 
-			obstacle.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
+			obstacle._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D31';
 			vision.addObstacle( obstacle.uuid );
 
 			const map = new Map();

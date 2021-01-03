@@ -123,7 +123,7 @@ describe( 'Cell', function () {
 
 			const cell = new Cell();
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			cell.add( entity );
 			const json = cell.toJSON();
 
@@ -139,7 +139,7 @@ describe( 'Cell', function () {
 
 			const cell = new Cell();
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			cell.add( entity );
 
 			const cell2 = new Cell( new AABB( new Vector3( 1, 1, 1 ), new Vector3( 1, 1, 1 ) ) ).fromJSON( PartitioningJSONs.Cell );
@@ -160,7 +160,7 @@ describe( 'Cell', function () {
 
 			const cell = new Cell();
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 			cell.add( entity.uuid );
 
 			const map = new Map();

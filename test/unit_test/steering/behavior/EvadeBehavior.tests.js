@@ -132,7 +132,7 @@ describe( 'EvadeBehavior', function () {
 			const behavior2 = new EvadeBehavior( );
 
 			//set ids
-			entity1.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity1._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			//set references
 			behavior2.pursuer = entity1.uuid;

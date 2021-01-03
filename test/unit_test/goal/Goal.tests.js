@@ -239,7 +239,7 @@ describe( 'Goal', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const owner = new GameEntity();
-			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			owner._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const goal = new Goal( owner );
 			goal.status = STATUS.COMPLETED;
@@ -272,7 +272,7 @@ describe( 'Goal', function () {
 		it( 'should restore the reference to the owner', function () {
 
 			const owner = new GameEntity();
-			owner.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			owner._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const entities = new Map();
 			entities.set( '4C06581E-448A-4557-835E-7A9D2CE20D30', owner );

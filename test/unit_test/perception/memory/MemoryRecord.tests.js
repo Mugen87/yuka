@@ -40,7 +40,7 @@ describe( 'MemoryRecord', function () {
 		it( 'should serialize this instance to a JSON object', function () {
 
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const record = new MemoryRecord( entity );
 
@@ -70,7 +70,7 @@ describe( 'MemoryRecord', function () {
 		it( 'should restore the reference to the entity', function () {
 
 			const entity = new GameEntity();
-			entity.uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
+			entity._uuid = '4C06581E-448A-4557-835E-7A9D2CE20D30';
 
 			const entities = new Map();
 			entities.set( entity.uuid, entity );

@@ -3051,12 +3051,6 @@
 
 		}
 
-		set uuid( uuid ) {
-
-			this._uuid = uuid;
-
-		}
-
 		/**
 		* Executed when this game entity is updated for the first time by its {@link EntityManager}.
 		*
@@ -3354,7 +3348,6 @@
 		*/
 		fromJSON( json ) {
 
-			this.uuid = json.uuid;
 			this.name = json.name;
 			this.active = json.active;
 			this.neighborhoodRadius = json.neighborhoodRadius;
@@ -3380,6 +3373,8 @@
 			this._cache.scale.fromArray( json._cache.scale );
 
 			this._started = json._started;
+
+			this._uuid = json.uuid;
 
 			return this;
 
@@ -9943,12 +9938,6 @@
 
 		}
 
-		set uuid( uuid ) {
-
-			this._uuid = uuid;
-
-		}
-
 		/**
 		* Computes the degree of membership for the given value. Notice that this method
 		* does not set {@link FuzzySet#degreeOfMembership} since other classes use it in
@@ -10034,7 +10023,8 @@
 			this.representativeValue = json.representativeValue;
 			this.left = json.left;
 			this.right = json.right;
-			this.uuid = json.uuid;
+
+			this._uuid = json.uuid;
 
 			return this;
 
