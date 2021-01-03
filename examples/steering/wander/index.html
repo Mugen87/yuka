@@ -55,6 +55,7 @@
 				vehicle.rotation.fromEuler( 0, 2 * Math.PI * Math.random(), 0 );
 				vehicle.position.x = 2.5 - Math.random() * 5;
 				vehicle.position.z = 2.5 - Math.random() * 5;
+				vehicle.updateWorldMatrix();
 				vehicle.setRenderComponent( vehicleMesh, sync );
 
 				const wanderBehavior = new YUKA.WanderBehavior();
