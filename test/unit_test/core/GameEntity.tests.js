@@ -42,12 +42,11 @@ describe( 'GameEntity', function () {
 			expect( entity ).to.have.a.property( 'maxTurnRate' ).that.is.equal( Math.PI );
 			expect( entity ).to.have.a.property( 'canActivateTrigger' ).that.is.true;
 
-			expect( entity ).to.have.a.property( 'manager' ).that.is.null;
-
 			expect( entity ).to.have.a.property( 'worldMatrix' ).that.is.an.instanceof( Matrix4 );
 
+			expect( entity ).to.have.a.property( 'manager' ).that.is.null;
+
 			expect( entity ).to.have.a.property( '_localMatrix' ).that.is.an.instanceof( Matrix4 );
-			expect( entity ).to.have.a.property( '_worldMatrix' ).that.is.an.instanceof( Matrix4 );
 
 			expect( entity ).to.have.a.property( '_renderComponent' ).that.is.null;
 			expect( entity ).to.have.a.property( '_renderComponentCallback' ).that.is.null;
@@ -222,6 +221,50 @@ describe( 'GameEntity', function () {
 
 	} );
 
+	describe( '#updateWorldMatrix()', function () {
+
+		it( 'should calculate a matrix that transforms the entity into world space', function () {
+
+			const entity1 = new GameEntity();
+			entity1.position.set( 1, 1, 1 );
+
+			const entity2 = new GameEntity();
+			entity2.position.set( 0, 0, 1 );
+
+			entity1.add( entity2 );
+
+			entity1.updateWorldMatrix();
+			entity2.updateWorldMatrix();
+
+			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
+
+		} );
+
+		it( 'should use its parameters to traverse the hierarchy up and down', function () {
+
+			const entity1 = new GameEntity();
+			entity1.position.set( 1, 1, 1 );
+
+			const entity2 = new GameEntity();
+			entity2.position.set( 0, 0, 1 );
+
+			const entity3 = new GameEntity();
+			entity3.position.set( 0, 1, 0 );
+
+			entity1.add( entity2 );
+			entity2.add( entity3 );
+
+			entity2.updateWorldMatrix( true, true );
+
+			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
+			expect( entity3.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 2, 1 ] );
+
+		} );
+
+	} );
+
 	describe( '#setRenderComponent()', function () {
 
 		it( 'should set the given parameters to the internal private properties', function () {
@@ -387,99 +430,9 @@ describe( 'GameEntity', function () {
 			entity.position.set( 1, 1, 1 );
 			entity.scale.set( 2, 2, 2 );
 
-			const updated = entity._updateMatrix();
+			entity._updateMatrix();
 
 			expect( entity._localMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
-			expect( updated ).to.be.true;
-
-		} );
-
-		it( 'should not compose a matrix from position, rotation and scale if not transformation properties have changed', function () {
-
-			const entity = new GameEntity();
-			entity.position.set( 1, 1, 1 );
-			entity.scale.set( 2, 2, 2 );
-
-			let updated = entity._updateMatrix();
-
-			expect( entity._localMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
-			expect( updated ).to.be.true;
-
-			updated = entity._updateMatrix();
-
-			expect( updated ).to.be.false;
-
-		} );
-
-	} );
-
-	describe( '#_updateWorldMatrix()', function () {
-
-		it( 'should calculate a matrix in world space', function () {
-
-			const entity1 = new GameEntity();
-			entity1.position.set( 1, 1, 1 );
-
-			const updated = entity1._updateWorldMatrix();
-
-			expect( entity1._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( updated ).to.be.true;
-
-		} );
-
-		it( 'should not calculate a matrix in world space if there are not changes in the local matrix', function () {
-
-			const entity1 = new GameEntity();
-			entity1.position.set( 1, 1, 1 );
-
-			let updated = entity1._updateWorldMatrix();
-
-			expect( entity1._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( updated ).to.be.true;
-
-			updated = entity1._updateWorldMatrix();
-			expect( updated ).to.be.false;
-
-		} );
-
-		it( 'should honor the transformation of parents', function () {
-
-			const entity1 = new GameEntity();
-			entity1.position.set( 1, 1, 1 );
-
-			const entity2 = new GameEntity();
-			entity2.position.set( 0, 0, 1 );
-
-			entity1.add( entity2 );
-
-			const updated = entity2._updateWorldMatrix();
-
-			expect( entity1._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( entity2._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
-			expect( updated ).to.be.true;
-
-		} );
-
-		it( 'should update an entity its world matrix if only the one of the parent changes', function () {
-
-			const entity2 = new GameEntity();
-			entity2.position.set( 0, 0, 1 );
-
-			let updated = entity2._updateWorldMatrix();
-
-			expect( entity2._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 ] );
-			expect( updated ).to.be.true;
-
-			const entity1 = new GameEntity();
-			entity1.position.set( 1, 1, 1 );
-
-			entity1.add( entity2 );
-
-			updated = entity2._updateWorldMatrix();
-
-			expect( entity1._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( entity2._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
-			expect( updated ).to.be.true;
 
 		} );
 

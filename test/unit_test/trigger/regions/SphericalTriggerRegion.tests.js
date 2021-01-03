@@ -71,6 +71,7 @@ describe( 'SphericalTriggerRegion', function () {
 
 			const trigger = new Trigger();
 			trigger.position.set( 1, 0, 0 );
+			trigger.updateWorldMatrix();
 
 			const region = new SphericalTriggerRegion( 1 );
 

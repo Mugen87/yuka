@@ -182,6 +182,7 @@ class EntityManager {
 			// update entity
 
 			entity.update( delta );
+			entity.updateWorldMatrix();
 
 			// update children
 

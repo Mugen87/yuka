@@ -111,6 +111,7 @@ describe( 'Vision', function () {
 
 			const entity = new GameEntity();
 			entity.position.set( 0, 0, - 1 );
+			entity.updateWorldMatrix();
 			const vision = new Vision( entity );
 			vision.range = 5;
 			vision.fieldOfView = Math.PI * 0.25;
