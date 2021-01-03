@@ -33,7 +33,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.3.10</span>
+            <span class="version">v0.4.0</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -236,12 +236,6 @@ class GameEntity {
 		}
 
 		return this._uuid;
-
-	}
-
-	set uuid( uuid ) {
-
-		this._uuid = uuid;
 
 	}
 
@@ -542,7 +536,6 @@ class GameEntity {
 	*/
 	fromJSON( json ) {
 
-		this.uuid = json.uuid;
 		this.name = json.name;
 		this.active = json.active;
 		this.neighborhoodRadius = json.neighborhoodRadius;
@@ -568,6 +561,8 @@ class GameEntity {
 		this._cache.scale.fromArray( json._cache.scale );
 
 		this._started = json._started;
+
+		this._uuid = json.uuid;
 
 		return this;
 
