@@ -21,7 +21,7 @@ class EntityManager {
 	constructor() {
 
 		/**
-		* A list of {@link GameEntity game entities }.
+		* A list of {@link GameEntity game entities}.
 		* @type {Array<GameEntity>}
 		* @readonly
 		*/
