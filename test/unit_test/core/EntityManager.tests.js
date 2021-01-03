@@ -165,28 +165,6 @@ describe( 'EntityManager', function () {
 
 		} );
 
-		it( 'should update the matrix and worldMatrix property of game entities', function () {
-
-			const manager = new EntityManager();
-
-			const entity1 = new GameEntity();
-			entity1.position.set( 1, 1, 1 );
-
-			const entity2 = new GameEntity();
-			entity2.position.set( 0, 0, 1 );
-
-			entity1.add( entity2 );
-			manager.add( entity1 );
-
-			manager.update();
-
-			expect( entity1._localMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( entity2._localMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 ] );
-			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
-
-		} );
-
 		it( 'should process a trigger (update region and test with other entities)', function () {
 
 			const manager = new EntityManager();

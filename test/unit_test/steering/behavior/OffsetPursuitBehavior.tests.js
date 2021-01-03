@@ -44,7 +44,6 @@ describe( 'OffsetPursuitBehavior', function () {
 
 			const leader = new Vehicle();
 			leader.position.set( 1, 1, 1 );
-			leader.updateWorldMatrix();
 
 			const offset = new Vector3( 0, 0, 2 );
 			const force = new Vector3();
