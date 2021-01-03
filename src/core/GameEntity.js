@@ -161,12 +161,17 @@ class GameEntity {
 
 		this._started = false;
 
-		// unique ID, primarily used in context of serialization/deserialization
+		//
 
 		this._uuid = null;
 
 	}
 
+	/**
+	* Unique ID, primarily used in context of serialization/deserialization.
+	* @type {String}
+	* @readonly
+	*/
 	get uuid() {
 
 		if ( this._uuid === null ) {

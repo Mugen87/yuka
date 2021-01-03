@@ -3,7 +3,7 @@
  * @license
  * The MIT License
  *
- * Copyright © 2020 Yuka authors
+ * Copyright © 2021 Yuka authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -3028,12 +3028,17 @@
 
 			this._started = false;
 
-			// unique ID, primarily used in context of serialization/deserialization
+			//
 
 			this._uuid = null;
 
 		}
 
+		/**
+		* Unique ID, primarily used in context of serialization/deserialization.
+		* @type {String}
+		* @readonly
+		*/
 		get uuid() {
 
 			if ( this._uuid === null ) {
@@ -9921,6 +9926,11 @@
 
 		}
 
+		/**
+		* Unique ID, primarily used in context of serialization/deserialization.
+		* @type {String}
+		* @readonly
+		*/
 		get uuid() {
 
 			if ( this._uuid === null ) {

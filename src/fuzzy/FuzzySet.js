@@ -61,6 +61,11 @@ class FuzzySet extends FuzzyTerm {
 
 	}
 
+	/**
+	* Unique ID, primarily used in context of serialization/deserialization.
+	* @type {String}
+	* @readonly
+	*/
 	get uuid() {
 
 		if ( this._uuid === null ) {
