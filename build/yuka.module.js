@@ -2984,13 +2984,6 @@ class GameEntity {
 		this.canActivateTrigger = true;
 
 		/**
-		* A transformation matrix representing the world space of this game entity.
-		* @type {Matrix4}
-		* @readonly
-		*/
-		this.worldMatrix = new Matrix4();
-
-		/**
 		* A reference to the entity manager of this game entity.
 		* Automatically set when added to an {@link EntityManager}.
 		* @type {EntityManager}
@@ -3004,6 +2997,10 @@ class GameEntity {
 		// local transformation matrix. no part of the public API due to caching
 
 		this._localMatrix = new Matrix4();
+
+		// internal world matrix reference (only accessible via a getter)
+
+		this._worldMatrix = new Matrix4();
 
 		// per-entity cache in order to avoid unnecessary matrix calculations
 
@@ -3025,6 +3022,23 @@ class GameEntity {
 		//
 
 		this._uuid = null;
+
+		// if set to true, it means the world matrix requires a recomputation
+
+		this._worldMatrixDirty = false;
+
+	}
+
+	/**
+	* A transformation matrix representing the world space of this game entity.
+	* @type {Matrix4}
+	* @readonly
+	*/
+	get worldMatrix() {
+
+		this._updateWorldMatrix();
+
+		return this._worldMatrix;
 
 	}
 
@@ -3177,58 +3191,6 @@ class GameEntity {
 	}
 
 	/**
-	* Updates the world matrix representing the world space.
-	*
-	* @param {Boolean} up - Whether to update the world matrices of the parents or not.
-	* @param {Boolean} down - Whether to update the world matrices of the children or not.
-	* @return {GameEntity} A reference to this game entity.
-	*/
-	updateWorldMatrix( up = false, down = false ) {
-
-		const parent = this.parent;
-		const children = this.children;
-
-		// update higher levels first
-
-		if ( up === true && parent !== null ) {
-
-			parent.updateWorldMatrix( true );
-
-		}
-
-		// update this entity
-
-		this._updateMatrix();
-
-		if ( parent === null ) {
-
-			this.worldMatrix.copy( this._localMatrix );
-
-		} else {
-
-			this.worldMatrix.multiplyMatrices( this.parent.worldMatrix, this._localMatrix );
-
-		}
-
-		// update lower levels
-
-		if ( down === true ) {
-
-			for ( let i = 0, l = children.length; i < l; i ++ ) {
-
-				const child = children[ i ];
-
-				child.updateWorldMatrix( false, true );
-
-			}
-
-		}
-
-		return this;
-
-	}
-
-	/**
 	* Sets a renderable component of a 3D engine with a sync callback for this game entity.
 	*
 	* @param {Object} renderComponent - A renderable component of a 3D engine.
@@ -3354,13 +3316,13 @@ class GameEntity {
 		this.boundingRadius = json.boundingRadius;
 		this.maxTurnRate = json.maxTurnRate;
 		this.canActivateTrigger = json.canActivateTrigger;
-		this.worldMatrix.fromArray( json.worldMatrix );
 
 		this.children = json.children.slice();
 		this.neighbors = json.neighbors.slice();
 		this.parent = json.parent;
 
 		this._localMatrix.fromArray( json._localMatrix );
+		this._worldMatrix.fromArray( json.worldMatrix );
 
 		this._cache.position.fromArray( json._cache.position );
 		this._cache.rotation.fromArray( json._cache.rotation );
@@ -3420,7 +3382,7 @@ class GameEntity {
 				cache.rotation.equals( this.rotation ) &&
 				cache.scale.equals( this.scale ) ) {
 
-			return this;
+			return;
 
 		}
 
@@ -3430,6 +3392,58 @@ class GameEntity {
 		cache.rotation.copy( this.rotation );
 		cache.scale.copy( this.scale );
 
+		this._worldMatrixDirty = true;
+
+	}
+
+	_updateWorldMatrix() {
+
+		const parent = this.parent;
+
+		if ( parent !== null ) {
+
+			parent._updateWorldMatrix();
+
+		}
+
+		this._updateMatrix();
+
+		if ( this._worldMatrixDirty === true ) {
+
+			if ( parent === null ) {
+
+				this._worldMatrix.copy( this._localMatrix );
+
+			} else {
+
+				this._worldMatrix.multiplyMatrices( this.parent._worldMatrix, this._localMatrix );
+
+			}
+
+			this._worldMatrixDirty = false;
+
+			// invalidate world matrices of children
+
+			const children = this.children;
+
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+				const child = children[ i ];
+				child._worldMatrixDirty = true;
+
+			}
+
+		}
+
+	}
+
+	// deprecated
+
+	updateWorldMatrix() {
+
+		// this warning will be removed with v1.0.0
+
+		console.warn( 'GameEntity: .updateWorldMatrix() has been removed. World matrices are automatically updated on access.' );
 		return this;
 
 	}
@@ -7693,7 +7707,7 @@ class EntityManager {
 	constructor() {
 
 		/**
-		* A list of {@link GameEntity game entities }.
+		* A list of {@link GameEntity game entities}.
 		* @type {Array<GameEntity>}
 		* @readonly
 		*/
@@ -7854,7 +7868,6 @@ class EntityManager {
 			// update entity
 
 			entity.update( delta );
-			entity.updateWorldMatrix();
 
 			// update children
 
