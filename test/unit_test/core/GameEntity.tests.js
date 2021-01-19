@@ -185,13 +185,15 @@ describe( 'GameEntity', function () {
 
 		it( 'should compute the direction of this game entity in world space', function () {
 
+			const parent = new GameEntity();
 			const entity = new GameEntity();
-			const targetDirection = new Vector3( - 1, 0, 0 );
 
-			const q = new Quaternion();
-			q.lookAt( entity.forward, targetDirection, entity.up );
+			parent.add( entity );
 
-			entity.worldMatrix.compose( new Vector3(), q, new Vector3( 1, 1, 1 ) );
+			const targetPosition = new Vector3( - 1, 0, 0 );
+
+			parent.lookAt( targetPosition );
+
 			const worldDirection = new Vector3();
 
 			entity.getWorldDirection( worldDirection );
@@ -208,58 +210,19 @@ describe( 'GameEntity', function () {
 
 		it( 'should compute the position of this game entity in world space', function () {
 
+			const parent = new GameEntity();
 			const entity = new GameEntity();
+
+			parent.add( entity );
+
 			const targetPosition = new Vector3( 1, 1, 1 );
-			entity.worldMatrix.setPosition( targetPosition );
+			parent.position.copy( targetPosition );
+
 			const worldPosition = new Vector3();
 
 			entity.getWorldPosition( worldPosition );
 
 			expect( worldPosition ).to.deep.equal( targetPosition );
-
-		} );
-
-	} );
-
-	describe( '#updateWorldMatrix()', function () {
-
-		it( 'should calculate a matrix that transforms the entity into world space', function () {
-
-			const entity1 = new GameEntity();
-			entity1.position.set( 1, 1, 1 );
-
-			const entity2 = new GameEntity();
-			entity2.position.set( 0, 0, 1 );
-
-			entity1.add( entity2 );
-
-			entity1.updateWorldMatrix();
-			entity2.updateWorldMatrix();
-
-			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
-
-		} );
-
-		it( 'should use its parameters to traverse the hierarchy up and down', function () {
-
-			const entity1 = new GameEntity();
-			entity1.position.set( 1, 1, 1 );
-
-			const entity2 = new GameEntity();
-			entity2.position.set( 0, 0, 1 );
-
-			const entity3 = new GameEntity();
-			entity3.position.set( 0, 1, 0 );
-
-			entity1.add( entity2 );
-			entity2.add( entity3 );
-
-			entity2.updateWorldMatrix( true, true );
-
-			expect( entity1.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
-			expect( entity2.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
-			expect( entity3.worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 2, 1 ] );
 
 		} );
 
@@ -433,6 +396,130 @@ describe( 'GameEntity', function () {
 			entity._updateMatrix();
 
 			expect( entity._localMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
+
+		} );
+
+		it( 'should invalidate the world matrix if an update is necessary', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+			entity.scale.set( 2, 2, 2 );
+
+			entity._updateMatrix();
+
+			expect( entity._worldMatrixDirty ).to.be.true;
+
+			entity._worldMatrixDirty = false; // reset
+
+			entity._updateMatrix();
+
+			expect( entity._worldMatrixDirty ).to.be.false;
+
+		} );
+
+	} );
+
+	describe( '#_updateWorldMatrix()', function () {
+
+		it( 'should update the local matrix of the entity', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+			entity.scale.set( 2, 2, 2 );
+
+			entity._updateWorldMatrix();
+
+			expect( entity._localMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
+
+		} );
+
+		it( 'should not recompute the world matrix if it is still valid', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+			entity.scale.set( 2, 2, 2 );
+
+			entity._updateWorldMatrix();
+
+			expect( entity._localMatrix.elements ).to.deep.equal( [ 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1 ] );
+
+			entity._updateWorldMatrix(); // does not trigger a recompute
+
+		} );
+
+		it( 'should update the world matrix with the local matrix if the game entity has no parent', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+			entity.scale.set( 2, 2, 2 );
+
+			entity._updateWorldMatrix();
+
+			expect( entity._worldMatrix.elements ).to.deep.equal( entity._localMatrix.elements );
+
+		} );
+
+		it( 'should invalidate the world matrix of children if an update is necessary', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+			entity.scale.set( 2, 2, 2 );
+
+			const child1 = new GameEntity();
+			entity.add( child1 );
+
+			const child2 = new GameEntity();
+			entity.add( child2 );
+
+			const childOfChild1 = new GameEntity();
+			child1.add( childOfChild1 );
+
+			entity._updateWorldMatrix();
+
+			expect( child1._worldMatrixDirty ).to.be.true;
+			expect( child2._worldMatrixDirty ).to.be.true;
+			expect( childOfChild1._worldMatrixDirty ).to.be.false;
+
+		} );
+
+		it( 'should update the upper hierachy of game entities to ensure a correct world matrix', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+
+			const child = new GameEntity();
+			child.position.set( 0, 0, 1 );
+			entity.add( child );
+
+			const childOfChild = new GameEntity();
+			childOfChild.position.set( 1, 0, 0 );
+			child.add( childOfChild );
+
+			childOfChild._updateWorldMatrix();
+
+			expect( entity._localMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( child._localMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 ] );
+			expect( childOfChild._localMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1 ] );
+
+			expect( entity._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1 ] );
+			expect( child._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 2, 1 ] );
+			expect( childOfChild._worldMatrix.elements ).to.deep.equal( [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1, 2, 1 ] );
+
+		} );
+
+		it( 'should update the world matrix if no changes to the local matrix happen but the dirty flag is true', function () {
+
+			const entity = new GameEntity();
+			entity.position.set( 1, 1, 1 );
+			entity.scale.set( 2, 2, 2 );
+
+			const child = new GameEntity();
+			entity.add( child );
+
+			entity._updateWorldMatrix(); // this call will set the dirty flag in child to true which forces a recompute
+			child._updateWorldMatrix();
+
+			expect( child._worldMatrix.elements ).to.deep.equal( entity._worldMatrix.elements );
 
 		} );
 
