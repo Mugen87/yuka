@@ -146,13 +146,34 @@ describe( 'GameEntity', function () {
 		it( 'should change the rotation property so the game entity directly faces the given target', function () {
 
 			const entity = new GameEntity();
-			const target = new Vector3( 0, 0, - 1 );
+			entity.position.set( - 1, 0, 0 );
+
+			const target = new Vector3( - 1, 0, - 1 );
 			entity.lookAt( target );
 
 			expect( entity.rotation.x ).to.closeTo( 0, Number.EPSILON );
 			expect( entity.rotation.y ).to.closeTo( 1, Number.EPSILON );
 			expect( entity.rotation.z ).to.closeTo( 0, Number.EPSILON );
 			expect( entity.rotation.w ).to.closeTo( 0, Number.EPSILON );
+
+		} );
+
+		it( 'should support transformed parents', function () {
+
+			const parent = new GameEntity();
+			parent.position.set( - 1, 0, 0 );
+			parent.rotation.fromEuler( 0, Math.PI * 0.5, 0 );
+
+			const entity = new GameEntity();
+			const target = new Vector3( - 1, 0, - 1 );
+
+			parent.add( entity );
+			entity.lookAt( target );
+
+			expect( entity.rotation.x ).to.closeTo( 0, Number.EPSILON );
+			expect( entity.rotation.y ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+			expect( entity.rotation.z ).to.closeTo( 0, Number.EPSILON );
+			expect( entity.rotation.w ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 
 		} );
 
@@ -176,6 +197,23 @@ describe( 'GameEntity', function () {
 			expect( entity.rotation.y ).to.closeTo( 1, Number.EPSILON );
 			expect( entity.rotation.z ).to.closeTo( 0, Number.EPSILON );
 			expect( entity.rotation.w ).to.closeTo( 0, Number.EPSILON );
+
+		} );
+
+		it( 'should support transformed parents', function () {
+
+			const parent = new GameEntity();
+			parent.rotation.fromEuler( 0, Math.PI * 0.5, 0 );
+
+			const entity = new GameEntity();
+			const target = new Vector3( 0, 0, - 1 );
+			parent.add( entity );
+
+			entity.rotateTo( target, 1 );
+			expect( entity.rotation.x ).to.closeTo( 0, Number.EPSILON );
+			expect( entity.rotation.y ).to.closeTo( 0.7071067811865475, Number.EPSILON );
+			expect( entity.rotation.z ).to.closeTo( 0, Number.EPSILON );
+			expect( entity.rotation.w ).to.closeTo( 0.7071067811865475, Number.EPSILON );
 
 		} );
 
