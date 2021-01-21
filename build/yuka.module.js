@@ -2867,6 +2867,7 @@ class Matrix4 {
 
 const targetRotation = new Quaternion();
 const targetDirection = new Vector3();
+const positionWorld = new Vector3();
 const quaternionWorld = new Quaternion();
 
 /**
@@ -3135,9 +3136,27 @@ class GameEntity {
 	*/
 	lookAt( target ) {
 
-		targetDirection.subVectors( target, this.position ).normalize();
+		const parent = this.parent;
 
-		this.rotation.lookAt( this.forward, targetDirection, this.up );
+		if ( parent !== null ) {
+
+			this.getWorldPosition( positionWorld );
+
+			targetDirection.subVectors( target, positionWorld ).normalize();
+
+			this.rotation.lookAt( this.forward, targetDirection, this.up );
+
+			quaternionWorld.extractRotationFromMatrix( parent.worldMatrix ).inverse();
+
+			this.rotation.premultiply( quaternionWorld );
+
+		} else {
+
+			targetDirection.subVectors( target, this.position ).normalize();
+
+			this.rotation.lookAt( this.forward, targetDirection, this.up );
+
+		}
 
 		return this;
 
@@ -3155,8 +3174,27 @@ class GameEntity {
 	*/
 	rotateTo( target, delta, tolerance = 0.0001 ) {
 
-		targetDirection.subVectors( target, this.position ).normalize();
-		targetRotation.lookAt( this.forward, targetDirection, this.up );
+		const parent = this.parent;
+
+		if ( parent !== null ) {
+
+			this.getWorldPosition( positionWorld );
+
+			targetDirection.subVectors( target, positionWorld ).normalize();
+
+			targetRotation.lookAt( this.forward, targetDirection, this.up );
+
+			quaternionWorld.extractRotationFromMatrix( parent.worldMatrix ).inverse();
+
+			targetRotation.premultiply( quaternionWorld );
+
+		} else {
+
+			targetDirection.subVectors( target, this.position ).normalize();
+
+			targetRotation.lookAt( this.forward, targetDirection, this.up );
+
+		}
 
 		return this.rotation.rotateTo( targetRotation, this.maxTurnRate * delta, tolerance );
 
