@@ -2,7 +2,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import * as THREE from '../../../lib/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.109/build/three.module.js';
 
 function createGraphHelper( graph, nodeSize = 1, nodeColor = 0x4e84c4, edgeColor = 0xffffff ) {
 
