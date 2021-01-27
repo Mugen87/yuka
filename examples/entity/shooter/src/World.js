@@ -3,7 +3,7 @@
  */
 
 import * as YUKA from '../../../../build/yuka.module.js';
-import * as THREE from '../../../lib/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.109/build/three.module.js';
 import { AssetManager } from './AssetManager.js';
 import { Bullet } from './Bullet.js';
 import { Ground } from './Ground.js';
