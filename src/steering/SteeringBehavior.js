@@ -72,7 +72,7 @@ class SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {SteeringBehavior} A reference to this steering behavior.
 	*/
 	resolveReferences( /* entities */ ) {}

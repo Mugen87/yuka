@@ -283,7 +283,7 @@ class StateMachine {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {StateMachine} A reference to this state machine.
 	*/
 	resolveReferences( entities ) {

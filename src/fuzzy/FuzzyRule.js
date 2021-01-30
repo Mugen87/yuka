@@ -91,7 +91,7 @@ class FuzzyRule {
 	* Restores this instance from the given JSON object.
 	*
 	* @param {Object} json - The JSON object.
-	* @param {Map} fuzzySets - Maps fuzzy sets to UUIDs.
+	* @param {Map<String,FuzzySet>} fuzzySets - Maps fuzzy sets to UUIDs.
 	* @return {FuzzyRule} A reference to this fuzzy rule.
 	*/
 	fromJSON( json, fuzzySets ) {

@@ -123,7 +123,7 @@ class EvadeBehavior extends SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {EvadeBehavior} A reference to this behavior.
 	*/
 	resolveReferences( entities ) {

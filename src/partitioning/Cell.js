@@ -137,7 +137,7 @@ class Cell {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {Cell} A reference to this cell.
 	*/
 	resolveReferences( entities ) {

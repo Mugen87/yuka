@@ -326,7 +326,7 @@ class SteeringManager {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {SteeringManager} A reference to this steering manager.
 	*/
 	resolveReferences( entities ) {

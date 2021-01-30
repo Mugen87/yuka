@@ -362,7 +362,7 @@ class CellSpacePartitioning {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {CellSpacePartitioning} A reference to this cell space portioning.
 	*/
 	resolveReferences( entities ) {

@@ -516,7 +516,7 @@ class GameEntity {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {GameEntity} A reference to this game entity.
 	*/
 	resolveReferences( entities ) {

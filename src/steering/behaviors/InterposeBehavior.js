@@ -135,7 +135,7 @@ class InterposeBehavior extends SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {InterposeBehavior} A reference to this behavior.
 	*/
 	resolveReferences( entities ) {

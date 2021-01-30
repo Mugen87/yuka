@@ -89,7 +89,7 @@ class Telegram {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {Telegram} A reference to this telegram.
 	*/
 	resolveReferences( entities ) {

@@ -116,7 +116,7 @@ class Telegram {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {Telegram} A reference to this telegram.
 	*/
 	resolveReferences( entities ) {
@@ -366,7 +366,7 @@ class MessageDispatcher {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {MessageDispatcher} A reference to this message dispatcher.
 	*/
 	resolveReferences( entities ) {
@@ -3377,7 +3377,7 @@ class GameEntity {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {GameEntity} A reference to this game entity.
 	*/
 	resolveReferences( entities ) {
@@ -3715,7 +3715,7 @@ class SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {SteeringBehavior} A reference to this steering behavior.
 	*/
 	resolveReferences( /* entities */ ) {}
@@ -4298,7 +4298,7 @@ class EvadeBehavior extends SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {EvadeBehavior} A reference to this behavior.
 	*/
 	resolveReferences( entities ) {
@@ -4717,7 +4717,7 @@ class InterposeBehavior extends SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {InterposeBehavior} A reference to this behavior.
 	*/
 	resolveReferences( entities ) {
@@ -6172,7 +6172,7 @@ class ObstacleAvoidanceBehavior extends SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {ObstacleAvoidanceBehavior} A reference to this behavior.
 	*/
 	resolveReferences( entities ) {
@@ -6312,7 +6312,7 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {OffsetPursuitBehavior} A reference to this behavior.
 	*/
 	resolveReferences( entities ) {
@@ -6461,7 +6461,7 @@ class PursuitBehavior extends SteeringBehavior {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {PursuitBehavior} A reference to this behavior.
 	*/
 	resolveReferences( entities ) {
@@ -6990,7 +6990,7 @@ class SteeringManager {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {SteeringManager} A reference to this steering manager.
 	*/
 	resolveReferences( entities ) {
@@ -7311,7 +7311,7 @@ class Vehicle extends MovingEntity {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {Vehicle} A reference to this vehicle.
 	*/
 	resolveReferences( entities ) {
@@ -9177,7 +9177,7 @@ class State {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {State} A reference to this state.
 	*/
 	resolveReferences( /* entities */ ) {}
@@ -9479,7 +9479,7 @@ class StateMachine {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {StateMachine} A reference to this state machine.
 	*/
 	resolveReferences( entities ) {
@@ -10985,7 +10985,7 @@ class FuzzyRule {
 	* Restores this instance from the given JSON object.
 	*
 	* @param {Object} json - The JSON object.
-	* @param {Map} fuzzySets - Maps fuzzy sets to UUIDs.
+	* @param {Map<String,FuzzySet>} fuzzySets - Maps fuzzy sets to UUIDs.
 	* @return {FuzzyRule} A reference to this fuzzy rule.
 	*/
 	fromJSON( json, fuzzySets ) {
@@ -11746,7 +11746,7 @@ class Goal {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {Goal} A reference to this goal.
 	*/
 	resolveReferences( entities ) {
@@ -11989,7 +11989,7 @@ class CompositeGoal extends Goal {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {CompositeGoal} A reference to this composite goal.
 	*/
 	resolveReferences( entities ) {
@@ -19454,7 +19454,7 @@ class Cell {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {Cell} A reference to this cell.
 	*/
 	resolveReferences( entities ) {
@@ -19833,7 +19833,7 @@ class CellSpacePartitioning {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {CellSpacePartitioning} A reference to this cell space portioning.
 	*/
 	resolveReferences( entities ) {
@@ -19940,7 +19940,7 @@ class MemoryRecord {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {MemoryRecord} A reference to this memory record.
 	*/
 	resolveReferences( entities ) {
@@ -20157,7 +20157,7 @@ class MemorySystem {
 	/**
 	* Restores UUIDs with references to GameEntity objects.
 	*
-	* @param {Map} entities - Maps game entities to UUIDs.
+	* @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	* @return {MemorySystem} A reference to this memory system.
 	*/
 	resolveReferences( entities ) {
@@ -20372,7 +20372,7 @@ class Vision {
 	/**
 	 * Restores UUIDs with references to GameEntity objects.
 	 *
-	 * @param {Map} entities - Maps game entities to UUIDs.
+	 * @param {Map<String,GameEntity>} entities - Maps game entities to UUIDs.
 	 * @return {Vision} A reference to this vision.
 	 */
 	resolveReferences( entities ) {
