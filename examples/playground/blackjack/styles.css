@@ -1,0 +1,114 @@
+#container {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(4, 1fr);
+	width: 100vw;
+	height: 100vh;
+	background-color: #004300;
+}
+
+#status {
+	grid-column: span 3;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #ffffff;
+}
+
+#dealer-cards {
+	grid-column: span 3;
+}
+
+.cards {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.card {
+	position: relative;
+	height: 10rem;
+	width: 6rem;
+	border: 1px solid black;
+	border-radius: 0.5rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 3rem;
+	background-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+	.cards {
+		gap: 0.1rem;
+	}
+	.card {
+		height: 5rem;
+		width: 3rem;
+		font-size: 1.5rem;
+	}
+}
+
+.card.red {
+	color: #ff0000;
+}
+
+.card.black {
+	color: #000000;
+}
+
+.card::before,
+.card::after {
+	position: absolute;
+	content: attr(data-value);
+	font-size: 0.75rem;
+}
+
+.card::before {
+	top: 0.5rem;
+	left: 0.5rem;
+}
+
+.card::after {
+	bottom: 0.5rem;
+	right: 0.5rem;
+	transform: rotate(180deg);
+}
+
+#buttons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+button {
+	height: 2rem;
+	width: 6rem;
+	color: #ffffff;
+	background: transparent;
+	outline: 1px solid #ffffff;
+	border: 0;
+	cursor: pointer;
+}
+
+@media (max-width: 768px) {
+	button {
+		height: 1rem;
+		width: 3rem;
+		font-size: 0.5rem;
+	}
+}
+
+button.disabled {
+	opacity: 0.25;
+	pointer-events: none;
+}
+
+#wins {
+	color: #ffffff;
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+}

@@ -1,0 +1,293 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Blackjack</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
+		<link rel="stylesheet" type="text/css" href="./styles.css">
+		<link rel="shortcut icon" type="image/x-icon" href="https://mugen87.github.io/yuka/favicon.ico">
+	</head>
+<body>
+
+	<div id="container">
+		<div id="dealer-cards" class="cards"></div>
+
+		<div id="status"></div>
+
+		<div id="ai-cards" class="cards"></div>
+		<div></div>
+		<div id="human-cards" class="cards"></div>
+
+		<div></div>
+		<div></div>
+		<div id="buttons">
+			<button id="button-stick" type="button">Stick</button>
+			<button id="button-hit" type="button">Hit</button>
+			<button id="button-restart" type="button">Restart</button>
+		</div>
+	</div>
+
+	<div id="wins">
+		<div>AI wins: <span id="ai-wins"></span><div>
+		<div>Human wins: <span id="human-wins"></span><div>
+	</div>
+
+	<script type="module">
+
+	import { ACTIONS } from './src/monteCarloSimulation/BlackjackEnvironment.js';
+
+	import Deck from './src/game/Deck.js';
+	import Player from './src/game/Player.js';
+	import AI from './src/game/AI.js';
+
+	const PLAYERS = Object.freeze( {
+		HUMAN: 0,
+		AI: 1,
+		DEALER: 2
+	} );
+
+	let activePlayer = PLAYERS.HUMAN;
+	let gameOver = false;
+
+	let deck, dealer, ai, human;
+
+	let humanWins = 0;
+	let aiWins = 0;
+
+	init();
+
+	function init() {
+
+		deck = new Deck();
+		deck.shuffle();
+
+		dealer = new Player();
+		ai = new AI( dealer );
+		human = new Player();
+
+		dealCards();
+
+		const buttonStick = document.querySelector( '#button-stick' );
+		const buttonHit = document.querySelector( '#button-hit' );
+		const buttonRestart = document.querySelector( '#button-restart' );
+
+		buttonStick.addEventListener( 'pointerup', () => {
+
+			activePlayer = PLAYERS.AI;
+
+			updateGame();
+
+		} );
+
+		buttonHit.addEventListener( 'pointerup', () => {
+
+			human.addCard( deck.nextCard() );
+
+			updateGame();
+
+		} );
+
+		buttonRestart.addEventListener( 'pointerup', () => {
+
+			gameOver = false;
+
+			activePlayer = PLAYERS.HUMAN;
+
+			dealCards();
+
+			updateGame();
+
+		} );
+
+		updateGame();
+
+	}
+
+	function dealCards() {
+
+		deck.shuffle();
+
+		dealer.reset();
+		ai.reset();
+		human.reset();
+
+		dealer.addCard( deck.nextCard() );
+
+		ai.addCard( deck.nextCard() );
+		ai.addCard( deck.nextCard() );
+
+		human.addCard( deck.nextCard() );
+		human.addCard( deck.nextCard() );
+
+	}
+
+	function updateGame() {
+
+		// human
+
+		if ( activePlayer === PLAYERS.HUMAN ) {
+
+			if ( human.isBust() || human.getSum() === 21 ) {
+
+				activePlayer = PLAYERS.AI;
+
+			}
+
+		}
+
+		// ai
+
+		if ( activePlayer === PLAYERS.AI ) {
+
+			while ( true ) {
+
+				const action = ai.getAction();
+
+				if ( action === ACTIONS.STICK ) {
+
+					activePlayer = PLAYERS.DEALER;
+					break;
+
+				} else if ( action === ACTIONS.HIT ) {
+
+					ai.addCard( deck.nextCard() );
+
+				}
+
+				if ( ai.isBust() ) {
+
+					activePlayer = PLAYERS.DEALER;
+					break;
+
+				}
+
+			}
+
+		}
+
+		// dealer
+
+		if ( activePlayer === PLAYERS.DEALER ) {
+
+			while ( dealer.getSum() < 17 ) {
+
+				dealer.addCard( deck.nextCard() );
+
+			}
+
+			gameOver = true;
+
+		}
+
+		updateUI();
+
+	}
+
+	function updateUI() {
+
+		const dealerCards = document.querySelector( '#dealer-cards' );
+		const aiCards = document.querySelector( '#ai-cards' );
+		const humanCards = document.querySelector( '#human-cards' );
+
+		updateCards( dealer, dealerCards );
+		updateCards( ai, aiCards );
+		updateCards( human, humanCards );
+
+		const status = document.querySelector( '#status' );
+		const buttonStick = document.querySelector( '#button-stick' );
+		const buttonHit = document.querySelector( '#button-hit' );
+
+		if ( activePlayer === PLAYERS.HUMAN ) {
+
+			buttonStick.classList.remove( 'disabled' );
+			buttonHit.classList.remove( 'disabled' );
+			status.innerText = 'Your turn!';
+
+		} else if ( activePlayer === PLAYERS.AI ) {
+
+			buttonStick.classList.add( 'disabled' );
+			buttonHit.classList.add( 'disabled' );
+			status.innerText = 'AI turn!';
+
+		}	else if ( activePlayer === PLAYERS.DEALER ) {
+
+			buttonStick.classList.add( 'disabled' );
+			buttonHit.classList.add( 'disabled' );
+			status.innerText = 'Dealer turn!';
+
+		}
+
+		//
+
+		if ( gameOver ) {
+
+			// human
+
+			if ( human.isBust() ) {
+
+				status.innerText = 'You loose!';
+
+			} else if ( human.getSum() === dealer.getSum() ) {
+
+				status.innerText = 'Draw!';
+
+			} else if ( human.getSum() > dealer.getSum() || dealer.isBust() ) {
+
+				status.innerText = 'You win!';
+				humanWins ++;
+
+			} else {
+
+				status.innerText = 'You loose!';
+
+			}
+
+			// ai
+
+			if ( ai.isBust() ) {
+
+				status.innerText += ' AI looses!';
+
+			} else if ( ai.getSum() === dealer.getSum() ) {
+
+				status.innerText += ' AI Draw!';
+
+			} else if ( ai.getSum() > dealer.getSum() || dealer.isBust() ) {
+
+				status.innerText += ' AI wins!';
+				aiWins ++;
+
+			} else {
+
+				status.innerText += ' AI looses!';
+
+			}
+
+		}
+
+		const aiWinsElement = document.querySelector( '#ai-wins' );
+		const humanWinsElement = document.querySelector( '#human-wins' );
+
+		aiWinsElement.innerText = aiWins;
+		humanWinsElement.innerText = humanWins;
+
+	}
+
+	function updateCards( player, domElement ) {
+
+		domElement.innerHTML = '';
+
+		const cards = player.getCards();
+
+		for ( const card of cards ) {
+
+			domElement.appendChild( card.getMarkup() );
+
+		}
+
+	}
+
+	</script>
+
+</body>
+</html>
