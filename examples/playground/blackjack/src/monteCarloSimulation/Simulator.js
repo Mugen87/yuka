@@ -13,7 +13,6 @@ class Simulator {
 
 		this.env = env;
 		this.episodes = episodes;
-		this.gamma = 1;
 
 	}
 
@@ -31,7 +30,7 @@ class Simulator {
 
 			const episode = playEpisode( env );
 
-			updateQ( N, Q, R, episode, this.gamma );
+			updateQ( N, Q, R, episode );
 
 		}
 
@@ -102,30 +101,22 @@ function playEpisode( env ) {
 
 }
 
-function updateQ( N, Q, R, episode, gamma ) {
+function updateQ( N, Q, R, episode ) {
 
-	const stateActionPairs = new Set();
+	let G = 0;
 
-	for ( let t = 0; t < episode.length; t ++ ) {
+	for ( let t = episode.length - 1; t >= 0; t -- ) {
 
 		const { state, action, reward } = episode[ t ];
 
 		const key = state[ 0 ] + '-' + state[ 1 ] + '-' + Number( state[ 2 ] ) + '-' + action;
 
-		// Using first-visit MC. Note that in Blackjack the same state never recurs within one episode,
-		// so there is no difference between first-visit and every-visit MC.
+		G += reward;
 
-		if ( stateActionPairs.has( key ) === false ) {
+		N[ key ] += 1;
+		R[ key ] += G;
+		Q[ key ] = R[ key ] / N[ key ];
 
-			stateActionPairs.add( key );
-
-			const G = reward * Math.pow( gamma, t );
-
-			N[ key ] += 1;
-			R[ key ] += G;
-			Q[ key ] = R[ key ] / N[ key ];
-
-		}
 
 	}
 
