@@ -1,5 +1,3 @@
-import { MathUtils } from '../../../../../build/yuka.module.js';
-
 import { BlackjackEnvironment, ACTIONS } from '../monteCarloSimulation/BlackjackEnvironment.js';
 import Simulator from '../monteCarloSimulation/Simulator.js';
 
@@ -18,12 +16,12 @@ class AI extends Player {
 
 		this.dealer = dealer;
 
-		const env = new BlackjackEnvironment( MathUtils );
+		const env = new BlackjackEnvironment();
 		const episodes = 1000000;
 
 		const mcs = new Simulator( env, episodes );
 
-		this.q = mcs.predict();
+		this.policy = mcs.predict();
 
 	}
 
@@ -42,13 +40,7 @@ class AI extends Player {
 
 			const state = sum + '-' + ( sumDealer === 11 ? 1 : sumDealer ) + '-' + Number( usableAce );
 
-			const actions = this.q[ state ];
-
-			const stickProb = actions[ ACTIONS.STICK ];
-			const hitProb = actions[ ACTIONS.HIT ];
-
-			return ( hitProb > stickProb ) ? ACTIONS.HIT : ACTIONS.STICK;
-
+			return this.policy[ state ];
 
 		}
 

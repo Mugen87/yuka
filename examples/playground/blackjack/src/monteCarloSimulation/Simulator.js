@@ -37,9 +37,33 @@ class Simulator {
 
 		}
 
-		return Q;
+		return getBestPolicy( Q );
 
 	}
+
+}
+
+function getBestAction( actionValues ) {
+
+	return actionValues.indexOf( Math.max( ...actionValues ) );
+
+}
+
+function getBestPolicy( Q ) {
+
+	const policy = {};
+
+	for ( const key in Q ) {
+
+		const actionValues = Q[ key ];
+
+		const bestAction = getBestAction( actionValues );
+
+		policy[ key ] = bestAction;
+
+	}
+
+	return policy;
 
 }
 
@@ -57,7 +81,7 @@ function getProbabilities( Q, state, epsilon, nA ) {
 
 	const probabilities = actionValues.map( () => epsilon / nA );
 
-	const bestAction = actionValues.indexOf( Math.max( ...actionValues ) );
+	const bestAction = getBestAction( actionValues );
 
 	probabilities[ bestAction ] = 1 - epsilon + ( epsilon / nA );
 
@@ -120,7 +144,7 @@ function updateQ( env, episode, Q, alpha ) {
 
 		G += reward;
 
-		Q[ key ][ action ] = Q[ key ][ action ] + alpha * ( G - Q[ key ][ action ] );
+		Q[ key ][ action ] += alpha * ( G - Q[ key ][ action ] );
 
 	}
 
