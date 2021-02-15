@@ -1,9 +1,5 @@
-import { ACTIONS } from './BlackjackEnvironment.js';
-
 /**
 * Implementation of a Monte Carlo simulation for Blackjack.
-*
-* Reference: Reinforcement Learning - An Introduction (Chapter 5.1 Monte Carlo Prediction)
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -14,23 +10,30 @@ class Simulator {
 		this.env = env;
 		this.episodes = episodes;
 
+		this.alpha = 0.001;
+
+		this.minEpsilon = 0.01;
+		this.decay = 0.9999;
+
+		this.epsilon = 1;
+
 	}
 
 	predict() {
 
 		const env = this.env;
 
-		const N = {}; // holds the amount of times a state/action pair has been visited
-		const Q = {}; // the value of that state/action pair
-		const R = {}; // the amount of returns that state/action pair has received
+		const Q = {};
 
-		init( N, Q, R, env );
+		init( Q, env );
 
 		for ( let i = 0; i < this.episodes; i ++ ) {
 
-			const episode = playEpisode( env );
+			this.epsilon = Math.max( this.epsilon * this.decay, this.minEpsilon );
 
-			updateQ( N, Q, R, episode );
+			const episode = playEpisode( env, Q, this.epsilon );
+
+			updateQ( env, episode, Q, this.alpha );
 
 		}
 
@@ -40,52 +43,56 @@ class Simulator {
 
 }
 
-function init( N, Q, R, env ) {
+function getKey( state ) {
+
+	return state[ 0 ] + '-' + state[ 1 ] + '-' + Number( state[ 2 ] );
+
+}
+
+function getProbabilities( Q, state, epsilon, nA ) {
+
+	const key = getKey( state );
+
+	const actionValues = Q[ key ];
+
+	const probabilities = actionValues.map( () => epsilon / nA );
+
+	const bestAction = actionValues.indexOf( Math.max( ...actionValues ) );
+
+	probabilities[ bestAction ] = 1 - epsilon + ( epsilon / nA );
+
+	return probabilities;
+
+}
+
+function init( Q, env ) {
 
 	const actionSpace = env.actionSpace;
 	const observationSpace = env.observationSpace;
 
+	// initialize all state-action pairs with 0
+
 	for ( let i = 0; i < observationSpace.length; i ++ ) {
 
 		const state = observationSpace[ i ];
-
-		for ( let i = 0; i < actionSpace.length; i ++ ) {
-
-			const action = actionSpace[ i ];
-			const key = state + '-' + action;
-
-			N[ key ] = 0;
-			Q[ key ] = 0;
-			R[ key ] = 0;
-
-		}
+		Q[ state ] = actionSpace.map( () => 0 );
 
 	}
 
 }
 
-function playEpisode( env ) {
+function playEpisode( env, Q, epsilon ) {
 
 	const episode = [];
+	const nA = env.actionSpace.length;
 
 	let currentState = env.reset();
 
 	while ( true ) {
 
-		// policy: if the player's hand is greater or equal 18, stick with a probability of 80% else hit with a probability of 80%
-		// NOTE: (the code could approximate an optimal policy via MC Control)
+		const probabilities = getProbabilities( Q, currentState, epsilon, nA );
 
-		let action;
-
-		if ( currentState[ 0 ] > 18 ) {
-
-			action = Math.random() <= 0.8 ? ACTIONS.STICK : ACTIONS.HIT;
-
-		} else {
-
-			action = Math.random() <= 0.8 ? ACTIONS.HIT : ACTIONS.STICK;
-
-		}
+		const action = env.sampleAction( probabilities );
 
 		const { state, reward, done } = env.step( action );
 
@@ -101,7 +108,7 @@ function playEpisode( env ) {
 
 }
 
-function updateQ( N, Q, R, episode ) {
+function updateQ( env, episode, Q, alpha ) {
 
 	let G = 0;
 
@@ -109,14 +116,11 @@ function updateQ( N, Q, R, episode ) {
 
 		const { state, action, reward } = episode[ t ];
 
-		const key = state[ 0 ] + '-' + state[ 1 ] + '-' + Number( state[ 2 ] ) + '-' + action;
+		const key = getKey( state );
 
 		G += reward;
 
-		N[ key ] += 1;
-		R[ key ] += G;
-		Q[ key ] = R[ key ] / N[ key ];
-
+		Q[ key ][ action ] = Q[ key ][ action ] + alpha * ( G - Q[ key ][ action ] );
 
 	}
 

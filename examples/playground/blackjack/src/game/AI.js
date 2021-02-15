@@ -30,16 +30,28 @@ class AI extends Player {
 	getAction() {
 
 		const sum = this.getSum();
-		const usableAce = this.hasUsableAce();
-		const sumDealer = this.dealer.getSum();
 
-		const keyStick = sum + '-' + sumDealer + '-' + Number( usableAce ) + '-' + ACTIONS.STICK;
-		const keyHit = sum + '-' + sumDealer + '-' + Number( usableAce ) + '-' + ACTIONS.HIT;
+		if ( sum < 12 ) {
 
-		const stickProb = this.q[ keyStick ];
-		const hitProb = this.q[ keyHit ];
+			return ACTIONS.HIT;
 
-		return ( hitProb > stickProb ) ? ACTIONS.HIT : ACTIONS.STICK;
+		} else {
+
+			const usableAce = this.hasUsableAce();
+			const sumDealer = this.dealer.getSum();
+
+			const state = sum + '-' + ( sumDealer === 11 ? 1 : sumDealer ) + '-' + Number( usableAce );
+
+			const actions = this.q[ state ];
+
+			const stickProb = actions[ ACTIONS.STICK ];
+			const hitProb = actions[ ACTIONS.HIT ];
+
+			return ( hitProb > stickProb ) ? ACTIONS.HIT : ACTIONS.STICK;
+
+
+		}
+
 
 	}
 

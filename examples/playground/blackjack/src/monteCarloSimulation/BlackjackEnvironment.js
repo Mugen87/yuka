@@ -32,6 +32,25 @@ class BlackjackEnvironment {
 
 	}
 
+	sampleAction( probabilities ) {
+
+		const random = Math.random();
+		let probability = 0;
+
+		// produces a random sample from a non-uniform distribution
+
+		const result = this.actionSpace.map( ( action, index ) => {
+
+			probability += probabilities[ index ];
+
+			return { action: action, probability: probability };
+
+		} ).find( ( action ) => action.probability >= random );
+
+		return result.action;
+
+	}
+
 	step( action ) {
 
 		const player = this.player;
@@ -187,8 +206,8 @@ function sumHand( hand ) {
 }
 
 const ACTIONS = Object.freeze( {
-	STICK: '0',
-	HIT: '1'
+	STICK: 0,
+	HIT: 1
 } );
 
 export { BlackjackEnvironment, ACTIONS };
