@@ -125,9 +125,9 @@ function drawCard() {
 
 }
 
-function drawHand( math ) {
+function drawHand() {
 
-	return [ drawCard( math ), drawCard( math ) ];
+	return [ drawCard(), drawCard() ];
 
 }
 
