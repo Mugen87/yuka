@@ -1,6 +1,8 @@
 /**
 * Implementation of a Monte Carlo simulation for Blackjack.
 *
+* Used Algorithm: First-Visit Constant-α GLIE MC Control.
+*
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
 class Simulator {
@@ -10,12 +12,11 @@ class Simulator {
 		this.env = env;
 		this.episodes = episodes;
 
-		this.alpha = 0.001;
-
-		this.minEpsilon = 0.01;
-		this.decay = 0.9999;
+		this.alpha = 0.001; // constant-α / learning rate
 
 		this.epsilon = 1;
+		this.minEpsilon = 0.01;
+		this.decay = 0.9999;
 
 	}
 
@@ -28,6 +29,10 @@ class Simulator {
 		init( Q, env );
 
 		for ( let i = 0; i < this.episodes; i ++ ) {
+
+			// The implementation starts with a large epsilon so action selection will focus on
+			// exploration. By playing more episodes, the epsilon will decrease and the probability
+			// of taking the best action will increase (focus on exploitation).
 
 			this.epsilon = Math.max( this.epsilon * this.decay, this.minEpsilon );
 
@@ -114,9 +119,16 @@ function playEpisode( env, Q, epsilon ) {
 
 	while ( true ) {
 
-		const probabilities = getProbabilities( Q, currentState, epsilon, nA );
+		// Notes about policies:
+		//
+		// 1. Action selection is based on a ε-soft policies (meaning they selects all actions in all states with nonzero probability).
+		// 2. The policies are ε-greedy (meaning most of the time they choose an action that has maximal estimated action value,
+		//    but with probability ε they instead select an action at random).
 
+		const probabilities = getProbabilities( Q, currentState, epsilon, nA );
 		const action = env.sampleAction( probabilities );
+
+		// When the action was sampled, interact with the environment and generate new episode
 
 		const { state, reward, done } = env.step( action );
 
