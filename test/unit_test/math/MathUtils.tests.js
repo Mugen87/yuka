@@ -13,6 +13,37 @@ const Vector3 = YUKA.Vector3;
 
 describe( 'Math', function () {
 
+	describe( '#choice()', function () {
+
+		it( 'should return a random sample from a given array assuming uniform distribution', function () {
+
+			const values = [ 'a', 'b', 'c', 'd' ];
+
+			expect( values ).to.include( MathUtils.choice( values ) );
+			expect( values ).to.include( MathUtils.choice( values ) );
+			expect( values ).to.include( MathUtils.choice( values ) );
+			expect( values ).to.include( MathUtils.choice( values ) );
+
+		} );
+
+		it( 'should return a random sample from a given array assuming non-uniform distribution', function () {
+
+			const values = [ 'a', 'b', 'c', 'd' ];
+
+			const probabilities1 = [ 1, 0, 0, 0 ];
+			const probabilities2 = [ 0, 1, 0, 0 ];
+			const probabilities3 = [ 0, 0, 1, 0 ];
+			const probabilities4 = [ 0, 0, 0, 1 ];
+
+			expect( MathUtils.choice( values, probabilities1 ) ).to.equal( 'a' );
+			expect( MathUtils.choice( values, probabilities2 ) ).to.equal( 'b' );
+			expect( MathUtils.choice( values, probabilities3 ) ).to.equal( 'c' );
+			expect( MathUtils.choice( values, probabilities4 ) ).to.equal( 'd' );
+
+		} );
+
+	} );
+
 	describe( '#clamp()', function () {
 
 		it( 'should clamp a number between two values', function () {

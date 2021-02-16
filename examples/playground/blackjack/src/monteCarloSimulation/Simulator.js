@@ -1,3 +1,5 @@
+import { MathUtils } from '../../../../../build/yuka.module.js';
+
 /**
 * Implementation of a Monte Carlo simulation for Blackjack.
 *
@@ -113,7 +115,8 @@ function init( Q, env ) {
 function playEpisode( env, Q, epsilon ) {
 
 	const episode = [];
-	const nA = env.actionSpace.length;
+	const actionSpace = env.actionSpace;
+	const nA = actionSpace.length;
 
 	let currentState = env.reset();
 
@@ -126,7 +129,7 @@ function playEpisode( env, Q, epsilon ) {
 		//    but with probability ε they instead select an action at random).
 
 		const probabilities = getProbabilities( Q, currentState, epsilon, nA );
-		const action = env.sampleAction( probabilities );
+		const action = MathUtils.choice( actionSpace, probabilities );
 
 		// When the action was sampled, interact with the environment and generate new episode
 

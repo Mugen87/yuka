@@ -408,6 +408,39 @@
 	class MathUtils {
 
 		/**
+		* Returns a random sample from a given array.
+		*
+		* @param {Array<Any>} array - The array that is used to generate the random sample.
+		* @param {Array<Number>} probabilities - The probabilities associated with each entry. If not given, the sample assumes a uniform distribution over all entries.
+		* @return {Any} The random sample value.
+		*/
+		static choice( array, probabilities = null ) {
+
+			const random = Math.random();
+
+			if ( probabilities === null ) {
+
+				return array[ Math.floor( Math.random() * array.length ) ];
+
+			} else {
+
+				let probability = 0;
+
+				const index = array.map( ( value, index ) => {
+
+					probability += probabilities[ index ];
+
+					return probability;
+
+				} ).findIndex( ( probability ) => probability >= random );
+
+				return array[ index ];
+
+			}
+
+		}
+
+		/**
 		* Ensures the given scalar value is within a given min/max range.
 		*
 		* @param {Number} value - The value to clamp.
