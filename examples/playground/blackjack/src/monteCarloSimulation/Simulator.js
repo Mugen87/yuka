@@ -1,9 +1,9 @@
-import { ACTIONS } from './BlackjackEnvironment.js';
+import { MathUtils } from '../../../../../build/yuka.module.js';
 
 /**
 * Implementation of a Monte Carlo simulation for Blackjack.
 *
-* Reference: Reinforcement Learning - An Introduction (Chapter 5.1 Monte Carlo Prediction)
+* Used Algorithm: First-Visit Constant-α GLIE MC Control.
 *
 * @author {@link https://github.com/Mugen87|Mugen87}
 */
@@ -13,7 +13,12 @@ class Simulator {
 
 		this.env = env;
 		this.episodes = episodes;
-		this.gamma = 1;
+
+		this.alpha = 0.001; // constant-α / learning rate
+
+		this.epsilon = 1;
+		this.minEpsilon = 0.01;
+		this.decay = 0.9999;
 
 	}
 
@@ -21,72 +26,112 @@ class Simulator {
 
 		const env = this.env;
 
-		const N = {}; // holds the amount of times a state/action pair has been visited
-		const Q = {}; // the value of that state/action pair
-		const R = {}; // the amount of returns that state/action pair has received
+		const Q = {};
 
-		init( N, Q, R, env );
+		init( Q, env );
 
 		for ( let i = 0; i < this.episodes; i ++ ) {
 
-			const episode = playEpisode( env );
+			// The implementation starts with a large epsilon so action selection will focus on
+			// exploration. By playing more episodes, the epsilon will decrease and the probability
+			// of taking the best action will increase (focus on exploitation).
 
-			updateQ( N, Q, R, episode, this.gamma );
+			this.epsilon = Math.max( this.epsilon * this.decay, this.minEpsilon );
+
+			const episode = playEpisode( env, Q, this.epsilon );
+
+			updateQ( env, episode, Q, this.alpha );
 
 		}
 
-		return Q;
+		return getBestPolicy( Q );
 
 	}
 
 }
 
-function init( N, Q, R, env ) {
+function getBestAction( actionValues ) {
+
+	return actionValues.indexOf( Math.max( ...actionValues ) );
+
+}
+
+function getBestPolicy( Q ) {
+
+	const policy = {};
+
+	for ( const key in Q ) {
+
+		const actionValues = Q[ key ];
+
+		const bestAction = getBestAction( actionValues );
+
+		policy[ key ] = bestAction;
+
+	}
+
+	return policy;
+
+}
+
+function getKey( state ) {
+
+	return state[ 0 ] + '-' + state[ 1 ] + '-' + Number( state[ 2 ] );
+
+}
+
+function getProbabilities( Q, state, epsilon, nA ) {
+
+	const key = getKey( state );
+
+	const actionValues = Q[ key ];
+
+	const probabilities = actionValues.map( () => epsilon / nA );
+
+	const bestAction = getBestAction( actionValues );
+
+	probabilities[ bestAction ] = 1 - epsilon + ( epsilon / nA );
+
+	return probabilities;
+
+}
+
+function init( Q, env ) {
 
 	const actionSpace = env.actionSpace;
 	const observationSpace = env.observationSpace;
 
+	// initialize all state-action pairs with 0
+
 	for ( let i = 0; i < observationSpace.length; i ++ ) {
 
 		const state = observationSpace[ i ];
-
-		for ( let i = 0; i < actionSpace.length; i ++ ) {
-
-			const action = actionSpace[ i ];
-			const key = state + '-' + action;
-
-			N[ key ] = 0;
-			Q[ key ] = 0;
-			R[ key ] = 0;
-
-		}
+		Q[ state ] = actionSpace.map( () => 0 );
 
 	}
 
 }
 
-function playEpisode( env ) {
+function playEpisode( env, Q, epsilon ) {
 
 	const episode = [];
+	const actionSpace = env.actionSpace;
+	const nA = actionSpace.length;
 
 	let currentState = env.reset();
 
 	while ( true ) {
 
-		// policy: if the player's hand is greater or equal 18, stick with a probability of 80% else hit with a probability of 80%
-		// NOTE: (the code could approximate an optimal policy via MC Control)
+		// Notes about policies:
+		//
+		// 1. Action selection is based on ε-soft policies (meaning they select all actions in all states with nonzero probability).
+		// 2. The policies are ε-greedy (meaning most of the time they choose an action that has maximal estimated action value,
+		//    but with probability ε they instead select an action at random).
 
-		let action;
+		const probabilities = getProbabilities( Q, currentState, epsilon, nA );
+		const action = MathUtils.choice( actionSpace, probabilities );
 
-		if ( currentState[ 0 ] > 18 ) {
-
-			action = Math.random() <= 0.8 ? ACTIONS.STICK : ACTIONS.HIT;
-
-		} else {
-
-			action = Math.random() <= 0.8 ? ACTIONS.HIT : ACTIONS.STICK;
-
-		}
+		// When the action was sampled, interact with the environment and generate new episode
 
 		const { state, reward, done } = env.step( action );
 
@@ -102,30 +147,19 @@ function playEpisode( env ) {
 
 }
 
-function updateQ( N, Q, R, episode, gamma ) {
+function updateQ( env, episode, Q, alpha ) {
 
-	const stateActionPairs = new Set();
+	let G = 0;
 
-	for ( let t = 0; t < episode.length; t ++ ) {
+	for ( let t = episode.length - 1; t >= 0; t -- ) {
 
 		const { state, action, reward } = episode[ t ];
 
-		const key = state[ 0 ] + '-' + state[ 1 ] + '-' + Number( state[ 2 ] ) + '-' + action;
+		const key = getKey( state );
 
-		// Using first-visit MC. Note that in Blackjack the same state never recurs within one episode,
-		// so there is no difference between first-visit and every-visit MC.
+		G += reward;
 
-		if ( stateActionPairs.has( key ) === false ) {
-
-			stateActionPairs.add( key );
-
-			const G = reward * Math.pow( gamma, t );
-
-			N[ key ] += 1;
-			R[ key ] += G;
-			Q[ key ] = R[ key ] / N[ key ];
-
-		}
+		Q[ key ][ action ] += alpha * ( G - Q[ key ][ action ] );
 
 	}
 

@@ -1,4 +1,4 @@
-let _math = null;
+import { MathUtils } from '../../../../../build/yuka.module.js';
 
 /**
 * Controls the flow of Blackjack games.
@@ -7,9 +7,7 @@ let _math = null;
 */
 class BlackjackEnvironment {
 
-	constructor( math, natural = false ) {
-
-		_math = math; // inject math module
+	constructor( natural = false ) {
 
 		this.actionSpace = [ ACTIONS.STICK, ACTIONS.HIT ];
 		this.observationSpace = generateObservationSpace();
@@ -103,14 +101,14 @@ function compare( a, b ) {
 
 function drawCard() {
 
-	const index = _math.randInt( 0, deck.length - 1 );
+	const index = MathUtils.randInt( 0, deck.length - 1 );
 	return deck[ index ];
 
 }
 
-function drawHand( math ) {
+function drawHand() {
 
-	return [ drawCard( math ), drawCard( math ) ];
+	return [ drawCard(), drawCard() ];
 
 }
 
@@ -187,8 +185,8 @@ function sumHand( hand ) {
 }
 
 const ACTIONS = Object.freeze( {
-	STICK: '0',
-	HIT: '1'
+	STICK: 0,
+	HIT: 1
 } );
 
 export { BlackjackEnvironment, ACTIONS };
