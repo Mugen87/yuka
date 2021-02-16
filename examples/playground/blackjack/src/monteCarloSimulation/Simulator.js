@@ -121,7 +121,7 @@ function playEpisode( env, Q, epsilon ) {
 
 		// Notes about policies:
 		//
-		// 1. Action selection is based on ε-soft policies (meaning they selects all actions in all states with nonzero probability).
+		// 1. Action selection is based on ε-soft policies (meaning they select all actions in all states with nonzero probability).
 		// 2. The policies are ε-greedy (meaning most of the time they choose an action that has maximal estimated action value,
 		//    but with probability ε they instead select an action at random).
 
