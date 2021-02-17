@@ -14,6 +14,42 @@ for ( let i = 0; i < 256; i ++ ) {
 class MathUtils {
 
 	/**
+	* Computes the signed area of a rectangle defined by three points.
+	* This method can also be used to calculate the area of a triangle.
+	*
+	* @param {Vector3} a - The first point in 3D space.
+	* @param {Vector3} b - The second point in 3D space.
+	* @param {Vector3} c - The third point in 3D space.
+	* @return {Number} The signed area.
+	*/
+	static area( a, b, c ) {
+
+		return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
+
+	}
+
+	/**
+	* Returns the indices of the maximum values of the given array.
+	*
+	* @param {Array<Number>} array - The input array.
+	* @return {Array<Number>} Array of indices into the array.
+	*/
+	static argmax( array ) {
+
+		const max = Math.max( ...array );
+		const indices = [];
+
+		for ( let i = 0, l = array.length; i < l; i ++ ) {
+
+			if ( array[ i ] === max ) indices.push( i );
+
+		}
+
+		return indices;
+
+	}
+
+	/**
 	* Returns a random sample from a given array.
 	*
 	* @param {Array<Any>} array - The array that is used to generate the random sample.
@@ -61,47 +97,6 @@ class MathUtils {
 	}
 
 	/**
-	* Computes a random integer value within a given min/max range.
-	*
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
-	* @return {Number} The random integer value.
-	*/
-	static randInt( min, max ) {
-
-		return min + Math.floor( Math.random() * ( max - min + 1 ) );
-
-	}
-
-	/**
-	* Computes a random float value within a given min/max range.
-	*
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
-	* @return {Number} The random float value.
-	*/
-	static randFloat( min, max ) {
-
-		return min + Math.random() * ( max - min );
-
-	}
-
-	/**
-	* Computes the signed area of a rectangle defined by three points.
-	* This method can also be used to calculate the area of a triangle.
-	*
-	* @param {Vector3} a - The first point in 3D space.
-	* @param {Vector3} b - The second point in 3D space.
-	* @param {Vector3} c - The third point in 3D space.
-	* @return {Number} The signed area.
-	*/
-	static area( a, b, c ) {
-
-		return ( ( c.x - a.x ) * ( b.z - a.z ) ) - ( ( b.x - a.x ) * ( c.z - a.z ) );
-
-	}
-
-	/**
 	* Computes a RFC4122 Version 4 complied Universally Unique Identifier (UUID).
 	*
 	* @return {String} The UUID.
@@ -120,6 +115,32 @@ class MathUtils {
 			lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 		return uuid.toUpperCase();
+
+	}
+
+	/**
+	* Computes a random float value within a given min/max range.
+	*
+	* @param {min} value - The min value.
+	* @param {max} value - The max value.
+	* @return {Number} The random float value.
+	*/
+	static randFloat( min, max ) {
+
+		return min + Math.random() * ( max - min );
+
+	}
+
+	/**
+	* Computes a random integer value within a given min/max range.
+	*
+	* @param {min} value - The min value.
+	* @param {max} value - The max value.
+	* @return {Number} The random integer value.
+	*/
+	static randInt( min, max ) {
+
+		return min + Math.floor( Math.random() * ( max - min + 1 ) );
 
 	}
 

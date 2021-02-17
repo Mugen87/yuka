@@ -50,12 +50,6 @@ class Simulator {
 
 }
 
-function getBestAction( actionValues ) {
-
-	return actionValues.indexOf( Math.max( ...actionValues ) );
-
-}
-
 function getBestPolicy( Q ) {
 
 	const policy = {};
@@ -64,7 +58,7 @@ function getBestPolicy( Q ) {
 
 		const actionValues = Q[ key ];
 
-		const bestAction = getBestAction( actionValues );
+		const bestAction = MathUtils.argmax( actionValues )[ 0 ];
 
 		policy[ key ] = bestAction;
 
@@ -88,7 +82,7 @@ function getProbabilities( Q, state, epsilon, nA ) {
 
 	const probabilities = actionValues.map( () => epsilon / nA );
 
-	const bestAction = getBestAction( actionValues );
+	const bestAction = MathUtils.argmax( actionValues )[ 0 ];
 
 	probabilities[ bestAction ] = 1 - epsilon + ( epsilon / nA );
 

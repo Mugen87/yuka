@@ -13,6 +13,34 @@ const Vector3 = YUKA.Vector3;
 
 describe( 'Math', function () {
 
+	describe( '#area()', function () {
+
+		it( 'should return the indices of the maximum values of the given array', function () {
+
+			const v1 = new Vector3( 0, 0, 0 );
+			const v2 = new Vector3( 2, 0, 0 );
+			const v3 = new Vector3( 2, 0, - 2 );
+
+			expect( MathUtils.area( v1, v2, v3 ) ).to.equal( 4 );
+
+		} );
+
+	} );
+
+	describe( '#argmax()', function () {
+
+		it( 'should return the indices of the maximum values of the given array', function () {
+
+			const values1 = [ 0, 1, 2, 3, 4, 5, 5, 4, 3, - 2, - 1, 5 ];
+			const values2 = [];
+
+			expect( MathUtils.argmax( values1 ) ).to.deep.equal( [ 5, 6, 11 ] );
+			expect( MathUtils.argmax( values2 ) ).to.be.empty;
+
+		} );
+
+	} );
+
 	describe( '#choice()', function () {
 
 		it( 'should return a random sample from a given array assuming uniform distribution', function () {
@@ -56,19 +84,13 @@ describe( 'Math', function () {
 
 	} );
 
-	describe( '#randInt()', function () {
+	describe( '#generateUUID()', function () {
 
-		it( 'should return a random integer between two integer values', function () {
+		it( 'should return a RFC4122 Version 4 complied Universally Unique Identifier (UUID)', function () {
 
-			let int = MathUtils.randInt( 4, 6 );
+			const uuid = MathUtils.generateUUID();
 
-			expect( int ).to.be.within( 4, 6 );
-			expect( int % 1 ).to.equal( 0 );
-
-			int = MathUtils.randInt( - 2, 0 );
-
-			expect( int ).to.be.within( - 2, 0 );
-			expect( int % 1 ).to.equal( 0 );
+			expect( uuid ).to.be.a.uuid( 'v4' );
 
 		} );
 
@@ -85,27 +107,19 @@ describe( 'Math', function () {
 
 	} );
 
-	describe( '#area()', function () {
+	describe( '#randInt()', function () {
 
-		it( 'should return the signed area of a rectangle (triangle * 2) defined by three points', function () {
+		it( 'should return a random integer between two integer values', function () {
 
-			const v1 = new Vector3( 0, 0, 0 );
-			const v2 = new Vector3( 2, 0, 0 );
-			const v3 = new Vector3( 2, 0, - 2 );
+			let int = MathUtils.randInt( 4, 6 );
 
-			expect( MathUtils.area( v1, v2, v3 ) ).to.equal( 4 );
+			expect( int ).to.be.within( 4, 6 );
+			expect( int % 1 ).to.equal( 0 );
 
-		} );
+			int = MathUtils.randInt( - 2, 0 );
 
-	} );
-
-	describe( '#generateUUID()', function () {
-
-		it( 'should return a RFC4122 Version 4 complied Universally Unique Identifier (UUID)', function () {
-
-			const uuid = MathUtils.generateUUID();
-
-			expect( uuid ).to.be.a.uuid( 'v4' );
+			expect( int ).to.be.within( - 2, 0 );
+			expect( int % 1 ).to.equal( 0 );
 
 		} );
 
