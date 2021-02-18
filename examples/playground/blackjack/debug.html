@@ -1,0 +1,149 @@
+<html lang="en">
+	<head>
+		<title>Yuka | Blackjack Debug</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../../lib/styles.css">
+		<link rel="shortcut icon" type="image/x-icon" href="https://mugen87.github.io/yuka/favicon.ico">
+		<style>
+			body{
+				overflow: auto;
+			}
+			#container {
+				display: flex;
+				flex-direction: column;
+			}
+			.row {
+				display: flex;
+				width: 100%;
+			}
+			.cell {
+				height: 1.5rem;
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.cell.hit {
+				background-color: #00ff00;
+			}
+			.cell.stick {
+				background-color: #ffff00;
+			}
+		</style>
+	</head>
+<body>
+
+	<h2>No usable Ace</h2>
+	<div id="container1">
+
+	<h2>Usable Ace</h2>
+	<div id="container2">
+
+	</div>
+
+	<script type="module">
+
+		import { BlackjackEnvironment, ACTIONS } from './src/monteCarloSimulation/BlackjackEnvironment.js';
+		import Simulator from './src/monteCarloSimulation/Simulator.js';
+
+		const env = new BlackjackEnvironment();
+		const episodes = 1000000;
+
+		const mcs = new Simulator( env, episodes );
+		const policy = mcs.predict();
+
+		// prepare
+
+		const data = {};
+
+		for ( const entry in policy ) {
+
+			const parts = entry.split( '-' );
+			const action = policy[ entry ];
+
+			const hand = parts[ 0 ];
+			const dealer = parts[ 1 ];
+			const usableAce = parts[ 2 ];
+
+			if ( data[ hand ] === undefined ) data[ hand ] = {};
+			if ( data[ hand ][ dealer ] === undefined ) data[ hand ][ dealer ] = {};
+
+			data[ hand ][ dealer ][ usableAce ] = action;
+
+		}
+
+		// generate UI
+
+		const container1 = document.getElementById( 'container1' );
+		const container2 = document.getElementById( 'container2' );
+
+		generateUI( data, '0', container1 );
+		generateUI( data, '1', container2 );
+
+		function generateUI( data, usableAce, container ) {
+
+			for ( const hand in data ) {
+
+				const row = document.createElement( 'div' );
+				row.classList.add( 'row' );
+
+				const cell = document.createElement( 'div' );
+				cell.classList.add( 'cell' );
+				cell.textContent = hand;
+				row.appendChild( cell );
+
+				for ( const dealer in data[ hand ] ) {
+
+					const cell = document.createElement( 'div' );
+					cell.classList.add( 'cell' );
+					cell.setAttribute( 'data-key', hand + '-' + dealer );
+
+					if ( data[ hand ][ dealer ][ usableAce ] === ACTIONS.HIT ) {
+
+						cell.textContent = 'H';
+						cell.classList.add( 'hit' );
+
+					} else {
+
+						cell.textContent = 'S';
+						cell.classList.add( 'stick' );
+
+					}
+
+					row.appendChild( cell );
+
+				}
+
+				container.insertBefore( row, container.firstChild );
+
+			}
+
+			// header
+
+			const hand = data[ Object.keys( data )[ 0 ] ];
+
+			const row = document.createElement( 'div' );
+			row.classList.add( 'row' );
+
+			const cell = document.createElement( 'div' ); // placeholder
+			cell.classList.add( 'cell' );
+			row.appendChild( cell );
+
+			for ( const dealer in hand ) {
+
+				const cell = document.createElement( 'div' );
+				cell.classList.add( 'cell' );
+				cell.textContent = dealer;
+				row.appendChild( cell );
+
+			}
+
+			container.insertBefore( row, container.firstChild );
+
+		}
+
+	</script>
+
+</body>
+</html>
