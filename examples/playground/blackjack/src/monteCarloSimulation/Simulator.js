@@ -125,7 +125,7 @@ function playEpisode( env, Q, epsilon ) {
 		const probabilities = getProbabilities( Q, currentState, epsilon, nA );
 		const action = MathUtils.choice( actionSpace, probabilities );
 
-		// When the action was sampled, interact with the environment and generate new episode
+		// When the action was sampled, interact with the environment and generate new state
 
 		const { state, reward, done } = env.step( action );
 
