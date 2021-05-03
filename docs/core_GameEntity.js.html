@@ -33,7 +33,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.7.3</span>
+            <span class="version">v0.7.4</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -259,7 +259,11 @@ class GameEntity {
 	*
 	* @return {GameEntity} A reference to this game entity.
 	*/
-	start() {}
+	start() {
+
+		return this;
+
+	}
 
 	/**
 	* Updates the internal state of this game entity. Normally called by {@link EntityManager#update}
@@ -268,7 +272,11 @@ class GameEntity {
 	* @param {Number} delta - The time delta.
 	* @return {GameEntity} A reference to this game entity.
 	*/
-	update( /* delta */ ) {}
+	update( /* delta */ ) {
+
+		return this;
+
+	}
 
 
 	/**
