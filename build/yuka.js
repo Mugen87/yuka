@@ -3125,7 +3125,11 @@
 		*
 		* @return {GameEntity} A reference to this game entity.
 		*/
-		start() {}
+		start() {
+
+			return this;
+
+		}
 
 		/**
 		* Updates the internal state of this game entity. Normally called by {@link EntityManager#update}
@@ -3134,7 +3138,11 @@
 		* @param {Number} delta - The time delta.
 		* @return {GameEntity} A reference to this game entity.
 		*/
-		update( /* delta */ ) {}
+		update( /* delta */ ) {
+
+			return this;
+
+		}
 
 
 		/**
