@@ -65,6 +65,13 @@ describe( 'GameEntity', function () {
 
 		} );
 
+		it( 'should return self', function () {
+
+			const entity = new GameEntity();
+			expect( entity.start() ).to.equal( entity );
+
+		} );
+
 	} );
 
 	describe( '#update()', function () {
@@ -73,6 +80,13 @@ describe( 'GameEntity', function () {
 
 			const entity = new GameEntity();
 			expect( entity ).respondTo( 'update' );
+
+		} );
+
+		it( 'should return self', function () {
+
+			const entity = new GameEntity();
+			expect( entity.update() ).to.equal( entity );
 
 		} );
 
