@@ -86,8 +86,8 @@ class MathUtils {
 	* Ensures the given scalar value is within a given min/max range.
 	*
 	* @param {Number} value - The value to clamp.
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
+	* @param {Number} min - The min value.
+	* @param {Number} max - The max value.
 	* @return {Number} The clamped value.
 	*/
 	static clamp( value, min, max ) {
@@ -121,8 +121,8 @@ class MathUtils {
 	/**
 	* Computes a random float value within a given min/max range.
 	*
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
+	* @param {Number} min - The min value.
+	* @param {Number} max - The max value.
 	* @return {Number} The random float value.
 	*/
 	static randFloat( min, max ) {
@@ -134,8 +134,8 @@ class MathUtils {
 	/**
 	* Computes a random integer value within a given min/max range.
 	*
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
+	* @param {Number} min - The min value.
+	* @param {Number} max - The max value.
 	* @return {Number} The random integer value.
 	*/
 	static randInt( min, max ) {

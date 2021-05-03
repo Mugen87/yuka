@@ -47,7 +47,7 @@ class OBB {
 	*
 	* @param {Vector3} center - The center of this OBB.
 	* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
-	* @param {Quaternion} rotation - The rotation of this OBB.
+	* @param {Matrix3} rotation - The rotation of this OBB.
 	*/
 	constructor( center = new Vector3(), halfSizes = new Vector3(), rotation = new Matrix3() ) {
 
@@ -76,7 +76,7 @@ class OBB {
 	*
 	* @param {Vector3} center - The center of this OBB
 	* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
-	* @param {Quaternion} rotation - The rotation of this OBB.
+	* @param {Matrix3} rotation - The rotation of this OBB.
 	* @return {OBB} A reference to this OBB.
 	*/
 	set( center, halfSizes, rotation ) {
@@ -599,7 +599,7 @@ class OBB {
 	/**
 	* Returns true if the given OBB is deep equal with this OBB.
 	*
-	* @param {OBB} aabb - The OBB to test.
+	* @param {OBB} obb - The OBB to test.
 	* @return {Boolean} The result of the equality test.
 	*/
 	equals( obb ) {
