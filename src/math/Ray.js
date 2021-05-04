@@ -632,4 +632,13 @@ class Ray {
 
 const localRay = new Ray();
 
+/**
+ * A triangle shape used in {@link Ray#intersectTriangle}.
+ *
+ * @typedef {Object} Triangle
+ * @property {Vector3} a The first vertex position.
+ * @property {Vector3} b The second vertex position.
+ * @property {Vector3} c The third vertex position.
+ */
+
 export { Ray };
