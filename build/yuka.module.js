@@ -474,8 +474,8 @@ class MathUtils {
 	* Ensures the given scalar value is within a given min/max range.
 	*
 	* @param {Number} value - The value to clamp.
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
+	* @param {Number} min - The min value.
+	* @param {Number} max - The max value.
 	* @return {Number} The clamped value.
 	*/
 	static clamp( value, min, max ) {
@@ -509,8 +509,8 @@ class MathUtils {
 	/**
 	* Computes a random float value within a given min/max range.
 	*
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
+	* @param {Number} min - The min value.
+	* @param {Number} max - The max value.
 	* @return {Number} The random float value.
 	*/
 	static randFloat( min, max ) {
@@ -522,8 +522,8 @@ class MathUtils {
 	/**
 	* Computes a random integer value within a given min/max range.
 	*
-	* @param {min} value - The min value.
-	* @param {max} value - The max value.
+	* @param {Number} min - The min value.
+	* @param {Number} max - The max value.
 	* @return {Number} The random integer value.
 	*/
 	static randInt( min, max ) {
@@ -17026,7 +17026,7 @@ class OBB {
 	*
 	* @param {Vector3} center - The center of this OBB.
 	* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
-	* @param {Quaternion} rotation - The rotation of this OBB.
+	* @param {Matrix3} rotation - The rotation of this OBB.
 	*/
 	constructor( center = new Vector3(), halfSizes = new Vector3(), rotation = new Matrix3() ) {
 
@@ -17055,7 +17055,7 @@ class OBB {
 	*
 	* @param {Vector3} center - The center of this OBB
 	* @param {Vector3} halfSizes - The half sizes of the OBB (defines its width, height and depth).
-	* @param {Quaternion} rotation - The rotation of this OBB.
+	* @param {Matrix3} rotation - The rotation of this OBB.
 	* @return {OBB} A reference to this OBB.
 	*/
 	set( center, halfSizes, rotation ) {
@@ -17578,7 +17578,7 @@ class OBB {
 	/**
 	* Returns true if the given OBB is deep equal with this OBB.
 	*
-	* @param {OBB} aabb - The OBB to test.
+	* @param {OBB} obb - The OBB to test.
 	* @return {Boolean} The result of the equality test.
 	*/
 	equals( obb ) {
