@@ -29,7 +29,7 @@ class EntityManager {
 
 		/**
 		* A reference to a spatial index.
-		* @type {CellSpacePartitioning}
+		* @type {?CellSpacePartitioning}
 		* @default null
 		*/
 		this.spatialIndex = null;

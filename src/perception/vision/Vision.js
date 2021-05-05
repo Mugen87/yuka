@@ -23,7 +23,8 @@ class Vision {
 
 		/**
 		 * The game entity that owns this vision instance.
-		 * @type {GameEntity}
+		 * @type {?GameEntity}
+		* @default null
 		 */
 		this.owner = owner;
 

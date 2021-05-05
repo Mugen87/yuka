@@ -28,7 +28,8 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 		/**
 		* The leader vehicle.
-		* @type {Vehicle}
+		* @type {?Vehicle}
+		* @default null
 		*/
 		this.leader = leader;
 

@@ -23,6 +23,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 		/**
 		* The radius of the region.
 		* @type {Number}
+		* @default 0
 		*/
 		this.radius = radius;
 

@@ -43,7 +43,7 @@ class GameEntity {
 		/**
 		* A reference to the parent entity of this game entity.
 		* Automatically set when added to a {@link GameEntity}.
-		* @type {GameEntity}
+		* @type {?GameEntity}
 		* @default null
 		* @readonly
 		*/

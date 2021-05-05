@@ -28,6 +28,7 @@ class MovingEntity extends GameEntity {
 		/**
 		* The maximum speed at which this game entity may travel.
 		* @type {Number}
+		* @default 1
 		*/
 		this.maxSpeed = 1;
 

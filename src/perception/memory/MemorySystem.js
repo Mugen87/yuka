@@ -17,7 +17,8 @@ class MemorySystem {
 
 		/**
 		* The game entity that owns this memory system.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.owner = owner;
 

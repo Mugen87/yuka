@@ -23,25 +23,29 @@ class HalfEdge {
 
 		/**
 		* A reference to the next half-edge.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.next = null;
 
 		/**
 		* A reference to the previous half-edge.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.prev = null;
 
 		/**
 		* A reference to the opponent half-edge.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.twin = null;
 
 		/**
 		* A reference to its polygon/face.
-		* @type {Polygon}
+		* @type {?Polygon}
+		* @default null
 		*/
 		this.polygon = null;
 

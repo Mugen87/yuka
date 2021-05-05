@@ -36,7 +36,8 @@ class MeshGeometry {
 
 		/**
 		* The index buffer.
-		* @type {Uint16Array | Uint32Array}
+		* @type {?(Uint16Array|?Uint32Array)}
+		* @default null
 		*/
 		this.indices = indices;
 

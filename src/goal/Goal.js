@@ -14,7 +14,8 @@ class Goal {
 
 		/**
 		* The owner of this goal.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.owner = owner;
 

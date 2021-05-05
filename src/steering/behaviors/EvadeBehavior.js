@@ -28,7 +28,7 @@ class EvadeBehavior extends SteeringBehavior {
 
 		/**
 		* The agent to evade from.
-		* @type {MovingEntity}
+		* @type {?MovingEntity}
 		* @default null
 		*/
 		this.pursuer = pursuer;

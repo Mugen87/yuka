@@ -18,19 +18,22 @@ class DFS {
 
 		/**
 		* The graph.
-		* @type {Graph}
+		* @type {?Graph}
+		* @default null
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.target = target;
 

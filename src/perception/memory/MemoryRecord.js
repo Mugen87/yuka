@@ -16,7 +16,8 @@ class MemoryRecord {
 
 		/**
 		* The game entity that is represented by this memory record.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.entity = entity;
 

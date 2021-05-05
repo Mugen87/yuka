@@ -25,7 +25,8 @@ class Polygon {
 
 		/**
 		* A reference to the first half-edge of this polygon.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.edge = null;
 

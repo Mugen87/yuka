@@ -26,14 +26,14 @@ class FuzzyRule {
 
 		/**
 		* Represents the condition of the rule.
-		* @type {FuzzyTerm}
+		* @type {?FuzzyTerm}
 		* @default null
 		*/
 		this.antecedent = antecedent;
 
 		/**
 		* Describes the consequence if the condition is satisfied.
-		* @type {FuzzyTerm}
+		* @type {?FuzzyTerm}
 		* @default null
 		*/
 		this.consequence = consequence;

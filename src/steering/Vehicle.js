@@ -49,7 +49,7 @@ class Vehicle extends MovingEntity {
 
 		/**
 		* An optional smoother to avoid shakiness due to conflicting steering behaviors.
-		* @type {Smoother}
+		* @type {?Smoother}
 		* @default null
 		*/
 		this.smoother = null;

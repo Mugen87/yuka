@@ -29,14 +29,14 @@ class InterposeBehavior extends SteeringBehavior {
 
 		/**
 		* The first agent.
-		* @type {MovingEntity}
+		* @type {?MovingEntity}
 		* @default null
 		*/
 		this.entity1 = entity1;
 
 		/**
 		* The second agent.
-		* @type {MovingEntity}
+		* @type {?MovingEntity}
 		* @default null
 		*/
 		this.entity2 = entity2;
