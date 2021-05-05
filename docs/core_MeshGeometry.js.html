@@ -33,7 +33,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.7.5</span>
+            <span class="version">v0.7.6</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -91,7 +91,8 @@ class MeshGeometry {
 
 		/**
 		* The index buffer.
-		* @type {Uint16Array | Uint32Array}
+		* @type {?(Uint16Array|?Uint32Array)}
+		* @default null
 		*/
 		this.indices = indices;
 

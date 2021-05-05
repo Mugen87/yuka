@@ -33,7 +33,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">YUKA</a></h1>
         
-            <span class="version">v0.7.5</span>
+            <span class="version">v0.7.6</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -72,25 +72,29 @@ class StateMachine {
 
 		/**
 		* The game entity that owns this state machine.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.owner = owner;
 
 		/**
 		* The current state of the game entity.
-		* @type {State}
+		* @type {?State}
+		* @default null
 		*/
 		this.currentState = null;
 
 		/**
 		* The previous state of the game entity.
-		* @type {State}
+		* @type {?State}
+		* @default null
 		*/
 		this.previousState = null; // a reference to the last state the agent was in
 
 		/**
 		* This state logic is called every time the state machine is updated.
-		* @type {State}
+		* @type {?State}
+		* @default null
 		*/
 		this.globalState = null;
 

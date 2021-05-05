@@ -2958,7 +2958,7 @@ class GameEntity {
 		/**
 		* A reference to the parent entity of this game entity.
 		* Automatically set when added to a {@link GameEntity}.
-		* @type {GameEntity}
+		* @type {?GameEntity}
 		* @default null
 		* @readonly
 		*/
@@ -3591,6 +3591,7 @@ class MovingEntity extends GameEntity {
 		/**
 		* The maximum speed at which this game entity may travel.
 		* @type {Number}
+		* @default 1
 		*/
 		this.maxSpeed = 1;
 
@@ -4265,7 +4266,7 @@ class EvadeBehavior extends SteeringBehavior {
 
 		/**
 		* The agent to evade from.
-		* @type {MovingEntity}
+		* @type {?MovingEntity}
 		* @default null
 		*/
 		this.pursuer = pursuer;
@@ -4673,14 +4674,14 @@ class InterposeBehavior extends SteeringBehavior {
 
 		/**
 		* The first agent.
-		* @type {MovingEntity}
+		* @type {?MovingEntity}
 		* @default null
 		*/
 		this.entity1 = entity1;
 
 		/**
 		* The second agent.
-		* @type {MovingEntity}
+		* @type {?MovingEntity}
 		* @default null
 		*/
 		this.entity2 = entity2;
@@ -6278,7 +6279,8 @@ class OffsetPursuitBehavior extends SteeringBehavior {
 
 		/**
 		* The leader vehicle.
-		* @type {Vehicle}
+		* @type {?Vehicle}
+		* @default null
 		*/
 		this.leader = leader;
 
@@ -6411,7 +6413,7 @@ class PursuitBehavior extends SteeringBehavior {
 
 		/**
 		* The agent to pursue.
-		* @type {MovingEntity}
+		* @type {?MovingEntity}
 		* @default null
 		*/
 		this.evader = evader;
@@ -7258,7 +7260,7 @@ class Vehicle extends MovingEntity {
 
 		/**
 		* An optional smoother to avoid shakiness due to conflicting steering behaviors.
-		* @type {Smoother}
+		* @type {?Smoother}
 		* @default null
 		*/
 		this.smoother = null;
@@ -7562,6 +7564,7 @@ class SphericalTriggerRegion extends TriggerRegion {
 		/**
 		* The radius of the region.
 		* @type {Number}
+		* @default 0
 		*/
 		this.radius = radius;
 
@@ -7815,7 +7818,7 @@ class EntityManager {
 
 		/**
 		* A reference to a spatial index.
-		* @type {CellSpacePartitioning}
+		* @type {?CellSpacePartitioning}
 		* @default null
 		*/
 		this.spatialIndex = null;
@@ -8600,7 +8603,8 @@ class MeshGeometry {
 
 		/**
 		* The index buffer.
-		* @type {Uint16Array | Uint32Array}
+		* @type {?(Uint16Array|?Uint32Array)}
+		* @default null
 		*/
 		this.indices = indices;
 
@@ -9275,25 +9279,29 @@ class StateMachine {
 
 		/**
 		* The game entity that owns this state machine.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.owner = owner;
 
 		/**
 		* The current state of the game entity.
-		* @type {State}
+		* @type {?State}
+		* @default null
 		*/
 		this.currentState = null;
 
 		/**
 		* The previous state of the game entity.
-		* @type {State}
+		* @type {?State}
+		* @default null
 		*/
 		this.previousState = null; // a reference to the last state the agent was in
 
 		/**
 		* This state logic is called every time the state machine is updated.
-		* @type {State}
+		* @type {?State}
+		* @default null
 		*/
 		this.globalState = null;
 
@@ -10982,14 +10990,14 @@ class FuzzyRule {
 
 		/**
 		* Represents the condition of the rule.
-		* @type {FuzzyTerm}
+		* @type {?FuzzyTerm}
 		* @default null
 		*/
 		this.antecedent = antecedent;
 
 		/**
 		* Describes the consequence if the condition is satisfied.
-		* @type {FuzzyTerm}
+		* @type {?FuzzyTerm}
 		* @default null
 		*/
 		this.consequence = consequence;
@@ -11655,7 +11663,8 @@ class Goal {
 
 		/**
 		* The owner of this goal.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.owner = owner;
 
@@ -13277,19 +13286,22 @@ class AStar {
 
 		/**
 		* The graph.
-		* @type {Graph}
+		* @type {?Graph}
+		* @default null
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.target = target;
 
@@ -13502,19 +13514,22 @@ class BFS {
 
 		/**
 		* The graph.
-		* @type {Graph}
+		* @type {?Graph}
+		* @default null
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.target = target;
 
@@ -13705,19 +13720,22 @@ class DFS {
 
 		/**
 		* The graph.
-		* @type {Graph}
+		* @type {?Graph}
+		* @default null
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.target = target;
 
@@ -13902,19 +13920,22 @@ class Dijkstra {
 
 		/**
 		* The graph.
-		* @type {Graph}
+		* @type {?Graph}
+		* @default null
 		*/
 		this.graph = graph;
 
 		/**
 		* The node index of the source node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.source = source;
 
 		/**
 		* The node index of the target node.
 		* @type {Number}
+		* @default - 1
 		*/
 		this.target = target;
 
@@ -15135,25 +15156,29 @@ class HalfEdge {
 
 		/**
 		* A reference to the next half-edge.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.next = null;
 
 		/**
 		* A reference to the previous half-edge.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.prev = null;
 
 		/**
 		* A reference to the opponent half-edge.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.twin = null;
 
 		/**
 		* A reference to its polygon/face.
-		* @type {Polygon}
+		* @type {?Polygon}
+		* @default null
 		*/
 		this.polygon = null;
 
@@ -15273,7 +15298,8 @@ class Polygon {
 
 		/**
 		* A reference to the first half-edge of this polygon.
-		* @type {HalfEdge}
+		* @type {?HalfEdge}
+		* @default null
 		*/
 		this.edge = null;
 
@@ -18168,7 +18194,7 @@ class NavMesh {
 
 		/**
 		* A reference to a spatial index.
-		* @type {CellSpacePartitioning}
+		* @type {?CellSpacePartitioning}
 		* @default null
 		*/
 		this.spatialIndex = null;
@@ -19928,7 +19954,8 @@ class MemoryRecord {
 
 		/**
 		* The game entity that is represented by this memory record.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.entity = entity;
 
@@ -20032,7 +20059,8 @@ class MemorySystem {
 
 		/**
 		* The game entity that owns this memory system.
-		* @type {GameEntity}
+		* @type {?GameEntity}
+		* @default null
 		*/
 		this.owner = owner;
 
@@ -20267,7 +20295,8 @@ class Vision {
 
 		/**
 		 * The game entity that owns this vision instance.
-		 * @type {GameEntity}
+		 * @type {?GameEntity}
+		* @default null
 		 */
 		this.owner = owner;
 
