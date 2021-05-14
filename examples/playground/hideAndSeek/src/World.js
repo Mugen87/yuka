@@ -301,7 +301,6 @@ class World {
 			if ( obstalce.geometry.intersectRay( ray, obstalce.worldMatrix, false, intersection.point, intersection.normal ) !== null ) {
 
 				const squaredDistance = intersection.point.squaredDistanceTo( ray.origin );
-				obstalce.squaredDistance = squaredDistance;
 
 				if ( squaredDistance < minDistance ) {
 
