@@ -30,6 +30,8 @@ class Enemy extends Vehicle {
 		const hideBehavior = new HideBehavior( this.manager, player );
 		this.steering.add( hideBehavior );
 
+		return this;
+
 	}
 
 	update( delta ) {
@@ -72,6 +74,8 @@ class Enemy extends Vehicle {
 			}
 
 		}
+
+		return this;
 
 	}
 

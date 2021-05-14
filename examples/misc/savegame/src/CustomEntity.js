@@ -26,6 +26,8 @@ class CustomEntity extends GameEntity {
 
 		}
 
+		return super.update( delta );
+
 	}
 
 	generatePosition() {

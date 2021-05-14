@@ -36,6 +36,8 @@ class CustomVehicle extends Vehicle {
 
 		}
 
+		return this;
+
 	}
 
 

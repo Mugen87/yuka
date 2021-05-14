@@ -43,6 +43,8 @@ class Soldier extends GameEntity {
 
 		this.zombie = this.manager.getEntityByName( 'zombie' );
 
+		return this;
+
 	}
 
 	update() {
@@ -52,6 +54,8 @@ class Soldier extends GameEntity {
 		this.selectWeapon();
 
 		this.ui.currentWeapon.textContent = ( this.assaultRifle.visible ) ? 'Assault Rifle' : 'Shotgun';
+
+		return this;
 
 	}
 

@@ -20,7 +20,7 @@ class CustomVehicle extends Vehicle {
 		const seekBehavior = this.steering.behaviors[ 0 ];
 		seekBehavior.target.copy( this.target.position );
 
-		super.update( delta );
+		return super.update( delta );
 
 	}
 

@@ -65,6 +65,8 @@ class Girl extends Vehicle {
 
 		this.mixer.update( delta );
 
+		return this;
+
 	}
 
 	tired() {
