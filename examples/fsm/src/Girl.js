@@ -44,6 +44,8 @@ class Girl extends GameEntity {
 
 		this.mixer.update( delta );
 
+		return this;
+
 	}
 
 }

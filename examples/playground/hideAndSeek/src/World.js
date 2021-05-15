@@ -301,7 +301,6 @@ class World {
 			if ( obstalce.geometry.intersectRay( ray, obstalce.worldMatrix, false, intersection.point, intersection.normal ) !== null ) {
 
 				const squaredDistance = intersection.point.squaredDistanceTo( ray.origin );
-				obstalce.squaredDistance = squaredDistance;
 
 				if ( squaredDistance < minDistance ) {
 
@@ -464,7 +463,7 @@ class World {
 		const player = this.player;
 
 		this.controls = new FirstPersonControls( player );
-		this.controls.lookSpeed = 2;
+		this.controls.lookingSpeed = 2;
 
 		const intro = this.ui.intro;
 		const crosshairs = this.ui.crosshairs;

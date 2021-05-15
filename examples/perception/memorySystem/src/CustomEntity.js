@@ -34,6 +34,8 @@ class CustomEntity extends GameEntity {
 		this.target = target;
 		this.vision.addObstacle( obstacle );
 
+		return this;
+
 	}
 
 	update( delta ) {
@@ -87,6 +89,8 @@ class CustomEntity extends GameEntity {
 			this.rotateTo( this.forward, delta );
 
 		}
+
+		return this;
 
 	}
 

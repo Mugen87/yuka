@@ -102,6 +102,8 @@ class HideBehavior extends SteeringBehavior {
 
 		}
 
+		return force;
+
 	}
 
 	_obstacleAvoidance( vehicle ) {

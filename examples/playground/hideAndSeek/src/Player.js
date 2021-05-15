@@ -116,7 +116,7 @@ class Player extends MovingEntity {
 
 		}
 
-		super.update( delta );
+		return super.update( delta );
 
 	}
 

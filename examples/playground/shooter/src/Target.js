@@ -30,6 +30,8 @@ class Target extends GameEntity {
 
 		}
 
+		return this;
+
 	}
 
 	handleMessage() {

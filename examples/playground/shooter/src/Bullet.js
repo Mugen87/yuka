@@ -83,6 +83,8 @@ class Bullet extends MovingEntity {
 
 		}
 
+		return this;
+
 	}
 
 }
