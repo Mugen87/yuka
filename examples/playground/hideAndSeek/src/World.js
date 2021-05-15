@@ -463,7 +463,6 @@ class World {
 		const player = this.player;
 
 		this.controls = new FirstPersonControls( player );
-		this.controls.lookingSpeed = 2;
 
 		const intro = this.ui.intro;
 		const crosshairs = this.ui.crosshairs;
