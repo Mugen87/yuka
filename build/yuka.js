@@ -3032,6 +3032,7 @@
 
 			/**
 			* The maximum turn rate of this game entity in radians per seconds.
+			* The only method that uses this property right now is {@link GameEntity#rotateTo}.
 			* @type {Number}
 			* @default π
 			*/
