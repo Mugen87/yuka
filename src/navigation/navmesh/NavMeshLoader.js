@@ -17,7 +17,7 @@ class NavMeshLoader {
 	* to influence the parsing of the navigation mesh.
 	*
 	* @param {String} url - The URL of the glTF asset.
-	* @param {Object} [options] - The (optional) configuration object.
+	* @param {Object} options - The (optional) configuration object.
 	* @return {Promise} A promise representing the loading and parsing process.
 	*/
 	load( url, options ) {
@@ -74,8 +74,8 @@ class NavMeshLoader {
 	* in node.js.
 	*
 	* @param {ArrayBuffer} arrayBuffer - The array buffer.
-	* @param {String} [url] - The (optional) URL.
-	* @param {Object} [options] - The (optional) configuration object.
+	* @param {String} url - The (optional) URL.
+	* @param {Object} options - The (optional) configuration object.
 	* @return {Promise} A promise representing the parsing process.
 	*/
 	parse( arrayBuffer, url, options ) {
