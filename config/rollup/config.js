@@ -1,16 +1,17 @@
-const fs = require( 'fs' );
-const commenting = require( 'commenting' );
+const path = require( 'path' );
+const license = require( 'rollup-plugin-license' );
 
 export default {
 	input: 'src/yuka.js',
-	plugins: [ {
-		banner() {
-
-			const text = fs.readFileSync( 'LICENSE', 'utf8' );
-			return commenting( '@license\n' + text, { extension: '.js' } );
-
-		}
-	} ],
+	plugins: [
+		license( {
+			banner: {
+				content: {
+					file: path.join( __dirname, '../../LICENSE' )
+				}
+			}
+		} )
+	],
 	output: [
 		{
 			format: 'umd',

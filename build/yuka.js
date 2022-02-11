@@ -1,9 +1,7 @@
-
 /**
- * @license
  * The MIT License
  *
- * Copyright © 2021 Yuka authors
+ * Copyright © 2022 Yuka authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +20,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
 	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.YUKA = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
 	/**
 	* Class for representing a telegram, an envelope which contains a message
@@ -827,7 +824,7 @@
 
 			// solve r = v - 2( v * n ) * n
 
-			return this.sub( v1.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
+			return this.sub( v1$4.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
 
 		}
 
@@ -1222,7 +1219,7 @@
 
 	}
 
-	const v1 = new Vector3();
+	const v1$4 = new Vector3();
 
 	const WorldUp = new Vector3( 0, 1, 0 );
 
@@ -1812,8 +1809,8 @@
 	const m1 = new Matrix3();
 	const m2 = new Matrix3();
 
-	const matrix = new Matrix3();
-	const vector = new Vector3();
+	const matrix$1 = new Matrix3();
+	const vector$1 = new Vector3();
 
 	/**
 	* Class representing a quaternion.
@@ -2089,8 +2086,8 @@
 		*/
 		lookAt( localForward, targetDirection, localUp ) {
 
-			matrix.lookAt( localForward, targetDirection, localUp );
-			this.fromMatrix3( matrix );
+			matrix$1.lookAt( localForward, targetDirection, localUp );
+			this.fromMatrix3( matrix$1 );
 
 		}
 
@@ -2171,14 +2168,14 @@
 		*/
 		extractRotationFromMatrix( m ) {
 
-			const e = matrix.elements;
+			const e = matrix$1.elements;
 			const me = m.elements;
 
 			// remove scaling from the 3x3 portion
 
-			const sx = 1 / vector.fromMatrix4Column( m, 0 ).length();
-			const sy = 1 / vector.fromMatrix4Column( m, 1 ).length();
-			const sz = 1 / vector.fromMatrix4Column( m, 2 ).length();
+			const sx = 1 / vector$1.fromMatrix4Column( m, 0 ).length();
+			const sy = 1 / vector$1.fromMatrix4Column( m, 1 ).length();
+			const sz = 1 / vector$1.fromMatrix4Column( m, 2 ).length();
 
 			e[ 0 ] = me[ 0 ] * sx;
 			e[ 1 ] = me[ 1 ] * sx;
@@ -2192,7 +2189,7 @@
 			e[ 7 ] = me[ 9 ] * sz;
 			e[ 8 ] = me[ 10 ] * sz;
 
-			this.fromMatrix3( matrix );
+			this.fromMatrix3( matrix$1 );
 
 			return this;
 
@@ -3571,8 +3568,8 @@
 
 	}
 
-	const displacement = new Vector3();
-	const target = new Vector3();
+	const displacement$4 = new Vector3();
+	const target$1 = new Vector3();
 
 	/**
 	* Class representing moving game entities.
@@ -3630,23 +3627,23 @@
 
 			// calculate displacement
 
-			displacement.copy( this.velocity ).multiplyScalar( delta );
+			displacement$4.copy( this.velocity ).multiplyScalar( delta );
 
 			// calculate target position
 
-			target.copy( this.position ).add( displacement );
+			target$1.copy( this.position ).add( displacement$4 );
 
 			// update the orientation if the vehicle has a non zero velocity
 
 			if ( this.updateOrientation && this.getSpeedSquared() > 0.00000001 ) {
 
-				this.lookAt( target );
+				this.lookAt( target$1 );
 
 			}
 
 			// update position
 
-			this.position.copy( target );
+			this.position.copy( target$1 );
 
 			return this;
 
@@ -3793,7 +3790,7 @@
 	}
 
 	const averageDirection = new Vector3();
-	const direction = new Vector3();
+	const direction$1 = new Vector3();
 
 	/**
 	* This steering behavior produces a force that keeps a vehicle’s heading aligned with its neighbors.
@@ -3832,9 +3829,9 @@
 
 				const neighbor = neighbors[ i ];
 
-				neighbor.getDirection( direction );
+				neighbor.getDirection( direction$1 );
 
-				averageDirection.add( direction );
+				averageDirection.add( direction$1 );
 
 			}
 
@@ -3844,8 +3841,8 @@
 
 				// produce a force to align the vehicle's heading
 
-				vehicle.getDirection( direction );
-				force.subVectors( averageDirection, direction );
+				vehicle.getDirection( direction$1 );
+				force.subVectors( averageDirection, direction$1 );
 
 			}
 
@@ -3855,8 +3852,8 @@
 
 	}
 
-	const desiredVelocity = new Vector3();
-	const displacement$1 = new Vector3();
+	const desiredVelocity$2 = new Vector3();
+	const displacement$3 = new Vector3();
 
 	/**
 	* This steering behavior produces a force that directs an agent toward a target position.
@@ -3913,9 +3910,9 @@
 			const target = this.target;
 			const deceleration = this.deceleration;
 
-			displacement$1.subVectors( target, vehicle.position );
+			displacement$3.subVectors( target, vehicle.position );
 
-			const distance = displacement$1.length();
+			const distance = displacement$3.length();
 
 			if ( distance > this.tolerance ) {
 
@@ -3931,15 +3928,15 @@
 				// the "displacement" vector because we have already gone to the trouble
 				// of calculating its length.
 
-				desiredVelocity.copy( displacement$1 ).multiplyScalar( speed / distance );
+				desiredVelocity$2.copy( displacement$3 ).multiplyScalar( speed / distance );
 
 			} else {
 
-				desiredVelocity.set( 0, 0, 0 );
+				desiredVelocity$2.set( 0, 0, 0 );
 
 			}
 
-			return force.subVectors( desiredVelocity, vehicle.velocity );
+			return force.subVectors( desiredVelocity$2, vehicle.velocity );
 
 		}
 
@@ -4135,7 +4132,7 @@
 
 	}
 
-	const desiredVelocity$2 = new Vector3();
+	const desiredVelocity = new Vector3();
 
 	/**
 	* This steering behavior produces a force that steers an agent away from a target position.
@@ -4192,19 +4189,19 @@
 				// from here, the only difference compared to seek is that the desired
 				// velocity is calculated using a vector pointing in the opposite direction
 
-				desiredVelocity$2.subVectors( vehicle.position, target ).normalize();
+				desiredVelocity.subVectors( vehicle.position, target ).normalize();
 
 				// if target and vehicle position are identical, choose default velocity
 
-				if ( desiredVelocity$2.squaredLength() === 0 ) {
+				if ( desiredVelocity.squaredLength() === 0 ) {
 
-					desiredVelocity$2.set( 0, 0, 1 );
+					desiredVelocity.set( 0, 0, 1 );
 
 				}
 
-				desiredVelocity$2.multiplyScalar( vehicle.maxSpeed );
+				desiredVelocity.multiplyScalar( vehicle.maxSpeed );
 
-				force.subVectors( desiredVelocity$2, vehicle.velocity );
+				force.subVectors( desiredVelocity, vehicle.velocity );
 
 			}
 
@@ -4249,7 +4246,7 @@
 
 	const displacement$2 = new Vector3();
 	const newPursuerVelocity = new Vector3();
-	const predictedPosition = new Vector3();
+	const predictedPosition$3 = new Vector3();
 
 	/**
 	* This steering behavior is is almost the same as {@link PursuitBehavior} except that
@@ -4318,11 +4315,11 @@
 			// calculate new velocity and predicted future position
 
 			newPursuerVelocity.copy( pursuer.velocity ).multiplyScalar( lookAheadTime );
-			predictedPosition.addVectors( pursuer.position, newPursuerVelocity );
+			predictedPosition$3.addVectors( pursuer.position, newPursuerVelocity );
 
 			// now flee away from predicted future position of the pursuer
 
-			this._flee.target = predictedPosition;
+			this._flee.target = predictedPosition$3;
 			this._flee.panicDistance = this.panicDistance;
 			this._flee.calculate( vehicle, force );
 
@@ -4655,7 +4652,7 @@
 	}
 
 	const midPoint = new Vector3();
-	const translation = new Vector3();
+	const translation$1 = new Vector3();
 	const predictedPosition1 = new Vector3();
 	const predictedPosition2 = new Vector3();
 
@@ -4729,11 +4726,11 @@
 			// now we have the time, we assume that entity 1 and entity 2 will
 			// continue on a straight trajectory and extrapolate to get their future positions
 
-			translation.copy( entity1.velocity ).multiplyScalar( time );
-			predictedPosition1.addVectors( entity1.position, translation );
+			translation$1.copy( entity1.velocity ).multiplyScalar( time );
+			predictedPosition1.addVectors( entity1.position, translation$1 );
 
-			translation.copy( entity2.velocity ).multiplyScalar( time );
-			predictedPosition2.addVectors( entity2.position, translation );
+			translation$1.copy( entity2.velocity ).multiplyScalar( time );
+			predictedPosition2.addVectors( entity2.position, translation$1 );
 
 			// calculate the mid point of these predicted positions
 
@@ -4799,9 +4796,9 @@
 
 	}
 
-	const vector$1 = new Vector3();
-	const center = new Vector3();
-	const size = new Vector3();
+	const vector = new Vector3();
+	const center$1 = new Vector3();
+	const size$1 = new Vector3();
 
 	const points = [
 		new Vector3(),
@@ -4979,11 +4976,11 @@
 
 			// find the point on the AABB closest to the sphere center
 
-			this.clampPoint( sphere.center, vector$1 );
+			this.clampPoint( sphere.center, vector );
 
 			// if that point is inside the sphere, the AABB and sphere intersect.
 
-			return vector$1.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+			return vector.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
 
 		}
 
@@ -5000,16 +4997,16 @@
 
 			const normal = plane.normal;
 
-			this.getCenter( center );
-			size.subVectors( this.max, center ); // positive extends
+			this.getCenter( center$1 );
+			size$1.subVectors( this.max, center$1 ); // positive extends
 
 			// compute the projection interval radius of b onto L(t) = c + t * plane.normal
 
-			const r = size.x * Math.abs( normal.x ) + size.y * Math.abs( normal.y ) + size.z * Math.abs( normal.z );
+			const r = size$1.x * Math.abs( normal.x ) + size$1.y * Math.abs( normal.y ) + size$1.z * Math.abs( normal.z );
 
 			// compute distance of box center from plane
 
-			const s = plane.distanceToPoint( center );
+			const s = plane.distanceToPoint( center$1 );
 
 			return Math.abs( s ) <= r;
 
@@ -5031,42 +5028,42 @@
 			let distance;
 			let minDistance = Infinity;
 
-			this.getCenter( center );
-			this.getSize( size );
+			this.getCenter( center$1 );
+			this.getSize( size$1 );
 
 			// transform point into local space of AABB
 
-			vector$1.copy( point ).sub( center );
+			vector.copy( point ).sub( center$1 );
 
 			// x-axis
 
-			distance = Math.abs( size.x - Math.abs( vector$1.x ) );
+			distance = Math.abs( size$1.x - Math.abs( vector.x ) );
 
 			if ( distance < minDistance ) {
 
 				minDistance = distance;
-				result.set( 1 * Math.sign( vector$1.x ), 0, 0 );
+				result.set( 1 * Math.sign( vector.x ), 0, 0 );
 
 			}
 
 			// y-axis
 
-			distance = Math.abs( size.y - Math.abs( vector$1.y ) );
+			distance = Math.abs( size$1.y - Math.abs( vector.y ) );
 
 			if ( distance < minDistance ) {
 
 				minDistance = distance;
-				result.set( 0, 1 * Math.sign( vector$1.y ), 0 );
+				result.set( 0, 1 * Math.sign( vector.y ), 0 );
 
 			}
 
 			// z-axis
 
-			distance = Math.abs( size.z - Math.abs( vector$1.z ) );
+			distance = Math.abs( size$1.z - Math.abs( vector.z ) );
 
 			if ( distance < minDistance ) {
 
-				result.set( 0, 0, 1 * Math.sign( vector$1.z ) );
+				result.set( 0, 0, 1 * Math.sign( vector.z ) );
 
 			}
 
@@ -5083,10 +5080,10 @@
 		*/
 		fromCenterAndSize( center, size ) {
 
-			vector$1.copy( size ).multiplyScalar( 0.5 ); // compute half size
+			vector.copy( size ).multiplyScalar( 0.5 ); // compute half size
 
-			this.min.copy( center ).sub( vector$1 );
-			this.max.copy( center ).add( vector$1 );
+			this.min.copy( center ).sub( vector );
+			this.max.copy( center ).add( vector );
 
 			return this;
 
@@ -5181,7 +5178,7 @@
 
 	}
 
-	const aabb = new AABB();
+	const aabb$2 = new AABB();
 
 	/**
 	* Class representing a bounding sphere.
@@ -5345,10 +5342,10 @@
 			// of points. However, there are other more complex algorithms that produce a
 			// more tight bounding sphere. For now, this approach is a good start.
 
-			aabb.fromPoints( points );
+			aabb$2.fromPoints( points );
 
-			aabb.getCenter( this.center );
-			this.radius = this.center.distanceTo( aabb.max );
+			aabb$2.getCenter( this.center );
+			this.radius = this.center.distanceTo( aabb$2.max );
 
 			return this;
 
@@ -5413,13 +5410,13 @@
 
 	}
 
-	const v1$1 = new Vector3();
+	const v1$3 = new Vector3();
 	const edge1 = new Vector3();
 	const edge2 = new Vector3();
-	const normal = new Vector3();
-	const size$1 = new Vector3();
-	const matrix$1 = new Matrix4();
-	const inverse = new Matrix4();
+	const normal$1 = new Vector3();
+	const size = new Vector3();
+	const matrix = new Matrix4();
+	const inverse$1 = new Matrix4();
 	const aabb$1 = new AABB();
 
 	/**
@@ -5519,9 +5516,9 @@
 		*/
 		intersectBoundingSphere( sphere, result ) {
 
-			v1$1.subVectors( sphere.center, this.origin );
-			const tca = v1$1.dot( this.direction );
-			const d2 = v1$1.dot( v1$1 ) - tca * tca;
+			v1$3.subVectors( sphere.center, this.origin );
+			const tca = v1$3.dot( this.direction );
+			const d2 = v1$3.dot( v1$3 ) - tca * tca;
 			const radius2 = sphere.radius * sphere.radius;
 
 			if ( d2 > radius2 ) return null;
@@ -5671,7 +5668,7 @@
 		*/
 		intersectsAABB( aabb ) {
 
-			return this.intersectAABB( aabb, v1$1 ) !== null;
+			return this.intersectAABB( aabb, v1$3 ) !== null;
 
 		}
 
@@ -5763,15 +5760,15 @@
 			// the idea is to perform the intersection test in the local space
 			// of the OBB.
 
-			obb.getSize( size$1 );
-			aabb$1.fromCenterAndSize( v1$1.set( 0, 0, 0 ), size$1 );
+			obb.getSize( size );
+			aabb$1.fromCenterAndSize( v1$3.set( 0, 0, 0 ), size );
 
-			matrix$1.fromMatrix3( obb.rotation );
-			matrix$1.setPosition( obb.center );
+			matrix.fromMatrix3( obb.rotation );
+			matrix.setPosition( obb.center );
 
 			// transform ray to the local space of the OBB
 
-			localRay.copy( this ).applyMatrix4( matrix$1.getInverse( inverse ) );
+			localRay.copy( this ).applyMatrix4( matrix.getInverse( inverse$1 ) );
 
 			// perform ray <-> AABB intersection test
 
@@ -5779,7 +5776,7 @@
 
 				// transform the intersection point back to world space
 
-				return result.applyMatrix4( matrix$1 );
+				return result.applyMatrix4( matrix );
 
 			} else {
 
@@ -5798,7 +5795,7 @@
 		*/
 		intersectsOBB( obb ) {
 
-			return this.intersectOBB( obb, v1$1 ) !== null;
+			return this.intersectOBB( obb, v1$3 ) !== null;
 
 		}
 
@@ -5894,7 +5891,7 @@
 		*/
 		intersectsConvexHull( convexHull ) {
 
-			return this.intersectConvexHull( convexHull, v1$1 ) !== null;
+			return this.intersectConvexHull( convexHull, v1$3 ) !== null;
 
 		}
 
@@ -5917,9 +5914,9 @@
 
 			edge1.subVectors( b, a );
 			edge2.subVectors( c, a );
-			normal.crossVectors( edge1, edge2 );
+			normal$1.crossVectors( edge1, edge2 );
 
-			let DdN = this.direction.dot( normal );
+			let DdN = this.direction.dot( normal$1 );
 			let sign;
 
 			if ( DdN > 0 ) {
@@ -5938,8 +5935,8 @@
 
 			}
 
-			v1$1.subVectors( this.origin, a );
-			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1$1, edge2 ) );
+			v1$3.subVectors( this.origin, a );
+			const DdQxE2 = sign * this.direction.dot( edge2.crossVectors( v1$3, edge2 ) );
 
 			// b1 < 0, no intersection
 
@@ -5949,7 +5946,7 @@
 
 			}
 
-			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1$1 ) );
+			const DdE1xQ = sign * this.direction.dot( edge1.cross( v1$3 ) );
 
 			// b2 < 0, no intersection
 
@@ -5969,7 +5966,7 @@
 
 			// line intersects triangle, check if ray does
 
-			const QdN = - sign * v1$1.dot( normal );
+			const QdN = - sign * v1$3.dot( normal$1 );
 
 			// t < 0, no intersection
 
@@ -6043,13 +6040,13 @@
 
 	const localRay = new Ray();
 
-	const inverse$1 = new Matrix4();
+	const inverse = new Matrix4();
 	const localPositionOfObstacle = new Vector3();
 	const localPositionOfClosestObstacle = new Vector3();
-	const intersectionPoint = new Vector3();
-	const boundingSphere = new BoundingSphere();
+	const intersectionPoint$1 = new Vector3();
+	const boundingSphere$1 = new BoundingSphere();
 
-	const ray = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
+	const ray$1 = new Ray( new Vector3( 0, 0, 0 ), new Vector3( 0, 0, 1 ) );
 
 	/**
 	* This steering behavior produces a force so a vehicle avoids obstacles lying in its path.
@@ -6115,7 +6112,7 @@
 
 			const dBoxLength = this.dBoxMinLength + ( vehicle.getSpeed() / vehicle.maxSpeed ) * this.dBoxMinLength;
 
-			vehicle.worldMatrix.getInverse( inverse$1 );
+			vehicle.worldMatrix.getInverse( inverse );
 
 			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 
@@ -6125,7 +6122,7 @@
 
 				// calculate this obstacle's position in local space of the vehicle
 
-				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse$1 );
+				localPositionOfObstacle.copy( obstacle.position ).applyMatrix4( inverse );
 
 				// if the local position has a positive z value then it must lay behind the agent.
 				// besides the absolute z value must be smaller than the length of the detection box
@@ -6141,18 +6138,18 @@
 
 						// do intersection test in local space of the vehicle
 
-						boundingSphere.center.copy( localPositionOfObstacle );
-						boundingSphere.radius = expandedRadius;
+						boundingSphere$1.center.copy( localPositionOfObstacle );
+						boundingSphere$1.radius = expandedRadius;
 
-						ray.intersectBoundingSphere( boundingSphere, intersectionPoint );
+						ray$1.intersectBoundingSphere( boundingSphere$1, intersectionPoint$1 );
 
 						// compare distances
 
-						if ( intersectionPoint.z < distanceToClosestObstacle ) {
+						if ( intersectionPoint$1.z < distanceToClosestObstacle ) {
 
 							// save new minimum distance
 
-							distanceToClosestObstacle = intersectionPoint.z;
+							distanceToClosestObstacle = intersectionPoint$1.z;
 
 							// save closest obstacle
 
@@ -6263,7 +6260,7 @@
 	const offsetWorld = new Vector3();
 	const toOffset = new Vector3();
 	const newLeaderVelocity = new Vector3();
-	const predictedPosition$1 = new Vector3();
+	const predictedPosition$2 = new Vector3();
 
 	/**
 	* This steering behavior produces a force that keeps a vehicle at a specified offset from a leader vehicle.
@@ -6335,11 +6332,11 @@
 
 			newLeaderVelocity.copy( leader.velocity ).multiplyScalar( lookAheadTime );
 
-			predictedPosition$1.addVectors( offsetWorld, newLeaderVelocity );
+			predictedPosition$2.addVectors( offsetWorld, newLeaderVelocity );
 
 			// now arrive at the predicted future position of the offset
 
-			this._arrive.target = predictedPosition$1;
+			this._arrive.target = predictedPosition$2;
 			this._arrive.calculate( vehicle, force );
 
 			return force;
@@ -6394,11 +6391,11 @@
 
 	}
 
-	const displacement$3 = new Vector3();
+	const displacement$1 = new Vector3();
 	const vehicleDirection = new Vector3();
 	const evaderDirection = new Vector3();
 	const newEvaderVelocity = new Vector3();
-	const predictedPosition$2 = new Vector3();
+	const predictedPosition$1 = new Vector3();
 
 	/**
 	* This steering behavior is useful when an agent is required to intercept a moving agent.
@@ -6450,7 +6447,7 @@
 
 			const evader = this.evader;
 
-			displacement$3.subVectors( evader.position, vehicle.position );
+			displacement$1.subVectors( evader.position, vehicle.position );
 
 			// 1. if the evader is ahead and facing the agent then we can just seek for the evader's current position
 
@@ -6459,7 +6456,7 @@
 
 			// first condition: evader must be in front of the pursuer
 
-			const evaderAhead = displacement$3.dot( vehicleDirection ) > 0;
+			const evaderAhead = displacement$1.dot( vehicleDirection ) > 0;
 
 			// second condition: evader must almost directly facing the agent
 
@@ -6479,17 +6476,17 @@
 			// and the pursuer. and is inversely proportional to the sum of the
 			// agent's velocities
 
-			let lookAheadTime = displacement$3.length() / ( vehicle.maxSpeed + evader.getSpeed() );
+			let lookAheadTime = displacement$1.length() / ( vehicle.maxSpeed + evader.getSpeed() );
 			lookAheadTime *= this.predictionFactor; // tweak the magnitude of the prediction
 
 			// calculate new velocity and predicted future position
 
 			newEvaderVelocity.copy( evader.velocity ).multiplyScalar( lookAheadTime );
-			predictedPosition$2.addVectors( evader.position, newEvaderVelocity );
+			predictedPosition$1.addVectors( evader.position, newEvaderVelocity );
 
 			// now seek to the predicted future position of the evader
 
-			this._seek.target = predictedPosition$2;
+			this._seek.target = predictedPosition$1;
 			this._seek.calculate( vehicle, force );
 
 			return force;
@@ -7222,9 +7219,9 @@
 	}
 
 	const steeringForce = new Vector3();
-	const displacement$4 = new Vector3();
+	const displacement = new Vector3();
 	const acceleration = new Vector3();
-	const target$1 = new Vector3();
+	const target = new Vector3();
 	const velocitySmooth = new Vector3();
 
 	/**
@@ -7306,23 +7303,23 @@
 
 			// calculate displacement
 
-			displacement$4.copy( this.velocity ).multiplyScalar( delta );
+			displacement.copy( this.velocity ).multiplyScalar( delta );
 
 			// calculate target position
 
-			target$1.copy( this.position ).add( displacement$4 );
+			target.copy( this.position ).add( displacement );
 
 			// update the orientation if the vehicle has a non zero velocity
 
 			if ( this.updateOrientation === true && this.smoother === null && this.getSpeedSquared() > 0.00000001 ) {
 
-				this.lookAt( target$1 );
+				this.lookAt( target );
 
 			}
 
 			// update position
 
-			this.position.copy( target$1 );
+			this.position.copy( target );
 
 			// if smoothing is enabled, the orientation (not the position!) of the vehicle is
 			// changed based on a post-processed velocity vector
@@ -7331,10 +7328,10 @@
 
 				this.smoother.calculate( this.velocity, velocitySmooth );
 
-				displacement$4.copy( velocitySmooth ).multiplyScalar( delta );
-				target$1.copy( this.position ).add( displacement$4 );
+				displacement.copy( velocitySmooth ).multiplyScalar( delta );
+				target.copy( this.position ).add( displacement );
 
-				this.lookAt( target$1 );
+				this.lookAt( target );
 
 			}
 
@@ -7455,8 +7452,8 @@
 
 	}
 
-	const boundingSphereEntity = new BoundingSphere();
-	const center$1 = new Vector3();
+	const boundingSphereEntity$1 = new BoundingSphere();
+	const center = new Vector3();
 
 	/**
 	* Class for representing a rectangular trigger region as an AABB.
@@ -7494,9 +7491,9 @@
 		*/
 		touching( entity ) {
 
-			boundingSphereEntity.set( entity.position, entity.boundingRadius );
+			boundingSphereEntity$1.set( entity.position, entity.boundingRadius );
 
-			return this._aabb.intersectsBoundingSphere( boundingSphereEntity );
+			return this._aabb.intersectsBoundingSphere( boundingSphereEntity$1 );
 
 		}
 
@@ -7508,9 +7505,9 @@
 		*/
 		update( trigger ) {
 
-			trigger.getWorldPosition( center$1 );
+			trigger.getWorldPosition( center );
 
-			this._aabb.fromCenterAndSize( center$1, this.size );
+			this._aabb.fromCenterAndSize( center, this.size );
 
 			return this;
 
@@ -7549,7 +7546,7 @@
 
 	}
 
-	const boundingSphereEntity$1 = new BoundingSphere();
+	const boundingSphereEntity = new BoundingSphere();
 
 	/**
 	* Class for representing a spherical trigger region as a bounding sphere.
@@ -7590,10 +7587,10 @@
 		*/
 		touching( entity ) {
 
-			entity.getWorldPosition( boundingSphereEntity$1.center );
-			boundingSphereEntity$1.radius = entity.boundingRadius;
+			entity.getWorldPosition( boundingSphereEntity.center );
+			boundingSphereEntity.radius = entity.boundingRadius;
 
-			return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity$1 );
+			return this._boundingSphere.intersectsBoundingSphere( boundingSphereEntity );
 
 		}
 
@@ -8376,8 +8373,8 @@
 	}
 
 	const v1$2 = new Vector3();
-	const v2 = new Vector3();
-	const d = new Vector3();
+	const v2$1 = new Vector3();
+	const d$1 = new Vector3();
 
 	/**
 	* Class representing a plane in 3D space. The plane is specified in Hessian normal form.
@@ -8490,7 +8487,7 @@
 		*/
 		fromCoplanarPoints( a, b, c ) {
 
-			v1$2.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
+			v1$2.subVectors( c, b ).cross( v2$1.subVectors( a, b ) ).normalize();
 
 			this.fromNormalAndCoplanarPoint( v1$2, a );
 
@@ -8513,21 +8510,21 @@
 
 			// compute direction of intersection line
 
-			d.crossVectors( this.normal, plane.normal );
+			d$1.crossVectors( this.normal, plane.normal );
 
 			// if d is zero, the planes are parallel (and separated)
 			// or coincident, so they’re not considered intersecting
 
-			const denom = d.dot( d );
+			const denom = d$1.dot( d$1 );
 
 			if ( denom === 0 ) return null;
 
 			// compute point on intersection line
 
 			v1$2.copy( plane.normal ).multiplyScalar( this.constant );
-			v2.copy( this.normal ).multiplyScalar( plane.constant );
+			v2$1.copy( this.normal ).multiplyScalar( plane.constant );
 
-			result.crossVectors( v1$2.sub( v2 ), d ).divideScalar( denom );
+			result.crossVectors( v1$2.sub( v2$1 ), d$1 ).divideScalar( denom );
 
 			return result;
 
@@ -8579,10 +8576,10 @@
 
 	}
 
-	const boundingSphere$1 = new BoundingSphere();
-	const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
+	const boundingSphere = new BoundingSphere();
+	const triangle$1 = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 	const rayLocal = new Ray();
-	const plane = new Plane();
+	const plane$1 = new Plane();
 	const inverseMatrix = new Matrix4();
 	const closestIntersectionPoint = new Vector3();
 	const closestTriangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
@@ -8690,9 +8687,9 @@
 
 			// check bounding sphere first in world space
 
-			boundingSphere$1.copy( this.boundingSphere ).applyMatrix4( worldMatrix );
+			boundingSphere.copy( this.boundingSphere ).applyMatrix4( worldMatrix );
 
-			if ( ray.intersectsBoundingSphere( boundingSphere$1 ) ) {
+			if ( ray.intersectsBoundingSphere( boundingSphere ) ) {
 
 				// transform the ray into the local space of the obstacle
 
@@ -8717,11 +8714,11 @@
 
 						for ( let i = 0, l = vertices.length; i < l; i += 9 ) {
 
-							triangle.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
-							triangle.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
-							triangle.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
+							triangle$1.a.set( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] );
+							triangle$1.b.set( vertices[ i + 3 ], vertices[ i + 4 ], vertices[ i + 5 ] );
+							triangle$1.c.set( vertices[ i + 6 ], vertices[ i + 7 ], vertices[ i + 8 ] );
 
-							if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
+							if ( rayLocal.intersectTriangle( triangle$1, this.backfaceCulling, intersectionPoint ) !== null ) {
 
 								if ( closest ) {
 
@@ -8732,9 +8729,9 @@
 										minDistance = distance;
 
 										closestIntersectionPoint.copy( intersectionPoint );
-										closestTriangle.a.copy( triangle.a );
-										closestTriangle.b.copy( triangle.b );
-										closestTriangle.c.copy( triangle.c );
+										closestTriangle.a.copy( triangle$1.a );
+										closestTriangle.b.copy( triangle$1.b );
+										closestTriangle.c.copy( triangle$1.c );
 										found = true;
 
 									}
@@ -8762,11 +8759,11 @@
 
 							const stride = 3;
 
-							triangle.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
-							triangle.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
-							triangle.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
+							triangle$1.a.set( vertices[ ( a * stride ) ], vertices[ ( a * stride ) + 1 ], vertices[ ( a * stride ) + 2 ] );
+							triangle$1.b.set( vertices[ ( b * stride ) ], vertices[ ( b * stride ) + 1 ], vertices[ ( b * stride ) + 2 ] );
+							triangle$1.c.set( vertices[ ( c * stride ) ], vertices[ ( c * stride ) + 1 ], vertices[ ( c * stride ) + 2 ] );
 
-							if ( rayLocal.intersectTriangle( triangle, this.backfaceCulling, intersectionPoint ) !== null ) {
+							if ( rayLocal.intersectTriangle( triangle$1, this.backfaceCulling, intersectionPoint ) !== null ) {
 
 								if ( closest ) {
 
@@ -8777,9 +8774,9 @@
 										minDistance = distance;
 
 										closestIntersectionPoint.copy( intersectionPoint );
-										closestTriangle.a.copy( triangle.a );
-										closestTriangle.b.copy( triangle.b );
-										closestTriangle.c.copy( triangle.c );
+										closestTriangle.a.copy( triangle$1.a );
+										closestTriangle.b.copy( triangle$1.b );
+										closestTriangle.c.copy( triangle$1.c );
 										found = true;
 
 									}
@@ -8806,9 +8803,9 @@
 							// restore closest intersection point and triangle
 
 							intersectionPoint.copy( closestIntersectionPoint );
-							triangle.a.copy( closestTriangle.a );
-							triangle.b.copy( closestTriangle.b );
-							triangle.c.copy( closestTriangle.c );
+							triangle$1.a.copy( closestTriangle.a );
+							triangle$1.b.copy( closestTriangle.b );
+							triangle$1.c.copy( closestTriangle.c );
 
 						}
 
@@ -8820,8 +8817,8 @@
 
 						if ( normal !== null ) {
 
-							plane.fromCoplanarPoints( triangle.a, triangle.b, triangle.c );
-							normal.copy( plane.normal );
+							plane$1.fromCoplanarPoints( triangle$1.a, triangle$1.b, triangle$1.c );
+							normal.copy( plane$1.normal );
 							normal.transformDirection( worldMatrix );
 
 						}
@@ -13341,7 +13338,7 @@
 		search() {
 
 			const outgoingEdges = new Array();
-			const pQueue = new PriorityQueue( compare );
+			const pQueue = new PriorityQueue( compare$1 );
 
 			pQueue.push( {
 				cost: 0,
@@ -13497,7 +13494,7 @@
 	}
 
 
-	function compare( a, b ) {
+	function compare$1( a, b ) {
 
 		return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
 
@@ -13968,7 +13965,7 @@
 		search() {
 
 			const outgoingEdges = new Array();
-			const pQueue = new PriorityQueue( compare$1 );
+			const pQueue = new PriorityQueue( compare );
 
 			pQueue.push( {
 				cost: 0,
@@ -14115,21 +14112,21 @@
 	}
 
 
-	function compare$1( a, b ) {
+	function compare( a, b ) {
 
 		return ( a.cost < b.cost ) ? - 1 : ( a.cost > b.cost ) ? 1 : 0;
 
 	}
 
-	const v1$3 = new Vector3();
-	const v2$1 = new Vector3();
+	const v1$1 = new Vector3();
+	const v2 = new Vector3();
 	const v3 = new Vector3();
 
-	const xAxis = new Vector3( 1, 0, 0 );
-	const yAxis = new Vector3( 0, 1, 0 );
-	const zAxis = new Vector3( 0, 0, 1 );
+	const xAxis$1 = new Vector3( 1, 0, 0 );
+	const yAxis$1 = new Vector3( 0, 1, 0 );
+	const zAxis$1 = new Vector3( 0, 0, 1 );
 
-	const triangle$1 = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
+	const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 	const intersection = new Vector3();
 	const intersections = new Array();
 
@@ -14215,13 +14212,13 @@
 
 			for ( let i = 0, l = primitives.length; i < l; i += 9 ) {
 
-				v1$3.fromArray( primitives, i );
-				v2$1.fromArray( primitives, i + 3 );
+				v1$1.fromArray( primitives, i );
+				v2.fromArray( primitives, i + 3 );
 				v3.fromArray( primitives, i + 6 );
 
-				v1$3.add( v2$1 ).add( v3 ).divideScalar( 3 );
+				v1$1.add( v2 ).add( v3 ).divideScalar( 3 );
 
-				this.root.centroids.push( v1$3.x, v1$3.y, v1$3.z );
+				this.root.centroids.push( v1$1.x, v1$1.y, v1$1.z );
 
 			}
 
@@ -14420,11 +14417,11 @@
 
 			for ( let i = 0, l = primitives.length; i < l; i += 3 ) {
 
-				v1$3.x = primitives[ i ];
-				v1$3.y = primitives[ i + 1 ];
-				v1$3.z = primitives[ i + 2 ];
+				v1$1.x = primitives[ i ];
+				v1$1.y = primitives[ i + 1 ];
+				v1$1.z = primitives[ i + 2 ];
 
-				aabb.expand( v1$3 );
+				aabb.expand( v1$1 );
 
 			}
 
@@ -14495,15 +14492,15 @@
 
 			if ( rangeX > rangeY && rangeX > rangeZ ) {
 
-				return xAxis;
+				return xAxis$1;
 
 			} else if ( rangeY > rangeZ ) {
 
-				return yAxis;
+				return yAxis$1;
 
 			} else {
 
-				return zAxis;
+				return zAxis$1;
 
 			}
 
@@ -14536,12 +14533,12 @@
 
 			for ( let i = 0, l = centroids.length; i < l; i += 3 ) {
 
-				v1$3.fromArray( centroids, i );
+				v1$1.fromArray( centroids, i );
 
 				// the result from the dot product is our sort criterion.
 				// it represents the projection of the centroid on the split axis
 
-				const p = v1$3.dot( axis );
+				const p = v1$1.dot( axis );
 				const primitiveIndex = i / 3;
 
 				sortedPrimitiveIndices.push( { index: primitiveIndex, p: p } );
@@ -14589,19 +14586,19 @@
 				const primitiveIndex = sortedPrimitiveIndices[ i ].index;
 				const stride = primitiveIndex * 9; // remember the "primitives" array holds raw vertex data defining triangles
 
-				v1$3.fromArray( primitives, stride );
-				v2$1.fromArray( primitives, stride + 3 );
+				v1$1.fromArray( primitives, stride );
+				v2.fromArray( primitives, stride + 3 );
 				v3.fromArray( primitives, stride + 6 );
 
-				child.primitives.push( v1$3.x, v1$3.y, v1$3.z );
-				child.primitives.push( v2$1.x, v2$1.y, v2$1.z );
+				child.primitives.push( v1$1.x, v1$1.y, v1$1.z );
+				child.primitives.push( v2.x, v2.y, v2.z );
 				child.primitives.push( v3.x, v3.y, v3.z );
 
 				// 2. centroid
 
-				v1$3.fromArray( centroids, primitiveIndex * 3 );
+				v1$1.fromArray( centroids, primitiveIndex * 3 );
 
-				child.centroids.push( v1$3.x, v1$3.y, v1$3.z );
+				child.centroids.push( v1$1.x, v1$1.y, v1$1.z );
 
 			}
 
@@ -14636,11 +14633,11 @@
 
 						// remember: we assume primitives are triangles
 
-						triangle$1.a.fromArray( vertices, i );
-						triangle$1.b.fromArray( vertices, i + 3 );
-						triangle$1.c.fromArray( vertices, i + 6 );
+						triangle.a.fromArray( vertices, i );
+						triangle.b.fromArray( vertices, i + 3 );
+						triangle.c.fromArray( vertices, i + 6 );
 
-						if ( ray.intersectTriangle( triangle$1, true, result ) !== null ) {
+						if ( ray.intersectTriangle( triangle, true, result ) !== null ) {
 
 							intersections.push( result.clone() );
 
@@ -14729,11 +14726,11 @@
 
 						// remember: we assume primitives are triangles
 
-						triangle$1.a.fromArray( vertices, i );
-						triangle$1.b.fromArray( vertices, i + 3 );
-						triangle$1.c.fromArray( vertices, i + 6 );
+						triangle.a.fromArray( vertices, i );
+						triangle.b.fromArray( vertices, i + 3 );
+						triangle.c.fromArray( vertices, i + 6 );
 
-						if ( ray.intersectTriangle( triangle$1, true, intersection ) !== null ) {
+						if ( ray.intersectTriangle( triangle, true, intersection ) !== null ) {
 
 							return true;
 
@@ -14938,13 +14935,13 @@
 
 	}
 
-	const normal$1 = new Vector3();
+	const normal = new Vector3();
 	const oppositeNormal = new Vector3();
 	const directionA = new Vector3();
 	const directionB = new Vector3();
 
 	const c = new Vector3();
-	const d$1 = new Vector3();
+	const d = new Vector3();
 	const v = new Vector3();
 
 	/**
@@ -15088,12 +15085,12 @@
 			const a = edgeA.polygon.plane.normal;
 			const b = edgeA.twin.polygon.plane.normal;
 			c.copy( edgeB.polygon.plane.normal );
-			d$1.copy( edgeB.twin.polygon.plane.normal );
+			d.copy( edgeB.twin.polygon.plane.normal );
 
 			// negate normals c and d to account for minkowski difference
 
 			c.multiplyScalar( - 1 );
-			d$1.multiplyScalar( - 1 );
+			d.multiplyScalar( - 1 );
 
 			// compute triple products
 
@@ -15101,7 +15098,7 @@
 			// have same direction as the cross product between their adjacent face normals
 
 			const cba = c.dot( directionA );
-			const dba = d$1.dot( directionA );
+			const dba = d.dot( directionA );
 			const adc = a.dot( directionB );
 			const bdc = b.dot( directionB );
 
@@ -15121,20 +15118,20 @@
 
 			// build plane through one edge
 
-			normal$1.crossVectors( directionA, directionB ).normalize();
+			normal.crossVectors( directionA, directionB ).normalize();
 
 			// ensure normal points from polyhedron A to B
 
-			if ( normal$1.dot( v.subVectors( edgeA.vertex, polyhedronA.centroid ) ) < 0 ) {
+			if ( normal.dot( v.subVectors( edgeA.vertex, polyhedronA.centroid ) ) < 0 ) {
 
-				normal$1.multiplyScalar( - 1 );
+				normal.multiplyScalar( - 1 );
 
 			}
 
 			// compute the distance of any vertex on the other edge to that plane
 			// no need to compute support points => O(1)
 
-			return normal$1.dot( v.subVectors( edgeB.vertex, edgeA.vertex ) );
+			return normal.dot( v.subVectors( edgeB.vertex, edgeA.vertex ) );
 
 		}
 
@@ -15835,8 +15832,8 @@
 	}
 
 	const line = new LineSegment();
-	const plane$1 = new Plane();
-	const closestPoint = new Vector3();
+	const plane = new Plane();
+	const closestPoint$1 = new Vector3();
 	const up = new Vector3( 0, 1, 0 );
 	const sat = new SAT();
 	let polyhedronAABB;
@@ -16170,9 +16167,9 @@
 
 				if ( vertex !== v0 && vertex !== v1 ) {
 
-					line.closestPointToPoint( vertex.point, true, closestPoint );
+					line.closestPointToPoint( vertex.point, true, closestPoint$1 );
 
-					distance = closestPoint.squaredDistanceTo( vertex.point );
+					distance = closestPoint$1.squaredDistanceTo( vertex.point );
 
 					if ( distance > maxDistance ) {
 
@@ -16188,7 +16185,7 @@
 			// 3. The next vertex 'v3' is the one farthest to the plane 'v0', 'v1', 'v2'
 
 			maxDistance = - Infinity;
-			plane$1.fromCoplanarPoints( v0.point, v1.point, v2.point );
+			plane.fromCoplanarPoints( v0.point, v1.point, v2.point );
 
 			for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
@@ -16196,7 +16193,7 @@
 
 				if ( vertex !== v0 && vertex !== v1 && vertex !== v2 ) {
 
-					distance = Math.abs( plane$1.distanceToPoint( vertex.point ) );
+					distance = Math.abs( plane.distanceToPoint( vertex.point ) );
 
 					if ( distance > maxDistance ) {
 
@@ -16211,7 +16208,7 @@
 
 			// handle case where all points lie in one plane
 
-			if ( plane$1.distanceToPoint( v3.point ) === 0 ) {
+			if ( plane.distanceToPoint( v3.point ) === 0 ) {
 
 				throw 'ERROR: YUKA.ConvexHull: All extreme points lie in a single plane. Unable to compute convex hull.';
 
@@ -16221,7 +16218,7 @@
 
 			const faces = this.faces;
 
-			if ( plane$1.distanceToPoint( v3.point ) < 0 ) {
+			if ( plane.distanceToPoint( v3.point ) < 0 ) {
 
 				// the face is not able to see the point so 'plane.normal' is pointing outside the tetrahedron
 
@@ -17036,11 +17033,11 @@
 	const AbsR = [[], [], []];
 	const t = [];
 
-	const xAxis$1 = new Vector3();
-	const yAxis$1 = new Vector3();
-	const zAxis$1 = new Vector3();
-	const v1$4 = new Vector3();
-	const closestPoint$1 = new Vector3();
+	const xAxis = new Vector3();
+	const yAxis = new Vector3();
+	const zAxis = new Vector3();
+	const v1 = new Vector3();
+	const closestPoint = new Vector3();
 
 	/**
 	* Class representing an oriented bounding box (OBB). Similar to an AABB, it's a
@@ -17155,8 +17152,8 @@
 
 			const halfSizes = this.halfSizes;
 
-			v1$4.subVectors( point, this.center );
-			this.rotation.extractBasis( xAxis$1, yAxis$1, zAxis$1 );
+			v1.subVectors( point, this.center );
+			this.rotation.extractBasis( xAxis, yAxis, zAxis );
 
 			// start at the center position of the OBB
 
@@ -17164,14 +17161,14 @@
 
 			// project the target onto the OBB axes and walk towards that point
 
-			const x = MathUtils.clamp( v1$4.dot( xAxis$1 ), - halfSizes.x, halfSizes.x );
-			result.add( xAxis$1.multiplyScalar( x ) );
+			const x = MathUtils.clamp( v1.dot( xAxis ), - halfSizes.x, halfSizes.x );
+			result.add( xAxis.multiplyScalar( x ) );
 
-			const y = MathUtils.clamp( v1$4.dot( yAxis$1 ), - halfSizes.y, halfSizes.y );
-			result.add( yAxis$1.multiplyScalar( y ) );
+			const y = MathUtils.clamp( v1.dot( yAxis ), - halfSizes.y, halfSizes.y );
+			result.add( yAxis.multiplyScalar( y ) );
 
-			const z = MathUtils.clamp( v1$4.dot( zAxis$1 ), - halfSizes.z, halfSizes.z );
-			result.add( zAxis$1.multiplyScalar( z ) );
+			const z = MathUtils.clamp( v1.dot( zAxis ), - halfSizes.z, halfSizes.z );
+			result.add( zAxis.multiplyScalar( z ) );
 
 			return result;
 
@@ -17185,14 +17182,14 @@
 		*/
 		containsPoint( point ) {
 
-			v1$4.subVectors( point, this.center );
-			this.rotation.extractBasis( xAxis$1, yAxis$1, zAxis$1 );
+			v1.subVectors( point, this.center );
+			this.rotation.extractBasis( xAxis, yAxis, zAxis );
 
 			// project v1 onto each axis and check if these points lie inside the OBB
 
-			return Math.abs( v1$4.dot( xAxis$1 ) ) <= this.halfSizes.x &&
-					Math.abs( v1$4.dot( yAxis$1 ) ) <= this.halfSizes.y &&
-					Math.abs( v1$4.dot( zAxis$1 ) ) <= this.halfSizes.z;
+			return Math.abs( v1.dot( xAxis ) ) <= this.halfSizes.x &&
+					Math.abs( v1.dot( yAxis ) ) <= this.halfSizes.y &&
+					Math.abs( v1.dot( zAxis ) ) <= this.halfSizes.z;
 
 		}
 
@@ -17218,11 +17215,11 @@
 
 			// find the point on the OBB closest to the sphere center
 
-			this.clampPoint( sphere.center, closestPoint$1 );
+			this.clampPoint( sphere.center, closestPoint );
 
 			// if that point is inside the sphere, the OBB and sphere intersect
 
-			return closestPoint$1.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
+			return closestPoint.squaredDistanceTo( sphere.center ) <= ( sphere.radius * sphere.radius );
 
 		}
 
@@ -17266,13 +17263,13 @@
 
 			// compute translation vector
 
-			v1$4.subVectors( b.c, a.c );
+			v1.subVectors( b.c, a.c );
 
 			// bring translation into a’s coordinate frame
 
-			t[ 0 ] = v1$4.dot( a.u[ 0 ] );
-			t[ 1 ] = v1$4.dot( a.u[ 1 ] );
-			t[ 2 ] = v1$4.dot( a.u[ 2 ] );
+			t[ 0 ] = v1.dot( a.u[ 0 ] );
+			t[ 1 ] = v1.dot( a.u[ 1 ] );
+			t[ 2 ] = v1.dot( a.u[ 2 ] );
 
 			// compute common subexpressions. Add in an epsilon term to
 			// counteract arithmetic errors when two edges are parallel and
@@ -17382,13 +17379,13 @@
 		*/
 		intersectsPlane( plane ) {
 
-			this.rotation.extractBasis( xAxis$1, yAxis$1, zAxis$1 );
+			this.rotation.extractBasis( xAxis, yAxis, zAxis );
 
 			// compute the projection interval radius of this OBB onto L(t) = this->center + t * p.normal;
 
-			const r = this.halfSizes.x * Math.abs( plane.normal.dot( xAxis$1 ) ) +
-					this.halfSizes.y * Math.abs( plane.normal.dot( yAxis$1 ) ) +
-					this.halfSizes.z * Math.abs( plane.normal.dot( zAxis$1 ) );
+			const r = this.halfSizes.x * Math.abs( plane.normal.dot( xAxis ) ) +
+					this.halfSizes.y * Math.abs( plane.normal.dot( yAxis ) ) +
+					this.halfSizes.z * Math.abs( plane.normal.dot( zAxis ) );
 
 			// compute distance of the OBB's center from the plane
 
@@ -18157,7 +18154,7 @@
 	const edgeDirection = new Vector3();
 	const movementDirection = new Vector3();
 	const newPosition = new Vector3();
-	const lineSegment = new LineSegment();
+	const lineSegment$1 = new LineSegment();
 	const edges = new Array();
 	const closestBorderEdge = {
 		edge: null,
@@ -18575,8 +18572,8 @@
 
 				// the following value "t" tells us if the point exceeds the line segment
 
-				lineSegment.set( closestEdge.prev.vertex, closestEdge.vertex );
-				const t = lineSegment.closestPointToPointParameter( newPosition, false );
+				lineSegment$1.set( closestEdge.prev.vertex, closestEdge.vertex );
+				const t = lineSegment$1.closestPointToPointParameter( newPosition, false );
 
 				//
 
@@ -18876,9 +18873,9 @@
 
 				const edge = borderEdges[ i ];
 
-				lineSegment.set( edge.prev.vertex, edge.vertex );
-				const t = lineSegment.closestPointToPointParameter( point );
-				lineSegment.at( t, pointOnLineSegment );
+				lineSegment$1.set( edge.prev.vertex, edge.vertex );
+				const t = lineSegment$1.closestPointToPointParameter( point );
+				lineSegment$1.at( t, pointOnLineSegment );
 
 				const distance = pointOnLineSegment.squaredDistanceTo( point );
 
@@ -19569,7 +19566,7 @@
 	}
 
 	const clampedPosition = new Vector3();
-	const aabb$2 = new AABB();
+	const aabb = new AABB();
 	const contour = new Array();
 
 	/**
@@ -19788,8 +19785,8 @@
 
 			// approximate range with an AABB which allows fast intersection test
 
-			aabb$2.min.copy( position ).subScalar( radius );
-			aabb$2.max.copy( position ).addScalar( radius );
+			aabb.min.copy( position ).subScalar( radius );
+			aabb.max.copy( position ).addScalar( radius );
 
 			// test all non-empty cells for an intersection
 
@@ -19797,7 +19794,7 @@
 
 				const cell = cells[ i ];
 
-				if ( cell.empty() === false && cell.intersects( aabb$2 ) === true ) {
+				if ( cell.empty() === false && cell.intersects( aabb ) === true ) {
 
 					result.push( ...cell.entries );
 
@@ -19840,13 +19837,13 @@
 
 			polygon.getContour( contour );
 
-			aabb$2.fromPoints( contour );
+			aabb.fromPoints( contour );
 
 			for ( let i = 0, l = cells.length; i < l; i ++ ) {
 
 				const cell = cells[ i ];
 
-				if ( cell.intersects( aabb$2 ) === true ) {
+				if ( cell.intersects( aabb ) === true ) {
 
 					cell.add( polygon );
 
@@ -20281,9 +20278,9 @@
 	}
 
 	const toPoint = new Vector3();
-	const direction$1 = new Vector3();
-	const ray$1 = new Ray();
-	const intersectionPoint$1 = new Vector3();
+	const direction = new Vector3();
+	const ray = new Ray();
+	const intersectionPoint = new Vector3();
 	const worldPosition = new Vector3();
 
 	/**
@@ -20382,30 +20379,30 @@
 
 			// next, check if the point lies within the game entity's field of view
 
-			owner.getWorldDirection( direction$1 );
+			owner.getWorldDirection( direction );
 
-			const angle = direction$1.angleTo( toPoint );
+			const angle = direction.angleTo( toPoint );
 
 			if ( angle > ( this.fieldOfView * 0.5 ) ) return false;
 
 			// the point lies within the game entity's visual range and field
 			// of view. now check if obstacles block the game entity's view to the given point.
 
-			ray$1.origin.copy( worldPosition );
-			ray$1.direction.copy( toPoint ).divideScalar( distanceToPoint || 1 ); // normalize
+			ray.origin.copy( worldPosition );
+			ray.direction.copy( toPoint ).divideScalar( distanceToPoint || 1 ); // normalize
 
 			for ( let i = 0, l = obstacles.length; i < l; i ++ ) {
 
 				const obstacle = obstacles[ i ];
 
-				const intersection = obstacle.lineOfSightTest( ray$1, intersectionPoint$1 );
+				const intersection = obstacle.lineOfSightTest( ray, intersectionPoint );
 
 				if ( intersection !== null ) {
 
 					// if an intersection point is closer to the game entity than the given point,
 					// something is blocking the game entity's view
 
-					const squaredDistanceToIntersectionPoint = intersectionPoint$1.squaredDistanceTo( worldPosition );
+					const squaredDistanceToIntersectionPoint = intersectionPoint.squaredDistanceTo( worldPosition );
 
 					if ( squaredDistanceToIntersectionPoint <= ( distanceToPoint * distanceToPoint ) ) return false;
 
@@ -20491,10 +20488,10 @@
 
 	}
 
-	const translation$1 = new Vector3();
-	const predictedPosition$3 = new Vector3();
+	const translation = new Vector3();
+	const predictedPosition = new Vector3();
 	const normalPoint = new Vector3();
-	const lineSegment$1 = new LineSegment();
+	const lineSegment = new LineSegment();
 	const closestNormalPoint = new Vector3();
 
 	/**
@@ -20557,8 +20554,8 @@
 
 			// predicted future position
 
-			translation$1.copy( vehicle.velocity ).multiplyScalar( this.predictionFactor );
-			predictedPosition$3.addVectors( vehicle.position, translation$1 );
+			translation.copy( vehicle.velocity ).multiplyScalar( this.predictionFactor );
+			predictedPosition.addVectors( vehicle.position, translation );
 
 			// compute closest line segment and normal point. the normal point is computed by projecting
 			// the predicted position of the vehicle on a line segment.
@@ -20573,24 +20570,24 @@
 
 			for ( let i = 0; i < l; i ++ ) {
 
-				lineSegment$1.from = path._waypoints[ i ];
+				lineSegment.from = path._waypoints[ i ];
 
 				// the last waypoint needs to be handled differently for a looped path.
 				// connect the last point with the first one in order to create the last line segment
 
 				if ( path.loop === true && i === ( l - 1 ) ) {
 
-					lineSegment$1.to = path._waypoints[ 0 ];
+					lineSegment.to = path._waypoints[ 0 ];
 
 				} else {
 
-					lineSegment$1.to = path._waypoints[ i + 1 ];
+					lineSegment.to = path._waypoints[ i + 1 ];
 
 				}
 
-				lineSegment$1.closestPointToPoint( predictedPosition$3, true, normalPoint );
+				lineSegment.closestPointToPoint( predictedPosition, true, normalPoint );
 
-				const distance = predictedPosition$3.squaredDistanceTo( normalPoint );
+				const distance = predictedPosition.squaredDistanceTo( normalPoint );
 
 				if ( distance < minDistance ) {
 
@@ -20894,4 +20891,4 @@
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

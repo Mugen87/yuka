@@ -4,14 +4,14 @@
 
 const fs = require( 'fs' );
 const path = require( 'path' );
+const util = require( 'util' );
 const expect = require( 'chai' ).expect;
 const fetch = require( 'node-fetch' );
-const TextDecoder = require( 'text-encoding' ).TextDecoder;
 
 // provide implementation of browser APIs used in NavMeshLoader
 
 global.fetch = fetch;
-global.TextDecoder = TextDecoder;
+global.TextDecoder = util.TextDecoder;
 
 const YUKA = require( '../../../../build/yuka.js' );
 
