@@ -12,8 +12,7 @@
     "doc": "jsdoc src -c \"config/jsdoc/config.json\"",
     "lint": "eslint src examples --ext .js",
     "start": "npm run dev",
-    "test": "nyc mocha \"test/unit_test/**/*.js\"",
-    "travis": "npm run lint && nyc --reporter=lcovonly mocha \"test/unit_test/**/*.js\""
+    "test": "nyc mocha \"test/unit_test/**/*.js\""
   },
   "keywords": [
     "javascript",
