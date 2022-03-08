@@ -1,5 +1,5 @@
-const path = require( 'path' );
-const license = require( 'rollup-plugin-license' );
+import path from 'path';
+import license from 'rollup-plugin-license';
 
 export default {
 	input: 'src/yuka.js',
