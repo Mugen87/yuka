@@ -189,7 +189,7 @@ class Polygon {
 	convex( ccw = true ) {
 
 		let edge = this.edge;
-		let antiCyleEdge = this.edge;
+		let antiCyleEdge = this.edge.next;
 
 		do {
 
