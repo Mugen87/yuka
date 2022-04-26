@@ -189,6 +189,7 @@ class Polygon {
 	convex( ccw = true ) {
 
 		let edge = this.edge;
+		let antiCyleEdge = this.edge;
 
 		do {
 
@@ -207,8 +208,9 @@ class Polygon {
 			}
 
 			edge = edge.next;
+			antiCyleEdge = edge.next.next;
 
-		} while ( edge !== this.edge );
+		} while ( edge !== this.edge && edge !== antiCyleEdge);
 
 		return true;
 
