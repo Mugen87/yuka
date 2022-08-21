@@ -55,7 +55,7 @@ function createGraphHelper( graph, nodeSize = 1, nodeColor = 0x4e84c4, edgeColor
 
 	}
 
-	edgesGeometry.addAttribute( 'position', new THREE.Float32BufferAttribute( position, 3 ) );
+	edgesGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( position, 3 ) );
 
 	const lines = new THREE.LineSegments( edgesGeometry, edgesMaterial );
 	lines.matrixAutoUpdate = false;
@@ -105,7 +105,7 @@ function createPathHelper( graph, path, nodeSize, color = 0x00ff00 ) {
 
 	}
 
-	edgesGeometry.addAttribute( 'position', new THREE.Float32BufferAttribute( position, 3 ) );
+	edgesGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( position, 3 ) );
 
 	const lines = new THREE.LineSegments( edgesGeometry, edgesMaterial );
 	lines.matrixAutoUpdate = false;
@@ -133,7 +133,7 @@ function createSearchTreeHelper( graph, searchTree, color = 0xff0000 ) {
 
 	}
 
-	geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( position, 3 ) );
+	geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( position, 3 ) );
 
 	const lines = new THREE.LineSegments( geometry, material );
 	lines.matrixAutoUpdate = false;
