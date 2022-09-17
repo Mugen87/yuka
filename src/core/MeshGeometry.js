@@ -1,9 +1,9 @@
 import { AABB } from '../math/AABB.js';
 import { BoundingSphere } from '../math/BoundingSphere.js';
 import { Vector3 } from '../math/Vector3.js';
-import { Ray } from '../math/Ray';
-import { Plane } from '../math/Plane';
-import { Matrix4 } from '../math/Matrix4';
+import { Ray } from '../math/Ray.js';
+import { Plane } from '../math/Plane.js';
+import { Matrix4 } from '../math/Matrix4.js';
 
 const boundingSphere = new BoundingSphere();
 const triangle = { a: new Vector3(), b: new Vector3(), c: new Vector3() };

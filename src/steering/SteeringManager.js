@@ -1,19 +1,19 @@
 import { Vector3 } from '../math/Vector3.js';
 import { Logger } from '../core/Logger.js';
-import { SteeringBehavior } from './SteeringBehavior';
-import { AlignmentBehavior } from './behaviors/AlignmentBehavior';
-import { ArriveBehavior } from './behaviors/ArriveBehavior';
-import { CohesionBehavior } from './behaviors/CohesionBehavior';
-import { EvadeBehavior } from './behaviors/EvadeBehavior';
-import { FleeBehavior } from './behaviors/FleeBehavior';
-import { FollowPathBehavior } from './behaviors/FollowPathBehavior';
-import { InterposeBehavior } from './behaviors/InterposeBehavior';
-import { ObstacleAvoidanceBehavior } from './behaviors/ObstacleAvoidanceBehavior';
-import { OffsetPursuitBehavior } from './behaviors/OffsetPursuitBehavior';
-import { PursuitBehavior } from './behaviors/PursuitBehavior';
-import { SeekBehavior } from './behaviors/SeekBehavior';
-import { SeparationBehavior } from './behaviors/SeparationBehavior';
-import { WanderBehavior } from './behaviors/WanderBehavior';
+import { SteeringBehavior } from './SteeringBehavior.js';
+import { AlignmentBehavior } from './behaviors/AlignmentBehavior.js';
+import { ArriveBehavior } from './behaviors/ArriveBehavior.js';
+import { CohesionBehavior } from './behaviors/CohesionBehavior.js';
+import { EvadeBehavior } from './behaviors/EvadeBehavior.js';
+import { FleeBehavior } from './behaviors/FleeBehavior.js';
+import { FollowPathBehavior } from './behaviors/FollowPathBehavior.js';
+import { InterposeBehavior } from './behaviors/InterposeBehavior.js';
+import { ObstacleAvoidanceBehavior } from './behaviors/ObstacleAvoidanceBehavior.js';
+import { OffsetPursuitBehavior } from './behaviors/OffsetPursuitBehavior.js';
+import { PursuitBehavior } from './behaviors/PursuitBehavior.js';
+import { SeekBehavior } from './behaviors/SeekBehavior.js';
+import { SeparationBehavior } from './behaviors/SeparationBehavior.js';
+import { WanderBehavior } from './behaviors/WanderBehavior.js';
 
 const force = new Vector3();
 

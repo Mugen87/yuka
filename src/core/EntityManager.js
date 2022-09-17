@@ -1,7 +1,7 @@
 import { MessageDispatcher } from './MessageDispatcher.js';
-import { GameEntity } from './GameEntity';
-import { MovingEntity } from './MovingEntity';
-import { Vehicle } from '../steering/Vehicle';
+import { GameEntity } from './GameEntity.js';
+import { MovingEntity } from './MovingEntity.js';
+import { Vehicle } from '../steering/Vehicle.js';
 import { Trigger } from '../trigger/Trigger.js';
 import { Logger } from './Logger.js';
 
